@@ -1,0 +1,93 @@
+/* ── POST CREATION WIDGET ────────────────────────────────────────────────── */
+.post-composer {
+  max-width: 680px;
+  margin: 0 auto;
+  background: #fef8f3;
+  border: 1px solid rgba(26,158,74,0.25);
+  border-radius: 4px;
+  padding: 16px 20px;
+  position: relative;
+  z-index: 10;
+}
+.post-composer-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.post-composer-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
+  border: 1px solid #1a9e4a;
+}
+.post-composer-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  font-family: 'Arvo', monospace;
+  font-size: 1.1em;
+  color: #16432a;
+  padding-top: 8px;
+  min-height: 44px;
+}
+.post-composer-input::placeholder {
+  color: rgba(22,67,42,0.4);
+}
+.post-composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(26,158,74,0.15);
+}
+.post-composer-icons {
+  display: flex;
+  gap: 4px;
+}
+.post-composer-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: #1a9e4a;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.post-composer-icon-btn:hover:not(:disabled) {
+  background: rgba(26,158,74,0.1);
+  color: #0d5c29;
+}
+.post-composer-icon-btn:disabled {
+  color: rgba(26,158,74,0.3);
+  cursor: not-allowed;
+}
+.post-composer-submit {
+  font-family: 'Hemisphers Bold Sans', monospace;
+  font-size: 0.85em;
+  letter-spacing: 0.12em;
+  color: #fff;
+  padding: 8px 22px;
+  border-radius: 999px;
+  border: 1px solid #1a9e4a;
+  background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
+  cursor: pointer;
+  transition: transform 0.07s ease, opacity 0.15s ease;
+}
+.post-composer-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.post-composer-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: linear-gradient(175deg, #7a8a80 0%, #5c6a62 100%);
+  border-color: rgba(26,158,74,0.2);
+}
