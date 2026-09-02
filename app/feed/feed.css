@@ -85,9 +85,51 @@
 .post-composer-submit:hover:not(:disabled) {
   transform: translateY(-1px);
 }
-.post-composer-submit:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background: linear-gradient(175deg, #7a8a80 0%, #5c6a62 100%);
-  border-color: rgba(26,158,74,0.2);
+.sidebar-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(26,158,74,0.08);
+  border: none;
+  color: #1a9e4a;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.sidebar-icon-btn:hover {
+  background: rgba(26,158,74,0.18);
+  color: #0d5c29;
+}
+
+/* ── FEED CARD (SOCIAL STYLE) ────────────────────────────────────────── */
+.feed-card-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
+  border: 1px solid #1a9e4a;
+}
+.feed-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(26,158,74,0.15);
+}
+.feed-card-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Hemisphers Bold Sans', monospace;
+  font-size: 0.68em;
+  letter-spacing: 0.15em;
+  color: #1a9e4a;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.feed-card-action-btn:hover {
+  color: #0d5c29;
 }

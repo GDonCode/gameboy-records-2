@@ -110,6 +110,27 @@ export default async function FeedPage({
           <aside className="tag-sidebar no-scrollbar relative flex flex-col w-64 flex-shrink-0 bg-[#fef8f3] z-[25] overflow-y-auto">
             <Corners />
             <div className="p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <button
+                  type="button"
+                  className="sidebar-icon-btn"
+                  aria-label="Notifications"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className="sidebar-icon-btn"
+                  aria-label="Messages"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                </button>
+              </div>
               <div
                 style={{
                   fontFamily: "'Hemisphers Bold Sans', monospace",
@@ -278,20 +299,57 @@ export default async function FeedPage({
                 </Link>
 
                 {/* Remaining posts — standard feed card grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-6">
                   {filteredPosts.slice(1).map((post) => (
                     <Link
                       key={post.id}
                       href={`/feed/${post.slug}`}
-                      className="group block p-6 no-underline hover:translate-y-[-6px] transition-all duration-150"
+                      className="group block p-5 no-underline hover:translate-y-[-4px] transition-all duration-150 feed-card"
                       style={{
                         background: '#fef8f3',
-                        border: '4px solid #3dc97e',
+                        border: '1px solid rgba(26,158,74,0.3)',
                         borderRadius: '4px',
                       }}
                     >
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="feed-card-avatar" />
+                        <div className="flex flex-col">
+                          <span
+                            style={{
+                              fontFamily: "'Hemisphers Bold Sans', monospace",
+                              fontSize: '0.78em',
+                              letterSpacing: '0.08em',
+                              color: '#16432a',
+                            }}
+                          >
+                            {post.artists?.name?.toUpperCase() || 'GAMEBOY RECORDS'}
+                          </span>
+                          <span
+                            style={{
+                              fontFamily: "'Arvo', monospace",
+                              fontSize: '0.72em',
+                              color: '#1a1a1a',
+                              opacity: 0.55,
+                            }}
+                          >
+                            {formatDate(post.published_at)} &nbsp;•&nbsp; {post.tag}
+                          </span>
+                        </div>
+                      </div>
+
                       <div
-                        className="relative w-full aspect-video mb-4 rounded overflow-hidden"
+                        className="group-hover:underline"
+                        style={{ fontFamily: "'Arvo', monospace", fontSize: '1.15em', color: '#1a1a1a', lineHeight: 1.35, marginBottom: '8px' }}
+                      >
+                        {post.title}
+                      </div>
+
+                      <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.85em', color: '#1a1a1a', lineHeight: 1.6, marginBottom: '12px' }}>
+                        {post.teaser}
+                      </div>
+
+                      <div
+                        className="relative w-full aspect-video mb-3 rounded overflow-hidden"
                         style={{ border: '1px solid rgba(26,158,74,0.2)', background: '#0c1510' }}
                       >
                         {post.cover_image_url && post.cover_media_type === 'video' ? (
@@ -326,52 +384,20 @@ export default async function FeedPage({
                         )}
                       </div>
 
-                      <div
-                        style={{
-                          fontFamily: "'Arvo', monospace",
-                          fontSize: '0.78em',
-                          letterSpacing: '0.1em',
-                          color: '#1a1a1a',
-                          opacity: 0.65,
-                          marginBottom: '10px',
-                        }}
-                      >
-                        {(post.artists?.name?.toUpperCase() || 'GAMEBOY RECORDS')} &nbsp;•&nbsp; {formatDate(post.published_at)}
-                      </div>
-
-                      <div
-                        className="group-hover:underline"
-                        style={{ fontFamily: "'Arvo', monospace", fontSize: '1.2em', color: '#1a1a1a', lineHeight: 1.35, marginBottom: '8px' }}
-                      >
-                        {post.title}
-                      </div>
-
-                      <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.85em', color: '#1a1a1a', lineHeight: 1.6, marginBottom: '12px' }}>
-                        {post.teaser}
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span
-                          style={{
-                            fontFamily: "'Hemisphers Bold Sans', monospace",
-                            fontSize: '0.7em',
-                            letterSpacing: '0.2em',
-                            color: '#ffffff',
-                            background: 'rgba(26,158,74)',
-                            padding: '4px 10px',
-                            borderRadius: '2px',
-                          }}
-                        >
-                          {post.tag}
+                      <div className="feed-card-actions">
+                        <span className="feed-card-action-btn">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                          </svg>
+                          COMMENT
                         </span>
-                        <span
-                          style={{
-                            fontFamily: "'Hemisphers Bold Sans', monospace",
-                            fontSize: '0.7em',
-                            letterSpacing: '0.15em',
-                            color: '#1a9e4a',
-                          }}
-                        >
+                        <span className="feed-card-action-btn">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13" />
+                          </svg>
+                          SHARE
+                        </span>
+                        <span className="feed-card-action-btn ml-auto">
                           READ →
                         </span>
                       </div>
