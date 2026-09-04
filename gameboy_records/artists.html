@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A-Game — Gameboy Records</title>
+  <style>
+@font-face {
+  font-family: 'Hemisphers Bold Sans';
+  src: url('Hemisphers_Bold_Sans.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  ascent-override:   80%;
+  descent-override:  20%;
+  line-gap-override:  0%;
+}
+
+/* ── RESET ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── TOKENS ─────────────────────────────────────────── */
+:root {
+  --hh:       76px;
+  --teal:     #149262;   /* Gameboy Records logo green   */
+  --teal-lt:  #3dc97e;   /* lighter green — borders/dividers */
+  --teal-dk:  #0c5d3c;   /* dark green — overlay floor   */
+  --bg:       #dfe0dc;   /* page background (light mode) */
+  --card-bg:  #f8f7f5;   /* right-panel fill             */
+  --txt:      #1a1a1a;
+  --txt-mu:   #3d5c4a;
+  --sep:      rgba(61,201,126,0.32);
+}
+
+/* ── BASE ───────────────────────────────────────────── */
+html, body { height: 100%; overflow: hidden; }
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+header {
+  flex-shrink: 0;
+  height: var(--hh);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 2px 16px rgba(0,0,0,.12);
+  position: relative;
+  z-index: 10;
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #1a9e4a55, #4dff9144, #1a9e4a55, transparent);
+  pointer-events: none;
+}
+.logo-area img { height: 48px; width: auto; display: block; }
+
+.main-nav { display: flex; align-items: center; gap: 2px; }
+.main-nav a {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: 1.05rem; letter-spacing: .18em;
+  color: #1a1a1a; text-decoration: none;
+  padding: 4px 11px 3px;
+  border: 1px solid transparent; border-radius: 2px; line-height: 1;
+  transition: color .1s, background .1s, border-color .1s;
+}
+.main-nav a:hover, .main-nav a.active {
+  color: #1a9e4a;
+  border-color: rgba(26,158,74,.28);
+  background: rgba(26,158,74,.06);
+}
+
+/* ── MAIN ───────────────────────────────────────────── */
+main {
+  flex: 1;
+  overflow: hidden;
+  padding: 20px;
+  display: flex;
+}
+
+/* ── ARTIST CARD ────────────────────────────────────── */
+/* UIverse border + shadow applied at full-layout scale  */
+.artist-card {
+  display: grid;
+  grid-template-columns: 42% 58%;
+  width: 100%;
+  border: 4px solid var(--teal-lt);
+  border-radius: 10px;
+  box-shadow: 0 6px 10px rgba(207,212,222,1), 0 18px 52px rgba(0,0,0,.13);
+  overflow: hidden;
+}
+
+/* ── PORTRAIT PANEL ─────────────────────────────────── */
+.portrait-panel {
+  position: relative;
+  background: var(--teal);   /* teal shows while image loads */
+  overflow: hidden;
+}
+.portrait-panel img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+/* gradient: transparent top → UIverse teal floor */
+.portrait-panel::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgba(0,0,0,.30) 62%,
+    rgba(30,143,126,.97) 100%
+  );
+  pointer-events: none;
+}
+
+/* UIverse name + social, bottom of portrait */
+.portrait-footer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 24px 28px;
+  z-index: 2;
+  color: #fff;
+  text-align: center;
+}
+.artist-name {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: 3.6rem; letter-spacing: .12em; line-height: 1;
+  text-shadow: 0 2px 18px rgba(0,0,0,.55);
+}
+.artist-role {
+  display: block;
+  font-size: .72rem; letter-spacing: .2em;
+  color: rgba(255,255,255,.78);
+  margin-top: 5px;
+}
+/* UIverse-style divider */
+.social-divider {
+  height: 2px;
+  background: var(--teal-lt);
+  margin: 15px 0;
+}
+/* UIverse social row */
+.social-row { display: flex; justify-content: center; gap: 22px; }
+.social-row a {
+  color: #fff; text-decoration: none;
+  position: relative; display: inline-flex;
+  transition: transform .15s, opacity .15s;
+}
+.social-row a:hover { transform: translateY(-3px); opacity: .8; }
+.social-row a svg { width: 1.15rem; height: 1.15rem; fill: currentColor; }
+
+/* UIverse tooltip */
+.tt {
+  background: #262626;
+  position: absolute;
+  bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: .68rem; letter-spacing: .07em;
+  padding: 4px 8px; border-radius: 4px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .18s; z-index: 10;
+}
+.tt::after {
+  content: '';
+  position: absolute;
+  bottom: -8px; left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #262626;
+}
+.social-row a:hover .tt { opacity: 1; }
+
+/* ── CONTENT COLUMN ─────────────────────────────────── */
+.content-col {
+  display: grid;
+  grid-template-rows: 160px minmax(90px,1fr) 315px;
+  background: var(--card-bg);
+  border-left: 3px solid var(--teal-lt);
+  height: 100%;
+  overflow: hidden;
+}
+
+/* shared panel base */
+.panel {
+  padding: 18px 22px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.panel + .panel { border-top: 2px solid var(--sep); }
+
+/* section label */
+.sec-lbl {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .66rem; letter-spacing: .44em;
+  color: var(--teal);
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px; flex-shrink: 0;
+}
+.sec-lbl::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, var(--teal-lt), transparent);
+}
+
+/* ── BIO ─────────────────────────────────────────────── */
+.panel-bio p {
+  font-size: .77rem; line-height: 1.74; letter-spacing: .015em;
+  color: var(--txt); opacity: .88;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+/* ── NEWS ────────────────────────────────────────────── */
+.panel-news { gap: 0; }
+.news-feed {
+  flex: 1; overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--teal-lt) transparent;
+}
+.news-feed::-webkit-scrollbar { width: 3px; }
+.news-feed::-webkit-scrollbar-thumb { background: var(--teal-lt); border-radius: 2px; }
+
+.news-item {
+  display: flex; gap: 13px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--sep);
+}
+.news-item:last-child { border-bottom: none; }
+.news-date {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .67rem; letter-spacing: .19em;
+  color: var(--teal); flex-shrink: 0;
+  min-width: 74px; padding-top: 2px;
+}
+.news-title { font-size: .74rem; color: var(--txt); line-height: 1.38; margin-bottom: 3px; }
+.news-teaser { font-size: .67rem; color: var(--txt-mu); line-height: 1.5; }
+.news-tag {
+  display: inline-block; margin-top: 5px;
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .62rem; letter-spacing: .18em;
+  color: var(--teal);
+  border: 1px solid var(--teal-lt);
+  padding: 1px 6px; border-radius: 2px;
+}
+
+/* ── VIDEO PANEL ─────────────────────────────────────── */
+.panel-vids { gap: 0; }
+
+/* featured iframe */
+.vid-player {
+  flex-shrink: 0; height: 138px;
+  background: #0d0d0d;
+  border-radius: 4px; overflow: hidden;
+  border: 1.5px solid var(--sep);
+  position: relative;
+}
+.vid-player iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+.vid-msg {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .9rem; letter-spacing: .26em;
+  color: var(--teal); opacity: .72;
+}
+
+/* thumbnail strip */
+.vid-strip {
+  display: flex; gap: 8px;
+  overflow-x: auto; scrollbar-width: none;
+  margin-top: 10px; padding-bottom: 2px;
+  flex-shrink: 0;
+}
+.vid-strip::-webkit-scrollbar { display: none; }
+
+.vid-thumb {
+  flex-shrink: 0; width: 112px;
+  border-radius: 4px; overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color .14s, transform .14s;
+}
+.vid-thumb.active            { border-color: var(--teal); }
+.vid-thumb:hover:not(.active){ border-color: var(--teal-lt); transform: translateY(-2px); }
+.vid-thumb img {
+  width: 100%; display: block;
+  aspect-ratio: 16/9; object-fit: cover;
+}
+.vid-thumb-ttl {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .6rem; letter-spacing: .04em;
+  color: var(--txt); padding: 3px 4px 2px; line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════ HEADER ══════════════════════════════ -->
+<header>
+  <div class="logo-area">
+    <img src="gameboy-logo.jpg" alt="Gameboy Records">
+  </div>
+  <nav class="main-nav">
+    <a href="index-2.html">HOME</a>
+    <a href="artists.html" class="active">ARTISTS</a>
+    <a href="#">RELEASES</a>
+    <a href="#">EVENTS</a>
+    <a href="#">MERCH</a>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════  MAIN  ══════════════════════════════ -->
+<main>
+  <div class="artist-card">
+
+    <!-- ╔══════════╗  LEFT · PORTRAIT  ══════════════════════════════ -->
+    <div class="portrait-panel">
+      <img src="agame-portrait.jpg" alt="Alexx A-Game">
+
+      <!-- UIverse card identity block, anchored to portrait bottom -->
+      <div class="portrait-footer">
+        <p class="artist-name">Alexx A-Game</p>
+        <span class="artist-role">GAMEBOY RECORDS · ARTIST</span>
+        <div class="social-divider"></div>
+        <div class="social-row">
+
+          <a href="#" aria-label="Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/>
+            </svg>
+            <span class="tt">Twitter</span>
+          </a>
+
+          <a href="#" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+              <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/>
+            </svg>
+            <span class="tt">Instagram</span>
+          </a>
+
+          <a href="#" aria-label="Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"/>
+            </svg>
+            <span class="tt">Facebook</span>
+          </a>
+
+          <a href="#" aria-label="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+              <path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/>
+            </svg>
+            <span class="tt">LinkedIn</span>
+          </a>
+
+        </div>
+      </div>
+    </div><!-- /.portrait-panel -->
+
+    <!-- ╔══════════╗  RIGHT · CONTENT  ══════════════════════════════ -->
+    <div class="content-col">
+
+      <!-- ── BIO ──────────────────────────────────────────────────── -->
+      <section class="panel panel-bio">
+        <div class="sec-lbl">BIO</div>
+        <p>Coming out of Kingston's vibrant underground circuit, A-Game has carved a lane at the intersection of dancehall, afrobeats, and raw trap production. Known for razor-sharp lyricism and an instinct for melody, every release lands like a dispatch from the frontlines of Caribbean contemporary sound. Two acclaimed projects in — the motion is deliberate, the fanbase is global.</p>
+      </section>
+
+      <!-- ── NEWS ─────────────────────────────────────────────────── -->
+      <section class="panel panel-news">
+        <div class="sec-lbl">NEWS</div>
+        <div class="news-feed">
+
+          <div class="news-item">
+            <span class="news-date">03 JUN 2025</span>
+            <div>
+              <div class="news-title">New single "Frequency" out now on all platforms</div>
+              <div class="news-teaser">A slow-burn anthem built on a two-step groove and layered vocal chops — biggest debut week yet.</div>
+              <span class="news-tag">RELEASE</span>
+            </div>
+          </div>
+
+          <div class="news-item">
+            <span class="news-date">22 MAY 2025</span>
+            <div>
+              <div class="news-title">Sold-out headline set at Dub Club Kingston</div>
+              <div class="news-teaser">Packed room, an extended set, and an unplanned collab with label mate NOVA mid-show.</div>
+              <span class="news-tag">LIVE</span>
+            </div>
+          </div>
+
+          <div class="news-item">
+            <span class="news-date">08 MAY 2025</span>
+            <div>
+              <div class="news-title">Featured on Gameboy Records Spring Compilation</div>
+              <div class="news-teaser">Two tracks on the label's latest 12-track release — streaming everywhere now.</div>
+              <span class="news-tag">LABEL</span>
+            </div>
+          </div>
+
+          <div class="news-item">
+            <span class="news-date">14 APR 2025</span>
+            <div>
+              <div class="news-title">Studio diary: recording "Frequency" in one take</div>
+              <div class="news-teaser">Behind-the-scenes on the session — from scratch to final mix in under six hours.</div>
+              <span class="news-tag">STUDIO</span>
+            </div>
+          </div>
+
+          <div class="news-item">
+            <span class="news-date">01 APR 2025</span>
+            <div>
+              <div class="news-title">Summer tour dates announced — Kingston · London · Toronto</div>
+              <div class="news-teaser">Four headline shows across three cities this July. Tickets on sale now.</div>
+              <span class="news-tag">TOUR</span>
+            </div>
+          </div>
+
+        </div><!-- /.news-feed -->
+      </section>
+
+      <!-- ── YOUTUBE VIDEO CAROUSEL ─────────────────────────────── -->
+      <section class="panel panel-vids">
+        <div class="sec-lbl">LATEST DROPS</div>
+
+        <div class="vid-player" id="vidPlayer">
+          <div class="vid-msg" id="vidMsg">TUNING IN…</div>
+          <iframe
+            id="vidFrame"
+            src=""
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            style="display:none"
+          ></iframe>
+        </div>
+
+        <div class="vid-strip" id="vidStrip"></div>
+      </section>
+
+    </div><!-- /.content-col -->
+  </div><!-- /.artist-card -->
+</main>
+
+<script>
+/* ── YouTube config ─────────────────────────────────── */
+const YT_KEY     = 'AIzaSyDR2m0XOZEhBIYmPb_38BP-rcnSf9mIuFQ';
+const CHANNEL_ID = 'UC2M7qSo99KTIq-WgnCNq50Q';
+
+function parseDuration(iso) {
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return 0;
+  return (parseInt(m[1]||0)*3600) + (parseInt(m[2]||0)*60) + parseInt(m[3]||0);
+}
+
+/* ── Video player ───────────────────────────────────── */
+let activeThumb = null;
+
+function playVideo(id, thumbEl) {
+  const frame = document.getElementById('vidFrame');
+  const msg   = document.getElementById('vidMsg');
+  frame.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+  frame.style.display = 'block';
+  if (msg) msg.style.display = 'none';
+  if (activeThumb) activeThumb.classList.remove('active');
+  thumbEl.classList.add('active');
+  activeThumb = thumbEl;
+}
+
+/* ── Fetch + render videos ──────────────────────────── */
+async function initVideos() {
+  const strip = document.getElementById('vidStrip');
+  const msg   = document.getElementById('vidMsg');
+
+  try {
+    /* 1. Uploads playlist ID */
+    const plId  = 'UU' + CHANNEL_ID.slice(2);
+
+    /* 2. Playlist items */
+    const plRes  = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?key=${YT_KEY}&playlistId=${plId}&part=snippet&maxResults=20`
+    );
+    const plData = await plRes.json();
+    if (plData.error) throw new Error(plData.error.message);
+
+    const candidates = (plData.items || [])
+      .map(it => ({
+        videoId: it.snippet?.resourceId?.videoId,
+        title:   it.snippet?.title || ''
+      }))
+      .filter(v => v.videoId && v.title !== 'Deleted video' && v.title !== 'Private video');
+
+    if (!candidates.length) throw new Error('NO SIGNAL');
+
+    /* 3. Filter: public + embeddable + longer than 60 s */
+    const ids   = candidates.map(v => v.videoId).join(',');
+    const vRes  = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?key=${YT_KEY}&id=${ids}&part=contentDetails,status,snippet`
+    );
+    const vData = await vRes.json();
+    if (vData.error) throw new Error(vData.error.message);
+
+    const map = {};
+    (vData.items || []).forEach(it => { map[it.id] = it; });
+
+    const videos = candidates
+      .filter(v => {
+        const item = map[v.videoId];
+        return item
+            && item.status?.privacyStatus === 'public'
+            && item.status?.embeddable
+            && parseDuration(item.contentDetails?.duration || 'PT0S') > 60;
+      })
+      .map(v => ({
+        ...v,
+        thumb: map[v.videoId]?.snippet?.thumbnails?.medium?.url
+            || `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`
+      }));
+
+    if (!videos.length) throw new Error('NO SIGNAL');
+
+    /* 4. Build thumbnail strip */
+    strip.innerHTML = '';
+    videos.forEach((v, i) => {
+      const el = document.createElement('div');
+      el.className = 'vid-thumb';
+      el.innerHTML = `
+        <img src="${v.thumb}" alt="" loading="lazy">
+        <div class="vid-thumb-ttl">${v.title}</div>
+      `;
+      el.addEventListener('click', () => playVideo(v.videoId, el));
+      strip.appendChild(el);
+
+      /* Auto-load first video */
+      if (i === 0) setTimeout(() => playVideo(v.videoId, el), 80);
+    });
+
+  } catch (e) {
+    if (msg) msg.textContent = `⚠ ${e.message}`;
+  }
+}
+
+initVideos();
+</script>
+</body>
+</html>

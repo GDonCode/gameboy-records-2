@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gameboy Records</title>
+<style>
+  @font-face {
+  font-family: 'Hemisphers Bold Sans';
+  src: url('Hemisphers_Bold_Sans.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  ascent-override:   80%;
+  descent-override:  20%;
+  line-gap-override:  0%;
+}
+/* ── RESET ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── TOKENS ─────────────────────────────────────────── */
+:root {
+  --header-h: 76px;
+  --bg:   #dfe0dc;
+  --grid: rgba(0,0,0,0.055);
+  --scan: rgba(0,0,0,0.018);
+}
+
+/* ── BASE ────────────────────────────────────────────── */
+html, body { height: 100%; overflow: hidden; }
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  transition: background .35s ease;
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+}
+
+/* ── HEADER ──────────────────────────────────────────── */
+header {
+  flex-shrink: 0;
+  height: var(--header-h);
+  position: relative;
+  z-index: 10;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 0 20px;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 2px 20px rgba(0,0,0,.22);
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #1a9e4a66 25%, #4dff9144 50%, #1a9e4a66 75%, transparent);
+  pointer-events: none;
+}
+
+.logo-area img { height: 48px; width: auto; display: block; }
+
+/* ── RIGHT CLUSTER ────────────────────────────────────── */
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* ── NAV ─────────────────────────────────────────────── */
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 8px;
+}
+.main-nav a {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: .18em;
+  color: #1a1a1a;
+  text-decoration: none;
+  padding: 4px 11px 3px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  line-height: 1;
+  position: relative;
+  transition: color .1s, background .1s, border-color .1s, text-shadow .1s;
+}
+.main-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 11px; right: 11px;
+  height: 2px;
+  background: #1a9e4a;
+  opacity: 0;
+  transition: opacity .1s;
+}
+.main-nav a:hover,
+.main-nav a.active {
+  color: #1a9e4a;
+  border-color: rgba(26,158,74,.28);
+  background: rgba(26,158,74,.06);
+  text-shadow: 0 0 8px rgba(26,158,74,.35);
+}
+.main-nav a.active::after { opacity: 1; }
+.main-nav a:active { transform: translateY(1px); }
+
+/* ── SWITCH AREA (switch scaled to ~60% of original) ─── */
+/* ::before overflow: 35×.6=21px L/R, 25×.6=15px T/B    */
+/* Padding must exceed those values                        */
+.switch-area {
+  position: relative;
+  padding: 18px 26px;
+}
+
+/* ── SWITCH ──────────────────────────────────────────── */
+#switch { visibility: hidden; clip: rect(0 0 0 0); position: absolute; left: 9999px; }
+
+.switch {
+  display: block;
+  width: 78px; height: 36px;
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+  border-radius: .35em;
+  background: linear-gradient(to right,
+    #ced8da 0%, #d8e0e3 29%, #ccd4d7 34%,
+    #d4dcdf 62%, #fff9f4 68%, #e1e9ec 74%, #b7bfc2 100%);
+  box-shadow:
+    0 0 1px 1.2px rgba(0,0,0,.7),
+    inset 0 1.2px 0 rgba(255,255,255,.6),
+    inset 0 -.6px 0 .6px rgba(0,0,0,.3),
+    0 5px 6px rgba(0,0,0,.15);
+  transition: all .2s ease-out;
+}
+.switch::before {
+  display: block; content: "";
+  position: absolute;
+  left: -21px; right: -21px; top: -15px; bottom: -15px;
+  z-index: -2;
+  border-radius: .4em;
+  background: linear-gradient(#d7dfe2, #bcc7cd);
+  box-shadow:
+    inset 0 1.2px 0 rgba(255,255,255,.6),
+    inset 0 -.6px .6px .6px rgba(0,0,0,.3),
+    0 0 5px 1.2px rgba(0,0,0,.2),
+    0 1.2px 2.4px 1.2px rgba(0,0,0,.1);
+  pointer-events: none;
+  transition: all .2s ease-out;
+}
+.switch::after {
+  content: "";
+  position: absolute;
+  right: -15px; top: 50%;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #788b91;
+  margin-top: -5px;
+  z-index: -1;
+  box-shadow:
+    inset 0 -.6px 5px rgba(0,0,0,.7),
+    inset 0 -1.2px 1.2px rgba(0,0,0,.2),
+    0 .6px 0 white,
+    0 -.6px 0 rgba(0,0,0,.5),
+    -28px 19px 9px 8px rgba(0,0,0,.25);
+}
+#switch:checked ~ .switch {
+  background: linear-gradient(to right,
+    #b7bfc2 0%, #e1e9ec 26%, #fff9f4 32%,
+    #d4dcdf 38%, #ccd4d7 66%, #d8e0e3 71%, #ced8da 100%);
+}
+#switch:checked ~ .switch::after {
+  background: #b1ffff;
+  box-shadow:
+    inset 0 -.6px 5px rgba(0,0,0,.7),
+    inset 0 -1.2px 1.2px rgba(0,0,0,.2),
+    0 .6px 0 white,
+    0 -.6px 0 rgba(0,0,0,.5),
+    -66px 19px 9px 8px rgba(0,0,0,.25);
+}
+
+/* ── MAIN ─────────────────────────────────────────────── */
+main { flex: 1; position: relative; overflow: hidden; }
+main::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+main::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, var(--scan) 3px, var(--scan) 4px);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── CAROUSEL ─────────────────────────────────────────── */
+.carousel { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+.carousel-track { display: flex; height: 100%; will-change: transform; }
+.carousel-slide {
+  flex-shrink: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 52px;
+}
+
+/* ── CHARACTER CARD ───────────────────────────────────── */
+.character-card {
+  width: min(1080px, 100%);
+  height: min(660px, calc(100% - 32px));
+  display: grid;
+  grid-template-columns: 40% 60%;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  border: 1.5px solid var(--ac);
+  box-shadow:
+    0 0 0 3px #070807,
+    0 0 32px rgba(var(--acRGB), .12),
+    0 20px 60px rgba(0,0,0,.75);
+}
+
+/* Corner brackets */
+.character-card::before,
+.character-card::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  z-index: 40; pointer-events: none;
+  opacity: .65;
+}
+.character-card::before {
+  top: 7px; left: 7px;
+  border-top: 1.5px solid var(--ac);
+  border-left: 1.5px solid var(--ac);
+}
+.character-card::after {
+  bottom: 7px; right: 7px;
+  border-bottom: 1.5px solid var(--ac);
+  border-right: 1.5px solid var(--ac);
+}
+
+/* Per-artist accent */
+.card-cipher { --ac: #7c3aed; --acRGB: 124,58,237; }
+.card-nova   { --ac: #0891b2; --acRGB:   8,145,178; }
+.card-graze  { --ac: #d97706; --acRGB: 217,119,6;   }
+
+/* ── PORTRAIT PANEL ───────────────────────────────────── */
+.card-portrait { position: relative; overflow: hidden; height: 100%; }
+
+.portrait-art {
+  position: absolute; inset: 0; overflow: hidden;
+}
+/* Scanlines on portrait */
+.portrait-art::after {
+  content: ''; position: absolute; inset: 0; z-index: 10;
+  background: repeating-linear-gradient(
+    0deg, rgba(0,0,0,.13), rgba(0,0,0,.13) 1px, transparent 1px, transparent 3px
+  );
+  pointer-events: none;
+}
+/* Bottom fade for badge overlay */
+.portrait-art::before {
+  content: ''; position: absolute;
+  bottom: 0; left: 0; right: 0; height: 48%;
+  background: linear-gradient(transparent, rgba(0,0,0,.9));
+  z-index: 5; pointer-events: none;
+}
+
+.portrait-bg     { position: absolute; inset: 0; z-index: 1; }
+.portrait-figure { position: absolute; inset: 0; z-index: 2; }
+.portrait-detail { position: absolute; inset: 0; z-index: 3; }
+
+.portrait-badge {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 12px 16px; z-index: 15;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.badge-name {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: 2.2rem; letter-spacing: .14em;
+  color: #fff; line-height: 1;
+  text-shadow: 0 0 14px var(--ac), 0 2px 8px rgba(0,0,0,.9);
+}
+.badge-num {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .85rem; letter-spacing: .22em;
+  color: var(--ac); opacity: .85; line-height: 1;
+}
+
+/* ── CIPHER PORTRAIT ─────────────────────────────────── */
+.card-cipher .portrait-bg {
+  background:
+    radial-gradient(ellipse 55% 50% at 50% 30%, rgba(109,40,217,.55) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 40% at 50% 78%, rgba(67,20,147,.65) 0%, transparent 75%),
+    radial-gradient(ellipse 100% 45% at 50% 100%, rgba(30,5,60,.9) 0%, transparent 100%),
+    linear-gradient(180deg, #030008 0%, #07001e 45%, #04000f 100%);
+}
+.card-cipher .portrait-figure {
+  background:
+    radial-gradient(ellipse 26% 22% at 50% 27%, rgba(139,92,246,.42) 0%, transparent 100%),
+    radial-gradient(ellipse 56% 52% at 50% 70%, rgba(88,28,135,.5) 0%, transparent 100%);
+}
+.card-cipher .portrait-detail {
+  background:
+    linear-gradient(90deg,
+      transparent 19%, rgba(139,92,246,.07) 19.4%, transparent 19.8%,
+      transparent 23%, rgba(139,92,246,.04) 23.4%, transparent 23.8%),
+    linear-gradient(180deg,
+      transparent 37%, rgba(139,92,246,.09) 37.4%, rgba(139,92,246,.05) 38.4%, transparent 38.8%,
+      transparent 41%, rgba(139,92,246,.04) 41.4%, transparent 41.8%);
+}
+
+/* ── NOVA PORTRAIT ──────────────────────────────────── */
+.card-nova .portrait-bg {
+  background:
+    radial-gradient(ellipse 55% 48% at 50% 28%, rgba(6,182,212,.48) 0%, transparent 65%),
+    radial-gradient(ellipse 68% 35% at 50% 78%, rgba(7,89,133,.62) 0%, transparent 80%),
+    radial-gradient(ellipse 100% 45% at 50% 100%, rgba(0,20,40,.9) 0%, transparent 100%),
+    linear-gradient(180deg, #000810 0%, #001224 45%, #000810 100%);
+}
+.card-nova .portrait-figure {
+  background:
+    radial-gradient(ellipse 24% 20% at 50% 26%, rgba(6,182,212,.45) 0%, transparent 100%),
+    radial-gradient(ellipse 54% 48% at 50% 68%, rgba(14,116,144,.52) 0%, transparent 100%);
+}
+.card-nova .portrait-detail {
+  background:
+    repeating-linear-gradient(90deg,
+      transparent 0px, transparent 29px,
+      rgba(6,182,212,.04) 29px, rgba(6,182,212,.04) 30px),
+    radial-gradient(ellipse 70% 4% at 50% 26%, rgba(6,182,212,.12) 0%, transparent 100%),
+    radial-gradient(ellipse 60% 3% at 50% 30%, rgba(6,182,212,.07) 0%, transparent 100%);
+}
+
+/* ── GRAZE PORTRAIT ─────────────────────────────────── */
+.card-graze .portrait-bg {
+  background:
+    radial-gradient(ellipse 55% 52% at 50% 30%, rgba(217,119,6,.48) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 38% at 50% 78%, rgba(146,64,14,.62) 0%, transparent 80%),
+    radial-gradient(ellipse 100% 45% at 50% 100%, rgba(40,15,0,.9) 0%, transparent 100%),
+    linear-gradient(180deg, #080400 0%, #150800 45%, #080400 100%);
+}
+.card-graze .portrait-figure {
+  background:
+    radial-gradient(ellipse 27% 22% at 50% 27%, rgba(245,158,11,.42) 0%, transparent 100%),
+    radial-gradient(ellipse 58% 52% at 50% 70%, rgba(180,83,9,.48) 0%, transparent 100%);
+}
+.card-graze .portrait-detail {
+  background:
+    radial-gradient(ellipse 130% 12% at 50% 45%, rgba(217,119,6,.07) 0%, transparent 100%),
+    radial-gradient(ellipse 130% 8%  at 50% 54%, rgba(217,119,6,.05) 0%, transparent 100%),
+    radial-gradient(ellipse 130% 6%  at 50% 62%, rgba(217,119,6,.03) 0%, transparent 100%);
+}
+
+/* ── DATA PANEL ──────────────────────────────────────── */
+.card-data {
+  background: linear-gradient(148deg, #0d0d0e 0%, #090909 100%);
+  border-left: 1px solid rgba(255,255,255,.05);
+  padding: 20px 24px 16px 22px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: none;
+  position: relative;
+}
+.card-data::-webkit-scrollbar { display: none; }
+
+/* faint grid on data panel */
+.card-data::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* ── CARD HEADER ─────────────────────────────────────── */
+.cd-header { margin-bottom: 12px; position: relative; z-index: 1; }
+.cd-toprow {
+  display: flex; justify-content: space-between;
+  align-items: baseline; margin-bottom: 1px;
+}
+.cd-num {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .78rem; letter-spacing: .35em;
+  color: var(--ac); opacity: .8;
+}
+.cd-streams {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .75rem; letter-spacing: .2em;
+  color: var(--ac); opacity: .6;
+}
+.cd-name {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: 3.6rem; letter-spacing: .1em;
+  color: #fff; line-height: .85;
+  text-shadow: 0 0 22px rgba(var(--acRGB), .28);
+}
+.cd-tags {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px;
+}
+.cd-tag {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .74rem; letter-spacing: .24em;
+  color: var(--ac);
+  border: 1px solid var(--ac);
+  padding: 1px 7px 0;
+  border-radius: 2px;
+  background: rgba(var(--acRGB), .08);
+}
+
+/* ── SECTION LABEL ───────────────────────────────────── */
+.s-head {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .67rem; letter-spacing: .38em;
+  color: var(--ac);
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 9px;
+  position: relative; z-index: 1;
+}
+.s-head::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, rgba(var(--acRGB), .5), transparent);
+}
+
+/* ── STATS ───────────────────────────────────────────── */
+.cd-stats { margin-bottom: 14px; position: relative; z-index: 1; }
+.stat-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 26px;
+  align-items: center;
+  gap: 8px; margin-bottom: 6px;
+}
+.stat-name {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .8rem; letter-spacing: .16em;
+  color: rgba(255,255,255,.42); line-height: 1;
+}
+.stat-bar {
+  height: 5px; background: rgba(255,255,255,.08);
+  border-radius: 1px; overflow: hidden;
+}
+.stat-fill {
+  height: 100%; width: 0;
+  background: linear-gradient(to right, var(--ac), rgba(var(--acRGB), .55));
+  box-shadow: 0 0 6px rgba(var(--acRGB), .5);
+  transition: width .9s cubic-bezier(.4,0,.2,1);
+}
+.stat-fill.loaded { width: var(--pct); }
+.stat-val {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .88rem;
+  color: rgba(255,255,255,.48);
+  text-align: right; letter-spacing: 0;
+}
+
+/* ── BIO ─────────────────────────────────────────────── */
+.cd-bio { margin-bottom: 14px; position: relative; z-index: 1; }
+.cd-bio p {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .68rem; line-height: 1.68; letter-spacing: .02em;
+  color: rgba(255,255,255,.4);
+}
+
+/* ── DROPS ───────────────────────────────────────────── */
+.cd-drops { margin-bottom: 14px; position: relative; z-index: 1; }
+.drop-item {
+  display: flex; align-items: center;
+  gap: 9px; padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.drop-item:last-child { border-bottom: none; }
+.drop-icon { font-size: .6rem; color: var(--ac); opacity: .8; flex-shrink: 0; }
+.drop-title {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: 1rem; letter-spacing: .11em;
+  color: rgba(255,255,255,.72); flex: 1;
+}
+.drop-date {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .73rem; letter-spacing: .14em;
+  color: rgba(255,255,255,.26);
+}
+
+/* ── CARD FOOTER ─────────────────────────────────────── */
+.cd-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(255,255,255,.05);
+  position: relative; z-index: 1;
+}
+.cf-edition, .cf-count {
+  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-size: .62rem; letter-spacing: .3em;
+  color: rgba(255,255,255,.17);
+}
+
+/* ── CAROUSEL NAV ────────────────────────────────────── */
+.carousel-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,.5);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.65);
+  width: 34px; height: 34px; border-radius: 2px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-family: 'Hemisphers Bold Sans', sans-serif; font-size: 1.3rem;
+  z-index: 20; backdrop-filter: blur(4px);
+  transition: background .12s, border-color .12s, color .12s;
+}
+.carousel-btn:hover {
+  background: rgba(26,158,74,.2);
+  border-color: rgba(77,255,145,.5);
+  color: #4dff91;
+}
+.carousel-btn:active { transform: translateY(-50%) scale(.94); }
+.carousel-btn.prev { left: 12px; }
+.carousel-btn.next { right: 12px; }
+
+.carousel-dots {
+  position: absolute; bottom: 12px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 8px; z-index: 20;
+}
+.carousel-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  border: none; cursor: pointer; padding: 0;
+  transition: background .15s, transform .15s, box-shadow .15s;
+}
+.carousel-dot.active {
+  background: #4dff91; transform: scale(1.4);
+  box-shadow: 0 0 6px rgba(77,255,145,.6);
+}
+.carousel-dot:hover { background: rgba(255,255,255,.38); }
+
+/* ── CARD REVEAL ANIMATION ───────────────────────────── */
+@keyframes cardReveal {
+  from { opacity: .2; transform: scale(.965) translateY(8px); }
+  to   { opacity: 1;  transform: scale(1)    translateY(0); }
+}
+.character-card.revealing {
+  animation: cardReveal .45s cubic-bezier(.2,0,.15,1) forwards;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <img src="gameboy-logo.jpg" alt="Gameboy Records">
+  </div>
+  <div class="header-right">
+    <nav class="main-nav">
+      <a href="#" class="active">HOME</a>
+      <a href="artists.html">ARTISTS</a>
+      <a href="#">RELEASES</a>
+      <a href="#">EVENTS</a>
+      <a href="#">MERCH</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+</main>
+
+</body>
+</html>
