@@ -71,7 +71,7 @@ export default function DashboardClient({ initialArtist, initialPosts, signOutAc
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <aside className="w-[220px] flex-shrink-0 bg-[#0c1510] border-r border-[rgba(26,158,74,0.2)] flex flex-col py-6">
+        <aside className="hidden md:flex w-[220px] flex-shrink-0 bg-[#0c1510] border-r border-[rgba(26,158,74,0.2)] flex-col py-6">
           <button
             onClick={() => setView('posts-list')}
             className={`text-left px-6 py-3 text-[0.85em] tracking-[0.1em] transition-colors ${
