@@ -160,7 +160,7 @@ export default function Header() {
           <Link
             href={session ? '/account' : '/account/login'}
             aria-label="Account"
-            className="group inline-flex items-center h-11 px-5 gap-2 rounded-full flex-shrink-0 bg-[#1a9e4a] border border-[#0d5c29] text-white transition"
+            className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white font-bold transition"
           >
             <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-110">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-5 h-5 flex-shrink-0 block" fill="currentColor">
@@ -173,7 +173,7 @@ export default function Header() {
           <button
             type="button"
             aria-label="Cart"
-            className="group inline-flex items-center h-11 px-5 gap-2 rounded-full flex-shrink-0 bg-[#1a9e4a] border border-[#0d5c29] text-white transition"
+            className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white font-bold transition"
           >
             <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-110">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-5 h-5 flex-shrink-0 block" fill="currentColor">
