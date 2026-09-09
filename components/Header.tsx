@@ -21,6 +21,7 @@ export default function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [hidden, setHidden] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -46,6 +47,24 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     return () => window.removeEventListener('scroll', handleScroll, true);
   }, []);
+
+  useEffect(() => {
+    if (!session) {
+      setCartCount(0);
+      return;
+    }
+
+    fetch('/api/cart')
+      .then((res) => (res.ok ? res.json() : { items: [] }))
+      .then((data) => {
+        const total = (data.items || []).reduce(
+          (sum: number, item: { quantity: number }) => sum + item.quantity,
+          0
+        );
+        setCartCount(total);
+      })
+      .catch(() => setCartCount(0));
+  }, [session]);
 
   return (
     <header
@@ -170,10 +189,10 @@ export default function Header() {
             </span>
           </Link>
 
-          <button
-            type="button"
+          <Link
+            href="/cart"
             aria-label="Cart"
-            className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white font-bold transition"
+            className="group relative cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white font-bold transition"
           >
             <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-110">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-5 h-5 flex-shrink-0 block" fill="currentColor">
@@ -181,7 +200,12 @@ export default function Header() {
               </svg>
               Cart
             </span>
-          </button>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold leading-none">
+                {cartCount}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </header>

@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -33,53 +34,71 @@ function Corners() {
 export default function ShopPage() {
     const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
     const [wishlist, setWishlist] = useState<Set<string>>(new Set());
-    const toggleWishlist = (key: string) => {
+    const [selectedColor, setSelectedColor] = useState<'all' | 'black' | 'white' | 'gray'>('all');
+    const router = useRouter();
+
+    useEffect(() => {
+        fetch('/api/wishlist')
+            .then(res => (res.ok ? res.json() : { items: [] }))
+            .then(data => {
+                const ids = (data.items || []).map((item: { product_id: string }) => item.product_id);
+                setWishlist(new Set(ids));
+            })
+            .catch(() => setWishlist(new Set()));
+    }, []);
+
+    const toggleWishlist = async (key: string) => {
+        const isWishlisted = wishlist.has(key);
+
         setWishlist(prev => {
             const next = new Set(prev);
-            if (next.has(key)) {
+            if (isWishlisted) {
                 next.delete(key);
             } else {
                 next.add(key);
             }
             return next;
         });
+
+        const res = await fetch('/api/wishlist', {
+            method: isWishlisted ? 'DELETE' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId: key }),
+        });
+
+        if (res.status === 401) {
+            router.push('/account/login');
+            return;
+        }
+
+        if (!res.ok) {
+            setWishlist(prev => {
+                const next = new Set(prev);
+                if (isWishlisted) {
+                    next.add(key);
+                } else {
+                    next.delete(key);
+                }
+                return next;
+            });
+        }
     };
+
+    const colorMatches = (productId: string) => selectedColor === 'all' || productId.startsWith(selectedColor);
+
     return (
         <>
             <Header />
-            <div className="flex flex-row h-screen overflow-hidden bg-[#FEFEFA]" >
-                <aside className="hidden md:flex news-sidebar relative flex-col w-64 h-full flex-shrink-0 bg-[#EDEAE0] z-[25] overflow-hidden">
-                <Corners />
-                <div className="no-scrollbar flex-1 overflow-y-auto">
-                  <div className="px-4 py-5">
-                    <div  className="space-y-8">
-                        <div>
-                            <h2 style={{fontFamily: "'Hemisphers Bold Sans', monospace",fontSize: '1.1em',letterSpacing: '0.1em',color: '#16432a',}}>Browse</h2>
-                            <ul className="pl-5 space-y-3 bg-[#1a9e4a]/[0.1] border border-[#1a9e4a]/20 px-4 py-3">
-                                <li style={{fontFamily: "'Arvo', monospace",fontSize: '1em',fontWeight: 'semibold',letterSpacing: '0.1em',color: '#fff',}}><button className="cursor-pointer bg-[#1a9e4a] px-5 py-2 rounded-md">All Products</button></li>
-                                <li style={{fontFamily: "'Arvo', monospace",fontSize: '1em',fontWeight: 'semibold',letterSpacing: '0.1em',color: '#16432a',}}><button className="cursor-pointer hover:scale-102 transition-transform duration-200">"Rise Up" Collection</button></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h2 style={{fontFamily: "'Hemisphers Bold Sans', monospace",fontSize: '1.1em',letterSpacing: '0.1em',color: '#16432a',}}>Account</h2>
-                            <ul className="pl-5 space-y-3 bg-[#1a9e4a]/[0.1] border border-[#1a9e4a]/20 px-4 py-3">
-                                <li style={{fontFamily: "'Arvo', monospace",fontSize: '1em',fontWeight: 'semibold',letterSpacing: '0.1em',color: '#16432a',}}><button className="cursor-pointer hover:scale-102 transition-transform duration-200">My Account</button></li>
-                                <li style={{fontFamily: "'Arvo', monospace",fontSize: '1em',fontWeight: 'semibold',letterSpacing: '0.1em',color: '#16432a',}}><button className="cursor-pointer hover:scale-102 transition-transform duration-200">Cart</button></li>   
-                            </ul>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-                </aside>
+            <div className="flex flex-row h-screen overflow-hidden bg-[#FEFEFA]">
                 <div className="flex flex-wrap content-start gap-6 p-4 flex-1 overflow-y-auto relative">
-                    <Link href="/shop/black-t" className="group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent">
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] border-2 border-b-0 border-[#2f8a68]/10 overflow-hidden">
+                    <Link href="/shop/black-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('black-t') ? '' : 'hidden'}`}>
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
                             <Image src="/black-t.png" alt="Product 1" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
                                 aria-label={wishlist.has('black-t') ? 'Remove Black T-Shirt from wishlist' : 'Add Black T-Shirt to wishlist'}
                                 aria-pressed={wishlist.has('black-t')}
-                                onClick={(e) => { e.preventDefault(); toggleWishlist('black-t'); }}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist('black-t'); }}
                                 className="group/wishlist absolute top-3 right-3 w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-md cursor-pointer"
                             >
                                 <span className="relative block w-[24px] h-[24px]">
@@ -102,14 +121,14 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                    <Link href="/shop/gray-t" className="group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent">
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] border-2 border-b-0 border-[#2f8a68]/10 overflow-hidden">
+                    <Link href="/shop/gray-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('gray-t') ? '' : 'hidden'}`}>
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
                             <Image src="/gray-t.png" alt="Product 2" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
                                 aria-label={wishlist.has('gray-t') ? 'Remove Gray T-Shirt from wishlist' : 'Add Gray T-Shirt to wishlist'}
                                 aria-pressed={wishlist.has('gray-t')}
-                                onClick={(e) => { e.preventDefault(); toggleWishlist('gray-t'); }}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist('gray-t'); }}
                                 className="group/wishlist absolute top-3 right-3 w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-md cursor-pointer"
                             >
                                 <span className="relative block w-[24px] h-[24px]">
@@ -132,14 +151,14 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                    <Link href="/shop/white-t" className="group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent">
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] border-2 border-b-0 border-[#2f8a68]/10 overflow-hidden">
+                    <Link href="/shop/white-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('white-t') ? '' : 'hidden'}`}>
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
                             <Image src="/white-t.png" alt="Product 3" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
                                 aria-label={wishlist.has('white-t') ? 'Remove White T-Shirt from wishlist' : 'Add White T-Shirt to wishlist'}
                                 aria-pressed={wishlist.has('white-t')}
-                                onClick={() => toggleWishlist('white-t')}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist('white-t'); }}
                                 className="group/wishlist absolute top-3 right-3 w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-md cursor-pointer"
                             >
                                 <span className="relative block w-[24px] h-[24px]">
@@ -162,14 +181,14 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                    <Link href="/shop/black-h" className="group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent">
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] border-2 border-b-0 border-[#2f8a68]/10 overflow-hidden">
+                    <Link href="/shop/black-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('black-h') ? '' : 'hidden'}`}>
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
                             <Image src="/black-h.png" alt="Product 4" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
                                 aria-label={wishlist.has('black-h') ? 'Remove Black Hoodie from wishlist' : 'Add Black Hoodie to wishlist'}
                                 aria-pressed={wishlist.has('black-h')}
-                                onClick={() => toggleWishlist('black-h')}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist('black-h'); }}
                                 className="group/wishlist absolute top-3 right-3 w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-md cursor-pointer"
                             >
                                 <span className="relative block w-[24px] h-[24px]">
@@ -192,14 +211,14 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                    <Link href="/shop/white-h" className="group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent">
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] border-2 border-b-0 border-[#2f8a68]/10 overflow-hidden">
+                                        <Link href="/shop/white-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('white-h') ? '' : 'hidden'}`}>
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
                             <Image src="/white-h.png" alt="Product 5" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
                                 aria-label={wishlist.has('white-h') ? 'Remove White Hoodie from wishlist' : 'Add White Hoodie to wishlist'}
                                 aria-pressed={wishlist.has('white-h')}
-                                onClick={() => toggleWishlist('white-h')}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist('white-h'); }}
                                 className="group/wishlist absolute top-3 right-3 w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-md cursor-pointer"
                             >
                                 <span className="relative block w-[24px] h-[24px]">
@@ -222,14 +241,14 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                    <Link href="/shop/gray-h" className="group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent">
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] border-2 border-b-0 border-[#2f8a68]/10 overflow-hidden">
+                                        <Link href="/shop/gray-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('gray-h') ? '' : 'hidden'}`}>
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
                             <Image src="/gray-h.png" alt="Product 6" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
                                 aria-label={wishlist.has('gray-h') ? 'Remove Gray Hoodie from wishlist' : 'Add Gray Hoodie to wishlist'}
                                 aria-pressed={wishlist.has('gray-h')}
-                                onClick={() => toggleWishlist('gray-h')}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist('gray-h'); }}
                                 className="group/wishlist absolute top-3 right-3 w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-md cursor-pointer"
                             >
                                 <span className="relative block w-[24px] h-[24px]">

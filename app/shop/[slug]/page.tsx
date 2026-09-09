@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams, notFound } from 'next/navigation';
+import { useParams, notFound, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
@@ -9,8 +9,12 @@ import { getProductBySlug, getRelatedProducts } from '@/lib/products';
 
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
+  const router = useRouter();
   const [activeImage, setActiveImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [addToCartError, setAddToCartError] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
 
   const product = getProductBySlug(params.slug);
 
@@ -20,12 +24,39 @@ export default function ProductPage() {
 
   const related = getRelatedProducts(product);
 
+  async function handleAddToCart() {
+    if (!selectedSize || !product) return;
+
+    setIsAddingToCart(true);
+    setAddToCartError(null);
+
+    const res = await fetch('/api/cart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: product.id, size: selectedSize, quantity }),
+    });
+
+    setIsAddingToCart(false);
+
+    if (res.status === 401) {
+      router.push('/account/login');
+      return;
+    }
+
+    if (!res.ok) {
+      setAddToCartError('Failed to add item. Try again.');
+      return;
+    }
+
+    router.push('/cart');
+  }
+
   return (
     <>
       <Header />
       <div className="w-full h-screen overflow-y-auto px-8 py-10 bg-[#FEFEFA]">
         <div className="flex flex-col md:flex-row gap-10 md:items-start">
-          <div className="w-full md:w-[380px] flex-shrink-0">
+          <div className="w-full md:w-[600px] flex-shrink-0">
             <div style={{ aspectRatio: '1 / 1' }} className="relative w-full bg-[#F6F6F4] border-2 border-[#2f8a68]/10 overflow-hidden">
               <Image src={product.images[activeImage]} alt={product.name} fill className="object-cover" />
             </div>
@@ -78,13 +109,45 @@ export default function ProductPage() {
               </div>
             </div>
 
+            <div className="mb-6">
+              <h2 style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="text-sm text-[#16432a] mb-2">
+                Quantity
+              </h2>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#16432a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  −
+                </button>
+                <span style={{ fontFamily: "'Arvo', monospace" }} className="w-8 text-center text-[#16432a]">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#16432a] cursor-pointer"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
             <button
               type="button"
-              disabled={!selectedSize}
+              onClick={handleAddToCart}
+              disabled={!selectedSize || isAddingToCart}
               className="w-full py-3 bg-[#1a9e4a] text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              Add to Cart
+              {isAddingToCart ? 'Adding…' : 'Add to Cart'}
             </button>
+            {addToCartError && (
+              <p style={{ fontFamily: "'Arvo', monospace" }} className="text-sm text-red-600 mt-2">
+                {addToCartError}
+              </p>
+            )}
           </div>
         </div>
 
