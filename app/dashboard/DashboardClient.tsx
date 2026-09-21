@@ -50,18 +50,18 @@ export default function DashboardClient({ initialArtist, initialPosts, signOutAc
             className="w-16 h-16 rounded-full object-cover border-2 border-[#4dff91]"
           />
         ) : (
-          <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-[#4dff91] text-white/50 text-[0.65em]" style={{ fontFamily: "'Arvo', monospace" }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-[#4dff91] text-white/50 text-[0.65em]" style={{ fontFamily: "'Poppins', monospace" }}>
             NO PHOTO
           </div>
         )}
         <div className="flex flex-col gap-1">
           <span
             className="text-[1.3em] tracking-[0.08em] text-[#4dff91]"
-            style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+            style={{ fontFamily: "'Poppins', monospace" }}
           >
             WELCOME, {artist.name.toUpperCase()}
           </span>
-          <div className="flex items-center gap-4 text-[0.78em] text-white/50" style={{ fontFamily: "'Arvo', monospace" }}>
+          <div className="flex items-center gap-4 text-[0.78em] text-white/50" style={{ fontFamily: "'Poppins', monospace" }}>
             <span>{artist.email}</span>
             <span>Member since {memberSince}</span>
             {initialArtist.is_admin && <span className="text-[#4dff91]">Administrator</span>}
@@ -79,7 +79,7 @@ export default function DashboardClient({ initialArtist, initialPosts, signOutAc
                 ? 'text-[#4dff91] bg-[rgba(26,158,74,0.1)]'
                 : 'text-white/60 hover:text-white'
             }`}
-            style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+            style={{ fontFamily: "'Poppins', monospace" }}
           >
             MY POSTS
           </button>
@@ -88,7 +88,7 @@ export default function DashboardClient({ initialArtist, initialPosts, signOutAc
             className={`text-left px-6 py-3 text-[0.85em] tracking-[0.1em] transition-colors ${
               view === 'settings' ? 'text-[#4dff91] bg-[rgba(26,158,74,0.1)]' : 'text-white/60 hover:text-white'
             }`}
-            style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+            style={{ fontFamily: "'Poppins', monospace" }}
           >
             ACCOUNT SETTINGS
           </button>
@@ -96,7 +96,7 @@ export default function DashboardClient({ initialArtist, initialPosts, signOutAc
             <button
               type="submit"
               className="text-left w-full px-6 py-3 text-[0.85em] tracking-[0.1em] text-[#ff6b6b] hover:bg-[rgba(255,107,107,0.08)] transition-colors"
-              style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+              style={{ fontFamily: "'Poppins', monospace" }}
             >
               LOG OUT
             </button>

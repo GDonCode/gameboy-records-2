@@ -96,7 +96,7 @@ export default function EditPostForm({ post }: { post: PostFields }) {
         }
         .post-form-card { width: 100%; max-width: 640px; }
         .post-form-title {
-          font-family: 'Hemisphers Bold Sans', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 1.8em;
           letter-spacing: 0.1em;
           color: #4dff91;
@@ -107,7 +107,7 @@ export default function EditPostForm({ post }: { post: PostFields }) {
           background: rgba(255,255,255,0.05);
           border: 1px solid rgba(26,158,74,0.25);
           color: #fff;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.9em;
           padding: 10px 14px;
           border-radius: 2px;
@@ -122,7 +122,7 @@ export default function EditPostForm({ post }: { post: PostFields }) {
         }
         .post-label {
           display: block;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.78em;
           letter-spacing: 0.12em;
           color: rgba(255,255,255,0.5);
@@ -130,7 +130,7 @@ export default function EditPostForm({ post }: { post: PostFields }) {
         }
         .post-actions { display: flex; gap: 12px; margin-top: 8px; }
         .post-btn {
-          font-family: 'Hemisphers Bold Sans', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.85em;
           letter-spacing: 0.14em;
           color: #fff;
@@ -152,7 +152,7 @@ export default function EditPostForm({ post }: { post: PostFields }) {
         }
         .post-error {
           color: #ff6b6b;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.82em;
           margin-bottom: 14px;
         }
@@ -187,7 +187,7 @@ export default function EditPostForm({ post }: { post: PostFields }) {
             style={{ padding: '8px 14px' }}
           />
           {isUploading && (
-            <p style={{ fontFamily: "'Arvo', monospace", fontSize: '0.78em', color: '#4dff91', marginTop: '-6px', marginBottom: '14px' }}>
+            <p style={{ fontFamily: "'Poppins', monospace", fontSize: '0.78em', color: '#4dff91', marginTop: '-6px', marginBottom: '14px' }}>
               Uploading…
             </p>
           )}

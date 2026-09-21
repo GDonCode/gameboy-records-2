@@ -44,7 +44,7 @@ export default async function MyPostsPage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
           <h1
             style={{
-              fontFamily: "'Hemisphers Bold Sans', monospace",
+              fontFamily: "'Poppins', monospace",
               fontSize: '1.8em',
               color: '#4dff91',
               letterSpacing: '0.1em',
@@ -57,7 +57,7 @@ export default async function MyPostsPage() {
             href="/dashboard/posts/new"
             className="no-underline"
             style={{
-              fontFamily: "'Hemisphers Bold Sans', monospace",
+              fontFamily: "'Poppins', monospace",
               fontSize: '0.8em',
               letterSpacing: '0.12em',
               color: '#fff',
@@ -72,7 +72,7 @@ export default async function MyPostsPage() {
         </div>
 
         {rows.length === 0 ? (
-          <p style={{ fontFamily: "'Arvo', monospace", color: 'rgba(255,255,255,0.5)' }}>
+          <p style={{ fontFamily: "'Poppins', monospace", color: 'rgba(255,255,255,0.5)' }}>
             You haven&apos;t written anything yet.
           </p>
         ) : (
@@ -91,13 +91,13 @@ export default async function MyPostsPage() {
                 }}
               >
                 <div>
-                  <div style={{ fontFamily: "'Arvo', monospace", color: '#fff', fontSize: '0.95em', marginBottom: '4px' }}>
+                  <div style={{ fontFamily: "'Poppins', monospace", color: '#fff', fontSize: '0.95em', marginBottom: '4px' }}>
                     {post.title}
                   </div>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     <span
                       style={{
-                        fontFamily: "'Arvo', monospace",
+                        fontFamily: "'Poppins', monospace",
                         fontSize: '0.75em',
                         letterSpacing: '0.14em',
                         color: post.status === 'published' ? '#4dff91' : 'rgba(255,255,255,0.5)',
@@ -108,7 +108,7 @@ export default async function MyPostsPage() {
                     >
                       {post.status.toUpperCase()}
                     </span>
-                    <span style={{ fontFamily: "'Arvo', monospace", fontSize: '0.75em', color: 'rgba(255,255,255,0.4)' }}>
+                    <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.75em', color: 'rgba(255,255,255,0.4)' }}>
                       {post.tag}
                     </span>
                   </div>
@@ -119,7 +119,7 @@ export default async function MyPostsPage() {
                     href={`/dashboard/posts/${post.id}/edit`}
                     className="no-underline"
                     style={{
-                      fontFamily: "'Arvo', monospace",
+                      fontFamily: "'Poppins', monospace",
                       fontSize: '0.78em',
                       color: '#4dff91',
                       border: '1px solid rgba(77,255,145,0.35)',

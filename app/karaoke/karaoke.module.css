@@ -83,20 +83,20 @@
   min-width: 150px;
 }
 .pickerEyebrow {
-  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.6rem;
   letter-spacing: 0.32em;
   color: #149262;
 }
 .pickerTitle {
-  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.15rem;
   letter-spacing: 0.04em;
   color: #16432a;
   line-height: 1.15;
 }
 .pickerArtist {
-  font-family: 'Arvo', monospace;
+  font-family: 'Poppins', monospace;
   font-size: 0.8rem;
   color: #3d5c4a;
   letter-spacing: 0.06em;
@@ -127,7 +127,7 @@
 }
 
 .time {
-  font-family: 'Arvo', monospace;
+  font-family: 'Poppins', monospace;
   font-size: 0.78rem;
   color: #3d5c4a;
   min-width: 36px;
@@ -162,7 +162,7 @@
 }
 
 .lyricLine {
-  font-family: 'Hemisphers Bold Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.3rem;
   letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.35);

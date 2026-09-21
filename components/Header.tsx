@@ -102,8 +102,8 @@ export default function Header() {
                       : 'text-[#16432a] hover:scale-110'
                   }`}
                   style={{
-                    fontFamily: "'Hemisphers Bold Sans', monospace",
-                    fontSize: '1em',
+                    fontFamily: "'Poppins_semibold', monospace",
+                    fontSize: '1.1em',
                     letterSpacing: '0.1em',
                   }}
                 >
@@ -122,8 +122,8 @@ export default function Header() {
                     : 'text-[#16432a] hover:scale-110'
                 }`}
                 style={{
-                  fontFamily: "'Hemisphers Bold Sans', monospace",
-                  fontSize: '1em',
+                  fontFamily: "'Poppins_semibold', monospace",
+                  fontSize: '1.1em',
                   letterSpacing: '0.1em',
                 }}
               >
@@ -160,7 +160,7 @@ export default function Header() {
                           : 'text-[#16432a] hover:bg-[#1a9e4a]/10'
                       }`}
                       style={{
-                        fontFamily: "'Hemisphers Bold Sans', monospace",
+                        fontFamily: "'Poppins', monospace",
                         fontSize: '1em',
                         letterSpacing: '0.1em',
                       }}

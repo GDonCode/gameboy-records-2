@@ -134,7 +134,7 @@ export default async function FeedPage({
               </div>
               <div
                 style={{
-                  fontFamily: "'Hemisphers Bold Sans', monospace",
+                  fontFamily: "'Poppins', monospace",
                   fontSize: '0.85em',
                   letterSpacing: '0.2em',
                   color: '#16432a',
@@ -148,7 +148,7 @@ export default async function FeedPage({
                   href="/feed"
                   className={`tag-link block no-underline${!activeTag ? ' tag-link-active' : ''}`}
                   style={{
-                    fontFamily: "'Arvo', monospace",
+                    fontFamily: "'Poppins', monospace",
                     fontSize: '1em',
                     letterSpacing: '0.05em',
                     padding: '8px 10px',
@@ -163,7 +163,7 @@ export default async function FeedPage({
                     href={`/feed?tag=${encodeURIComponent(t)}`}
                     className={`tag-link block no-underline${activeTag === t ? ' tag-link-active' : ''}`}
                     style={{
-                      fontFamily: "'Arvo', monospace",
+                      fontFamily: "'Poppins', monospace",
                       fontSize: '1em',
                       letterSpacing: '0.05em',
                       padding: '8px 10px',
@@ -188,7 +188,7 @@ export default async function FeedPage({
             <div className="mx-auto px-12 mt-6 z-10 relative">
 
             {filteredPosts.length === 0 ? (
-              <p style={{ fontFamily: "'Arvo', monospace", color: 'rgba(255,255,255,0.5)' }}>
+              <p style={{ fontFamily: "'Poppins', monospace", color: 'rgba(255,255,255,0.5)' }}>
                 No posts yet — check back soon.
               </p>
             ) : (
@@ -227,7 +227,7 @@ export default async function FeedPage({
                           className="absolute inset-0 flex items-center justify-center opacity-40"
                           style={{
                             background: 'linear-gradient(135deg, rgba(26,158,74,0.15), rgba(26,158,74,0.05))',
-                            fontFamily: "'Arvo', monospace",
+                            fontFamily: "'Poppins', monospace",
                             fontSize: '0.85em',
                             letterSpacing: '0.3em',
                             color: '#4dff91',
@@ -243,7 +243,7 @@ export default async function FeedPage({
                         style={{
                           display: 'inline-block',
                           marginBottom: '14px',
-                          fontFamily: "'Hemisphers Bold Sans', monospace",
+                          fontFamily: "'Poppins', monospace",
                           fontSize: '0.7em',
                           letterSpacing: '0.3em',
                           color: '#ffffff',
@@ -259,7 +259,7 @@ export default async function FeedPage({
                       <div
                         className="group-hover:underline"
                         style={{
-                          fontFamily: "'Arvo', monospace",
+                          fontFamily: "'Poppins', monospace",
                           fontSize: '1.6em',
                           color: '#1a1a1a',
                           lineHeight: 1.25,
@@ -271,7 +271,7 @@ export default async function FeedPage({
 
                       <div
                         style={{
-                          fontFamily: "'Arvo', monospace",
+                          fontFamily: "'Poppins', monospace",
                           fontSize: '0.85em',
                           letterSpacing: '0.1em',
                           color: '#1a1a1a',
@@ -282,13 +282,13 @@ export default async function FeedPage({
                         {(filteredPosts[0].artists?.name?.toUpperCase() || 'GAMEBOY RECORDS')} &nbsp;•&nbsp; {formatDate(filteredPosts[0].published_at)}
                       </div>
 
-                      <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.95em', color: '#1a1a1a', lineHeight: 1.6, marginBottom: '16px' }}>
+                      <div style={{ fontFamily: "'Poppins', monospace", fontSize: '0.95em', color: '#1a1a1a', lineHeight: 1.6, marginBottom: '16px' }}>
                         {filteredPosts[0].teaser}
                       </div>
 
                       <span
                         style={{
-                          fontFamily: "'Hemisphers Bold Sans', monospace",
+                          fontFamily: "'Poppins', monospace",
                           fontSize: '0.75em',
                           letterSpacing: '0.2em',
                           color: '#1a9e4a',

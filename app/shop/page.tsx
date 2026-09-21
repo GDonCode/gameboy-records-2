@@ -112,10 +112,10 @@ export default function ShopPage() {
                             </button>
                         </div>
                         <div className="w-full px-4 py-4">
-                            <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">Black T-Shirt</span>
+                            <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">Black T-Shirt</span>
                             <div className="flex items-center justify-between">
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$19.99</span>
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
+                                <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$19.99</span>
+                                <span style={{fontFamily: "'Poppins', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
                                     View Product
                                 </span>
                             </div>
@@ -142,10 +142,10 @@ export default function ShopPage() {
                             </button>
                         </div>
                         <div className="w-full px-4 py-4">
-                            <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">Gray T-Shirt</span>
+                            <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">Gray T-Shirt</span>
                             <div className="flex items-center justify-between">
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$19.99</span>
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
+                                <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$19.99</span>
+                                <span style={{fontFamily: "'Poppins', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
                                     View Product
                                 </span>
                             </div>
@@ -172,10 +172,10 @@ export default function ShopPage() {
                             </button> 
                         </div>
                         <div className="w-full px-4 py-4">
-                            <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">White T-Shirt</span>
+                            <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">White T-Shirt</span>
                             <div className="flex items-center justify-between">
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$19.99</span>
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
+                                <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$19.99</span>
+                                <span style={{fontFamily: "'Poppins', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
                                     View Product
                                 </span>
                             </div>
@@ -202,10 +202,10 @@ export default function ShopPage() {
                             </button>
                         </div>
                         <div className="w-full px-4 py-4">
-                            <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">Black Hoodie</span>
+                            <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">Black Hoodie</span>
                             <div className="flex items-center justify-between">
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$39.99</span>
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
+                                <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$39.99</span>
+                                <span style={{fontFamily: "'Poppins', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
                                     View Product
                                 </span>
                             </div>
@@ -232,10 +232,10 @@ export default function ShopPage() {
                             </button>
                         </div>
                         <div className="w-full px-4 py-4">
-                            <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">White Hoodie</span>
+                            <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">White Hoodie</span>
                             <div className="flex items-center justify-between">
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$39.99</span>
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
+                                <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$39.99</span>
+                                <span style={{fontFamily: "'Poppins', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
                                     View Product
                                 </span>
                             </div>
@@ -262,10 +262,10 @@ export default function ShopPage() {
                             </button>
                         </div>
                         <div className="w-full px-4 py-4">
-                            <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">Gray Hoodie</span>
+                            <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.3em'}} className="block font-semibold text-[#16432a]">Gray Hoodie</span>
                             <div className="flex items-center justify-between">
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$39.99</span>
-                                <span style={{fontFamily: "'Hemisphers Bold Sans', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
+                                <span style={{fontFamily: "'Poppins', monospace", fontSize: '1.25em'}} className="font-semibold text-[#1a9e4a]">$39.99</span>
+                                <span style={{fontFamily: "'Poppins', monospace"}} className="text-xs text-[#16432a] transition-transform duration-200 hover:scale-110 hover:underline group-hover:underline">
                                     View Product
                                 </span>
                             </div>

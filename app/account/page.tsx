@@ -36,14 +36,14 @@ export default async function AccountPage() {
         <div className="max-w-[480px] w-full flex flex-col gap-8">
           <h1
             className="text-[1.8em] tracking-[0.1em] text-[#4dff91]"
-            style={{ fontFamily: "'Hemisphers Bold Sans', monospace", textShadow: '0 0 20px rgba(77,255,145,0.25)' }}
+            style={{ fontFamily: "'Poppins', monospace", textShadow: '0 0 20px rgba(77,255,145,0.25)' }}
           >
             MY ACCOUNT
           </h1>
 
           <AccountAvatar displayName={user.display_name} initialAvatarUrl={user.avatar_url} />
 
-          <div className="flex flex-col gap-3" style={{ fontFamily: "'Arvo', monospace", color: '#fff' }}>
+          <div className="flex flex-col gap-3" style={{ fontFamily: "'Poppins', monospace", color: '#fff' }}>
             <div><span style={{ opacity: 0.6 }}>Name:</span> {user.display_name}</div>
             <div><span style={{ opacity: 0.6 }}>Email:</span> {user.email}</div>
             <div><span style={{ opacity: 0.6 }}>Points:</span> {user.points_balance}</div>
@@ -53,7 +53,7 @@ export default async function AccountPage() {
             <button
               type="submit"
               className="text-[0.85em] tracking-[0.1em] text-[#ff6b6b]"
-              style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+              style={{ fontFamily: "'Poppins', monospace" }}
             >
               LOG OUT
             </button>

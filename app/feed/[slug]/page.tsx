@@ -95,7 +95,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             <Link
               href="/feed"
               className="inline-block no-underline mb-8"
-              style={{ fontFamily: "'Arvo', monospace", fontSize: '0.9em', letterSpacing: '0.16em', color: '#4dff91', opacity: 0.75 }}
+              style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.16em', color: '#4dff91', opacity: 0.75 }}
             >
               ← BACK TO FEED
             </Link>
@@ -114,13 +114,13 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <div className="flex-1 min-w-0">
             <div style={{ background: '#fef8f3', borderRadius: '4px', overflow: 'hidden' }}>
               <div style={{ padding: '32px 32px 0' }}>
-                <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.85em', letterSpacing: '0.2em', color: '#149262', opacity: 0.8, marginBottom: '10px' }}>
+                <div style={{ fontFamily: "'Poppins', monospace", fontSize: '0.85em', letterSpacing: '0.2em', color: '#149262', opacity: 0.8, marginBottom: '10px' }}>
                   {formatDate(post.published_at)} · {post.artists?.name?.toUpperCase() || 'GAMEBOY RECORDS'}
                 </div>
 
                 <h1
                   style={{
-                    fontFamily: "'Hemisphers Bold Sans', monospace",
+                    fontFamily: "'Poppins', monospace",
                     fontSize: '2.2em',
                     color: '#1a1a1a',
                     letterSpacing: '0.06em',
@@ -135,7 +135,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                   style={{
                     display: 'inline-block',
                     marginBottom: '28px',
-                    fontFamily: "'Arvo', monospace",
+                    fontFamily: "'Poppins', monospace",
                     fontSize: '0.78em',
                     letterSpacing: '0.2em',
                     color: '#149262',
@@ -172,7 +172,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
               <div
                 style={{
-                  fontFamily: "'Arvo', monospace",
+                  fontFamily: "'Poppins', monospace",
                   fontSize: '1em',
                   color: '#1a1a1a',
                   lineHeight: 1.8,

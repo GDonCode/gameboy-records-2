@@ -77,18 +77,18 @@ export default function ProductPage() {
           </div>
 
           <div className="flex-1">
-            <h1 style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="text-2xl text-[#16432a] mb-2">
+            <h1 style={{ fontFamily: "'Poppins', monospace" }} className="text-2xl text-[#16432a] mb-2">
               {product.name}
             </h1>
-            <p style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="text-xl text-[#1a9e4a] mb-6">
+            <p style={{ fontFamily: "'Poppins', monospace" }} className="text-xl text-[#1a9e4a] mb-6">
               ${product.price.toFixed(2)}
             </p>
-            <p style={{ fontFamily: "'Arvo', monospace" }} className="text-[#16432a]/80 mb-6">
+            <p style={{ fontFamily: "'Poppins', monospace" }} className="text-[#16432a]/80 mb-6">
               {product.description}
             </p>
 
             <div className="mb-6">
-              <h2 style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="text-sm text-[#16432a] mb-2">
+              <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#16432a] mb-2">
                 Size
               </h2>
               <div className="flex gap-2">
@@ -110,7 +110,7 @@ export default function ProductPage() {
             </div>
 
             <div className="mb-6">
-              <h2 style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="text-sm text-[#16432a] mb-2">
+              <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#16432a] mb-2">
                 Quantity
               </h2>
               <div className="flex items-center gap-3">
@@ -122,7 +122,7 @@ export default function ProductPage() {
                 >
                   −
                 </button>
-                <span style={{ fontFamily: "'Arvo', monospace" }} className="w-8 text-center text-[#16432a]">
+                <span style={{ fontFamily: "'Poppins', monospace" }} className="w-8 text-center text-[#16432a]">
                   {quantity}
                 </span>
                 <button
@@ -144,7 +144,7 @@ export default function ProductPage() {
               {isAddingToCart ? 'Adding…' : 'Add to Cart'}
             </button>
             {addToCartError && (
-              <p style={{ fontFamily: "'Arvo', monospace" }} className="text-sm text-red-600 mt-2">
+              <p style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-red-600 mt-2">
                 {addToCartError}
               </p>
             )}
@@ -153,7 +153,7 @@ export default function ProductPage() {
 
         {related.length > 0 && (
           <div className="mt-16">
-            <h2 style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="text-lg text-[#16432a] mb-4">
+            <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-lg text-[#16432a] mb-4">
               You may also like
             </h2>
             <div className="flex flex-wrap gap-6">
@@ -167,15 +167,15 @@ export default function ProductPage() {
                     <Image src={r.images[0]} alt={r.name} fill className="object-cover" />
                   </div>
                   <div className="w-full px-4 py-4">
-                    <span style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="block font-semibold text-white">
+                    <span style={{ fontFamily: "'Poppins', monospace" }} className="block font-semibold text-white">
                       {r.name}
                     </span>
-                    <span style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="block font-semibold text-white">
+                    <span style={{ fontFamily: "'Poppins', monospace" }} className="block font-semibold text-white">
                       ${r.price.toFixed(2)}
                     </span>
                     <div className="w-full flex justify-end mt-2">
                       <span
-                        style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+                        style={{ fontFamily: "'Poppins', monospace" }}
                         className="text-xs text-white transition-transform duration-200 group-hover:underline hover:scale-110 hover:underline"
                       >
                         View Product

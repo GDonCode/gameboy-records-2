@@ -56,7 +56,7 @@ export default function AccountLoginPage() {
           padding: 40px 32px;
         }
         .acct-title {
-          font-family: 'Hemisphers Bold Sans', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 1.6em;
           letter-spacing: 0.1em;
           color: #4dff91;
@@ -68,7 +68,7 @@ export default function AccountLoginPage() {
           background: rgba(255,255,255,0.05);
           border: 1px solid rgba(26,158,74,0.25);
           color: #fff;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.9em;
           padding: 10px 14px;
           border-radius: 2px;
@@ -81,7 +81,7 @@ export default function AccountLoginPage() {
           box-shadow: 0 0 0 1px #4dff91, 0 0 12px rgba(77,255,145,0.15);
         }
         .acct-submit {
-          font-family: 'Hemisphers Bold Sans', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.95em;
           letter-spacing: 0.16em;
           color: #fff;
@@ -95,7 +95,7 @@ export default function AccountLoginPage() {
         .acct-submit:disabled { opacity: 0.5; cursor: not-allowed; }
         .acct-error {
           color: #ff6b6b;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.82em;
           margin-bottom: 14px;
           text-align: center;
@@ -104,7 +104,7 @@ export default function AccountLoginPage() {
           display: block;
           text-align: center;
           margin-top: 18px;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.8em;
           color: #4dff91;
           opacity: 0.75;

@@ -121,13 +121,13 @@ export default function AccountSettings({ artist, onArtistUpdated }: AccountSett
     <div className="max-w-[640px] mx-auto flex flex-col gap-10">
       <h1
         className="text-[1.8em] tracking-[0.1em] text-[#4dff91]"
-        style={{ fontFamily: "'Hemisphers Bold Sans', monospace", textShadow: '0 0 20px rgba(77,255,145,0.25)' }}
+        style={{ fontFamily: "'Poppins', monospace", textShadow: '0 0 20px rgba(77,255,145,0.25)' }}
       >
         ACCOUNT SETTINGS
       </h1>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-[0.9em] tracking-[0.14em] text-white/70" style={{ fontFamily: "'Arvo', monospace" }}>
+        <h2 className="text-[0.9em] tracking-[0.14em] text-white/70" style={{ fontFamily: "'Poppins', monospace" }}>
           PORTRAIT
         </h2>
         <div className="flex items-center gap-5">
@@ -139,7 +139,7 @@ export default function AccountSettings({ artist, onArtistUpdated }: AccountSett
               className="w-20 h-20 rounded-full object-cover border-2 border-[#4dff91]"
             />
           ) : (
-            <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-[#4dff91] text-white/50 text-[0.7em]" style={{ fontFamily: "'Arvo', monospace" }}>
+            <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-[#4dff91] text-white/50 text-[0.7em]" style={{ fontFamily: "'Poppins', monospace" }}>
               NO PHOTO
             </div>
           )}
@@ -150,15 +150,15 @@ export default function AccountSettings({ artist, onArtistUpdated }: AccountSett
               onChange={handlePortraitChange}
               disabled={isUploadingPortrait}
               className="text-[0.8em] text-white/70"
-              style={{ fontFamily: "'Arvo', monospace" }}
+              style={{ fontFamily: "'Poppins', monospace" }}
             />
             {isUploadingPortrait && (
-              <p className="text-[#4dff91] text-[0.78em] mt-1" style={{ fontFamily: "'Arvo', monospace" }}>
+              <p className="text-[#4dff91] text-[0.78em] mt-1" style={{ fontFamily: "'Poppins', monospace" }}>
                 Uploading…
               </p>
             )}
             {portraitError && (
-              <p className="text-[#ff6b6b] text-[0.78em] mt-1" style={{ fontFamily: "'Arvo', monospace" }}>
+              <p className="text-[#ff6b6b] text-[0.78em] mt-1" style={{ fontFamily: "'Poppins', monospace" }}>
                 {portraitError}
               </p>
             )}
@@ -167,12 +167,12 @@ export default function AccountSettings({ artist, onArtistUpdated }: AccountSett
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-[0.9em] tracking-[0.14em] text-white/70" style={{ fontFamily: "'Arvo', monospace" }}>
+        <h2 className="text-[0.9em] tracking-[0.14em] text-white/70" style={{ fontFamily: "'Poppins', monospace" }}>
           DISPLAY NAME
         </h2>
         <input
           className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2.5 rounded-[2px] w-full outline-none focus:border-[#4dff91]"
-          style={{ fontFamily: "'Arvo', monospace" }}
+          style={{ fontFamily: "'Poppins', monospace" }}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -180,52 +180,52 @@ export default function AccountSettings({ artist, onArtistUpdated }: AccountSett
           onClick={handleNameSave}
           disabled={isSavingName || name === artist.name}
           className="self-start text-[0.85em] tracking-[0.14em] text-white h-[42px] px-5 rounded-[2px] border border-[#1a9e4a] disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ fontFamily: "'Hemisphers Bold Sans', monospace", background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)' }}
+          style={{ fontFamily: "'Poppins', monospace", background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)' }}
         >
           {isSavingName ? 'SAVING…' : 'SAVE NAME'}
         </button>
         {nameStatus && (
-          <p className={`text-[0.8em] ${nameStatus.type === 'success' ? 'text-[#4dff91]' : 'text-[#ff6b6b]'}`} style={{ fontFamily: "'Arvo', monospace" }}>
+          <p className={`text-[0.8em] ${nameStatus.type === 'success' ? 'text-[#4dff91]' : 'text-[#ff6b6b]'}`} style={{ fontFamily: "'Poppins', monospace" }}>
             {nameStatus.message}
           </p>
         )}
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-[0.9em] tracking-[0.14em] text-white/70" style={{ fontFamily: "'Arvo', monospace" }}>
+        <h2 className="text-[0.9em] tracking-[0.14em] text-white/70" style={{ fontFamily: "'Poppins', monospace" }}>
           EMAIL & PASSWORD
         </h2>
 
-        <label className="text-[0.78em] tracking-[0.1em] text-white/50" style={{ fontFamily: "'Arvo', monospace" }}>
+        <label className="text-[0.78em] tracking-[0.1em] text-white/50" style={{ fontFamily: "'Poppins', monospace" }}>
           Email
         </label>
         <input
           type="email"
           className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2.5 rounded-[2px] w-full outline-none focus:border-[#4dff91]"
-          style={{ fontFamily: "'Arvo', monospace" }}
+          style={{ fontFamily: "'Poppins', monospace" }}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <label className="text-[0.78em] tracking-[0.1em] text-white/50 mt-2" style={{ fontFamily: "'Arvo', monospace" }}>
+        <label className="text-[0.78em] tracking-[0.1em] text-white/50 mt-2" style={{ fontFamily: "'Poppins', monospace" }}>
           Current Password (required to set a new password)
         </label>
         <input
           type="password"
           className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2.5 rounded-[2px] w-full outline-none focus:border-[#4dff91]"
-          style={{ fontFamily: "'Arvo', monospace" }}
+          style={{ fontFamily: "'Poppins', monospace" }}
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
           placeholder="••••••••"
         />
 
-        <label className="text-[0.78em] tracking-[0.1em] text-white/50 mt-2" style={{ fontFamily: "'Arvo', monospace" }}>
+        <label className="text-[0.78em] tracking-[0.1em] text-white/50 mt-2" style={{ fontFamily: "'Poppins', monospace" }}>
           New Password (leave blank to keep current password)
         </label>
         <input
           type="password"
           className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2.5 rounded-[2px] w-full outline-none focus:border-[#4dff91]"
-          style={{ fontFamily: "'Arvo', monospace" }}
+          style={{ fontFamily: "'Poppins', monospace" }}
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           placeholder="••••••••"
@@ -235,12 +235,12 @@ export default function AccountSettings({ artist, onArtistUpdated }: AccountSett
           onClick={handleCredentialsSave}
           disabled={isSavingCredentials}
           className="self-start text-[0.85em] tracking-[0.14em] text-white h-[42px] px-5 rounded-[2px] border border-[#1a9e4a] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-          style={{ fontFamily: "'Hemisphers Bold Sans', monospace", background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)' }}
+          style={{ fontFamily: "'Poppins', monospace", background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)' }}
         >
           {isSavingCredentials ? 'SAVING…' : 'SAVE CHANGES'}
         </button>
         {credentialsStatus && (
-          <p className={`text-[0.8em] ${credentialsStatus.type === 'success' ? 'text-[#4dff91]' : 'text-[#ff6b6b]'}`} style={{ fontFamily: "'Arvo', monospace" }}>
+          <p className={`text-[0.8em] ${credentialsStatus.type === 'success' ? 'text-[#4dff91]' : 'text-[#ff6b6b]'}`} style={{ fontFamily: "'Poppins', monospace" }}>
             {credentialsStatus.message}
           </p>
         )}

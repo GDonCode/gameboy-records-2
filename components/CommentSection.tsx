@@ -64,7 +64,7 @@ export default function CommentSection({ postId, initialComments, currentUser }:
     <div>
       <div
         style={{
-          fontFamily: "'Hemisphers Bold Sans', monospace",
+          fontFamily: "'Poppins', monospace",
           fontSize: '1.1em',
           letterSpacing: '0.1em',
           color: '#4dff91',
@@ -75,7 +75,7 @@ export default function CommentSection({ postId, initialComments, currentUser }:
       </div>
 
       {comments.length === 0 && (
-        <p style={{ fontFamily: "'Arvo', monospace", fontSize: '0.85em', color: 'rgba(255,255,255,0.5)', marginBottom: '20px' }}>
+        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '0.85em', color: 'rgba(255,255,255,0.5)', marginBottom: '20px' }}>
           No comments yet.
         </p>
       )}
@@ -102,10 +102,10 @@ export default function CommentSection({ postId, initialComments, currentUser }:
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.78em', letterSpacing: '0.1em', color: '#4dff91', opacity: 0.8, marginBottom: '4px' }}>
+              <div style={{ fontFamily: "'Poppins', monospace", fontSize: '0.78em', letterSpacing: '0.1em', color: '#4dff91', opacity: 0.8, marginBottom: '4px' }}>
                 {c.author_name} · {formatCommentDate(c.created_at)}
               </div>
-              <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.85em', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+              <div style={{ fontFamily: "'Poppins', monospace", fontSize: '0.85em', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
                 {c.body}
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function CommentSection({ postId, initialComments, currentUser }:
       {currentUser ? (
         <div>
           {error && (
-            <p style={{ fontFamily: "'Arvo', monospace", fontSize: '0.78em', color: '#ff6b6b', marginBottom: '8px' }}>
+            <p style={{ fontFamily: "'Poppins', monospace", fontSize: '0.78em', color: '#ff6b6b', marginBottom: '8px' }}>
               {error}
             </p>
           )}
@@ -126,20 +126,20 @@ export default function CommentSection({ postId, initialComments, currentUser }:
             placeholder="Add a comment…"
             rows={3}
             className="w-full bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.85em] px-3 py-2.5 rounded-[2px] outline-none mb-2.5 focus:border-[#4dff91] resize-y"
-            style={{ fontFamily: "'Arvo', monospace" }}
+            style={{ fontFamily: "'Poppins', monospace" }}
           />
           <button
             type="button"
             disabled={isSubmitting || !draft.trim()}
             onClick={handleSubmit}
             className="text-[0.8em] tracking-[0.12em] text-white h-[40px] px-5 rounded-[2px] border border-[#1a9e4a] disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ fontFamily: "'Hemisphers Bold Sans', monospace", background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)' }}
+            style={{ fontFamily: "'Poppins', monospace", background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)' }}
           >
             {isSubmitting ? 'POSTING…' : 'POST COMMENT'}
           </button>
         </div>
       ) : (
-        <p style={{ fontFamily: "'Arvo', monospace", fontSize: '0.82em', color: 'rgba(255,255,255,0.6)' }}>
+        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '0.82em', color: 'rgba(255,255,255,0.6)' }}>
           <a href="/account/login" style={{ color: '#4dff91', textDecoration: 'underline' }}>
             Log in
           </a>{' '}

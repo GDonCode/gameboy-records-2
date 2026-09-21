@@ -77,7 +77,7 @@ export default function FeedScrollList({ posts }: { posts: PostListItem[] }) {
             <div className="flex flex-col">
               <span
                 style={{
-                  fontFamily: "'Hemisphers Bold Sans', monospace",
+                  fontFamily: "'Poppins', monospace",
                   fontSize: '0.78em',
                   letterSpacing: '0.08em',
                   color: '#16432a',
@@ -87,7 +87,7 @@ export default function FeedScrollList({ posts }: { posts: PostListItem[] }) {
               </span>
               <span
                 style={{
-                  fontFamily: "'Arvo', monospace",
+                  fontFamily: "'Poppins', monospace",
                   fontSize: '0.72em',
                   color: '#1a1a1a',
                   opacity: 0.55,
@@ -100,12 +100,12 @@ export default function FeedScrollList({ posts }: { posts: PostListItem[] }) {
 
           <div
             className="group-hover:underline"
-            style={{ fontFamily: "'Arvo', monospace", fontSize: '1.15em', color: '#1a1a1a', lineHeight: 1.35, marginBottom: '8px' }}
+            style={{ fontFamily: "'Poppins', monospace", fontSize: '1.15em', color: '#1a1a1a', lineHeight: 1.35, marginBottom: '8px' }}
           >
             {post.title}
           </div>
 
-          <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.85em', color: '#1a1a1a', lineHeight: 1.6, marginBottom: '12px' }}>
+          <div style={{ fontFamily: "'Poppins', monospace", fontSize: '0.85em', color: '#1a1a1a', lineHeight: 1.6, marginBottom: '12px' }}>
             {post.teaser}
           </div>
 
@@ -136,7 +136,7 @@ export default function FeedScrollList({ posts }: { posts: PostListItem[] }) {
                 className="absolute inset-0 flex items-center justify-center opacity-40"
                 style={{
                   background: 'linear-gradient(135deg, rgba(26,158,74,0.15), rgba(26,158,74,0.05))',
-                  fontFamily: "'Arvo', monospace",
+                  fontFamily: "'Poppins', monospace",
                   fontSize: '0.85em',
                   letterSpacing: '0.3em',
                   color: '#4dff91',

@@ -27,7 +27,7 @@ export default function DeletePostButton({ postId }: { postId: string }) {
       onClick={handleDelete}
       disabled={isDeleting}
       style={{
-        fontFamily: "'Arvo', monospace",
+        fontFamily: "'Poppins', monospace",
         fontSize: '0.78em',
         letterSpacing: '0.1em',
         color: '#ff6b6b',

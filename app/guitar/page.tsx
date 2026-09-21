@@ -14,7 +14,7 @@ export default function GuitarPage() {
       >
         <h1
           style={{
-            fontFamily: "'Hemisphers Bold Sans', monospace",
+            fontFamily: "'Poppins', monospace",
             fontSize: '1.4em',
             letterSpacing: '0.2em',
             color: '#4dff91',

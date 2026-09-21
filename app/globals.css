@@ -32,7 +32,7 @@ body {
 
 /* ── FONTS ─────────────────────────────────────────────────── */
 @font-face {
-  font-family: 'Hemisphers Bold Sans';
+  font-family: 'Hemisphers_Bold_Sans';
   src: url('/fonts/Hemisphers_Bold_Sans.otf') format('opentype');
   font-weight: bold;
   font-style: normal;
@@ -43,8 +43,19 @@ body {
 }
 
 @font-face {
-  font-family: 'Arvo';
-  src: url('/fonts/Arvo-Regular.ttf') format('truetype-variations');
+  font-family: 'Poppins_semibold';
+  src: url('/fonts/Poppins-SemiBold.ttf') format('truetype-variations');
+  font-weight: normal;
+  font-style: normal;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins-Regular.ttf') format('truetype-variations');
   font-weight: normal;
   font-style: normal;
   ascent-override: 80%;
@@ -55,7 +66,7 @@ body {
 
 /* ── NAV BUTTONS ─────────────────────────────────────────────────────────── */
 .nav-btn {
-  font-family: 'Hemisphers Bold Sans', monospace;
+  font-family: 'Poppins', monospace;
   font-size: 1.1em;
   letter-spacing: 0.14em;
   text-decoration: none;
@@ -129,7 +140,7 @@ body {
   text-decoration: none;
   cursor: pointer;
   color: rgba(255,255,255,0.5);
-  font-family: 'Arvo', monospace;
+  font-family: 'Poppins', monospace;
   font-size: 0.62em;
   letter-spacing: 0.12em;
   transition: color 0.15s ease;
@@ -176,7 +187,7 @@ body {
 }
 .mobile-nav-home-label {
   margin-top: -18px;
-  font-family: 'Hemisphers Bold Sans', monospace;
+  font-family: 'Poppins', monospace;
   font-size: 0.68em;
   letter-spacing: 0.14em;
   color: #4dff91;
@@ -197,7 +208,7 @@ body {
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  font-family: 'Hemisphers Bold Sans', monospace;
+  font-family: 'Poppins', monospace;
   font-size: 0.85em;
   letter-spacing: 0.1em;
   color: #fff;

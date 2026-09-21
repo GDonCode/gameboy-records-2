@@ -95,45 +95,45 @@ export default function PostForm({ post, onSaved }: PostFormProps) {
     <div className="max-w-[640px] mx-auto">
       <div
         className="text-[1.8em] tracking-[0.1em] text-[#4dff91] mb-7"
-        style={{ fontFamily: "'Hemisphers Bold Sans', monospace", textShadow: '0 0 20px rgba(77,255,145,0.25)' }}
+        style={{ fontFamily: "'Poppins', monospace", textShadow: '0 0 20px rgba(77,255,145,0.25)' }}
       >
         {post ? 'EDIT POST' : 'NEW POST'}
       </div>
 
       {error && (
-        <div className="text-[#ff6b6b] text-[0.82em] mb-3.5" style={{ fontFamily: "'Arvo', monospace" }}>
+        <div className="text-[#ff6b6b] text-[0.82em] mb-3.5" style={{ fontFamily: "'Poppins', monospace" }}>
           {error}
         </div>
       )}
 
-      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Arvo', monospace" }}>
+      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Poppins', monospace" }}>
         Title
       </label>
       <input
         className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2.5 rounded-[2px] w-full outline-none mb-3.5 focus:border-[#4dff91]"
-        style={{ fontFamily: "'Arvo', monospace" }}
+        style={{ fontFamily: "'Poppins', monospace" }}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="e.g. New single out now"
       />
 
-      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Arvo', monospace" }}>
+      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Poppins', monospace" }}>
         Teaser (short summary shown in feed)
       </label>
       <input
         className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2.5 rounded-[2px] w-full outline-none mb-3.5 focus:border-[#4dff91]"
-        style={{ fontFamily: "'Arvo', monospace" }}
+        style={{ fontFamily: "'Poppins', monospace" }}
         value={teaser}
         onChange={(e) => setTeaser(e.target.value)}
         placeholder="One or two sentences"
       />
 
-      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Arvo', monospace" }}>
+      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Poppins', monospace" }}>
         Tag
       </label>
       <select
         className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2.5 rounded-[2px] w-full outline-none mb-3.5 focus:border-[#4dff91]"
-        style={{ fontFamily: "'Arvo', monospace" }}
+        style={{ fontFamily: "'Poppins', monospace" }}
         value={tag}
         onChange={(e) => setTag(e.target.value)}
       >
@@ -142,7 +142,7 @@ export default function PostForm({ post, onSaved }: PostFormProps) {
         ))}
       </select>
 
-      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Arvo', monospace" }}>
+      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Poppins', monospace" }}>
         Cover Image or Video (optional)
       </label>
       <input
@@ -153,7 +153,7 @@ export default function PostForm({ post, onSaved }: PostFormProps) {
         className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2 rounded-[2px] w-full outline-none mb-3.5"
       />
       {isUploading && (
-        <p className="text-[#4dff91] text-[0.78em] -mt-1.5 mb-3.5" style={{ fontFamily: "'Arvo', monospace" }}>
+        <p className="text-[#4dff91] text-[0.78em] -mt-1.5 mb-3.5" style={{ fontFamily: "'Poppins', monospace" }}>
           Uploading…
         </p>
       )}
@@ -173,12 +173,12 @@ export default function PostForm({ post, onSaved }: PostFormProps) {
         />
       )}
 
-      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Arvo', monospace" }}>
+      <label className="block text-[0.78em] tracking-[0.12em] text-white/50 mb-1.5" style={{ fontFamily: "'Poppins', monospace" }}>
         Body
       </label>
       <textarea
         className="bg-white/5 border border-[rgba(26,158,74,0.25)] text-white text-[0.9em] px-3.5 py-2.5 rounded-[2px] w-full outline-none mb-3.5 focus:border-[#4dff91] resize-y"
-        style={{ fontFamily: "'Arvo', monospace" }}
+        style={{ fontFamily: "'Poppins', monospace" }}
         rows={10}
         value={body}
         onChange={(e) => setBody(e.target.value)}
@@ -191,7 +191,7 @@ export default function PostForm({ post, onSaved }: PostFormProps) {
           disabled={isSubmitting}
           onClick={() => submitPost('draft')}
           className="text-[0.85em] tracking-[0.14em] text-white h-[46px] px-6 rounded-[2px] border border-white/25 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-px transition-transform"
-          style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+          style={{ fontFamily: "'Poppins', monospace" }}
         >
           SAVE DRAFT
         </button>
@@ -200,7 +200,7 @@ export default function PostForm({ post, onSaved }: PostFormProps) {
           disabled={isSubmitting}
           onClick={() => submitPost('published')}
           className="text-[0.85em] tracking-[0.14em] text-white h-[46px] px-6 rounded-[2px] border border-[#1a9e4a] disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-px transition-transform"
-          style={{ fontFamily: "'Hemisphers Bold Sans', monospace", background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)' }}
+          style={{ fontFamily: "'Poppins', monospace", background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)' }}
         >
           {isSubmitting
             ? post ? 'SAVING…' : 'PUBLISHING…'

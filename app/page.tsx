@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
 import { supabasePublic } from '@/lib/supabase-public';
+import Footer from '@/components/Footer';
 
 
 const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
@@ -118,7 +119,7 @@ export default function Home() {
         /* ── HERO TAGLINE — responsive size/spacing ── */
         .hero-tagline {
           font-size: 1.75em;
-          letter-spacing: 0.16em;
+          letter-spacing: 0.1em;
         }
         @media (min-width: 768px) {
           .hero-tagline {
@@ -160,8 +161,8 @@ export default function Home() {
 
         /* ── HERO LISTEN NOW BUTTON ── */
         .listen-btn {
-          font-family: 'Hemisphers Bold Sans', monospace;
-          font-size: 1em;
+          font-family: 'Poppins_semibold', monospace;
+          font-size: 1.1em;
           letter-spacing: 0.18em;
           color: #fff;
           text-shadow: 0 1px 2px rgba(0,0,0,0.5);
@@ -218,7 +219,7 @@ export default function Home() {
           background: rgba(255,255,255,0.05);
           border: 1px solid rgba(26,158,74,0.25);
           color: #fff;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.9em;
           padding: 10px 14px;
           border-radius: 2px;
@@ -234,7 +235,7 @@ export default function Home() {
           color: rgba(255,255,255,0.3);
         }
         .contact-submit {
-          font-family: 'Hemisphers Bold Sans', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 1em;
           letter-spacing: 0.18em;
           color: #fff;
@@ -269,7 +270,7 @@ export default function Home() {
           cursor: not-allowed;
         }
         .status-message {
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.85em;
           padding: 8px 14px;
           border-radius: 2px;
@@ -302,13 +303,13 @@ export default function Home() {
               style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}
             >
 
-              {/* ── NEWS SIDEBAR ──────────────────────────────────────── */}
+              {/* ── NEWS SIDEBAR ──────────────────────────────────────── 
               <aside className="hidden md:flex news-sidebar relative flex-col w-80 flex-shrink-0 bg-[#fef8f3] z-[25] overflow-hidden">
                 <Corners />
 
                 <div className="no-scrollbar flex-1 overflow-y-auto">
                   {newsItems.length === 0 && (
-                    <div className="p-5" style={{ fontFamily: "'Arvo', monospace", fontSize: '0.85em', color: '#3c5e4c', opacity: 0.7 }}>
+                    <div className="p-5" style={{ fontFamily: "'Poppins', monospace", fontSize: '0.85em', color: '#3c5e4c', opacity: 0.7 }}>
                       No news yet.
                     </div>
                   )}
@@ -341,7 +342,7 @@ export default function Home() {
                           style={{
                             background: 'linear-gradient(135deg, #e3f6e9, #cfeede)',
                             border: '1px solid rgba(26,158,74,0.15)',
-                            fontFamily: "'Hemisphers Bold Sans', monospace",
+                            fontFamily: "'Poppins', monospace",
                             fontSize: '0.85em',
                             letterSpacing: '0.3em',
                             color: '#1a9e4a',
@@ -350,22 +351,22 @@ export default function Home() {
                           IMAGE
                         </div>
                       )}
-                      <div style={{ fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '0.78em', letterSpacing: '0.22em', color: '#1a9e4a', opacity: 0.8, marginBottom: '6px' }}>
+                      <div style={{ fontFamily: "'Poppins', monospace", fontSize: '0.78em', letterSpacing: '0.22em', color: '#1a9e4a', opacity: 0.8, marginBottom: '6px' }}>
                         {item.date}
                       </div>
-                      <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.9em', color: '#16432a', lineHeight: 1.45 }}>
+                      <div style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', color: '#16432a', lineHeight: 1.45 }}>
                         {item.title}
                       </div>
-                      <div style={{ fontFamily: "'Arvo', monospace", fontSize: '0.78em', color: '#3c5e4c', opacity: 0.7, lineHeight: 1.6, marginTop: '8px' }}>
+                      <div style={{ fontFamily: "'Poppins', monospace", fontSize: '0.78em', color: '#3c5e4c', opacity: 0.7, lineHeight: 1.6, marginTop: '8px' }}>
                         {item.teaser}
                       </div>
-                      <span style={{ display: 'inline-block', marginTop: '10px', fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '0.74em', letterSpacing: '0.3em', color: '#ffffff', opacity: 0.75, border: '1px solid rgba(26,158,74,0.25)', padding: '4px 12px', background: 'rgba(26,158,74)' }}>
+                      <span style={{ display: 'inline-block', marginTop: '10px', fontFamily: "'Poppins', monospace", fontSize: '0.74em', letterSpacing: '0.3em', color: '#ffffff', opacity: 0.75, border: '1px solid rgba(26,158,74,0.25)', padding: '4px 12px', background: 'rgba(26,158,74)' }}>
                         {item.tag}
                       </span>
                     </a>
                   ))}
                 </div>
-              </aside>
+              </aside> */}
 
               {/* ── MAIN SCROLL COLUMN ────────────────────────────────── */}
               <div className="no-scrollbar flex-1 min-h-0 overflow-y-auto flex flex-col pt-[60px] md:pt-0">
@@ -373,7 +374,7 @@ export default function Home() {
                 {/* ═══ NEW LABEL HERO — "REALEST. TRUEST." ═══ */}
                 <div
                   className="relative flex-shrink-0 overflow-hidden"
-                  style={{ minHeight: 'calc(100vh - 84px)' }}
+                  style={{ minHeight: 'calc(100vh - 90px)' }}
                 >
                   {/* Background video */}
                   <video
@@ -389,13 +390,13 @@ export default function Home() {
                   {/* Content */}
                   <div
                     className="relative z-[3] flex flex-col items-center justify-center gap-5 px-6 text-center"
-                    style={{ minHeight: 'calc(100vh - 84px)' }}
+                    style={{ minHeight: 'calc(100vh - 90px)' }}
                   >
                     <div className="flex flex-col items-center gap-1">
                        <h1
                         className="hidden md:block"
                         style={{
-                          fontFamily: "'Hemisphers Bold Sans', monospace",
+                          fontFamily: "'Poppins_semibold', monospace",
                           fontSize: '3em',
                           color: '#fff',
                           letterSpacing: '0.12em',
@@ -408,7 +409,7 @@ export default function Home() {
                       <p
                         className="hero-tagline"
                         style={{
-                          fontFamily: "'Arvo', monospace",
+                          fontFamily: "'Poppins', monospace",
                           color: '#4dff91',
                           textShadow: '0 0 30px rgba(77,255,145,0.40)',
                           lineHeight: 1.2,
@@ -432,7 +433,7 @@ export default function Home() {
                           className="w-[80px] h-[80px] rounded-full border-[3px] border-[#4dff91] object-cover object-top"
                           style={{ boxShadow: '0 0 0 2px rgba(77,255,145,0.5), 0 0 22px rgba(77,255,145,0.95), 0 0 8px rgba(77,255,145,0.6)' }}
                         />
-                        <span style={{ fontFamily: "'Arvo', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
+                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
                           Alexx A-Game
                         </span>
                       </a>
@@ -443,7 +444,7 @@ export default function Home() {
                           className="w-[80px] h-[80px] rounded-full flex items-center justify-center border-[3px] border-[#4dff91]"
                           style={{
                             background: 'linear-gradient(135deg, #c0392b, #78281f)',
-                            fontFamily: "'Arvo', monospace",
+                            fontFamily: "'Poppins', monospace",
                             fontSize: '2em',
                             color: '#fff',
                             textShadow: '0 1px 6px rgba(0,0,0,0.6)',
@@ -452,7 +453,7 @@ export default function Home() {
                         >
                           DK
                         </div>
-                        <span style={{ fontFamily: "'Arvo', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
+                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
                           DJ Karma
                         </span>
                       </a>
@@ -463,7 +464,7 @@ export default function Home() {
                           className="w-[80px] h-[80px] rounded-full flex items-center justify-center border-[3px] border-[#4dff91]"
                           style={{
                             background: 'linear-gradient(135deg, #2980b9, #1a5276)',
-                            fontFamily: "'Arvo', monospace",
+                            fontFamily: "'Poppins', monospace",
                             fontSize: '2em',
                             color: '#fff',
                             textShadow: '0 1px 6px rgba(0,0,0,0.6)',
@@ -472,7 +473,7 @@ export default function Home() {
                         >
                           BL
                         </div>
-                        <span style={{ fontFamily: "'Arvo', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
+                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
                           Bassline
                         </span>
                       </a>
@@ -483,7 +484,7 @@ export default function Home() {
                           className="w-[80px] h-[80px] rounded-full flex items-center justify-center border-[3px] border-[#4dff91]"
                           style={{
                             background: 'linear-gradient(135deg, #8e44ad, #5b2d6e)',
-                            fontFamily: "'Arvo', monospace",
+                            fontFamily: "'Poppins', monospace",
                             fontSize: '2em',
                             color: '#fff',
                             textShadow: '0 1px 6px rgba(0,0,0,0.6)',
@@ -492,7 +493,7 @@ export default function Home() {
                         >
                           NN
                         </div>
-                        <span style={{ fontFamily: "'Arvo', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
+                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
                           Neon Noir
                         </span>
                       </a>
@@ -503,7 +504,7 @@ export default function Home() {
                           className="w-[80px] h-[80px] rounded-full flex items-center justify-center border-[3px] border-[#4dff91]"
                           style={{
                             background: 'linear-gradient(135deg, #d35400, #6e2c00)',
-                            fontFamily: "'Arvo', monospace",
+                            fontFamily: "'Poppins', monospace",
                             fontSize: '2em',
                             color: '#fff',
                             textShadow: '0 1px 6px rgba(0,0,0,0.6)',
@@ -512,7 +513,7 @@ export default function Home() {
                         >
                           VX
                         </div>
-                        <span style={{ fontFamily: "'Arvo', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
+                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
                           Vibe X
                         </span>
                       </a>
@@ -520,20 +521,22 @@ export default function Home() {
                     </div>
                     */}
 
+                    
+                  </div>
+                  <div className="absolute bottom-24 left-0 right-0 z-[3] flex items-center justify-center">
                     {/* TUNE IN CTA — always plays the playlist, never a single video */}
-                    <button
-                      className="listen-btn"
-                      onClick={() => openPlayer('https://www.youtube.com/embed/videoseries?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo&autoplay=1&controls=1')}
-                      style={{ marginTop: '6px' }}
-                    >
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 block" fill="currentColor">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                      TUNE IN
-                    </button>
+                      <button
+                        className="listen-btn"
+                        onClick={() => openPlayer('https://www.youtube.com/embed/videoseries?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo&autoplay=1&controls=1')}
+                        style={{ marginTop: '6px' }}
+                      >
+                        <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 block" fill="currentColor">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                        TUNE IN
+                      </button>
                   </div>
                 </div>
-
                 <div
                   className="relative flex-shrink-0 overflow-hidden"
                   style={{ minHeight: 'calc(100vh - 84px)' }}
@@ -555,14 +558,14 @@ export default function Home() {
                     className="relative z-[3] flex flex-col items-center justify-center gap-6 px-10 text-center"
                     style={{ minHeight: 'calc(100vh - 84px)' }}
                   >
-                    <span style={{ fontFamily: "'Arvo', monospace", fontSize: '0.72em', letterSpacing: '0.35em', color: '#4dff91', border: '1px solid rgba(77,255,145,0.4)', padding: '3px 12px', borderRadius: '2px', textShadow: '0 0 10px rgba(77,255,145,0.6)', background: 'rgba(0,0,0,0.45)' }}>
+                    <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.72em', letterSpacing: '0.35em', color: '#4dff91', border: '1px solid rgba(77,255,145,0.4)', padding: '3px 12px', borderRadius: '2px', textShadow: '0 0 10px rgba(77,255,145,0.6)', background: 'rgba(0,0,0,0.45)' }}>
                       FEATURED RELEASE
                     </span>
                     <div className="flex flex-col items-center gap-1">
-                      <h1 style={{ fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '3em', color: '#fff', letterSpacing: '0.15em', textShadow: '0 2px 28px rgba(0,0,0,0.9), 0 0 40px rgba(77,255,145,0.12)', lineHeight: 1 }}>
+                      <h1 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '3em', color: '#fff', letterSpacing: '0.15em', textShadow: '0 2px 28px rgba(0,0,0,0.9), 0 0 40px rgba(77,255,145,0.12)', lineHeight: 1 }}>
                         ALEXX A-GAME
                       </h1>
-                      <h2 style={{ fontFamily: "'Arvo', monospace", fontSize: '1.75em', color: '#4dff91', letterSpacing: '0.28em', textShadow: '0 0 24px rgba(77,255,145,0.55)', lineHeight: 1 }}>
+                      <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '1.75em', color: '#4dff91', letterSpacing: '0.28em', textShadow: '0 0 24px rgba(77,255,145,0.55)', lineHeight: 1 }}>
                         HURT INSIDE
                       </h2>
                     </div>
@@ -584,14 +587,17 @@ export default function Home() {
                 >
                   <GameIconsBackground />
 
+                  {/* TEMP DISABLED: Partners + Contact sub-sections (remove `{false && (<>` and matching `</>)}` to restore) */}
+                  {false && (
+                  <>
                   {/* Partners sub-section */}
                   <div className="px-12 py-10">
                     {/* Section header */}
                     <div className="flex flex-col items-center mb-12 text-center">
-                      <h2 style={{ fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '3em', color: '#4dff91', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(77,255,145,0.25)' }}>
+                      <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '3em', color: '#4dff91', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(77,255,145,0.25)' }}>
                         Teammates
                       </h2>
-                      <p style={{ fontFamily: "'Arvo', monospace", fontSize: '1.25em', color: '#4dff91', opacity: 0.4 }}>
+                      <p style={{ fontFamily: "'Poppins', monospace", fontSize: '1.25em', color: '#4dff91', opacity: 0.4 }}>
                         Brands and organisations we work alongside.
                       </p>
                     </div>
@@ -617,7 +623,7 @@ export default function Home() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={`${MEDIA_BASE}/the-vault-logo.jpg`} alt="The Vault" className="max-w-[260px] h-auto block" />
-                        <p  className="font-bold" style={{ fontFamily: "'Arvo', monospace", fontSize: '1em', color: '#16432a', lineHeight: 1.6 }}>
+                        <p  className="font-bold" style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#16432a', lineHeight: 1.6 }}>
                           When we're in Negril, we voice at The Vault. <br></br> A partnering recording studio built for late-night sessions and serious sound. Located in the heart of the city's nightlife, it serves as the premium creative hub for bringing records to life.
                         </p>
                         <a
@@ -635,12 +641,12 @@ export default function Home() {
                   <div className="px-12 py-20">
                     <div className="flex flex-col items-center mb-12 text-center">
                     <h2
-                      style={{ fontFamily: "'Hemisphers Bold Sans', monospace", fontSize: '3em', color: '#4dff91', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(77,255,145,0.25)' }}
+                      style={{ fontFamily: "'Poppins', monospace", fontSize: '3em', color: '#4dff91', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(77,255,145,0.25)' }}
                     >
                       SEND A MESSAGE
                     </h2>
                     <p
-                      style={{ fontFamily: "'Arvo', monospace", fontSize: '1.25em', color: '#4dff91', opacity: 0.4 }}
+                      style={{ fontFamily: "'Poppins', monospace", fontSize: '1.25em', color: '#4dff91', opacity: 0.4 }}
                     >
                       We’ll get back to you within 24 hours.
                     </p>
@@ -689,10 +695,13 @@ export default function Home() {
                     )}
                   </form>
                   </div>{/* /contact sub-section */}
+                  </>
+                  )}
                 </div>{/* /partners+contact shared wrapper */}
 
-              </div>{/* /main-scroll */}
+                <Footer />
 
+              </div>{/* /main-scroll */}
             </div>{/* /section */}
           </div>
         </div>
@@ -714,14 +723,14 @@ export default function Home() {
           >
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#4dff91] animate-pulse" />
-              <span style={{ fontFamily: "'Arvo', monospace", fontSize: '0.7em', letterSpacing: '0.28em', color: '#4dff91' }}>
+              <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.7em', letterSpacing: '0.28em', color: '#4dff91' }}>
                 NOW PLAYING
               </span>
             </div>
             <button
               onClick={() => setPlayerVisible(false)}
               className="mini-player-close transition-colors"
-              style={{ fontFamily: "'Arvo', monospace", fontSize: '1em', color: '#4dff91', background: 'none', border: 'none', cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
+              style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#4dff91', background: 'none', border: 'none', cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
               aria-label="Hide player"
             >
               ✕

@@ -135,18 +135,18 @@ export default function CartPage() {
       <Header />
       <div className="w-full min-h-screen bg-[#FEFEFA] px-6 md:px-10 py-10">
         <h1
-          style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+          style={{ fontFamily: "'Poppins', monospace" }}
           className="text-2xl text-[#16432a] mb-8"
         >
           Your Cart
         </h1>
 
         {isLoading ? (
-          <p style={{ fontFamily: "'Arvo', monospace" }} className="text-[#16432a]/70">
+          <p style={{ fontFamily: "'Poppins', monospace" }} className="text-[#16432a]/70">
             Loading…
           </p>
         ) : error ? (
-          <p style={{ fontFamily: "'Arvo', monospace" }} className="text-red-600">
+          <p style={{ fontFamily: "'Poppins', monospace" }} className="text-red-600">
             {error}
           </p>
         ) : (
@@ -154,7 +154,7 @@ export default function CartPage() {
             {/* Cart items — main column */}
             <div className="flex-1 w-full">
               {cartItems.length === 0 ? (
-                <p style={{ fontFamily: "'Arvo', monospace" }} className="text-[#16432a]/70">
+                <p style={{ fontFamily: "'Poppins', monospace" }} className="text-[#16432a]/70">
                   Your cart is empty.{' '}
                   <Link href="/shop" className="text-[#1a9e4a] underline">
                     Continue shopping
@@ -174,15 +174,15 @@ export default function CartPage() {
                       </div>
                       <div className="flex-1">
                         <p
-                          style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+                          style={{ fontFamily: "'Poppins', monospace" }}
                           className="text-[#16432a] font-semibold"
                         >
                           {item.name}
                         </p>
-                        <p style={{ fontFamily: "'Arvo', monospace" }} className="text-sm text-[#16432a]/60">
+                        <p style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#16432a]/60">
                           Size: {item.size}
                         </p>
-                        <p style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="text-[#1a9e4a] mt-1">
+                        <p style={{ fontFamily: "'Poppins', monospace" }} className="text-[#1a9e4a] mt-1">
                           ${item.price.toFixed(2)}
                         </p>
                       </div>
@@ -195,7 +195,7 @@ export default function CartPage() {
                         >
                           −
                         </button>
-                        <span style={{ fontFamily: "'Arvo', monospace" }} className="w-6 text-center text-[#16432a]">
+                        <span style={{ fontFamily: "'Poppins', monospace" }} className="w-6 text-center text-[#16432a]">
                           {item.quantity}
                         </span>
                         <button
@@ -209,7 +209,7 @@ export default function CartPage() {
                       <button
                         type="button"
                         onClick={() => removeFromCart(item.id)}
-                        style={{ fontFamily: "'Arvo', monospace" }}
+                        style={{ fontFamily: "'Poppins', monospace" }}
                         className="text-sm text-red-600 hover:underline cursor-pointer ml-2"
                       >
                         Remove
@@ -218,7 +218,7 @@ export default function CartPage() {
                   ))}
 
                   <div className="flex justify-end mt-4">
-                    <p style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }} className="text-lg text-[#16432a]">
+                    <p style={{ fontFamily: "'Poppins', monospace" }} className="text-lg text-[#16432a]">
                       Subtotal: <span className="text-[#1a9e4a]">${subtotal.toFixed(2)}</span>
                     </p>
                   </div>
@@ -229,14 +229,14 @@ export default function CartPage() {
             {/* Wishlist — sidebar */}
             <aside className="w-full lg:w-[320px] flex-shrink-0 border border-[#1a9e4a]/20 bg-white px-5 py-5">
               <h2
-                style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+                style={{ fontFamily: "'Poppins', monospace" }}
                 className="text-[#16432a] mb-4"
               >
                 Wishlist
               </h2>
 
               {wishlistItems.length === 0 ? (
-                <p style={{ fontFamily: "'Arvo', monospace" }} className="text-sm text-[#16432a]/60">
+                <p style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#16432a]/60">
                   Nothing saved yet.
                 </p>
               ) : (
@@ -251,19 +251,19 @@ export default function CartPage() {
                       <div className="flex-1">
                         <Link
                           href={`/shop/${item.slug}`}
-                          style={{ fontFamily: "'Hemisphers Bold Sans', monospace" }}
+                          style={{ fontFamily: "'Poppins', monospace" }}
                           className="block text-sm text-[#16432a] font-semibold hover:underline"
                         >
                           {item.name}
                         </Link>
-                        <p style={{ fontFamily: "'Arvo', monospace" }} className="text-xs text-[#1a9e4a] mb-2">
+                        <p style={{ fontFamily: "'Poppins', monospace" }} className="text-xs text-[#1a9e4a] mb-2">
                           ${item.price.toFixed(2)}
                         </p>
                         <div className="flex gap-3">
                           <button
                             type="button"
                             onClick={() => moveToCart(item)}
-                            style={{ fontFamily: "'Arvo', monospace" }}
+                            style={{ fontFamily: "'Poppins', monospace" }}
                             className="text-xs text-[#1a9e4a] hover:underline cursor-pointer"
                           >
                             Move to cart
@@ -271,7 +271,7 @@ export default function CartPage() {
                           <button
                             type="button"
                             onClick={() => removeFromWishlist(item.product_id)}
-                            style={{ fontFamily: "'Arvo', monospace" }}
+                            style={{ fontFamily: "'Poppins', monospace" }}
                             className="text-xs text-red-600 hover:underline cursor-pointer"
                           >
                             Remove

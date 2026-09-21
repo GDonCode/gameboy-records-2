@@ -219,7 +219,7 @@ export default function GuitarTiles() {
 
       <div
         style={{
-          fontFamily: "'Hemisphers Bold Sans', monospace",
+          fontFamily: "'Poppins', monospace",
           fontSize: '1.2em',
           letterSpacing: '0.15em',
           color: '#4dff91',
@@ -234,7 +234,7 @@ export default function GuitarTiles() {
           onClick={startGame}
           disabled={saving}
           style={{
-            fontFamily: "'Hemisphers Bold Sans', monospace",
+            fontFamily: "'Poppins', monospace",
             fontSize: '0.85em',
             letterSpacing: '0.12em',
             color: '#fff',
@@ -251,7 +251,7 @@ export default function GuitarTiles() {
       )}
 
       {state === 'idle' && (
-        <p style={{ fontFamily: "'Arvo', monospace", fontSize: '0.8em', color: 'rgba(255,255,255,0.6)' }}>
+        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '0.8em', color: 'rgba(255,255,255,0.6)' }}>
           Keys: A S D F J K (low E → high E), or tap the lanes.
         </p>
       )}
