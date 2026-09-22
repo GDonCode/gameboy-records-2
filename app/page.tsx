@@ -389,8 +389,8 @@ export default function Home() {
 
                   {/* Content */}
                   <div
-                    className="relative z-[3] flex flex-col items-center justify-center gap-5 px-6 text-center"
-                    style={{ minHeight: 'calc(100vh - 90px)' }}
+                    className="relative z-[3] flex flex-col items-center justify-center gap-6 px-10 text-center"
+                    style={{ minHeight: '100vh' }}
                   >
                     <div className="flex flex-col items-center gap-1">
                        <h1
@@ -421,6 +421,15 @@ export default function Home() {
                         {' '}TRUEST VISION.
                       </p>
                     </div>
+                    <button
+                      className="listen-btn"
+                      onClick={() => openPlayer('https://www.youtube.com/embed/videoseries?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo&autoplay=1&controls=1')}
+                    >
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 block" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      TUNE IN
+                    </button>
 
                     {/* Artist portraits strip 
                     <div className="flex flex-wrap items-center justify-center gap-8 mt-2 max-w-4xl">
@@ -523,55 +532,50 @@ export default function Home() {
 
                     
                   </div>
-                  <div className="absolute bottom-24 left-0 right-0 z-[3] flex items-center justify-center">
-                    {/* TUNE IN CTA — always plays the playlist, never a single video */}
-                      <button
-                        className="listen-btn"
-                        onClick={() => openPlayer('https://www.youtube.com/embed/videoseries?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo&autoplay=1&controls=1')}
-                        style={{ marginTop: '6px' }}
-                      >
-                        <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 block" fill="currentColor">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                        TUNE IN
-                      </button>
-                  </div>
                 </div>
                 <div
                   className="relative flex-shrink-0 overflow-hidden"
                   style={{ minHeight: 'calc(100vh - 84px)' }}
                 >
-                  {/* Background video */}
+                  {/* Background video — blurred, stretched fill */}
                   <video
-                    src={`${MEDIA_BASE}/hurt-inside-preview.mp4`}
+                    src={`${MEDIA_BASE}/Rise Up Now (Guitar Cover).mp4`}
                     autoPlay muted loop playsInline
-                    className="absolute inset-0 w-full h-full object-cover"
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover scale-110"
+                    style={{ filter: 'blur(5px) brightness(0.55)' }}
+                  />
+
+                  {/* Foreground video — true vertical aspect, centered, no crop */}
+                  <video
+                    src={`${MEDIA_BASE}/Rise Up Now (Guitar Cover).mp4`}
+                    autoPlay muted loop playsInline
+                    className="absolute inset-0 w-full h-full object-contain"
                   />
 
                   {/* Overlay layer 1 — uniform dark tint for readability */}
-                  <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.45)' }} />
+                  <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.25)' }} />
                   {/* Overlay layer 2 — top + bottom gradient fade */}
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,16,12,0.6) 0%, transparent 22%, transparent 62%, rgba(10,16,12,0.98) 100%)' }} />
-
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,16,12,0.32) 0%, transparent 22%, transparent 62%, rgba(10,16,12,0.5) 100%)' }} />
                   {/* Hero content */}
                   <div
                     className="relative z-[3] flex flex-col items-center justify-center gap-6 px-10 text-center"
                     style={{ minHeight: 'calc(100vh - 84px)' }}
                   >
                     <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.72em', letterSpacing: '0.35em', color: '#4dff91', border: '1px solid rgba(77,255,145,0.4)', padding: '3px 12px', borderRadius: '2px', textShadow: '0 0 10px rgba(77,255,145,0.6)', background: 'rgba(0,0,0,0.45)' }}>
-                      FEATURED RELEASE
+                      NEW MUSIC
                     </span>
                     <div className="flex flex-col items-center gap-1">
-                      <h1 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '3em', color: '#fff', letterSpacing: '0.15em', textShadow: '0 2px 28px rgba(0,0,0,0.9), 0 0 40px rgba(77,255,145,0.12)', lineHeight: 1 }}>
-                        ALEXX A-GAME
+                      <h1 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '3em', color: '#fff', letterSpacing: '0.12em', textShadow: '0 2px 28px rgba(0,0,0,0.9), 0 0 40px rgba(77,255,145,0.12)', lineHeight: 1 }}>
+                        RISE UP NOW (GUITAR VERSION)
                       </h1>
                       <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '1.75em', color: '#4dff91', letterSpacing: '0.28em', textShadow: '0 0 24px rgba(77,255,145,0.55)', lineHeight: 1 }}>
-                        HURT INSIDE
+                        ALEXX A-GAME
                       </h2>
                     </div>
                     <button
                       className="listen-btn"
-                      onClick={() => openPlayer('https://www.youtube.com/embed/HgpiViCedv0?autoplay=1&controls=1')}
+                      onClick={() => openPlayer('https://www.youtube.com/embed/etLGFz3dtsM?si=tzBYcOWR4rJUbu9J&autoplay=1&controls=1')}
                     >
                       <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 block" fill="currentColor">
                         <path d="M8 5v14l11-7z" />
@@ -585,7 +589,33 @@ export default function Home() {
                   className="flex-shrink-0 relative z-[2]"
                   style={{ background: 'linear-gradient(180deg, #0f1a12 0%, #0c1510 100%)' }}
                 >
-                  <GameIconsBackground />
+                                  <GameIconsBackground />
+
+                {/* About sub-section */}
+                  <div className="relative z-[1] px-12 py-16">
+                    <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12 max-w-[1080px] mx-auto">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`${MEDIA_BASE}/IMG_2591.jpg`}
+                        alt="Alexx A-Game"
+                        className="w-full h-[440px] object-cover block rounded-[2px] border-[3px] border-[#1a9e4a]"
+                      />
+                      <div className="flex flex-col gap-4">
+                        <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '3em', color: '#4dff91', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(77,255,145,0.25)' }}>
+                          WHO IS GAMEBOY?
+                        </h2>
+                        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '1.25em', color: '#4dff91', opacity: 0.4 }}>
+                          The story behind the sound.
+                        </p>
+                        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#e8f5ec', lineHeight: 1.6 }}>
+                          <span className="font-bold text-[1.15em] text-[#fff]">Alexx A-Game</span>, born Alex Gallimore, grew up in Wood’s Town, Discovery Bay, in St. Ann, Jamaica. A William Knibb High School graduate, he picked up his stage name in late 2013 from his constant use of the slang “a-game.”
+                        </p>
+                        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#e8f5ec', lineHeight: 1.6 }}>
+                          A musician first, Alexx has pushed for a fresher, more visual approach to Jamaican music, and was cast as Peter Tosh in Paramount’s <em>Bob Marley: One Love</em>. Gameboy Records is where that vision lives: realest sound, truest vision.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* TEMP DISABLED: Partners + Contact sub-sections (remove `{false && (<>` and matching `</>)}` to restore) */}
                   {false && (

@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
-
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,19 +39,15 @@ export default function Footer() {
           flex: 1;
           min-width: 0;
           height: 44px;
-          padding: 0 14px;
-          font-family: 'Poppins', monospace;
-          font-size: 0.9em;
-          color: #16432a;
-          background: #fff;
-          border: 1px solid rgba(26,158,74,0.45);
-          border-radius: 2px;
+          line-height: 28px;
+          padding: 0 1rem;
+          padding-left: 2.5rem;
+          border: 2px solid transparent;
+          border-radius: 8px;
           outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .footer-email-input:focus {
-          border-color: #1a9e4a;
-          box-shadow: 0 0 0 1px #1a9e4a;
+          background-color: #fff;
+          color: #0d0c22;
+          transition: .3s ease;
         }
         .footer-email-input::placeholder { color: rgba(22,67,42,0.4); }
         .footer-subscribe-btn {
@@ -85,27 +79,52 @@ export default function Footer() {
           transform: translateY(4px);
           box-shadow: inset 0 2px 6px rgba(0,0,0,0.25);
         }
-        .footer-subscribe-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+                .footer-subscribe-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+                .footer-social-link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          padding: 8px;
+          border-radius: 50%;
+          background: #fff;
+          border: 1px solid rgba(26,158,74,0.2);
+          box-shadow: 0 3px 0 rgba(13,92,41,0.15), 0 4px 10px rgba(0,0,0,0.08);
+          transition: transform 0.07s ease, box-shadow 0.07s ease;
+          user-select: none;
+        }
+        .footer-social-link img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+        }
+        .footer-social-link:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 0 rgba(13,92,41,0.15), 0 6px 14px rgba(0,0,0,0.12);
+        }
       `}</style>
-            {/* Left half — image + text */}
-      <div className="flex-1 flow-root px-6 py-8 text-left">
-                <div className="float-left mr-5 mb-2">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`${MEDIA_BASE}/IMG_2591.jpg`}
-          alt="Gameboy Records"
-          className="w-auto h-auto max-w-[200px] max-h-[180px] block rounded-[2px] border-[3px] border-[#1a9e4a]"
-        />
-      </div>
-        <p className="mb-3" style={{ fontFamily: "'Poppins', monospace", fontSize: '0.8em', color: '#3c5e4c', lineHeight: 1.6 }}>
-          Alexx A-Game, born Alex Gallimore, grew up in Wood’s Town, Discovery Bay, in St. Ann, Jamaica. A William Knibb High School graduate, he picked up his stage name in late 2013 from his constant use of the slang “a-game.”
+      {/* Left half — social links */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-8">
+        <h3 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '1.75em', letterSpacing: '0.15em', color: '#16432a', lineHeight: 1 }}>
+          FOLLOW US
+        </h3>
+        <p className="mt-3 mb-6" style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#3c5e4c', lineHeight: 1.6 }}>
+          New drops, shows and behind-the-scenes — follow along.
         </p>
-        <p className="mb-3" style={{ fontFamily: "'Poppins', monospace", fontSize: '0.8em', color: '#3c5e4c', lineHeight: 1.6 }}>
-          His sound blends dancehall with hip-hop, shaped by Damian Marley, Shabba Ranks and US and UK rap culture. Bass-heavy beats and sharp, witty lyrics defined his early mixtape <em>RealnTrue Vol. 1</em>, and he has since worked with international producers including Benny Page, Swing Ting and Famous Eno.
-        </p>
-        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '0.8em', color: '#3c5e4c', lineHeight: 1.6 }}>
-          A musician first, Alexx has pushed for a fresher, more visual approach to Jamaican music, and was cast as Peter Tosh in Paramount’s <em>Bob Marley: One Love</em>. Gameboy Records is where that vision lives: realest sound, truest vision.
-        </p>
+                <div className="flex items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://www.instagram.com/gameboyrecordsofficial/" aria-label="Instagram" className="footer-social-link"><img src="/instagram.png" alt="Instagram" /></a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://www.tiktok.com/@alexxagame" aria-label="TikTok" className="footer-social-link"><img src="/tik-tok.png" alt="TikTok" /></a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://www.youtube.com/@LifeOfGameBoy" aria-label="YouTube" className="footer-social-link"><img src="/youtube.png" alt="YouTube" /></a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://open.spotify.com/artist/3BemerMhrSFpqDcAsqkdvh" aria-label="Spotify" className="footer-social-link"><img src="/spotify.png" alt="Spotify" /></a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://music.apple.com/us/artist/alexx-a-game/1093080428" aria-label="Apple Music" className="footer-social-link"><img src="/apple-music.png" alt="Apple Music" /></a>
+        </div>
       </div>
 
       {/* Divider — my-6 keeps it clear of the top and bottom edges */}
@@ -113,24 +132,37 @@ export default function Footer() {
 
       {/* Right half — newsletter signup */}
       <div className="flex-1 flex items-center justify-center px-6 py-8">
-        <div className="w-full max-w-[420px] flex flex-col gap-3">
-          <h3 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '1.4em', letterSpacing: '0.15em', color: '#16432a', lineHeight: 1 }}>
+        <div className="w-full max-w-[420px] flex flex-col">
+          <h3 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '1.75em', letterSpacing: '0.15em', color: '#16432a', lineHeight: 1 }}>
             JOIN THE NEWSLETTER
           </h3>
-          <p style={{ fontFamily: "'Poppins', monospace", fontSize: '0.85em', color: '#3c5e4c', lineHeight: 1.6 }}>
+          <p className="mt-3" style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#3c5e4c', lineHeight: 1.6 }}>
             New drops, shows and behind-the-scenes, straight to your inbox.
           </p>
-          <form onSubmit={handleSubscribe} className="flex gap-2">
-            <input
-              type="email"
-              name="email"
-              placeholder="Your email"
-              aria-label="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="footer-email-input"
-            />
+          <form onSubmit={handleSubscribe} className="flex gap-2 mt-6">
+            <div className="relative flex-1 min-w-0">
+              {/* Font Awesome envelope icon (v7.3.1), CC BY 4.0 */}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 640 640"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+              >
+                <path
+                  fill="#16432a"
+                  d="M125.4 128C91.5 128 64 155.5 64 189.4C64 190.3 64 191.1 64.1 192L64 192L64 448C64 483.3 92.7 512 128 512L512 512C547.3 512 576 483.3 576 448L576 192L575.9 192C575.9 191.1 576 190.3 576 189.4C576 155.5 548.5 128 514.6 128L125.4 128zM528 256.3L528 448C528 456.8 520.8 464 512 464L128 464C119.2 464 112 456.8 112 448L112 256.3L266.8 373.7C298.2 397.6 341.7 397.6 373.2 373.7L528 256.3zM112 189.4C112 182 118 176 125.4 176L514.6 176C522 176 528 182 528 189.4C528 193.6 526 197.6 522.7 200.1L344.2 335.5C329.9 346.3 310.1 346.3 295.8 335.5L117.3 200.1C114 197.6 112 193.6 112 189.4z"
+                />
+              </svg>
+              <input
+                type="email"
+                name="email"
+                placeholder="Your email"
+                aria-label="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="footer-email-input w-full"
+              />
+            </div>
             <button type="submit" disabled={isSubmitting} className="footer-subscribe-btn">
               {isSubmitting ? 'SENDING…' : 'SUBSCRIBE'}
             </button>

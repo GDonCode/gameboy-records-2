@@ -89,9 +89,9 @@ export default function Header() {
             className="flex items-center gap-1 bg-[#1a9e4a]/[0.1] border border-[#1a9e4a]/20 px-3 py-2"
           >
             {[
-              { href: '/feed', label: 'Feed' },
-              { href: '/shows', label: 'Shows' },
-              { href: '/shop', label: 'Shop' },
+              { href: '/feed', label: 'FEED' },
+              { href: '/shows', label: 'SHOWS' },
+              { href: '/shop', label: 'SHOP' },
             ].map((item) => (
               <li key={item.href}>
                 <a 
@@ -104,7 +104,7 @@ export default function Header() {
                   style={{
                     fontFamily: "'Poppins_semibold', monospace",
                     fontSize: '1.1em',
-                    letterSpacing: '0.1em',
+                    letterSpacing: '0.05em',
                   }}
                 >
                   {item.label}
@@ -124,11 +124,11 @@ export default function Header() {
                 style={{
                   fontFamily: "'Poppins_semibold', monospace",
                   fontSize: '1.1em',
-                  letterSpacing: '0.1em',
+                  letterSpacing: '0.05em',
                 }}
               >
                 <span className="inline-flex items-center gap-1">
-                  Games
+                  VIBES
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -148,8 +148,8 @@ export default function Header() {
                 className="absolute left-0 top-full hidden group-hover:flex flex-col min-w-[160px] bg-[#fef8f3] border border-[#1a9e4a]/20 shadow-lg z-50"
               >
                 {[
-                  { href: '/karaoke', label: 'Karaoke' },
-                  { href: '/guitar', label: 'Guitar' },
+                  { href: '/karaoke', label: 'KARAOKE' },
+                  { href: '/guitar', label: 'GUITAR' },
                 ].map((item) => (
                   <li key={item.href}>
                     <a
@@ -160,7 +160,7 @@ export default function Header() {
                           : 'text-[#16432a] hover:bg-[#1a9e4a]/10'
                       }`}
                       style={{
-                        fontFamily: "'Poppins', monospace",
+                        fontFamily: "'Poppins_semibold', monospace",
                         fontSize: '1em',
                         letterSpacing: '0.1em',
                       }}
@@ -181,11 +181,10 @@ export default function Header() {
             aria-label="Account"
             className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white font-bold transition"
           >
-            <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-110">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-5 h-5 flex-shrink-0 block" fill="currentColor">
+            <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-120">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-6 h-6 flex-shrink-0 block" fill="currentColor">
                 <path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z" />
               </svg>
-              My Account
             </span>
           </Link>
 
@@ -194,11 +193,10 @@ export default function Header() {
             aria-label="Cart"
             className="group relative cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white font-bold transition"
           >
-            <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-110">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-5 h-5 flex-shrink-0 block" fill="currentColor">
+            <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-120">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-6 h-6 flex-shrink-0 block" fill="currentColor">
                 <path d="M24 80C10.7 80 0 90.7 0 104C0 117.3 10.7 128 24 128L69.5 128C79.6 128 88.4 134.8 91 144.6L143.9 344.9C154.6 385.4 191.3 413.7 233.2 413.7L465.8 413.7C507 413.7 543.2 386.4 554.5 346.8L601 184.6C609.6 154.7 587.2 124.8 556.1 124.8L142.9 124.8L137.6 105C127.5 66.7 92.8 40 53.2 40L24 40L24 80zM192 528C218.5 528 240 506.5 240 480C240 453.5 218.5 432 192 432C165.5 432 144 453.5 144 480C144 506.5 165.5 528 192 528zM496 528C522.5 528 544 506.5 544 480C544 453.5 522.5 432 496 432C469.5 432 448 453.5 448 480C448 506.5 469.5 528 496 528z" />
               </svg>
-              Cart
             </span>
             {cartCount > 0 && (
               <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold leading-none">

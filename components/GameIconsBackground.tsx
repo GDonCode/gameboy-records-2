@@ -3,12 +3,12 @@
 import { useEffect, useRef } from 'react';
 
 export type GameIconName =
-  | 'controller'
-  | 'dpad'
-  | 'joystick'
-  | 'dice'
   | 'trophy'
-  | 'console';
+  | 'tv'
+  | 'eagle'
+  | 'musicNotes'
+  | 'guitar'
+  | 'dice';
 
 interface GameIconsBackgroundProps {
   /** Extra classes on the wrapping div (e.g. z-index overrides). */
@@ -27,7 +27,7 @@ interface GameIconsBackgroundProps {
   icons?: GameIconName[];
 }
 
-const ALL_ICONS: GameIconName[] = ['controller', 'dpad', 'joystick', 'dice', 'trophy', 'console'];
+const ALL_ICONS: GameIconName[] = ['trophy', 'tv', 'eagle', 'musicNotes', 'guitar', 'dice'];
 
 const LAYER_CONFIG = [
   { sizeRange: [12, 18] as [number, number], speed: 6, baseOpacity: 0.1, countPerArea: 1 / 26000 },
@@ -55,62 +55,68 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
   ctx.closePath();
 }
 
-function drawController(ctx: CanvasRenderingContext2D, s: number) {
-  const w = s, h = s * 0.55;
-  roundRect(ctx, -w / 2, -h / 2, w, h, h * 0.4);
+function drawTV(ctx: CanvasRenderingContext2D, s: number) {
+  const w = s * 0.9, h = s * 0.65;
+  roundRect(ctx, -w / 2, -h / 2, w, h, h * 0.12);
   ctx.stroke();
 
-  const dx = -w * 0.22, armLen = h * 0.5, armW = h * 0.2;
-  ctx.beginPath();
-  ctx.moveTo(dx - armW / 2, -armLen / 2);
-  ctx.lineTo(dx + armW / 2, -armLen / 2);
-  ctx.lineTo(dx + armW / 2, -armW / 2);
-  ctx.lineTo(dx + armLen / 2, -armW / 2);
-  ctx.lineTo(dx + armLen / 2, armW / 2);
-  ctx.lineTo(dx + armW / 2, armW / 2);
-  ctx.lineTo(dx + armW / 2, armLen / 2);
-  ctx.lineTo(dx - armW / 2, armLen / 2);
-  ctx.lineTo(dx - armW / 2, armW / 2);
-  ctx.lineTo(dx - armLen / 2, armW / 2);
-  ctx.lineTo(dx - armLen / 2, -armW / 2);
-  ctx.lineTo(dx - armW / 2, -armW / 2);
-  ctx.closePath();
+  const pad = h * 0.15;
+  roundRect(ctx, -w / 2 + pad, -h / 2 + pad, w - pad * 2, h - pad * 2, h * 0.06);
   ctx.stroke();
 
-  const bx = w * 0.2, by = -h * 0.08, r = h * 0.13;
-  ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(bx + r * 1.7, by + h * 0.18, r, 0, Math.PI * 2); ctx.stroke();
-}
-
-function drawDpad(ctx: CanvasRenderingContext2D, s: number) {
-  const armLen = s * 0.9, armW = s * 0.32;
   ctx.beginPath();
-  ctx.moveTo(-armW / 2, -armLen / 2);
-  ctx.lineTo(armW / 2, -armLen / 2);
-  ctx.lineTo(armW / 2, -armW / 2);
-  ctx.lineTo(armLen / 2, -armW / 2);
-  ctx.lineTo(armLen / 2, armW / 2);
-  ctx.lineTo(armW / 2, armW / 2);
-  ctx.lineTo(armW / 2, armLen / 2);
-  ctx.lineTo(-armW / 2, armLen / 2);
-  ctx.lineTo(-armW / 2, armW / 2);
-  ctx.lineTo(-armLen / 2, armW / 2);
-  ctx.lineTo(-armLen / 2, -armW / 2);
-  ctx.lineTo(-armW / 2, -armW / 2);
-  ctx.closePath();
+  ctx.moveTo(-w * 0.18, h / 2);
+  ctx.lineTo(-w * 0.3, h / 2 + h * 0.22);
+  ctx.moveTo(w * 0.18, h / 2);
+  ctx.lineTo(w * 0.3, h / 2 + h * 0.22);
   ctx.stroke();
 }
 
-function drawJoystick(ctx: CanvasRenderingContext2D, s: number) {
-  const baseW = s * 0.7, baseH = s * 0.22;
-  roundRect(ctx, -baseW / 2, s * 0.28, baseW, baseH, baseH * 0.3);
-  ctx.stroke();
+// ... drawTV above ...
+function drawMusicNotes(ctx: CanvasRenderingContext2D, s: number) {
+  const headR = s * 0.12;
+  const x1 = -s * 0.22, x2 = s * 0.1;
+  const yBase = s * 0.22, y2Base = s * 0.16;
+  const stemH = s * 0.5;
+
+  ctx.beginPath(); ctx.arc(x1, yBase, headR, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x2, y2Base, headR, 0, Math.PI * 2); ctx.stroke();
+
+  const stemX1 = x1 + headR * 0.9, stemX2 = x2 + headR * 0.9;
+  const stemTop1 = yBase - stemH, stemTop2 = y2Base - stemH;
+
   ctx.beginPath();
-  ctx.moveTo(0, s * 0.28);
-  ctx.lineTo(0, -s * 0.18);
+  ctx.moveTo(stemX1, yBase - headR * 0.2);
+  ctx.lineTo(stemX1, stemTop1);
   ctx.stroke();
+
   ctx.beginPath();
-  ctx.arc(0, -s * 0.32, s * 0.16, 0, Math.PI * 2);
+  ctx.moveTo(stemX2, y2Base - headR * 0.2);
+  ctx.lineTo(stemX2, stemTop2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(stemX1, stemTop1);
+  ctx.lineTo(stemX2, stemTop2);
+  ctx.lineTo(stemX2, stemTop2 + s * 0.08);
+  ctx.lineTo(stemX1, stemTop1 + s * 0.08);
+  ctx.closePath();
+  ctx.stroke();
+}
+
+function drawGuitar(ctx: CanvasRenderingContext2D, s: number) {
+  const bodyR1 = s * 0.22, bodyR2 = s * 0.16;
+
+  ctx.beginPath(); ctx.arc(0, s * 0.25, bodyR1, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, s * 0.02, bodyR2, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, s * 0.2, bodyR1 * 0.35, 0, Math.PI * 2); ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(0, -s * 0.12);
+  ctx.lineTo(0, -s * 0.48);
+  ctx.stroke();
+
+  roundRect(ctx, -s * 0.09, -s * 0.58, s * 0.18, s * 0.1, s * 0.02);
   ctx.stroke();
 }
 
@@ -144,28 +150,12 @@ function drawTrophy(ctx: CanvasRenderingContext2D, s: number) {
   ctx.stroke();
 }
 
-function drawConsole(ctx: CanvasRenderingContext2D, s: number) {
-  const w = s * 0.9, h = s * 0.6;
-  roundRect(ctx, -w / 2, -h / 2, w, h, h * 0.15);
-  ctx.stroke();
-  const pad = h * 0.18;
-  roundRect(ctx, -w / 2 + pad, -h / 2 + pad, w - pad * 2, h - pad * 2.4, h * 0.08);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(-w * 0.1, -h / 2);
-  ctx.lineTo(-w * 0.25, -h / 2 - h * 0.4);
-  ctx.moveTo(w * 0.1, -h / 2);
-  ctx.lineTo(w * 0.25, -h / 2 - h * 0.4);
-  ctx.stroke();
-}
-
-const DRAW_FNS: Record<GameIconName, (ctx: CanvasRenderingContext2D, s: number) => void> = {
-  controller: drawController,
-  dpad: drawDpad,
-  joystick: drawJoystick,
-  dice: drawDice,
+const DRAW_FNS: Record<Exclude<GameIconName, 'eagle'>, (ctx: CanvasRenderingContext2D, s: number) => void> = {
   trophy: drawTrophy,
-  console: drawConsole,
+  tv: drawTV,
+  musicNotes: drawMusicNotes,
+  guitar: drawGuitar,
+  dice: drawDice,
 };
 
 function buildIcons(width: number, height: number, layerCount: number, density: number, iconNames: GameIconName[]): IconInstance[] {
@@ -196,9 +186,10 @@ export default function GameIconsBackground({
   opacity = 1,
   icons = ALL_ICONS,
 }: GameIconsBackgroundProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const iconsRef = useRef<IconInstance[]>([]);
+  const eagleImgRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -210,6 +201,11 @@ export default function GameIconsBackground({
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let width = 0, height = 0, frameId = 0, lastTime = 0, visible = true;
+
+    const eagleImg = new Image();
+    eagleImg.onload = () => { if (reduceMotion) draw(); };
+    eagleImg.src = '/eagle.png';
+    eagleImgRef.current = eagleImg;
 
     function resize() {
       const rect = wrapper!.getBoundingClientRect();
@@ -228,13 +224,20 @@ export default function GameIconsBackground({
       ctx!.clearRect(0, 0, width, height);
       ctx!.strokeStyle = color;
       ctx!.lineJoin = 'round';
-      for (const icon of iconsRef.current) {
+            for (const icon of iconsRef.current) {
         ctx!.save();
         ctx!.translate(icon.x, icon.y);
         ctx!.rotate(icon.rotation);
         ctx!.globalAlpha = icon.opacity * opacity;
-        ctx!.lineWidth = Math.max(1.2, icon.size / 14);
-        DRAW_FNS[icon.type](ctx!, icon.size);
+        if (icon.type === 'eagle') {
+          const img = eagleImgRef.current;
+          if (img && img.complete && img.naturalWidth > 0) {
+            ctx!.drawImage(img, -icon.size / 2, -icon.size / 2, icon.size, icon.size);
+          }
+        } else {
+          ctx!.lineWidth = Math.max(1.2, icon.size / 14);
+          DRAW_FNS[icon.type](ctx!, icon.size);
+        }
         ctx!.restore();
       }
     }
