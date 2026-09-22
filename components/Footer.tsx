@@ -61,10 +61,6 @@ export default function Footer() {
           padding: 0 22px;
           height: 44px;
           background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
-          border: 1px solid #1a9e4a;
-          border-bottom-color: #0d5c29;
-          border-right-color: #126e32;
-          box-shadow: 0 4px 0 #0d5c29, 0 6px 16px rgba(13,92,41,0.5), inset 0 1px 0 rgba(255,255,255,0.35);
           cursor: pointer;
           transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.08s ease;
           user-select: none;
@@ -73,7 +69,6 @@ export default function Footer() {
           transform: translateY(-2px);
           background: linear-gradient(175deg, #2bd06a 0%, #1aa64c 100%);
           border-color: #4dff91;
-          box-shadow: 0 6px 0 #0d5c29, 0 8px 14px rgba(13,92,41,0.4), 0 0 14px rgba(77,255,145,0.45);
         }
         .footer-subscribe-btn:active:not(:disabled) {
           transform: translateY(4px);
