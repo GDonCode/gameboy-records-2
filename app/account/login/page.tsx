@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import GameIconsBackground from '@/components/GameIconsBackground';
 
 export default function AccountLoginPage() {
   const router = useRouter();
@@ -42,6 +43,7 @@ export default function AccountLoginPage() {
     <>
       <style>{`
         .acct-wrap {
+          position: relative;
           min-height: 100vh;
           display: flex;
           align-items: center;
@@ -49,6 +51,8 @@ export default function AccountLoginPage() {
           background: linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%);
         }
         .acct-card {
+          position: relative;
+          z-index: 1;
           width: 380px;
           background: #0f1a12;
           border: 1px solid rgba(26,158,74,0.3);
@@ -112,6 +116,7 @@ export default function AccountLoginPage() {
       `}</style>
 
       <div className="acct-wrap">
+        <GameIconsBackground />
         <div className="acct-card">
           <div className="acct-title">SIGN IN</div>
 

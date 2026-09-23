@@ -187,9 +187,53 @@ export default function Home() {
           border-bottom-color: #0d5c29;
           box-shadow: 0 6px 0 #0d5c29, 0 8px 20px rgba(13,92,41,0.5), inset 0 1px 0 rgba(255,255,255,0.4), 0 0 22px rgba(77,255,145,0.55);
         }
-        .listen-btn:active {
+                .listen-btn:active {
           transform: translateY(4px);
           box-shadow: inset 0 2px 6px rgba(0,0,0,0.3), inset 0 0 16px rgba(77,255,145,0.2);
+        }
+
+        /* ── LISTEN ON (PLATFORM) BUTTONS ── */
+        .listen-on-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+        }
+        .listen-on-btn {
+          font-family: 'Poppins_semibold', monospace;
+          font-size: 0.85em;
+          letter-spacing: 0.1em;
+          color: #fff;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 0 20px;
+          height: 48px;
+          background: rgba(10,20,14,0.55);
+          border: 1px solid rgba(77,255,145,0.35);
+          border-radius: 2px;
+          cursor: pointer;
+          text-decoration: none;
+          transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.15s ease, border-color 0.15s ease;
+          user-select: none;
+        }
+        .listen-on-btn img {
+          width: 22px;
+          height: 22px;
+          object-fit: contain;
+          border-radius: 4px;
+          flex-shrink: 0;
+        }
+        .listen-on-btn:hover {
+          transform: translateY(-2px);
+          background: rgba(26,158,74,0.25);
+          border-color: #4dff91;
+          box-shadow: 0 4px 14px rgba(13,92,41,0.5), 0 0 14px rgba(77,255,145,0.35);
+        }
+        .listen-on-btn:active {
+          transform: translateY(1px);
         }
 
         /* ── FLOATING MINI-PLAYER ── */
@@ -562,9 +606,6 @@ export default function Home() {
                     className="relative z-[3] flex flex-col items-center justify-center gap-6 px-10 text-center"
                     style={{ minHeight: 'calc(100vh - 84px)' }}
                   >
-                    <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.72em', letterSpacing: '0.35em', color: '#4dff91', border: '1px solid rgba(77,255,145,0.4)', padding: '3px 12px', borderRadius: '2px', textShadow: '0 0 10px rgba(77,255,145,0.6)', background: 'rgba(0,0,0,0.45)' }}>
-                      NEW MUSIC
-                    </span>
                     <div className="flex flex-col items-center gap-1">
                       <h1 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '3em', color: '#fff', letterSpacing: '0.12em', textShadow: '0 2px 28px rgba(0,0,0,0.9), 0 0 40px rgba(77,255,145,0.12)', lineHeight: 1 }}>
                         RISE UP NOW (GUITAR VERSION)
@@ -573,15 +614,56 @@ export default function Home() {
                         ALEXX A-GAME
                       </h2>
                     </div>
-                    <button
-                      className="listen-btn"
-                      onClick={() => openPlayer('https://www.youtube.com/embed/etLGFz3dtsM?si=tzBYcOWR4rJUbu9J&autoplay=1&controls=1')}
-                    >
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 block" fill="currentColor">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                      LISTEN NOW
-                    </button>
+                    <div className="listen-on-wrap">
+                      <button
+                        className="listen-on-btn"
+                        onClick={() => openPlayer('https://www.youtube.com/embed/etLGFz3dtsM?si=tzBYcOWR4rJUbu9J&autoplay=1&controls=1')}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/youtube.png" alt="YouTube" />
+                        YOUTUBE
+                      </button>
+                      <a
+                        href="https://music.apple.com/us/song/rise-up-now-guitar-version/6809729519"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="listen-on-btn"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/apple-music.png" alt="Apple Music" />
+                        APPLE MUSIC
+                      </a>
+                      <a
+                        href="https://open.spotify.com/track/3tcAFyDjx0YBBJ2Y6TvVVh?si=a50460c499134546"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="listen-on-btn"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/spotify.png" alt="Spotify" />
+                        SPOTIFY
+                      </a>
+                      <a
+                        href="PASTE_AUDIOMACK_LINK_HERE"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="listen-on-btn"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/audiomack.png" alt="Audiomack" />
+                        AUDIOMACK
+                      </a>
+                      <a
+                        href="PASTE_SOUNDCLOUD_LINK_HERE"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="listen-on-btn"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/soundcloud.png" alt="Soundcloud" />
+                        SOUNDCLOUD
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -601,7 +683,7 @@ export default function Home() {
                         className="w-full h-[440px] object-cover block rounded-[2px] border-[3px] border-[#1a9e4a]"
                       />
                       <div className="flex flex-col gap-4">
-                        <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '3em', color: '#4dff91', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(77,255,145,0.25)' }}>
+                        <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '3em', color: '#4dff91', letterSpacing: '0.05em', textShadow: '0 0 20px rgba(77,255,145,0.25)' }}>
                           WHO IS GAMEBOY?
                         </h2>
                         <p style={{ fontFamily: "'Poppins', monospace", fontSize: '1.25em', color: '#4dff91', opacity: 0.4 }}>
