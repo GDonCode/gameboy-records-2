@@ -33,7 +33,7 @@ export default function Footer() {
 
 // ... existing code below ...
   return (
-        <footer className="relative z-[2] flex flex-shrink-0 w-full min-h-[160px] bg-[#EDEAE0] border-t border-[rgba(186, 132, 132, 0.25)]">
+        <footer className="relative z-[2] flex flex-col md:flex-row flex-shrink-0 w-full min-h-[160px] bg-[#EDEAE0] border-t border-[rgba(186, 132, 132, 0.25)]">
       <style>{`
         .footer-email-input {
           flex: 1;
@@ -108,7 +108,7 @@ export default function Footer() {
         <p className="mt-3 mb-6" style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#3c5e4c', lineHeight: 1.6 }}>
           New drops, shows and behind-the-scenes — follow along.
         </p>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <a href="https://www.instagram.com/gameboyrecordsofficial/" aria-label="Instagram" className="footer-social-link"><img src="/instagram.png" alt="Instagram" /></a>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -123,10 +123,10 @@ export default function Footer() {
       </div>
 
       {/* Divider — my-6 keeps it clear of the top and bottom edges */}
-      <div className="my-6 w-px bg-[#181818]" aria-hidden="true" />
+      <div className="mx-6 h-px md:mx-0 md:my-6 md:h-auto md:w-px bg-[#181818]" aria-hidden="true" />
 
       {/* Right half — newsletter signup */}
-      <div className="flex-1 flex items-center justify-center px-6 py-8">
+      <div className="flex-1 flex items-center justify-start md:justify-center px-6 py-8">
         <div className="w-full max-w-[420px] flex flex-col">
           <h3 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '1.75em', letterSpacing: '0.15em', color: '#16432a', lineHeight: 1 }}>
             JOIN THE NEWSLETTER

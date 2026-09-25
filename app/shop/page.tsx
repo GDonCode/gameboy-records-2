@@ -3,6 +3,7 @@
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
+import Footer from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -80,8 +81,23 @@ export default function ShopPage() {
             <Header />
             <div className="flex flex-row h-screen overflow-hidden bg-[#FEFEFA]">
                 <div className="flex flex-wrap content-start gap-6 p-4 flex-1 overflow-y-auto relative">
+                    <section className="relative isolate w-full overflow-hidden bg-[#0c1510] px-6 py-10 md:px-10 md:py-10">
+                        <GameIconsBackground />
+                        <div className="relative z-[1]">
+                            <span style={{ fontFamily: "'Poppins', monospace" }} className="block text-xs md:text-sm uppercase tracking-[0.35em] text-[#3dc97e]">
+                                Gameboy Records · Apparel
+                            </span>
+                            <h1 style={{ fontFamily: "'Poppins_semibold', sans-serif" }} className="mt-3 text-5xl md:text-7xl uppercase leading-none text-[#FEFEFA]">
+                                Rise Collection
+                            </h1>
+                            <p style={{ fontFamily: "'Poppins', sans-serif" }} className="mt-5 max-w-md text-sm md:text-base text-[#EDEAE0]/80">
+                                Tees and hoodies in black, white and gray.
+                            </p>
+                        </div>
+                    </section>
+                    
                     <Link href="/shop/black-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('black-t') ? '' : 'hidden'}`}>
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-transparent overflow-hidden">
                             <Image src="/black-t.png" alt="Product 1" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
@@ -111,7 +127,7 @@ export default function ShopPage() {
                         </div>
                     </Link>
                     <Link href="/shop/gray-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('gray-t') ? '' : 'hidden'}`}>
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-transparent overflow-hidden">
                             <Image src="/gray-t.png" alt="Product 2" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
@@ -141,7 +157,7 @@ export default function ShopPage() {
                         </div>
                     </Link>
                     <Link href="/shop/white-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('white-t') ? '' : 'hidden'}`}>
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-transparent overflow-hidden">
                             <Image src="/white-t.png" alt="Product 3" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
@@ -171,7 +187,7 @@ export default function ShopPage() {
                         </div>
                     </Link>
                     <Link href="/shop/black-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('black-h') ? '' : 'hidden'}`}>
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-transparent overflow-hidden">
                             <Image src="/black-h.png" alt="Product 4" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
@@ -201,7 +217,7 @@ export default function ShopPage() {
                         </div>
                     </Link>
                                         <Link href="/shop/white-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('white-h') ? '' : 'hidden'}`}>
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-transparent overflow-hidden">
                             <Image src="/white-h.png" alt="Product 5" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
@@ -231,7 +247,7 @@ export default function ShopPage() {
                         </div>
                     </Link>
                                         <Link href="/shop/gray-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] h-fit bg-transparent ${colorMatches('gray-h') ? '' : 'hidden'}`}>
-                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F4] overflow-hidden">
+                        <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-transparent overflow-hidden">
                             <Image src="/gray-h.png" alt="Product 6" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
                                 type="button"
@@ -260,6 +276,9 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
+                    <div className="-mx-4 -mb-4 w-[calc(100%+2rem)]">
+                        <Footer />
+                    </div>
                 </div>
             </div>
         </>
