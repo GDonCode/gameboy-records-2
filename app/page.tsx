@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
@@ -79,10 +79,25 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   function openPlayer(embedSrc?: string) {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
     if (embedSrc) setPlayerSrc(embedSrc);
     setPlayerMounted(true);
     setPlayerVisible(true);
+  }
+
+  function closePlayer() {
+    setPlayerVisible(false);
+    // Unmount after the .mini-player slide-out (0.38s) so the iframe stops playing
+    closeTimerRef.current = setTimeout(() => {
+      setPlayerMounted(false);
+      closeTimerRef.current = null;
+    }, 400);
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -603,14 +618,14 @@ export default function Home() {
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,16,12,0.32) 0%, transparent 22%, transparent 62%, rgba(10,16,12,0.5) 100%)' }} />
                   {/* Hero content */}
                   <div
-                    className="relative z-[3] flex flex-col items-center justify-center gap-6 px-10 text-center"
+                    className="relative z-[3] flex flex-col items-center justify-center gap-10 px-10 text-center"
                     style={{ minHeight: 'calc(100vh - 84px)' }}
                   >
                     <div className="flex flex-col items-center gap-1">
                       <h1 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '3em', color: '#fff', letterSpacing: '0.12em', textShadow: '0 2px 28px rgba(0,0,0,0.9), 0 0 40px rgba(77,255,145,0.12)', lineHeight: 1 }}>
                         RISE UP NOW (GUITAR VERSION)
                       </h1>
-                      <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '1.75em', color: '#4dff91', letterSpacing: '0.28em', textShadow: '0 0 24px rgba(77,255,145,0.55)', lineHeight: 1 }}>
+                      <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '1.75em', color: '#4dff91', letterSpacing: '0.28em', textShadow: '0 0 24px rgba(77,255,145,0.55)', lineHeight: 1, marginTop: '12px' }}>
                         ALEXX A-GAME
                       </h2>
                     </div>
@@ -644,7 +659,7 @@ export default function Home() {
                         SPOTIFY
                       </a>
                       <a
-                        href="PASTE_AUDIOMACK_LINK_HERE"
+                        href="https://audiomack.com/alexxagame"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="listen-on-btn"
@@ -654,7 +669,7 @@ export default function Home() {
                         AUDIOMACK
                       </a>
                       <a
-                        href="PASTE_SOUNDCLOUD_LINK_HERE"
+                        href="https://soundcloud.com/alexxagame"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="listen-on-btn"
@@ -819,11 +834,9 @@ export default function Home() {
         </div>
 
       </div>
-
       {/* ── FLOATING MINI-PLAYER ───────────────────────────────────────
-           Rendered once on first click and never unmounted — the iframe
-           keeps playing while the panel is hidden. Close button only
-           slides the panel out; it does not kill the audio.
+                     Mounted on open. Close button slides the panel out, then
+           unmounts the iframe after the transition so playback stops.
       ─────────────────────────────────────────────────────────────── */}
       {playerMounted && (
         <div className={`mini-player${playerVisible ? ' visible' : ''}`}>
@@ -840,10 +853,10 @@ export default function Home() {
               </span>
             </div>
             <button
-              onClick={() => setPlayerVisible(false)}
+              onClick={closePlayer}
               className="mini-player-close transition-colors"
               style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#4dff91', background: 'none', border: 'none', cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
-              aria-label="Hide player"
+              aria-label="Close player"
             >
               ✕
             </button>
