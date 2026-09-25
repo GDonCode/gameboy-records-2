@@ -8,16 +8,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
-interface NewsItem {
-  id: string;
-  date: string;
-  title: string;
-  teaser: string;
-  tag: string;
-  slug: string;
-  coverImageUrl: string | null;
-}
-
 // ── CORNER BRACKETS ──────────────────────────────────────────────────────────
 function Corners() {
   return (
@@ -32,7 +22,6 @@ function Corners() {
 
 
 export default function ShopPage() {
-    const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
     const [wishlist, setWishlist] = useState<Set<string>>(new Set());
     const [selectedColor, setSelectedColor] = useState<'all' | 'black' | 'white' | 'gray'>('all');
     const router = useRouter();

@@ -89,7 +89,6 @@ export default function Header() {
             className="flex items-center gap-1 bg-[#1a9e4a]/[0.1] border border-[#1a9e4a]/20 px-3 py-2"
           >
             {[
-              { href: '/feed', label: 'FEED' },
               { href: '/shows', label: 'SHOWS' },
               { href: '/shop', label: 'SHOP' },
             ].map((item) => (

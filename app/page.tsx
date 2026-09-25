@@ -1,24 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
-import { supabasePublic } from '@/lib/supabase-public';
 import Footer from '@/components/Footer';
 
 
 const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
-
-interface NewsItem {
-  id: string;
-  date: string;
-  title: string;
-  teaser: string;
-  tag: string;
-  slug: string;
-  coverImageUrl: string | null;
-}
 
 // ── CORNER BRACKETS ──────────────────────────────────────────────────────────
 function Corners() {
@@ -39,40 +28,6 @@ export default function Home() {
   const [playerSrc, setPlayerSrc] = useState(
     'https://www.youtube.com/embed/videoseries?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo&autoplay=1&controls=1'
   );
-  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadNews() {
-      const { data, error } = await supabasePublic
-        .from('posts')
-        .select('id, title, teaser, tag, slug, published_at, cover_image_url')
-        .eq('status', 'published')
-        .order('published_at', { ascending: false })
-        .limit(6);
-
-      if (error || cancelled) return;
-
-      const mapped = (data || []).map((p) => ({
-        id: p.id,
-        date: new Date(p.published_at)
-          .toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
-          .toUpperCase(),
-        title: p.title,
-        teaser: p.teaser,
-        tag: p.tag,
-        slug: p.slug,
-        coverImageUrl: p.cover_image_url,
-      }));
-
-      if (!cancelled) setNewsItems(mapped);
-    }
-
-    loadNews();
-    return () => { cancelled = true; };
-  }, []);
-// ... existing code below ...
 
   // Contact form state
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
