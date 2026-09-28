@@ -23,6 +23,15 @@ declare global {
 }
 
 type Mode = 'signin' | 'register';
+type FieldKey = 'signInEmail' | 'signInPassword' | 'displayName' | 'registerEmail' | 'registerPassword';
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateEmail(value: string): string | null {
+  if (!value.trim()) return 'Enter your email.';
+  if (!EMAIL_RE.test(value.trim())) return 'Enter a valid email address.';
+  return null;
+}
 
 export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mode }) {
   const router = useRouter();
@@ -40,11 +49,48 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
 
+  const [touched, setTouched] = useState<Partial<Record<FieldKey, boolean>>>({});
+  const markTouched = (key: FieldKey) => setTouched((t) => ({ ...t, [key]: true }));
+
+  const fieldErrors: Record<FieldKey, string | null> = {
+    signInEmail: validateEmail(signInEmail),
+    signInPassword: signInPassword ? null : 'Enter your password.',
+    displayName: displayName.trim() ? null : 'Enter a display name.',
+    registerEmail: validateEmail(registerEmail),
+    registerPassword: !registerPassword
+      ? 'Create a password.'
+      : registerPassword.length < 8
+        ? 'Password must be at least 8 characters.'
+        : null,
+  };
+  const shownError = (key: FieldKey) => (touched[key] ? fieldErrors[key] : null);
+  const fieldProps = (key: FieldKey) => {
+    const error = shownError(key);
+    return {
+      onBlur: () => markTouched(key),
+      'aria-invalid': !!error,
+      'aria-describedby': error ? `acct-err-${key}` : undefined,
+      className: `acct-input${error ? ' is-invalid' : ''}`,
+    };
+  };
+  const renderFieldError = (key: FieldKey) => {
+    const error = shownError(key);
+    return error ? (
+      <div id={`acct-err-${key}`} className="acct-field-error" role="alert">
+        {error}
+      </div>
+    ) : null;
+  };
+
   const googleSignInBtnRef = useRef<HTMLDivElement>(null);
   const googleRegisterBtnRef = useRef<HTMLDivElement>(null);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (fieldErrors.signInEmail || fieldErrors.signInPassword) {
+      setTouched((t) => ({ ...t, signInEmail: true, signInPassword: true }));
+      return;
+    }
     setIsSigningIn(true);
     setSignInError(null);
     setSignInNotice(null);
@@ -64,6 +110,10 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (fieldErrors.displayName || fieldErrors.registerEmail || fieldErrors.registerPassword) {
+      setTouched((t) => ({ ...t, displayName: true, registerEmail: true, registerPassword: true }));
+      return;
+    }
     setIsRegistering(true);
     setRegisterError(null);
 
@@ -222,7 +272,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           text-align: center;
         }
         .acct-title {
-          font-family: 'Hemisphers Bold Sans', monospace;
+          font-family: 'Poppins_semibold', monospace;
           font-size: 1.6em;
           letter-spacing: 0.1em;
           color: #16432a;
@@ -233,7 +283,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           background: #fff;
           border: 1px solid rgba(22,67,42,0.2);
           color: #16432a;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.9em;
           padding: 10px 14px;
           border-radius: 2px;
@@ -242,25 +292,43 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           margin-bottom: 14px;
         }
         .acct-input::placeholder { color: rgba(22,67,42,0.4); }
+        .acct-field {
+          width: 100%;
+          margin-bottom: 14px;
+          text-align: left;
+        }
+        .acct-field .acct-input { margin-bottom: 0; }
+        .acct-input.is-invalid { border-color: #c0392b; }
+        .acct-input.is-invalid:focus {
+          border-color: #c0392b;
+          box-shadow: 0 0 0 1px #c0392b, 0 0 12px rgba(192,57,43,0.15);
+        }
+        .acct-field-error,
+        .acct-field-hint {
+          font-family: 'Arvo', monospace;
+          font-size: 0.75em;
+          margin-top: 6px;
+        }
+        .acct-field-error { color: #c0392b; }
+        .acct-field-hint { color: rgba(22,67,42,0.55); }
         .acct-input:focus {
           border-color: #1a9e4a;
           box-shadow: 0 0 0 1px #1a9e4a, 0 0 12px rgba(26,158,74,0.15);
         }
         .acct-submit,
         .acct-ghost {
-          font-family: 'Hemisphers Bold Sans', monospace;
+          font-family: 'Poppins_semibold', monospace;
           font-size: 0.85em;
           letter-spacing: 0.16em;
           color: #fff;
           height: 48px;
           padding: 0 45px;
-          border-radius: 999px;
           cursor: pointer;
           transition: transform 80ms ease-in;
         }
         .acct-submit {
           width: 100%;
-          margin-top: 6px;
+          margin-top: 16px;
           background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
           border: 1px solid #1a9e4a;
           border-bottom-color: #0d5c29;
@@ -278,6 +346,14 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           outline-offset: 3px;
         }
         .acct-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .acct-submit.acct-submit-fit { width: auto; }
+        .acct-btn-label {
+          display: inline-block;
+          transition: transform 0.15s ease;
+        }
+        .acct-toggle-btn:hover .acct-btn-label,
+        .acct-submit:hover:not(:disabled) .acct-btn-label,
+        .acct-ghost:hover .acct-btn-label { transform: scale(1.1); }
         .acct-error,
         .acct-notice {
           font-family: 'Arvo', monospace;
@@ -380,13 +456,13 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           .acct-overlay-right { right: 0; transform: translateX(0); }
           .acct-container.is-register .acct-overlay-right { transform: translateX(20%); }
           .acct-overlay-title {
-            font-family: 'Hemisphers Bold Sans', monospace;
+            font-family: 'Poppins_semibold', monospace;
             font-size: 1.6em;
             letter-spacing: 0.1em;
             color: #FEFEFA;
           }
           .acct-overlay-text {
-            font-family: 'Arvo', monospace;
+            font-family: 'Poppins', monospace;
             font-size: 0.85em;
             line-height: 1.6;
             margin: 20px 0 30px;
@@ -402,7 +478,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           .acct-overlay-container,
           .acct-overlay,
           .acct-overlay-panel,
-          .acct-toggle-thumb { transition: none !important; animation: none !important; }
+          .acct-toggle-thumb,
+          .acct-btn-label { transition: none !important; animation: none !important; }
         }
       `}</style>
 
@@ -421,7 +498,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
               className="acct-toggle-btn"
               onClick={() => setMode('signin')}
             >
-              SIGN IN
+              <span className="acct-btn-label">SIGN IN</span>
             </button>
             <button
               type="button"
@@ -431,46 +508,57 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
               className="acct-toggle-btn"
               onClick={() => setMode('register')}
             >
-              CREATE ACCOUNT
+              <span className="acct-btn-label">CREATE ACCOUNT</span>
             </button>
           </div>
 
           <div className={`acct-container${mode === 'register' ? ' is-register' : ''}`}>
             <div id="acct-register" className={`acct-form-box acct-signup${mode === 'register' ? '' : ' is-hidden'}`}>
-              <form className="acct-form" onSubmit={handleRegister}>
+              <form className="acct-form" onSubmit={handleRegister} noValidate>
                 <div className="acct-title">CREATE ACCOUNT</div>
 
                 {registerError && <div className="acct-error">{registerError}</div>}
 
-                <input
-                  type="text"
-                  placeholder="Display name"
-                  autoComplete="nickname"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  required
-                  className="acct-input"
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  autoComplete="email"
-                  value={registerEmail}
-                  onChange={(e) => setRegisterEmail(e.target.value)}
-                  required
-                  className="acct-input"
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  autoComplete="new-password"
-                  value={registerPassword}
-                  onChange={(e) => setRegisterPassword(e.target.value)}
-                  required
-                  className="acct-input"
-                />
+                <div className="acct-field">
+                  <input
+                    type="text"
+                    placeholder="Display name"
+                    autoComplete="nickname"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    required
+                    {...fieldProps('displayName')}
+                  />
+                  {renderFieldError('displayName')}
+                </div>
+                <div className="acct-field">
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    autoComplete="email"
+                    value={registerEmail}
+                    onChange={(e) => setRegisterEmail(e.target.value)}
+                    required
+                    {...fieldProps('registerEmail')}
+                  />
+                  {renderFieldError('registerEmail')}
+                </div>
+                <div className="acct-field">
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    autoComplete="new-password"
+                    value={registerPassword}
+                    onChange={(e) => setRegisterPassword(e.target.value)}
+                    required
+                    {...fieldProps('registerPassword')}
+                  />
+                  {renderFieldError('registerPassword') ?? (
+                    <div className="acct-field-hint">At least 8 characters.</div>
+                  )}
+                </div>
                 <button type="submit" disabled={isRegistering} className="acct-submit">
-                  {isRegistering ? 'CREATING…' : 'CREATE ACCOUNT'}
+                  <span className="acct-btn-label">{isRegistering ? 'CREATING…' : 'CREATE ACCOUNT'}</span>
                 </button>
 
                 <div className="acct-divider">or</div>
@@ -479,32 +567,38 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
             </div>
 
             <div id="acct-signin" className={`acct-form-box acct-signin${mode === 'signin' ? '' : ' is-hidden'}`}>
-              <form className="acct-form" onSubmit={handleSignIn}>
+              <form className="acct-form" onSubmit={handleSignIn} noValidate>
                 <div className="acct-title">SIGN IN</div>
 
                 {signInNotice && <div className="acct-notice">{signInNotice}</div>}
                 {signInError && <div className="acct-error">{signInError}</div>}
 
-                <input
-                  type="email"
-                  placeholder="Email"
-                  autoComplete="email"
-                  value={signInEmail}
-                  onChange={(e) => setSignInEmail(e.target.value)}
-                  required
-                  className="acct-input"
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  autoComplete="current-password"
-                  value={signInPassword}
-                  onChange={(e) => setSignInPassword(e.target.value)}
-                  required
-                  className="acct-input"
-                />
-                <button type="submit" disabled={isSigningIn} className="acct-submit">
-                  {isSigningIn ? 'SIGNING IN…' : 'SIGN IN'}
+                <div className="acct-field">
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    autoComplete="email"
+                    value={signInEmail}
+                    onChange={(e) => setSignInEmail(e.target.value)}
+                    required
+                    {...fieldProps('signInEmail')}
+                  />
+                  {renderFieldError('signInEmail')}
+                </div>
+                <div className="acct-field">
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    autoComplete="current-password"
+                    value={signInPassword}
+                    onChange={(e) => setSignInPassword(e.target.value)}
+                    required
+                    {...fieldProps('signInPassword')}
+                  />
+                  {renderFieldError('signInPassword')}
+                </div>
+                <button type="submit" disabled={isSigningIn} className="acct-submit acct-submit-fit">
+                  <span className="acct-btn-label">{isSigningIn ? 'SIGNING IN…' : 'SIGN IN'}</span>
                 </button>
 
                 <div className="acct-divider">or</div>
@@ -518,14 +612,14 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                   <div className="acct-overlay-title">WELCOME BACK</div>
                   <p className="acct-overlay-text">Sign in to see your orders and points.</p>
                   <button type="button" className="acct-ghost" onClick={() => setMode('signin')}>
-                    SIGN IN
+                    <span className="acct-btn-label">SIGN IN</span>
                   </button>
                 </div>
                 <div className="acct-overlay-panel acct-overlay-right">
                   <div className="acct-overlay-title">NEW HERE?</div>
                   <p className="acct-overlay-text">Create an account to track orders and collect points.</p>
                   <button type="button" className="acct-ghost" onClick={() => setMode('register')}>
-                    CREATE ACCOUNT
+                    <span className="acct-btn-label">CREATE ACCOUNT</span>
                   </button>
                 </div>
               </div>
