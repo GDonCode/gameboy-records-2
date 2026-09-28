@@ -243,7 +243,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           background: none;
           border: 0;
           cursor: pointer;
-          font-family: 'Poppins', monospace;
+          font-family: 'Poppins_semibold', monospace;
           font-size: 0.75em;
           letter-spacing: 0.14em;
           color: #3c5e4c;
