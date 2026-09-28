@@ -129,9 +129,9 @@ const SONGS: Song[] = [
     ],
   },
   {
-    id: 'placeholder-2',
-    title: 'TRACK TWO',
-    artist: 'ARTIST TWO',
+    id: 'still-a-rise',
+    title: 'Still A Rise',
+    artist: 'Alexx A-Game',
     audioSrc: '/placeholder-track-2.mp3',
     photoSrc: null,
     lyrics: [
@@ -141,9 +141,9 @@ const SONGS: Song[] = [
     ],
   },
   {
-    id: 'placeholder-3',
-    title: 'TRACK THREE',
-    artist: 'ARTIST THREE',
+    id: 'rise-up-now-guitar',
+    title: 'Rise Up Now (Guitar Version)',
+    artist: 'Alexx A-Game',
     audioSrc: '/placeholder-track-3.mp3',
     photoSrc: null,
     lyrics: [
@@ -152,6 +152,18 @@ const SONGS: Song[] = [
       { time: 14, text: 'Placeholder lyric line two' },
     ],
   },
+  {
+    id: 'go-harda',
+    title: 'Go Harda',
+    artist: 'Alexx A-Game',
+    audioSrc: '/placeholder-track-3.mp3',
+    photoSrc: null,
+    lyrics: [
+      { time: 0, text: '♪ Instrumental intro ♪' },
+      { time: 8, text: 'Placeholder lyric line one' },
+      { time: 14, text: 'Placeholder lyric line two' },
+    ],
+  }
 ];
 
 type Direction = 'next' | 'prev';
@@ -266,7 +278,6 @@ export default function KaraokePage() {
           </div>
 
           <div className={styles.pickerMeta}>
-            <span className={styles.pickerEyebrow}>KARAOKE MODE</span>
             <p className={styles.pickerTitle}>{activeSong.title}</p>
             <p className={styles.pickerArtist}>{activeSong.artist}</p>
           </div>

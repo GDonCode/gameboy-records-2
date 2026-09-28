@@ -123,7 +123,7 @@ export default function Footer() {
       </div>
 
       {/* Divider — my-6 keeps it clear of the top and bottom edges */}
-      <div className="mx-6 h-px md:mx-0 md:my-6 md:h-auto md:w-px bg-[#181818]" aria-hidden="true" />
+      <div className="mx-6 h-px md:mx-0 md:my-6 md:h-auto md:w-px bg-[#181818]/10" aria-hidden="true" />
 
       {/* Right half — newsletter signup */}
       <div className="flex-1 flex items-center justify-start md:justify-center px-6 py-8">

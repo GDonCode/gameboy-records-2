@@ -2,6 +2,7 @@
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GuitarTiles from '@/components/GuitarTiles';
+import GameIconsBackground from '@/components/GameIconsBackground';
 
 export default function GuitarPage() {
   return (
