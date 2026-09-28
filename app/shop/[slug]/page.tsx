@@ -5,6 +5,7 @@ import { useParams, notFound, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import MobileBottomNav from '@/components/MobileBottomNav';
 import { getProductBySlug, getRelatedProducts } from '@/lib/products';
 
 export default function ProductPage() {
@@ -53,8 +54,9 @@ export default function ProductPage() {
 
   return (
     <>
-      <Header />
-      <div className="w-full h-screen overflow-y-auto px-8 py-10 bg-[#FEFEFA]">
+            <Header />
+      <MobileBottomNav />
+      <div className="mobile-home-pad w-full h-screen overflow-y-auto px-8 py-10 bg-[#FEFEFA]">
         <div className="flex flex-col md:flex-row gap-10 md:items-start">
           <div className="w-full md:w-[600px] flex-shrink-0">
             <div style={{ aspectRatio: '1 / 1' }} className="relative w-full bg-[#F6F6F4] border-2 border-[#2f8a68]/10 overflow-hidden">

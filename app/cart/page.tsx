@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 interface CartItem {
   id: string;
@@ -131,9 +132,10 @@ export default function CartPage() {
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <>
+        <div className="flex flex-col h-dvh overflow-hidden">
       <Header />
-      <div className="w-full min-h-screen bg-[#FEFEFA] px-6 md:px-10 py-10">
+      <MobileBottomNav />
+      <div className="mobile-home-pad flex-1 min-h-0 overflow-y-auto w-full bg-[#FEFEFA] px-6 md:px-10 pt-[100px] pb-10 md:pt-10">
         <h1
           style={{ fontFamily: "'Poppins', monospace" }}
           className="text-2xl text-[#16432a] mb-8"
@@ -286,6 +288,6 @@ export default function CartPage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

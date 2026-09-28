@@ -9,7 +9,7 @@ export default function GuitarPage() {
       <Header />
       <MobileBottomNav />
       <div
-        className="flex-1 flex flex-col items-center justify-center overflow-y-auto py-8"
+                className="mobile-home-pad flex-1 flex flex-col items-center justify-center overflow-y-auto py-8"
         style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%)' }}
       >
         <h1

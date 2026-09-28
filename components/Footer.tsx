@@ -33,7 +33,7 @@ export default function Footer() {
 
 // ... existing code below ...
   return (
-        <footer className="relative z-[2] flex flex-col md:flex-row flex-shrink-0 w-full min-h-[160px] bg-[#EDEAE0] border-t border-[rgba(186, 132, 132, 0.25)]">
+              <footer className="mobile-home-pad relative z-[2] flex flex-col md:flex-row flex-shrink-0 w-full min-h-[160px] bg-[#EDEAE0] border-t border-[rgba(186, 132, 132, 0.25)]">
       <style>{`
         .footer-email-input {
           flex: 1;

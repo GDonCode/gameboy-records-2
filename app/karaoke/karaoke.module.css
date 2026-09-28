@@ -16,6 +16,11 @@
   position: relative;
 }
 
+
+@media (max-width: 767px) {
+  .main { padding-bottom: var(--home-btn-space); }
+}
+
 /* ── SONG PICKER BAR ──────────────────────────────────── */
 .pickerBar {
   position: relative;

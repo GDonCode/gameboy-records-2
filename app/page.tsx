@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
@@ -25,9 +25,10 @@ function Corners() {
 export default function Home() {
   const [playerMounted,  setPlayerMounted]  = useState(false);
   const [playerVisible,  setPlayerVisible]  = useState(false);
-  const [playerSrc, setPlayerSrc] = useState(
+    const [playerSrc, setPlayerSrc] = useState(
     'https://www.youtube.com/embed/videoseries?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo&autoplay=1&controls=1'
   );
+  const [playerCollapsed, setPlayerCollapsed] = useState(false);
 
   // Contact form state
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -35,13 +36,38 @@ export default function Home() {
   const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+   const playerRef = useRef<HTMLDivElement>(null);
+
+  // Mobile: collapse the expanded mini-player to its pull tab on any tap outside it
+  useEffect(() => {
+    if (!playerVisible || playerCollapsed) return;
+    const mq = window.matchMedia('(max-width: 767px)');
+    function handlePointerDown(e: PointerEvent) {
+      if (!mq.matches) return;
+      if (playerRef.current && !playerRef.current.contains(e.target as Node)) {
+        setPlayerCollapsed(true);
+      }
+    }
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [playerVisible, playerCollapsed]);
+ 
+  // iOS Safari: React omits the `muted` attribute in server HTML, so Safari blocks autoplay.
+  // Force muted + play() on mount for every autoplay video on this page.
+  useEffect(() => {
+    document.querySelectorAll<HTMLVideoElement>('video[autoplay]').forEach((v) => {
+      v.muted = true;
+      v.play().catch(() => {});
+    });
+  }, []);
 
   function openPlayer(embedSrc?: string) {
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
     }
-    if (embedSrc) setPlayerSrc(embedSrc);
+        if (embedSrc) setPlayerSrc(embedSrc);
+    setPlayerCollapsed(false);
     setPlayerMounted(true);
     setPlayerVisible(true);
   }
@@ -95,6 +121,16 @@ export default function Home() {
           .hero-tagline {
             font-size: 1.75em;
             letter-spacing: 0.28em;
+          }
+        }
+                  /* ── MAIN HERO — desktop unchanged; mobile fills visible viewport below fixed 60px header ── */
+        .hero-main { min-height: calc(100vh - 90px); }
+        .hero-main-content { min-height: 100vh; }
+        @media (max-width: 767px) {
+          .hero-main,
+          .hero-main-content {
+            min-height: calc(100vh - 60px);
+            min-height: calc(100svh - 60px);
           }
         }
 
@@ -226,7 +262,75 @@ export default function Home() {
           opacity: 1;
           pointer-events: auto;
         }
-        .mini-player-close:hover { color: #fff; }
+                .mini-player-close:hover { color: #fff; }
+
+        /* Collapse chevron (desktop) */
+        .mini-player-collapse {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          padding: 0;
+          color: #4dff91;
+          background: none;
+          border: none;
+          cursor: pointer;
+          transition: color 0.15s ease;
+        }
+        .mini-player-collapse:hover { color: #fff; }
+        .mini-player-collapse svg { transition: transform 0.25s ease; }
+        .mini-player.collapsed .mini-player-collapse svg { transform: rotate(180deg); }
+
+        /* Iframe wrapper — height animates on desktop collapse (iframe stays mounted, keeps playing) */
+        .mini-player-body {
+          height: 191px;
+          overflow: hidden;
+          transition: height 0.3s cubic-bezier(0.22,1,0.36,1);
+        }
+
+        /* Pull tab (mobile only) */
+        .mini-player-tab { display: none; }
+
+        @media (min-width: 768px) {
+          .mini-player.collapsed .mini-player-body { height: 0; }
+        }
+
+        @media (max-width: 767px) {
+          .mini-player {
+            left: 40px;
+            right: 12px;
+            width: auto;
+            bottom: calc(var(--home-btn-size) + (var(--home-btn-gap) * 2) + env(safe-area-inset-bottom));
+          }
+          /* Slide fully off the right edge; the tab (attached to the left edge) stays on screen */
+          .mini-player.visible.collapsed {
+            transform: translateX(calc(100% + 12px));
+          }
+          .mini-player-collapse { display: none; }
+          .mini-player-tab {
+            position: absolute;
+            top: 50%;
+            right: 100%;
+            width: 28px;
+            height: 72px;
+            margin-top: -36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4dff91;
+            background: #050f08;
+            border: 1px solid rgba(26,158,74,0.5);
+            border-right: none;
+            border-radius: 6px 0 0 6px;
+            box-shadow: -6px 0 18px rgba(0,0,0,0.6);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+          }
+          .mini-player-tab svg { transition: transform 0.25s ease; }
+          .mini-player.collapsed .mini-player-tab svg { transform: rotate(180deg); }
+        }
 
         /* ── CONTACT FORM STYLES ── */
         .contact-input {
@@ -386,10 +490,7 @@ export default function Home() {
               <div className="no-scrollbar flex-1 min-h-0 overflow-y-auto flex flex-col pt-[60px] md:pt-0">
 
                 {/* ═══ NEW LABEL HERO — "REALEST. TRUEST." ═══ */}
-                <div
-                  className="relative flex-shrink-0 overflow-hidden"
-                  style={{ minHeight: 'calc(100vh - 90px)' }}
-                >
+                  <div className="hero-main relative flex-shrink-0 overflow-hidden">
                   {/* Background video */}
                   <video
                     src={`${MEDIA_BASE}/hero-vid.mp4`}
@@ -403,8 +504,7 @@ export default function Home() {
 
                   {/* Content */}
                   <div
-                    className="relative z-[3] flex flex-col items-center justify-center gap-6 px-10 text-center"
-                    style={{ minHeight: '100vh' }}
+                                        className="hero-main-content relative z-[3] flex flex-col items-center justify-center gap-6 px-10 text-center"
                   >
                     <div className="flex flex-col items-center gap-1">
                        <h1
@@ -794,7 +894,20 @@ export default function Home() {
            unmounts the iframe after the transition so playback stops.
       ─────────────────────────────────────────────────────────────── */}
       {playerMounted && (
-        <div className={`mini-player${playerVisible ? ' visible' : ''}`}>
+                          <div ref={playerRef} className={`mini-player${playerVisible ? ' visible' : ''}${playerCollapsed ? ' collapsed' : ''}`}>
+
+          {/* Pull tab (mobile only) */}
+          <button
+            type="button"
+            className="mini-player-tab"
+            onClick={() => setPlayerCollapsed((c) => !c)}
+            aria-label={playerCollapsed ? 'Show player' : 'Hide player'}
+            aria-expanded={!playerCollapsed}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </button>
 
           {/* Header bar */}
           <div
@@ -807,24 +920,31 @@ export default function Home() {
                 NOW PLAYING
               </span>
             </div>
-            <button
-              onClick={closePlayer}
-              className="mini-player-close transition-colors"
-              style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#4dff91', background: 'none', border: 'none', cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
-              aria-label="Close player"
-            >
-              ✕
-            </button>
+                        <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPlayerCollapsed((c) => !c)}
+                className="mini-player-collapse"
+                aria-label={playerCollapsed ? 'Expand player' : 'Collapse player'}
+                aria-expanded={!playerCollapsed}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+            </div>
           </div>
 
-           <iframe
-            src={playerSrc}
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowFullScreen
-            title="Gameboy Records Player"
-            className="w-full border-0 block"
-            style={{ height: '191px' }}
-          />
+                     <div className="mini-player-body">
+            <iframe
+              src={playerSrc}
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowFullScreen
+              title="Gameboy Records Player"
+              className="w-full border-0 block"
+              style={{ height: '191px' }}
+            />
+          </div>
 
         </div>
       )}

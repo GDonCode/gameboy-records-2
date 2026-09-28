@@ -79,20 +79,18 @@ export default function ShopPage() {
     return (
         <>
             <Header />
+            <MobileBottomNav />
             <div className="flex flex-row h-screen overflow-hidden bg-[#FEFEFA]">
-                <div className="flex flex-wrap content-start gap-6 p-4 flex-1 overflow-y-auto relative">
-                    <section className="relative isolate w-full overflow-hidden bg-[#0c1510] px-6 py-10 md:px-10 md:py-10">
+                <div className="flex flex-wrap content-start gap-6 p-4 pt-18 flex-1 overflow-y-auto relative">
+                    <section className="relative isolate w-full overflow-hidden bg-[#0c1510] p-6 md:px-10 md:py-10">
                         <GameIconsBackground />
                         <div className="relative z-[1]">
                             <span style={{ fontFamily: "'Poppins', monospace" }} className="block text-xs md:text-sm uppercase tracking-[0.35em] text-[#3dc97e]">
                                 Gameboy Records · Apparel
                             </span>
                             <h1 style={{ fontFamily: "'Poppins_semibold', sans-serif" }} className="mt-3 text-5xl md:text-7xl uppercase leading-none text-[#FEFEFA]">
-                                Rise Collection
+                                RISE APPAREL
                             </h1>
-                            <p style={{ fontFamily: "'Poppins', sans-serif" }} className="mt-5 max-w-md text-sm md:text-base text-[#EDEAE0]/80">
-                                Tees and hoodies in black, white and gray.
-                            </p>
                         </div>
                     </section>
                     

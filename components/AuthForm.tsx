@@ -243,7 +243,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           background: none;
           border: 0;
           cursor: pointer;
-          font-family: 'Hemisphers Bold Sans', monospace;
+          font-family: 'Poppins', monospace;
           font-size: 0.75em;
           letter-spacing: 0.14em;
           color: #3c5e4c;
@@ -387,6 +387,10 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           min-height: 44px;
         }
         .acct-overlay-container { display: none; }
+                @media (max-width: 767px) {
+          /* Top-align so the toggle sits a fixed 24px (wrap padding) below the header in both modes */
+          .acct-inner { margin: 0 auto; }
+        }
         @media (min-width: 768px) {
           .acct-toggle { display: none; }
           .acct-container {
