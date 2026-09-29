@@ -18,7 +18,8 @@
 
 
 @media (max-width: 767px) {
-  .main { padding-bottom: var(--home-btn-space); }
+  .main { padding-top: 60px; /* clears the fixed 60px mobile header (h-[60px] in Header.tsx) */ padding-bottom: var(--home-btn-space);
+          padding-left: 48px; padding-right: 48px; }
 }
 
 /* ── SONG PICKER BAR ──────────────────────────────────── */
@@ -28,7 +29,7 @@
   width: 100%;
   max-width: 920px;
   flex-shrink: 0;
-  margin-top: 24px;
+  margin-top: 42px;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -38,23 +39,37 @@
   padding: 14px 22px;
 }
 
+@media (max-width: 767px) {
+  .pickerBar {
+    width: calc(100% + 96px);
+    max-width: none;
+    margin-left: -48px;
+    margin-right: -48px;
+  }
+}
+
 .navArrowSm {
   flex-shrink: 0;
-  width: 30px;
-  height: 30px;
+  align-self: stretch;
+  width: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
+  background: #3dc97e;
+  color: #fff;
   border: none;
+  border-radius: 0;
   padding: 0;
   cursor: pointer;
-  transition: transform .15s, opacity .15s;
+  transition: background .15s;
 }
-.navArrowSm svg { width: 100%; height: 100%; display: block; }
-.navArrowSm:hover { transform: translateY(-2px); opacity: .82; }
-.navArrowSm:active { transform: translateY(0); opacity: 1; }
-.navArrowSm:focus-visible { outline: 2px solid #3dc97e; outline-offset: 3px; border-radius: 50%; }
+/* Flush against the bar's inner edges (cancels .pickerBar padding: 14px 22px) */
+.navArrowSm:first-child { margin: -14px 0 -14px -22px; }
+.navArrowSm:last-child { margin: -14px -22px -14px 0; }
+.navArrowSm svg { width: 18px; height: 18px; display: block; }
+.navArrowSm:hover { background: #34b56f; }
+.navArrowSm:active { background: #2a9d5f; }
+.navArrowSm:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 
 .pickerPhoto {
   flex-shrink: 0;
@@ -145,6 +160,56 @@
   accent-color: #149262;
 }
 
+/* Seek-by-step buttons — mobile only (replace the scrubber) */
+.seekBtn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #149262;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.seekBtn svg { width: 22px; height: 22px; display: block; }
+.seekBtn:active { opacity: .6; }
+.seekBtn:focus-visible { outline: 2px solid #3dc97e; outline-offset: 2px; border-radius: 4px; }
+
+@media (max-width: 767px) {
+  .seekBar,
+  .time { display: none; }
+  .seekBtn { display: flex; }
+
+  /* Compact picker layout */
+  .pickerBar { --pb-y: 24px; --pb-x: 12px; gap: 10px; margin-top: 0; padding: var(--pb-y) var(--pb-x); }
+  .navArrowSm { width: 30px; }
+  .navArrowSm:first-child { margin: calc(-1 * var(--pb-y)) 0 calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)); }
+  .navArrowSm:last-child { margin: calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)) calc(-1 * var(--pb-y)) 0; }
+  .navArrowSm svg { width: 16px; height: 16px; }
+  .navArrowSm svg { width: 16px; height: 16px; }
+
+  .pickerPhoto { width: 44px; height: 44px; }
+
+  .pickerMeta { flex: 1 1 0; min-width: 0; flex-shrink: 1; }
+  .pickerTitle,
+  .pickerArtist {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pickerTitle { font-size: 0.95rem; }
+  .pickerArtist { font-size: 0.7rem; letter-spacing: 0.04em; }
+
+  .pickerPlayback { flex: 0 0 auto; gap: 2px; }
+  .playBtn { width: 36px; height: 36px; font-size: 0.8rem; box-shadow: 0 3px 0 #0d5c29; }
+  .seekBtn { width: 28px; height: 28px; }
+  .seekBtn svg { width: 18px; height: 18px; }
+}
+
 /* ── LYRICS ── unboxed, directly on page background ──── */
 .lyricsArea {
   position: relative;
@@ -159,11 +224,19 @@
   align-items: center;
   justify-content: flex-start;
   gap: 26px;
-  margin-top: 48px;
+  margin-top: 32px;
   padding-top: 12px;
   padding-bottom: 40px;
   scrollbar-width: thin;
   scrollbar-color: #3dc97e transparent;
+}
+
+@media (max-width: 767px) {
+  .lyricsArea {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .lyricsArea::-webkit-scrollbar { display: none; }
 }
 
 .lyricLine {
@@ -172,12 +245,14 @@
   letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.35);
   text-align: center;
-  transition: color 0.25s ease, transform 0.25s ease, font-size 0.25s ease;
+  max-width: 84%;              /* leaves room for the 1.18× scale — no sideways overflow */
+  transform-origin: center;
+  will-change: transform;
+  transition: color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease;
 }
 
 .activeLine {
   color: #4dff91;
-  font-size: 1.7rem;
-  transform: scale(1.03);
+  transform: scale(1.18);      /* visual size only — wrapping stays locked at 1.3rem */
   text-shadow: 0 0 20px rgba(77, 255, 145, 0.35);
 }

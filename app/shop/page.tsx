@@ -82,13 +82,13 @@ export default function ShopPage() {
             <MobileBottomNav />
             <div className="flex flex-row h-screen overflow-hidden bg-[#FEFEFA]">
                 <div className="flex flex-wrap content-start gap-6 p-4 pt-18 md:pt-4 flex-1 overflow-y-auto relative">
-                    <section className="relative isolate w-full overflow-hidden bg-[#0c1510] p-6 md:px-8 md:py-8">
+                    <section className="relative isolate w-full overflow-hidden bg-[#0c1510] px-6 pt-4 pb-6 md:px-8 md:py-8">
                         <GameIconsBackground />
                         <div className="relative z-[1]">
-                            <h1 style={{ fontFamily: "'Poppins_semibold', sans-serif" }} className="mt-3 text-5xl md:text-7xl uppercase leading-none text-[#FEFEFA]">
+                            <h1 style={{ fontFamily: "'Poppins_semibold', sans-serif" }} className="mt-3 text-4xl md:text-7xl uppercase leading-none text-[#FEFEFA]">
                                 "RISE" COLLECTION
                             </h1>
-                            <span style={{ fontFamily: "'Poppins', monospace" }} className="block text-xs md:text-lg tracking-[0.35em] text-[#3dc97e] ml-8">
+                            <span style={{ fontFamily: "'Poppins', monospace" }} className="block text-sm md:text-lg tracking-[0.35em] text-[#3dc97e] ml-8">
                                 by ALEXX A-GAME
                             </span>
                         </div>
