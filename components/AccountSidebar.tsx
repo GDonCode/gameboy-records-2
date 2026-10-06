@@ -81,7 +81,7 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
 function RowText({ label, subtitle }: { label: string; subtitle: string }) {
   return (
     <span className="flex flex-col min-w-0">
-      <span style={{ fontFamily: "'Poppins_semibold', 'Poppins', monospace" }}>{label}</span>
+      <span style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}>{label}</span>
       <span className="text-[0.8em] text-[#16432a]/60">{subtitle}</span>
     </span>
   );
@@ -117,7 +117,7 @@ export default function AccountSidebar({
     <aside
       aria-label="Account navigation"
       className={`flex-shrink-0 w-full md:w-[300px] md:h-full md:overflow-y-auto bg-[#EDEAE0] px-4 pt-20 pb-10 md:pt-8 md:border-r border-[#16432a]/10 ${className}`}
-      style={{ fontFamily: "'Poppins', monospace" }}
+      style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       {/* Account header */}
       <div className="flex items-center gap-3 px-3 pb-5 mb-2 border-b border-[#16432a]/15">
@@ -129,7 +129,7 @@ export default function AccountSidebar({
             {firstName.charAt(0).toUpperCase()}
           </span>
         )}
-        <span className="text-[#16432a] text-[1.05em]" style={{ fontFamily: "'Poppins_semibold', 'Poppins', monospace" }}>
+        <span className="text-[#16432a] text-[1.05em]" style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}>
           {firstName}&apos;s Account
         </span>
       </div>
@@ -139,7 +139,7 @@ export default function AccountSidebar({
           <div key={group.heading} className="flex flex-col gap-1 py-3 border-b border-[#16432a]/15">
             <h2
               className="px-3 pt-1 pb-2 text-[0.75em] tracking-[0.2em] text-[#16432a]/70"
-              style={{ fontFamily: "'Share Tech Mono', monospace" }}
+              style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
             >
               {group.heading.toUpperCase()}
             </h2>
@@ -150,7 +150,7 @@ export default function AccountSidebar({
         <div className="flex flex-col gap-1 py-3">
           <h2
             className="px-3 pt-1 pb-2 text-[0.75em] tracking-[0.2em] text-[#16432a]/70"
-            style={{ fontFamily: "'Share Tech Mono', monospace" }}
+            style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
           >
             HELP
           </h2>

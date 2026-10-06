@@ -19,11 +19,11 @@ export default function ComingSoonTab({ icon: Icon, title, subtitle, message }: 
         </span>
         <span
           className="px-3 py-1 rounded-full text-[0.7em] tracking-[0.2em] text-[#0c1510] bg-[#4dff91]"
-          style={{ fontFamily: "'Share Tech Mono', monospace" }}
+          style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
         >
           COMING SOON
         </span>
-        <p className="max-w-[360px] text-[0.95em] text-white/70" style={{ fontFamily: "'Poppins', monospace" }}>
+        <p className="max-w-[360px] text-[0.95em] text-white/70" style={{ fontFamily: "'Poppins', sans-serif" }}>
           {message}
         </p>
       </Panel>

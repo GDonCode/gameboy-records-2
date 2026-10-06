@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { awardPoints } from '@/lib/points';
+import { PROFILE_PHOTO_POINTS } from '@/lib/quests';
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -50,6 +52,8 @@ export async function POST(request: Request) {
   if (updateError) {
     return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
+
+  await awardPoints(session.user.id, PROFILE_PHOTO_POINTS, 'profile_photo');
 
   return NextResponse.json({ url: publicUrlData.publicUrl });
 }

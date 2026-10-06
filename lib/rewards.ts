@@ -1,7 +1,9 @@
 // lib/rewards.ts
 // PLACEHOLDER reward tiers for the account "Reward Pass".
-// Points are displayed from users.points_balance, but no earning or redemption
-// logic exists yet — swap these tiers for the real ones once that's decided.
+// Points are displayed from users.points_balance and awarded server-side through
+// lib/points.ts (award_points SQL function + points_transactions ledger).
+// Redemption is not built yet. Tune the later tiers once merch prices and the
+// checkout earn rate are final.
 
 export interface RewardTier {
   level: number;
@@ -12,12 +14,12 @@ export interface RewardTier {
 }
 
 export const REWARD_TIERS: RewardTier[] = [
-  { level: 1, points: 100, name: 'Sticker Pack', description: 'Gameboy Records sticker sheet', icon: 'sticker' },
-  { level: 2, points: 250, name: 'Free Shipping', description: 'On your next merch order', icon: 'shipping' },
-  { level: 3, points: 500, name: '$5 Off Merch', description: 'One-time discount code', icon: 'discount' },
-  { level: 4, points: 1000, name: 'Exclusive Track', description: 'Unreleased song download', icon: 'track' },
-  { level: 5, points: 2000, name: 'Limited Tee', description: 'Members-only drop', icon: 'tee' },
-  { level: 6, points: 3500, name: 'VIP Show Pass', description: 'Priority entry at a live show', icon: 'ticket' },
+  { level: 1, points: 50, name: 'Sticker Pack', description: 'Gameboy Records sticker sheet', icon: 'sticker' },
+  { level: 2, points: 150, name: 'Free Shipping', description: 'On your next merch order', icon: 'shipping' },
+  { level: 3, points: 300, name: '$5 Off Merch', description: 'One-time discount code', icon: 'discount' },
+  { level: 4, points: 600, name: 'Exclusive Track', description: 'Unreleased song download', icon: 'track' },
+  { level: 5, points: 1200, name: 'Limited Tee', description: 'Members-only drop', icon: 'tee' },
+  { level: 6, points: 2500, name: 'VIP Show Pass', description: 'Priority entry at a live show', icon: 'ticket' },
 ];
 
 export interface RewardProgress {

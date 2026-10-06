@@ -51,7 +51,7 @@ export default function AccountAvatar({ displayName, initialAvatarUrl }: Account
       ) : (
         <div
           className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-[#4dff91] text-white/50 text-[0.7em]"
-          style={{ fontFamily: "'Poppins', monospace" }}
+          style={{ fontFamily: "'Poppins', sans-serif" }}
         >
           NO PHOTO
         </div>
@@ -63,15 +63,15 @@ export default function AccountAvatar({ displayName, initialAvatarUrl }: Account
           onChange={handleAvatarChange}
           disabled={isUploading}
           className="text-[0.8em] text-white/70"
-          style={{ fontFamily: "'Poppins', monospace" }}
+          style={{ fontFamily: "'Poppins', sans-serif" }}
         />
         {isUploading && (
-          <p className="text-[#4dff91] text-[0.78em] mt-1" style={{ fontFamily: "'Poppins', monospace" }}>
+          <p className="text-[#4dff91] text-[0.78em] mt-1" style={{ fontFamily: "'Poppins', sans-serif" }}>
             Uploading…
           </p>
         )}
         {error && (
-          <p className="text-[#ff6b6b] text-[0.78em] mt-1" style={{ fontFamily: "'Poppins', monospace" }}>
+          <p className="text-[#ff6b6b] text-[0.78em] mt-1" style={{ fontFamily: "'Poppins', sans-serif" }}>
             {error}
           </p>
         )}

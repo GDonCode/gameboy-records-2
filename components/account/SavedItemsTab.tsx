@@ -41,7 +41,7 @@ export default function SavedItemsTab({ initialItems }: { initialItems: SavedIte
       />
 
       {error && (
-        <p className="text-[#ff6b6b] text-[0.85em]" style={{ fontFamily: "'Poppins', monospace" }}>
+        <p className="text-[#ff6b6b] text-[0.85em]" style={{ fontFamily: "'Poppins', sans-serif" }}>
           {error}
         </p>
       )}
@@ -51,13 +51,13 @@ export default function SavedItemsTab({ initialItems }: { initialItems: SavedIte
           <span className="flex items-center justify-center w-16 h-16 rounded-full bg-[#1a9e4a]/15 border border-[#1a9e4a]/40">
             <Heart className="w-7 h-7 text-[#4dff91]" strokeWidth={2} />
           </span>
-          <p className="text-white/70" style={{ fontFamily: "'Poppins', monospace" }}>
+          <p className="text-white/70" style={{ fontFamily: "'Poppins', sans-serif" }}>
             Nothing saved yet.
           </p>
           <Link
             href="/shop"
             className="px-5 py-2.5 rounded-[6px] bg-[#1a9e4a] text-white text-[0.85em] tracking-[0.1em] hover:bg-[#149262] transition-colors"
-            style={{ fontFamily: "'Poppins', monospace" }}
+            style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             BROWSE THE SHOP
           </Link>
@@ -72,7 +72,7 @@ export default function SavedItemsTab({ initialItems }: { initialItems: SavedIte
               <Link href={`/shop/${item.slug}`} className="relative block aspect-square bg-[#F6F6F4]">
                 {item.image && <Image src={item.image} alt={item.name} fill className="object-cover" />}
               </Link>
-              <div className="flex flex-col gap-3 p-4" style={{ fontFamily: "'Poppins', monospace" }}>
+              <div className="flex flex-col gap-3 p-4" style={{ fontFamily: "'Poppins', sans-serif" }}>
                 <div>
                   <Link href={`/shop/${item.slug}`} className="block text-white hover:underline">
                     {item.name}

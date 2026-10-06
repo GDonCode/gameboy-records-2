@@ -4,6 +4,7 @@ import Credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { OAuth2Client } from 'google-auth-library';
+import { awardPoints, SIGNUP_BONUS } from '@/lib/points';
 
 const googleClient = new OAuth2Client();
 
@@ -115,6 +116,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (insertError || !created) return null;
           user = created;
+          await awardPoints(created.id, SIGNUP_BONUS, 'signup_bonus');
         }
 
         return {

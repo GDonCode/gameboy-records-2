@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { products } from '@/lib/products';
+import { awardPoints } from '@/lib/points';
+import { FIRST_SAVE_POINTS } from '@/lib/quests';
 
 export async function GET() {
   const session = await auth();
@@ -54,6 +56,8 @@ export async function POST(request: Request) {
   if (error && error.code !== '23505') {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  await awardPoints(session.user.id, FIRST_SAVE_POINTS, 'first_save');
 
   return NextResponse.json({ success: true }, { status: 201 });
 }

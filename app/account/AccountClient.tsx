@@ -8,16 +8,25 @@ import HomeTab from '@/components/account/HomeTab';
 import SavedItemsTab from '@/components/account/SavedItemsTab';
 import PersonalInfoTab from '@/components/account/PersonalInfoTab';
 import ComingSoonTab from '@/components/account/ComingSoonTab';
-import { isAccountTab, type AccountTab, type AccountUser, type SavedItem } from '@/components/account/types';
+import {
+  isAccountTab,
+  type AccountTab,
+  type AccountUser,
+  type QuestStatus,
+  type RewardClaim,
+  type SavedItem,
+} from '@/components/account/types';
 
 interface AccountClientProps {
   user: AccountUser;
   savedItems: SavedItem[];
+  quests: QuestStatus[];
+  claims: RewardClaim[];
   initialTab: AccountTab | null;
   signOutAction: () => Promise<void>;
 }
 
-export default function AccountClient({ user, savedItems, initialTab, signOutAction }: AccountClientProps) {
+export default function AccountClient({ user, savedItems, quests, claims, initialTab, signOutAction }: AccountClientProps) {
   const [tab, setTab] = useState<AccountTab>(initialTab ?? 'home');
   // Mobile only: show the menu first unless the URL already points at a tab.
   const [mobileView, setMobileView] = useState<'menu' | 'content'>(initialTab ? 'content' : 'menu');
@@ -54,7 +63,7 @@ export default function AccountClient({ user, savedItems, initialTab, signOutAct
   function renderTab() {
     switch (tab) {
       case 'home':
-        return <HomeTab user={user} memberSince={memberSince} />;
+        return <HomeTab user={user} memberSince={memberSince} quests={quests} claims={claims} onSelectTab={selectTab} />;
       case 'saved':
         return <SavedItemsTab initialItems={savedItems} />;
       case 'personal':
@@ -142,7 +151,7 @@ export default function AccountClient({ user, savedItems, initialTab, signOutAct
             type="button"
             onClick={backToMenu}
             className="md:hidden inline-flex items-center gap-2 self-start text-[0.85em] tracking-[0.1em] text-[#4dff91]"
-            style={{ fontFamily: "'Poppins', monospace" }}
+            style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             <ArrowLeft className="w-4 h-4" />
             ACCOUNT MENU

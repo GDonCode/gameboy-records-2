@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { awardPoints, SIGNUP_BONUS } from '@/lib/points';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -32,6 +33,10 @@ export async function POST(request: Request) {
     }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Endowed progress: new members start partway to their first reward.
+  // A failed award is logged inside awardPoints and must not block registration.
+  await awardPoints(user.id, SIGNUP_BONUS, 'signup_bonus');
 
   return NextResponse.json({ user });
 }

@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { auth, signOut } from '@/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { products } from '@/lib/products';
+import { getQuestStatus } from '@/lib/quests';
+import { getRewardClaims } from '@/lib/claims';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import { isAccountTab, type SavedItem } from '@/components/account/types';
@@ -50,6 +52,10 @@ export default async function AccountPage({
     };
   });
 
+  const [quests, claims] = await Promise.all([
+    getQuestStatus(session.user.id),
+    getRewardClaims(session.user.id),
+  ]);
   const { tab } = await searchParams;
   const initialTab = isAccountTab(tab) ? tab : null;
 
@@ -62,7 +68,14 @@ export default async function AccountPage({
     <div className="flex flex-col h-screen overflow-hidden">
       <Header />
       <MobileBottomNav />
-      <AccountClient user={user} savedItems={savedItems} initialTab={initialTab} signOutAction={handleSignOut} />
+      <AccountClient
+        user={user}
+        savedItems={savedItems}
+        quests={quests}
+        claims={claims}
+        initialTab={initialTab}
+        signOutAction={handleSignOut}
+      />
     </div>
   );
 }

@@ -1,8 +1,10 @@
 // components/account/HomeTab.tsx
-import { Check, Disc3, Lock, Shirt, Sticker, Tag, Ticket, Truck, type LucideIcon } from 'lucide-react';
+import { Check, Disc3, Gift, Lock, Shirt, Sticker, Tag, Ticket, Truck, type LucideIcon } from 'lucide-react';
 import { REWARD_TIERS, getRewardProgress, type RewardTier } from '@/lib/rewards';
 import { Panel, TabHeading } from './Panel';
-import type { AccountUser } from './types';
+import ClaimButton from './ClaimButton';
+import QuestsPanel from './QuestsPanel';
+import type { AccountTab, AccountUser, QuestStatus, RewardClaim } from './types';
 
 const TIER_ICONS: Record<RewardTier['icon'], LucideIcon> = {
   sticker: Sticker,
@@ -13,12 +15,12 @@ const TIER_ICONS: Record<RewardTier['icon'], LucideIcon> = {
   ticket: Ticket,
 };
 
-const MONO = { fontFamily: "'Share Tech Mono', monospace" };
-const BODY = { fontFamily: "'Poppins', monospace" };
+const MONO = { fontFamily: "'Poppins_semibold', sans-serif" };
+const BODY = { fontFamily: "'Poppins', sans-serif" };
 
 type TierState = 'unlocked' | 'next' | 'locked';
 
-function RewardPass({ points }: { points: number }) {
+function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] }) {
   const progress = getRewardProgress(points);
 
   return (
@@ -36,6 +38,7 @@ function RewardPass({ points }: { points: number }) {
           const state: TierState =
             i < progress.unlockedCount ? 'unlocked' : i === progress.unlockedCount ? 'next' : 'locked';
           const Icon = TIER_ICONS[tier.icon];
+          const claim = claims.find((c) => c.level === tier.level);
 
           const nodeClass =
             state === 'unlocked'
@@ -87,6 +90,17 @@ function RewardPass({ points }: { points: number }) {
                 <span className="text-[0.75em] text-white/50" style={MONO}>
                   {tier.points.toLocaleString('en-US')} PTS
                 </span>
+                {state === 'unlocked' &&
+                  (claim ? (
+                    <span
+                      className="px-2 py-0.5 rounded-full border border-[#4dff91]/60 text-[#4dff91] text-[0.65em] tracking-[0.15em]"
+                      style={MONO}
+                    >
+                      {claim.status === 'fulfilled' ? 'DELIVERED' : 'CLAIMED'}
+                    </span>
+                  ) : (
+                    <ClaimButton level={tier.level} />
+                  ))}
                 <span className="sr-only">
                   {state === 'unlocked' ? 'Unlocked' : state === 'next' ? 'Next reward' : 'Locked'}. {tier.description}.
                 </span>
@@ -99,10 +113,25 @@ function RewardPass({ points }: { points: number }) {
   );
 }
 
-export default function HomeTab({ user, memberSince }: { user: AccountUser; memberSince: string }) {
+export default function HomeTab({
+  user,
+  memberSince,
+  quests,
+  claims,
+  onSelectTab,
+}: {
+  user: AccountUser;
+  memberSince: string;
+  quests: QuestStatus[];
+  claims: RewardClaim[];
+  onSelectTab: (tab: AccountTab) => void;
+}) {
   const progress = getRewardProgress(user.points_balance);
   const firstName = user.display_name.split(' ')[0] || user.display_name;
   const totalTiers = REWARD_TIERS.length;
+  const unclaimedCount = REWARD_TIERS.filter(
+    (t) => progress.points >= t.points && !claims.some((c) => c.level === t.level)
+  ).length;
 
   const stats = [
     { label: 'Points balance', value: progress.points.toLocaleString('en-US') },
@@ -137,7 +166,7 @@ export default function HomeTab({ user, memberSince }: { user: AccountUser; memb
       <Panel className="flex flex-col gap-8">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <h2 className="text-[1.3em] text-white" style={{ fontFamily: "'Hemisphers_Bold_Sans', 'Poppins', sans-serif" }}>
+            <h2 className="text-[1.3em] text-white" style={{ fontFamily: "'Poppins_semibold', sans-serif" }}>
               Reward Pass
             </h2>
             <p className="text-[0.9em] text-white/60" style={BODY}>
@@ -156,15 +185,32 @@ export default function HomeTab({ user, memberSince }: { user: AccountUser; memb
           </div>
         </div>
 
-        <RewardPass points={progress.points} />
-      </Panel>
+        {unclaimedCount > 0 && (
+          <div
+            className="flex items-center gap-3 rounded-[10px] border border-[#4dff91] bg-[#4dff91]/10 px-4 py-3"
+            role="status"
+          >
+            <Gift className="w-5 h-5 text-[#4dff91]" />
+            <span className="text-[0.9em] text-white" style={BODY}>
+              You have {unclaimedCount} {unclaimedCount === 1 ? 'reward' : 'rewards'} ready to claim.
+            </span>
+          </div>
+        )}
 
+        <RewardPass points={progress.points} claims={claims} />
+      </Panel>
+      
+      {/* Quests */}
+      <QuestsPanel quests={quests} email={user.email} onSelectTab={onSelectTab} />
       {/* How it works — PLACEHOLDER copy until the earning rules are decided */}
       <Panel className="flex flex-col gap-5">
-        <h2 className="text-[1.3em] text-white" style={{ fontFamily: "'Hemisphers_Bold_Sans', 'Poppins', sans-serif" }}>
+        <h2 className="text-[1.3em] text-white" style={{ fontFamily: "'Poppins_semibold', sans-serif" }}>
           How you earn points
         </h2>
         <ul className="flex flex-col gap-3 text-white/80" style={BODY}>
+          <li>
+            <span className="text-[#4dff91]">40 point welcome bonus</span> just for joining. You&apos;re already on your way.
+          </li>
           <li>
             <span className="text-[#4dff91]">1 point</span> for every $1 spent on Gameboy Records merch.
           </li>
@@ -172,7 +218,7 @@ export default function HomeTab({ user, memberSince }: { user: AccountUser; memb
             <span className="text-[#4dff91]">Bonus points</span> on new drops and live show nights. Watch for them.
           </li>
           <li>
-            <span className="text-[#4dff91]">Rewards unlock automatically</span> as you level up. No codes to track.
+            <span className="text-[#4dff91]">Claim your rewards</span> as you level up. Tap CLAIM on an unlocked reward and we&apos;ll be in touch about delivery.
           </li>
         </ul>
       </Panel>

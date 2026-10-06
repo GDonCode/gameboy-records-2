@@ -7,19 +7,19 @@ export function TabHeading({ eyebrow, title, subtitle }: { eyebrow?: string; tit
       {eyebrow && (
         <span
           className="text-[0.75em] tracking-[0.25em] text-[#4dff91]"
-          style={{ fontFamily: "'Share Tech Mono', monospace" }}
+          style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
         >
           {eyebrow}
         </span>
       )}
       <h1
         className="text-[1.8em] leading-tight text-white"
-        style={{ fontFamily: "'Hemisphers_Bold_Sans', 'Poppins', sans-serif" }}
+        style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
       >
         {title}
       </h1>
       {subtitle && (
-        <p className="text-[0.95em] text-white/60" style={{ fontFamily: "'Poppins', monospace" }}>
+        <p className="text-[0.95em] text-white/60" style={{ fontFamily: "'Poppins', sans-serif" }}>
           {subtitle}
         </p>
       )}
