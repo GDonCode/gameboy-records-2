@@ -23,13 +23,13 @@ declare global {
 }
 
 type Mode = 'signin' | 'register';
-type FieldKey = 'signInEmail' | 'signInPassword' | 'displayName' | 'registerEmail' | 'registerPassword';
+type FieldKey = 'signInEmail' | 'signInPassword' | 'displayName' | 'registerEmail' | 'registerPassword' | 'registerConfirmPassword';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validateEmail(value: string): string | null {
   if (!value.trim()) return 'Enter your email.';
-  if (!EMAIL_RE.test(value.trim())) return 'Enter a valid email address.';
+  if (value.trim().length > 254 || !EMAIL_RE.test(value.trim())) return 'Enter a valid email address.';
   return null;
 }
 
@@ -46,6 +46,10 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
   const [displayName, setDisplayName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
+  const [showSignInPassword, setShowSignInPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showRegisterConfirm, setShowRegisterConfirm] = useState(false);
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
 
@@ -55,12 +59,23 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
   const fieldErrors: Record<FieldKey, string | null> = {
     signInEmail: validateEmail(signInEmail),
     signInPassword: signInPassword ? null : 'Enter your password.',
-    displayName: displayName.trim() ? null : 'Enter a display name.',
+    displayName: !displayName.trim()
+      ? 'Enter a display name.'
+      : displayName.trim().length > 50
+        ? 'Display name must be 50 characters or fewer.'
+        : null,
     registerEmail: validateEmail(registerEmail),
     registerPassword: !registerPassword
       ? 'Create a password.'
       : registerPassword.length < 8
         ? 'Password must be at least 8 characters.'
+        : new TextEncoder().encode(registerPassword).length > 72
+        ? 'Password is too long. Try a shorter one.'
+          : null,
+    registerConfirmPassword: !registerConfirmPassword
+      ? 'Confirm your password.'
+      : registerConfirmPassword !== registerPassword
+        ? 'Passwords do not match.'
         : null,
   };
   const shownError = (key: FieldKey) => (touched[key] ? fieldErrors[key] : null);
@@ -82,6 +97,28 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
     ) : null;
   };
 
+    const renderPasswordToggle = (visible: boolean, onToggle: () => void, label = 'password') => (
+    <button
+      type="button"
+      className="acct-pw-toggle"
+      onClick={onToggle}
+      onMouseDown={(e) => e.preventDefault()}
+      aria-label={`${visible ? 'Hide' : 'Show'} ${label}`}
+      aria-pressed={visible}
+    >
+      {visible ? (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-7 0-11-7-11-7a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+          <line x1="1" y1="1" x2="23" y2="23" />
+        </svg>
+      ) : (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      )}
+    </button>
+  );
   const googleSignInBtnRef = useRef<HTMLDivElement>(null);
   const googleRegisterBtnRef = useRef<HTMLDivElement>(null);
 
@@ -95,9 +132,18 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
     setSignInError(null);
     setSignInNotice(null);
 
-    const res = await signIn('user-credentials', { email: signInEmail, password: signInPassword, redirect: false });
+    const res = await signIn('user-credentials', {
+      email: signInEmail.trim(),
+      password: signInPassword,
+      redirect: false,
+    }).catch(() => null);
 
     setIsSigningIn(false);
+
+    if (res === null) {
+      setSignInError('Something went wrong. Check your connection and try again.');
+      return;
+    }
 
     if (res?.error) {
       setSignInError('Invalid email or password.');
@@ -110,8 +156,19 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (fieldErrors.displayName || fieldErrors.registerEmail || fieldErrors.registerPassword) {
-      setTouched((t) => ({ ...t, displayName: true, registerEmail: true, registerPassword: true }));
+    if (
+      fieldErrors.displayName ||
+      fieldErrors.registerEmail ||
+      fieldErrors.registerPassword ||
+      fieldErrors.registerConfirmPassword
+    ) {
+      setTouched((t) => ({
+        ...t,
+        displayName: true,
+        registerEmail: true,
+        registerPassword: true,
+        registerConfirmPassword: true,
+      }));
       return;
     }
     setIsRegistering(true);
@@ -120,20 +177,35 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
     const res = await fetch('/api/account/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: registerEmail, password: registerPassword, displayName }),
-    });
-    const data = await res.json();
+      body: JSON.stringify({
+        email: registerEmail.trim(),
+        password: registerPassword,
+        displayName: displayName.trim(),
+      }),
+    }).catch(() => null);
 
-    if (!res.ok) {
+    if (!res) {
       setIsRegistering(false);
-      setRegisterError(data.error || 'Registration failed.');
+      setRegisterError('Something went wrong. Check your connection and try again.');
       return;
     }
 
-    const signInRes = await signIn('user-credentials', { email: registerEmail, password: registerPassword, redirect: false });
+    const data: { error?: string } = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      setIsRegistering(false);
+      setRegisterError(data.error || 'Registration failed. Please try again.');
+      return;
+    }
+
+    const signInRes = await signIn('user-credentials', {
+      email: registerEmail.trim(),
+      password: registerPassword,
+      redirect: false,
+    }).catch(() => null);
     setIsRegistering(false);
 
-    if (signInRes?.error) {
+    if (!signInRes || signInRes.error) {
       setSignInEmail(registerEmail);
       setSignInNotice('Account created. Sign in to continue.');
       setMode('signin');
@@ -149,9 +221,9 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
     setSignInError(null);
     setSignInNotice(null);
 
-    const res = await signIn('google-onetap', { credential: response.credential, redirect: false });
+    const res = await signIn('google-onetap', { credential: response.credential, redirect: false }).catch(() => null);
 
-    if (res?.error) {
+    if (!res || res.error) {
       setMode('signin');
       setSignInError('Google sign-in failed. Try again or use your email.');
       return;
@@ -298,6 +370,26 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           text-align: left;
         }
         .acct-field .acct-input { margin-bottom: 0; }
+        .acct-pw-wrap { position: relative; width: 100%; }
+        .acct-pw-wrap .acct-input { padding-right: 44px; }
+        .acct-pw-toggle {
+          position: absolute;
+          top: 50%;
+          right: 6px;
+          transform: translateY(-50%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          background: none;
+          border: 0;
+          cursor: pointer;
+          color: rgba(22,67,42,0.55);
+        }
+        .acct-pw-toggle:hover { color: #1a9e4a; }
+        .acct-pw-toggle:focus-visible { outline: 2px solid #1a9e4a; outline-offset: 1px; }
         .acct-input.is-invalid { border-color: #c0392b; }
         .acct-input.is-invalid:focus {
           border-color: #c0392b;
@@ -396,7 +488,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           .acct-container {
             width: 768px;
             max-width: 100%;
-            min-height: 520px;
+            min-height: 600px;
           }
           .acct-form-box,
           .acct-form-box.is-hidden {
@@ -517,11 +609,15 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           </div>
 
           <div className={`acct-container${mode === 'register' ? ' is-register' : ''}`}>
-            <div id="acct-register" className={`acct-form-box acct-signup${mode === 'register' ? '' : ' is-hidden'}`}>
+            <div
+              id="acct-register"
+              className={`acct-form-box acct-signup${mode === 'register' ? '' : ' is-hidden'}`}
+              inert={mode !== 'register'}
+            >
               <form className="acct-form" onSubmit={handleRegister} noValidate>
                 <div className="acct-title">CREATE ACCOUNT</div>
 
-                {registerError && <div className="acct-error">{registerError}</div>}
+                {registerError && <div className="acct-error" role="alert">{registerError}</div>}
 
                 <div className="acct-field">
                   <input
@@ -530,6 +626,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                     autoComplete="nickname"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
+                    aria-label="Display name"
+                    maxLength={50}
                     required
                     {...fieldProps('displayName')}
                   />
@@ -542,24 +640,46 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                     autoComplete="email"
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
+                    aria-label="Email"
+                    maxLength={254}
                     required
                     {...fieldProps('registerEmail')}
                   />
                   {renderFieldError('registerEmail')}
                 </div>
-                <div className="acct-field">
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    autoComplete="new-password"
-                    value={registerPassword}
-                    onChange={(e) => setRegisterPassword(e.target.value)}
-                    required
-                    {...fieldProps('registerPassword')}
-                  />
+                                <div className="acct-field">
+                  <div className="acct-pw-wrap">
+                    <input
+                      type={showRegisterPassword ? 'text' : 'password'}
+                      placeholder="Password"
+                      autoComplete="new-password"
+                      value={registerPassword}
+                      onChange={(e) => setRegisterPassword(e.target.value)}
+                      aria-label="Password"
+                      required
+                      {...fieldProps('registerPassword')}
+                    />
+                    {renderPasswordToggle(showRegisterPassword, () => setShowRegisterPassword((v) => !v))}
+                  </div>
                   {renderFieldError('registerPassword') ?? (
                     <div className="acct-field-hint">At least 8 characters.</div>
                   )}
+                </div>
+                <div className="acct-field">
+                  <div className="acct-pw-wrap">
+                    <input
+                      type={showRegisterConfirm ? 'text' : 'password'}
+                      placeholder="Confirm password"
+                      autoComplete="new-password"
+                      value={registerConfirmPassword}
+                      onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                      aria-label="Confirm password"
+                      required
+                      {...fieldProps('registerConfirmPassword')}
+                    />
+                    {renderPasswordToggle(showRegisterConfirm, () => setShowRegisterConfirm((v) => !v), 'confirm password')}
+                  </div>
+                  {renderFieldError('registerConfirmPassword')}
                 </div>
                 <button type="submit" disabled={isRegistering} className="acct-submit">
                   <span className="acct-btn-label">{isRegistering ? 'CREATING…' : 'CREATE ACCOUNT'}</span>
@@ -570,12 +690,16 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
               </form>
             </div>
 
-            <div id="acct-signin" className={`acct-form-box acct-signin${mode === 'signin' ? '' : ' is-hidden'}`}>
+            <div
+              id="acct-signin"
+              className={`acct-form-box acct-signin${mode === 'signin' ? '' : ' is-hidden'}`}
+              inert={mode !== 'signin'}
+            >
               <form className="acct-form" onSubmit={handleSignIn} noValidate>
                 <div className="acct-title">SIGN IN</div>
 
-                {signInNotice && <div className="acct-notice">{signInNotice}</div>}
-                {signInError && <div className="acct-error">{signInError}</div>}
+                {signInNotice && <div className="acct-notice" role="status">{signInNotice}</div>}
+                {signInError && <div className="acct-error" role="alert">{signInError}</div>}
 
                 <div className="acct-field">
                   <input
@@ -584,21 +708,27 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                     autoComplete="email"
                     value={signInEmail}
                     onChange={(e) => setSignInEmail(e.target.value)}
+                    aria-label="Email"
+                    maxLength={254}
                     required
                     {...fieldProps('signInEmail')}
                   />
                   {renderFieldError('signInEmail')}
                 </div>
                 <div className="acct-field">
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    autoComplete="current-password"
-                    value={signInPassword}
-                    onChange={(e) => setSignInPassword(e.target.value)}
-                    required
-                    {...fieldProps('signInPassword')}
-                  />
+                  <div className="acct-pw-wrap">
+                    <input
+                      type={showSignInPassword ? 'text' : 'password'}
+                      placeholder="Password"
+                      autoComplete="current-password"
+                      value={signInPassword}
+                      onChange={(e) => setSignInPassword(e.target.value)}
+                      aria-label="Password"
+                      required
+                      {...fieldProps('signInPassword')}
+                    />
+                    {renderPasswordToggle(showSignInPassword, () => setShowSignInPassword((v) => !v))}
+                  </div>
                   {renderFieldError('signInPassword')}
                 </div>
                 <button type="submit" disabled={isSigningIn} className="acct-submit acct-submit-fit">

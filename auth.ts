@@ -56,7 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const { data: user, error } = await supabaseAdmin
           .from('users')
           .select('id, email, password_hash, display_name')
-          .eq('email', email)
+          .eq('email', email.trim().toLowerCase())
           .single();
 
         if (error || !user) return null;
@@ -96,7 +96,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const { data: existing, error: lookupError } = await supabaseAdmin
           .from('users')
           .select('id, email, display_name')
-          .eq('email', payload.email)
+          .eq('email', payload.email.toLowerCase())
           .maybeSingle();
 
         if (lookupError) return null;
@@ -107,7 +107,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const { data: created, error: insertError } = await supabaseAdmin
             .from('users')
             .insert({
-              email: payload.email,
+              email: payload.email.toLowerCase(),
               display_name: payload.name?.trim() || payload.email.split('@')[0],
               avatar_url: payload.picture ?? null,
             })

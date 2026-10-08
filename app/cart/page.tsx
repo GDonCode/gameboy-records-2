@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { emitCartCount } from '@/lib/cart-sync';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 
@@ -128,6 +129,13 @@ export default function CartPage() {
       }
     }
   }
+
+  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Keep the header's red counter in step with this page.
+  useEffect(() => {
+    if (!isLoading && !error) emitCartCount(itemCount);
+  }, [itemCount, isLoading, error]);
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 

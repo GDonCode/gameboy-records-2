@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { useCartCount } from '@/lib/cart-sync';
 function Corners() {
   return (
     <>
@@ -21,7 +22,9 @@ export default function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [hidden, setHidden] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  // Live cart total: updates instantly from the shop/cart pages, no refresh needed.
+  const liveCartCount = useCartCount(session?.user?.id);
+  const cartCount = session ? liveCartCount : 0;
   const [menuOpen, setMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -48,24 +51,6 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     return () => window.removeEventListener('scroll', handleScroll, true);
   }, []);
-
-  useEffect(() => {
-    if (!session) {
-      setCartCount(0);
-      return;
-    }
-
-    fetch('/api/cart')
-      .then((res) => (res.ok ? res.json() : { items: [] }))
-      .then((data) => {
-        const total = (data.items || []).reduce(
-          (sum: number, item: { quantity: number }) => sum + item.quantity,
-          0
-        );
-                setCartCount(total);
-      })
-      .catch(() => setCartCount(0));
-  }, [session]);
 
   // Close the mobile menu on Escape
   useEffect(() => {
