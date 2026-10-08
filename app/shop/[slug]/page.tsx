@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
+import GameIconsBackground from '@/components/GameIconsBackground';
 import { getProductBySlug, getRelatedProducts } from '@/lib/products';
 
 export default function ProductPage() {
@@ -56,7 +57,9 @@ export default function ProductPage() {
     <>
             <Header />
       <MobileBottomNav />
-      <div className="mobile-home-pad w-full h-screen overflow-y-auto px-8 py-10 bg-[#FEFEFA]">
+      <div className="relative w-full h-screen overflow-hidden" style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}>
+      <GameIconsBackground opacity={1.5} />
+      <div className="mobile-home-pad absolute inset-0 z-[1] overflow-y-auto px-8 py-10">
         <div className="flex flex-col md:flex-row gap-10 md:items-start">
           <div className="w-full md:w-[600px] flex-shrink-0">
             <div style={{ aspectRatio: '1 / 1' }} className="relative w-full bg-[#F6F6F4] border-2 border-[#2f8a68]/10 overflow-hidden">
@@ -79,18 +82,18 @@ export default function ProductPage() {
           </div>
 
           <div className="flex-1">
-            <h1 style={{ fontFamily: "'Poppins', monospace" }} className="text-2xl text-[#16432a] mb-2">
+            <h1 style={{ fontFamily: "'Poppins', monospace" }} className="text-2xl text-[#FEFEFA] mb-2">
               {product.name}
             </h1>
             <p style={{ fontFamily: "'Poppins', monospace" }} className="text-xl text-[#1a9e4a] mb-6">
               ${product.price.toFixed(2)}
             </p>
-            <p style={{ fontFamily: "'Poppins', monospace" }} className="text-[#16432a]/80 mb-6">
+            <p style={{ fontFamily: "'Poppins', monospace" }} className="text-[#e8f5ec]/80 mb-6">
               {product.description}
             </p>
 
             <div className="mb-6">
-              <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#16432a] mb-2">
+              <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#e8f5ec] mb-2">
                 Size
               </h2>
               <div className="flex gap-2">
@@ -102,7 +105,7 @@ export default function ProductPage() {
                     className={`px-4 py-2 border cursor-pointer ${
                       selectedSize === size
                         ? 'bg-[#1a9e4a] text-white border-[#1a9e4a]'
-                        : 'border-[#1a9e4a]/30 text-[#16432a]'
+                        : 'border-[#1a9e4a]/30 text-[#e8f5ec]'
                     }`}
                   >
                     {size}
@@ -112,7 +115,7 @@ export default function ProductPage() {
             </div>
 
             <div className="mb-6">
-              <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#16432a] mb-2">
+              <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#e8f5ec] mb-2">
                 Quantity
               </h2>
               <div className="flex items-center gap-3">
@@ -120,17 +123,17 @@ export default function ProductPage() {
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1}
-                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#16432a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#e8f5ec] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   −
                 </button>
-                <span style={{ fontFamily: "'Poppins', monospace" }} className="w-8 text-center text-[#16432a]">
+                <span style={{ fontFamily: "'Poppins', monospace" }} className="w-8 text-center text-[#e8f5ec]">
                   {quantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => q + 1)}
-                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#16432a] cursor-pointer"
+                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#e8f5ec] cursor-pointer"
                 >
                   +
                 </button>
@@ -146,7 +149,7 @@ export default function ProductPage() {
               {isAddingToCart ? 'Adding…' : 'Add to Cart'}
             </button>
             {addToCartError && (
-              <p style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-red-600 mt-2">
+              <p style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-red-400 mt-2">
                 {addToCartError}
               </p>
             )}
@@ -155,7 +158,7 @@ export default function ProductPage() {
 
         {related.length > 0 && (
           <div className="mt-16">
-            <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-lg text-[#16432a] mb-4">
+            <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-lg text-[#e8f5ec] mb-4">
               You may also like
             </h2>
             <div className="flex flex-wrap gap-6">
@@ -189,6 +192,7 @@ export default function ProductPage() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </>
   );

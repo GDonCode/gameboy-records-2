@@ -720,17 +720,8 @@ export default function Home() {
 
                 {/* ═══ NEW LABEL HERO — "REALEST. TRUEST." ═══ */}
                   <div className="hero-main relative flex-shrink-0 overflow-hidden">
-                  {/* Background image */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`${MEDIA_BASE}/Screenshot%20(103).png`}
-                    alt=""
-                    aria-hidden="true"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-
-                  {/* Overlays */}
-                  <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.50)' }} />
+                  {/* Background — animated game icons */}
+                  <GameIconsBackground opacity={1.5} />
 
                   {/* Hero figure — centered, 3D sway, white background keyed out */}
                   <div className="absolute inset-0 flex items-end justify-center pointer-events-none" aria-hidden="true">
@@ -812,110 +803,9 @@ export default function Home() {
                       </svg>
                       TUNE IN
                     </button>
-
-                    {/* Artist portraits strip 
-                    <div className="flex flex-wrap items-center justify-center gap-8 mt-2 max-w-4xl">
-                      // Alexx A-Game — portrait photo 
-                      <a href="/artists" className="flex flex-col items-center gap-2 transition-all duration-200 hover:scale-110">
-                        // eslint-disable-next-line @next/next/no-img-element 
-                        <img
-                          src="/alexx-portrait.jpg"
-                          alt="Alexx A-Game"
-                          className="w-[80px] h-[80px] rounded-full border-[3px] border-[#4dff91] object-cover object-top"
-                          style={{ boxShadow: '0 0 0 2px rgba(77,255,145,0.5), 0 0 22px rgba(77,255,145,0.95), 0 0 8px rgba(77,255,145,0.6)' }}
-                        />
-                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
-                          Alexx A-Game
-                        </span>
-                      </a>
-
-                      // DJ Karma 
-                      <a href="/artists" className="flex flex-col items-center gap-2 transition-all duration-200 hover:scale-110">
-                        <div
-                          className="w-[80px] h-[80px] rounded-full flex items-center justify-center border-[3px] border-[#4dff91]"
-                          style={{
-                            background: 'linear-gradient(135deg, #c0392b, #78281f)',
-                            fontFamily: "'Poppins', monospace",
-                            fontSize: '2em',
-                            color: '#fff',
-                            textShadow: '0 1px 6px rgba(0,0,0,0.6)',
-                            boxShadow: '0 0 0 2px rgba(77,255,145,0.5), 0 0 22px rgba(77,255,145,0.95), 0 0 8px rgba(77,255,145,0.6)',
-                          }}
-                        >
-                          DK
-                        </div>
-                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
-                          DJ Karma
-                        </span>
-                      </a>
-
-                      // Bassline 
-                      <a href="/artists" className="flex flex-col items-center gap-2 transition-all duration-200 hover:scale-110">
-                        <div
-                          className="w-[80px] h-[80px] rounded-full flex items-center justify-center border-[3px] border-[#4dff91]"
-                          style={{
-                            background: 'linear-gradient(135deg, #2980b9, #1a5276)',
-                            fontFamily: "'Poppins', monospace",
-                            fontSize: '2em',
-                            color: '#fff',
-                            textShadow: '0 1px 6px rgba(0,0,0,0.6)',
-                            boxShadow: '0 0 0 2px rgba(77,255,145,0.5), 0 0 22px rgba(77,255,145,0.95), 0 0 8px rgba(77,255,145,0.6)',
-                          }}
-                        >
-                          BL
-                        </div>
-                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
-                          Bassline
-                        </span>
-                      </a>
-
-                      // Neon Noir 
-                      <a href="/artists" className="flex flex-col items-center gap-2 transition-all duration-200 hover:scale-110">
-                        <div
-                          className="w-[80px] h-[80px] rounded-full flex items-center justify-center border-[3px] border-[#4dff91]"
-                          style={{
-                            background: 'linear-gradient(135deg, #8e44ad, #5b2d6e)',
-                            fontFamily: "'Poppins', monospace",
-                            fontSize: '2em',
-                            color: '#fff',
-                            textShadow: '0 1px 6px rgba(0,0,0,0.6)',
-                            boxShadow: '0 0 0 2px rgba(77,255,145,0.5), 0 0 22px rgba(77,255,145,0.95), 0 0 8px rgba(77,255,145,0.6)',
-                          }}
-                        >
-                          NN
-                        </div>
-                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
-                          Neon Noir
-                        </span>
-                      </a>
-
-                      // Vibe X 
-                      <a href="/artists" className="flex flex-col items-center gap-2 transition-all duration-200 hover:scale-110">
-                        <div
-                          className="w-[80px] h-[80px] rounded-full flex items-center justify-center border-[3px] border-[#4dff91]"
-                          style={{
-                            background: 'linear-gradient(135deg, #d35400, #6e2c00)',
-                            fontFamily: "'Poppins', monospace",
-                            fontSize: '2em',
-                            color: '#fff',
-                            textShadow: '0 1px 6px rgba(0,0,0,0.6)',
-                            boxShadow: '0 0 0 2px rgba(77,255,145,0.5), 0 0 22px rgba(77,255,145,0.95), 0 0 8px rgba(77,255,145,0.6)',
-                          }}
-                        >
-                          VX
-                        </div>
-                        <span style={{ fontFamily: "'Poppins', monospace", fontSize: '0.9em', letterSpacing: '0.12em', color: '#fff' }}>
-                          Vibe X
-                        </span>
-                      </a>
-
-                    </div>
-                    */}
-
-                    
                   </div>
                 </div>
-                                {/* Hero panels — stacked fallback when they can't sit beside the cutout */}
+                {/* Hero panels — stacked fallback when they can't sit beside the cutout */}
                 <div
                   className="hero-stack flex-shrink-0 relative z-[2] px-6 py-10"
                   style={{ background: 'linear-gradient(180deg, #0c1510 0%, #0f1a12 100%)' }}
@@ -927,6 +817,8 @@ export default function Home() {
                     <SocialsPanel />
                   </div>
                 </div>
+
+                
                 <div
                   className="relative flex-shrink-0 overflow-hidden"
                   style={{ minHeight: 'calc(100vh - 84px)' }}
@@ -1017,37 +909,103 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* ═══ STILL A RISE — release section ═══ */}
+                <div
+                  className="relative flex-shrink-0 overflow-hidden"
+                  style={{ minHeight: 'calc(100vh - 84px)' }}
+                >
+                  {/* Background video — blurred, stretched fill */}
+                  <video
+                    src={`${MEDIA_BASE}/Standing.mp4`}
+                    autoPlay muted loop playsInline
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover scale-110"
+                    style={{ filter: 'blur(5px) brightness(0.55)' }}
+                  />
+
+                  {/* Foreground video — true vertical aspect, centered, no crop */}
+                  <video
+                    src={`${MEDIA_BASE}/Standing.mp4`}
+                    autoPlay muted loop playsInline
+                    className="absolute inset-0 w-full h-full object-contain"
+                  />
+
+                  {/* Overlay layer 1 — uniform dark tint for readability */}
+                  <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.25)' }} />
+                  {/* Overlay layer 2 — top + bottom gradient fade */}
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,16,12,0.32) 0%, transparent 22%, transparent 62%, rgba(10,16,12,0.5) 100%)' }} />
+                  {/* Hero content */}
+                  <div
+                    className="relative z-[3] flex flex-col items-center justify-center gap-10 px-10 text-center"
+                    style={{ minHeight: 'calc(100vh - 84px)' }}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <h1 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '3em', color: '#fff', letterSpacing: '0.12em', textShadow: '0 2px 28px rgba(0,0,0,0.9), 0 0 40px rgba(77,255,145,0.12)', lineHeight: 1 }}>
+                        STILL A RISE
+                      </h1>
+                      <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '1.75em', color: '#4dff91', letterSpacing: '0.28em', textShadow: '0 0 24px rgba(77,255,145,0.55)', lineHeight: 1, marginTop: '12px' }}>
+                        ALEXX A-GAME
+                      </h2>
+                    </div>
+                    <div className="listen-on-wrap">
+                      <button
+                        className="listen-on-btn"
+                        onClick={() => openPlayer('https://www.youtube.com/embed/BhKt3DVRRkw?si=YgpNpIqT8BEMDctg&autoplay=1&controls=1')}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/youtube.png" alt="YouTube" />
+                        YOUTUBE
+                      </button>
+                      <a
+                        href="https://music.apple.com/us/album/still-a-rise-single/6808531561"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="listen-on-btn"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/apple-music.png" alt="Apple Music" />
+                        APPLE MUSIC
+                      </a>
+                      <a
+                        href="https://open.spotify.com/track/6x4zWKWNHfCzWDDMPJaG7N?si=098d7034338040bb"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="listen-on-btn"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/spotify.png" alt="Spotify" />
+                        SPOTIFY
+                      </a>
+                      <a
+                        href="https://audiomack.com/alexxagame"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="listen-on-btn"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/audiomack.png" alt="Audiomack" />
+                        AUDIOMACK
+                      </a>
+                      <a
+                        href="https://soundcloud.com/alexxagame"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="listen-on-btn"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/soundcloud.png" alt="Soundcloud" />
+                        SOUNDCLOUD
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
                 <div
                   className="flex-shrink-0 relative z-[2]"
                   style={{ background: 'linear-gradient(180deg, #0f1a12 0%, #0c1510 100%)' }}
                 >
-                                  <GameIconsBackground />
+                  <GameIconsBackground />
 
-                {/* About sub-section */}
-                  <div className="relative z-[1] px-12 py-16">
-                    <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12 max-w-[1080px] mx-auto">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`${MEDIA_BASE}/IMG_2591.jpg`}
-                        alt="Alexx A-Game"
-                        className="w-full h-[440px] object-cover block rounded-[2px] border-[3px] border-[#1a9e4a]"
-                      />
-                      <div className="flex flex-col gap-4">
-                        <h2 style={{ fontFamily: "'Poppins', monospace", fontSize: '3em', color: '#4dff91', letterSpacing: '0.05em', textShadow: '0 0 20px rgba(77,255,145,0.25)' }}>
-                          WHO IS GAMEBOY?
-                        </h2>
-                        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '1.25em', color: '#4dff91', opacity: 0.4 }}>
-                          The story behind the sound.
-                        </p>
-                        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#e8f5ec', lineHeight: 1.6 }}>
-                          <span className="font-bold text-[1.15em] text-[#fff]">Alexx A-Game</span>, born Alex Gallimore, grew up in Wood’s Town, Discovery Bay, in St. Ann, Jamaica. A William Knibb High School graduate, he picked up his stage name in late 2013 from his constant use of the slang “a-game.”
-                        </p>
-                        <p style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#e8f5ec', lineHeight: 1.6 }}>
-                          A musician first, Alexx has pushed for a fresher, more visual approach to Jamaican music, and was cast as Peter Tosh in Paramount’s <em>Bob Marley: One Love</em>. Gameboy Records is where that vision lives: realest sound, truest vision.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* TEMP DISABLED: Partners + Contact sub-sections (remove `{false && (<>` and matching `</>)}` to restore) */}
                   {false && (

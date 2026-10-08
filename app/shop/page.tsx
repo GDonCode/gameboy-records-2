@@ -129,7 +129,7 @@ function MobileFilterBar(props: {
 }) {
   const chip = (active: boolean) =>
     `shrink-0 border px-3 py-1.5 text-xs cursor-pointer ${
-      active ? 'bg-[#1a9e4a] border-[#1a9e4a] text-white' : 'border-[#1a9e4a]/30 text-[#16432a]'
+      active ? 'bg-[#1a9e4a] border-[#1a9e4a] text-white' : 'border-[#1a9e4a]/30 text-[#e8f5ec]'
     }`;
   return (
     <div className="md:hidden -mx-4 w-[calc(100%+2rem)] overflow-x-auto px-4" aria-label="Product filters">
@@ -556,9 +556,10 @@ export default function ShopPage() {
             <MobileBottomNav />
             <div className="flex flex-row h-screen overflow-hidden bg-[#FEFEFA]">
                 <FilterSidebar color={selectedColor} type={selectedType} onColor={setSelectedColor} onType={setSelectedType} onReset={resetFilters} resultCount={resultCount} />
-                <div className="flex flex-wrap content-start gap-6 p-4 pt-18 md:pt-4 flex-1 overflow-y-auto relative">
-                    <section className="relative isolate -mx-4 -mt-3 w-[calc(100%+2rem)] overflow-hidden bg-[#0c1510] px-6 pt-4 pb-6 md:mx-0 md:mt-0 md:w-full md:px-8 md:py-8">
-                        <GameIconsBackground />
+                <div className="relative flex-1 overflow-hidden" style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}>
+                <GameIconsBackground opacity={1.5} />
+                <div className="flex flex-wrap content-start gap-6 p-4 pt-18 md:pt-4 absolute inset-0 z-[1] overflow-y-auto">
+                    <section className="relative isolate -mx-4 -mt-3 w-[calc(100%+2rem)] overflow-hidden px-6 pt-4 pb-6 md:mx-0 md:mt-0 md:w-full md:px-8 md:py-2">
                         <div className="relative z-[1]">
                             <h1 style={{ fontFamily: "'Poppins_semibold', sans-serif" }} className="mt-3 text-4xl md:text-5xl uppercase leading-none text-[#FEFEFA]">
                                 "RISE" COLLECTION
@@ -570,12 +571,12 @@ export default function ShopPage() {
                     </section>
                     <MobileFilterBar color={selectedColor} type={selectedType} onColor={setSelectedColor} onType={setSelectedType} />
                     {resultCount === 0 && (
-                        <p style={{ fontFamily: "'Poppins', monospace" }} className="w-full py-12 text-center text-[#16432a]/70">
+                        <p style={{ fontFamily: "'Poppins', monospace" }} className="w-full py-12 text-center text-[#e8f5ec]/80">
                             No products match these filters.{' '}
                             <button type="button" onClick={resetFilters} className="text-[#1a9e4a] underline cursor-pointer">Reset filters</button>
                         </p>
                     )}
-                    <Link href="/shop/black-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-transparent ${colorMatches('black-t') ? '' : 'hidden'}`}>
+                    <Link href="/shop/black-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-white ${colorMatches('black-t') ? '' : 'hidden'}`}>
                         <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F6] overflow-hidden">
                             <Image src="/black-t.png" alt="Product 1" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
@@ -604,7 +605,7 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                    <Link href="/shop/gray-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-transparent ${colorMatches('gray-t') ? '' : 'hidden'}`}>
+                    <Link href="/shop/gray-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-white ${colorMatches('gray-t') ? '' : 'hidden'}`}>
                         <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F6] overflow-hidden">
                             <Image src="/gray-t.png" alt="Product 2" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
@@ -633,7 +634,7 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                    <Link href="/shop/white-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-transparent ${colorMatches('white-t') ? '' : 'hidden'}`}>
+                    <Link href="/shop/white-t" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-white ${colorMatches('white-t') ? '' : 'hidden'}`}>
                         <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F6] overflow-hidden">
                             <Image src="/white-t.png" alt="Product 3" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
@@ -662,7 +663,7 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                    <Link href="/shop/black-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-transparent ${colorMatches('black-h') ? '' : 'hidden'}`}>
+                    <Link href="/shop/black-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-white ${colorMatches('black-h') ? '' : 'hidden'}`}>
                         <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F6] overflow-hidden">
                             <Image src="/black-h.png" alt="Product 4" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
@@ -691,7 +692,7 @@ export default function ShopPage() {
                             </div>
                         </div>
                     </Link>
-                                        <Link href="/shop/white-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-transparent ${colorMatches('white-h') ? '' : 'hidden'}`}>
+                                        <Link href="/shop/white-h" className={`group items-center flex flex-col overflow-hidden cursor-pointer w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] h-fit shadow-[0_4px_16px_rgba(22,67,42,0.18)] bg-white ${colorMatches('white-h') ? '' : 'hidden'}`}>
                         <div style={{ aspectRatio: '1 / 1' }} className="group relative w-full mx-auto bg-[#F6F6F6] overflow-hidden">
                             <Image src="/white-h.png" alt="Product 5" fill className="object-cover transition-transform duration-300 ease-out group-hover:scale-110" />
                             <button
@@ -752,6 +753,7 @@ export default function ShopPage() {
                     <div className="-mx-4 -mb-4 w-[calc(100%+2rem)]">
                         <Footer />
                     </div>
+                </div>
                 </div>
             </div>
         </>
