@@ -556,8 +556,8 @@ export default function ShopPage() {
             <MobileBottomNav />
             <div className="flex flex-row h-screen overflow-hidden bg-[#FEFEFA]">
                 <FilterSidebar color={selectedColor} type={selectedType} onColor={setSelectedColor} onType={setSelectedType} onReset={resetFilters} resultCount={resultCount} />
-                <div className="relative flex-1 overflow-hidden" style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}>
-                <GameIconsBackground opacity={1.5} />
+                <div className="relative flex-1 overflow-hidden"               style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}>
+                {/* <GameIconsBackground opacity={1.5} /> */}
                 <div className="flex flex-wrap content-start gap-6 p-4 pt-18 md:pt-4 absolute inset-0 z-[1] overflow-y-auto">
                     <section className="relative isolate -mx-4 -mt-3 w-[calc(100%+2rem)] overflow-hidden px-6 pt-4 pb-6 md:mx-0 md:mt-0 md:w-full md:px-8 md:py-2">
                         <div className="relative z-[1]">

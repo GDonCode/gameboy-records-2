@@ -720,8 +720,13 @@ export default function Home() {
 
                 {/* ═══ NEW LABEL HERO — "REALEST. TRUEST." ═══ */}
                   <div className="hero-main relative flex-shrink-0 overflow-hidden">
-                  {/* Background — animated game icons */}
-                  <GameIconsBackground opacity={1.5} />
+                  {/* Background video */}
+                  <video
+                    src={`${MEDIA_BASE}/web-hero.mp4`}
+                    autoPlay muted loop playsInline
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
 
                   {/* Hero figure — centered, 3D sway, white background keyed out */}
                   <div className="absolute inset-0 flex items-end justify-center pointer-events-none" aria-hidden="true">
@@ -743,66 +748,6 @@ export default function Home() {
                         <feComposite in2="SourceAlpha" operator="in" />
                       </filter>
                     </svg>
-                  </div>
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,16,12,0.7) 0%, transparent 25%, transparent 60%, rgba(10,16,12,0.95) 100%)' }} />
-                  {/* Hero overlay — name above cutout; panels left/right (desktop) */}
-                  <div className="absolute inset-0 z-[3] pointer-events-none">
-                    <h1 className="hero-artist-name">ALEXX A-GAME</h1>
-
-                    <div className="hero-side hero-side-left">
-                      <RadioPanel onTuneIn={() => openPlayer(RADIO_EMBED)} />
-                      <FeaturedPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
-                    </div>
-
-                    <div className="hero-side hero-side-right">
-                      <StoryPanel />
-                      <SocialsPanel />
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  {/* Content */}
-                  <div
-                    className="hidden hero-main-content relative z-[3] flex flex-col items-center justify-center gap-6 px-10 text-center"
-                  >
-                    <div className="flex flex-col items-center gap-1">
-                       <h1
-                        className="hidden md:block"
-                        style={{
-                          fontFamily: "'Poppins_semibold', monospace",
-                          fontSize: '3em',
-                          color: '#fff',
-                          letterSpacing: '0.12em',
-                          textShadow: '0 2px 28px rgba(0,0,0,0.9), 0 0 50px rgba(77,255,145,0.10)',
-                          lineHeight: 1.0,
-                        }}
-                      >
-                        GAMEBOY RECORDS
-                      </h1>
-                      <p
-                        className="hero-tagline"
-                        style={{
-                          fontFamily: "'Poppins', monospace",
-                          color: '#4dff91',
-                          textShadow: '0 0 30px rgba(77,255,145,0.40)',
-                          lineHeight: 1.2,
-                          marginTop: '4px',
-                        }}
-                      >
-                        REALEST SOUND.
-                        <br className="md:hidden" />
-                        {' '}TRUEST VISION.
-                      </p>
-                    </div>
-                    <button
-                      className="listen-btn"
-                      onClick={() => openPlayer('https://www.youtube.com/embed/videoseries?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo&autoplay=1&controls=1')}
-                    >
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0 block" fill="currentColor">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                      TUNE IN
-                    </button>
                   </div>
                 </div>
                 {/* Hero panels — stacked fallback when they can't sit beside the cutout */}
