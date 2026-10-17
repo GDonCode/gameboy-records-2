@@ -34,6 +34,25 @@ const SOCIAL_LINKS = [
   { label: 'SoundCloud',  href: 'https://soundcloud.com/alexxagame',                                         icon: '/soundcloud.png' },
 ];
 
+// ── HERO HOTSPOT — the person in web-hero.mp4 ────────────────────────────────
+// The spotlight is a cone of light: narrow at the top (as if a lamp hangs above the frame) and widening toward the bottom.
+// Its hover area is the same cone. Points are [x, y] as fractions of the VIDEO frame (0–1), not of the screen,
+// listed top-left, bottom-left, bottom-right, top-right. It runs just past the top and bottom of the frame on purpose.
+// To reshape it, move the points. To calibrate, open the home page with ?hotspot=debug,
+// hover the spot you want, and read the x / y values in the black readout.
+const HERO_SHAPE: [number, number][] = [
+  [0.320, -0.100],
+  [0.110, 1.100],
+  [0.630, 1.100],
+  [0.420, -0.100],
+];
+// Half-width of the pool of light where the beam lands on the bottom edge of the hero, as a fraction of the video width.
+const HERO_POOL_RX = 0.26;
+// Where the tooltip points (the top of the head), as a fraction of the video frame.
+const HERO_TIP = { x: 0.37, y: 0.10 };
+// Horizontal centre of the person (0–1). On narrow screens the video is shifted sideways to keep it in view.
+const HERO_FOCUS_X = 0.37;
+
 function RadioPanel({ onTuneIn }: { onTuneIn: () => void }) {
   return (
     <div className="hero-panel">
@@ -142,6 +161,17 @@ export default function Home() {
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
    const playerRef = useRef<HTMLDivElement>(null);
 
+  // Hero hotspot + drawer
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const hotspotRef = useRef<SVGPathElement>(null);
+  const dimRef = useRef<SVGPathElement>(null);
+  const poolRef = useRef<SVGEllipseElement>(null);
+  const tipRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const debugRef = useRef<HTMLDivElement>(null);
+
   // Mobile: collapse the expanded mini-player to its pull tab on any tap outside it
   useEffect(() => {
     if (!playerVisible || playerCollapsed) return;
@@ -164,6 +194,125 @@ export default function Home() {
       v.play().catch(() => {});
     });
   }, []);
+
+  // Hero hotspot — keeps the highlight shape and tooltip on the person in web-hero.mp4.
+  // The video is top-aligned (its top edge is never cropped) and nudged sideways so the person stays in view.
+  useEffect(() => {
+    const hero = heroRef.current;
+    const video = heroVideoRef.current;
+    const hot = hotspotRef.current;
+    const dim = dimRef.current;
+    const pool = poolRef.current;
+    const tip = tipRef.current;
+    const hud = debugRef.current;
+    if (!hero || !video || !hot || !tip) return;
+
+    const debug = new URLSearchParams(window.location.search).get('hotspot') === 'debug';
+    if (debug) hot.dataset.debug = '1';
+
+    // Where the video is drawn inside the hero (object-fit: cover, top-aligned)
+    const geo = { ox: 0, dw: 1, dh: 1 };
+    let visible = true;
+    let raf = 0;
+    let lastD = '';
+
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+    });
+    io.observe(hero);
+
+    const frame = () => {
+      raf = requestAnimationFrame(frame);
+      if (!visible) return;
+      const cw = hero.clientWidth;
+      const ch = hero.clientHeight;
+      if (!cw || !ch) return;
+
+      const vw = video.videoWidth || 16;
+      const vh = video.videoHeight || 9;
+      const scale = Math.max(cw / vw, ch / vh);
+      const dw = vw * scale;
+      const dh = vh * scale;
+      const ox = Math.min(0, Math.max(cw - dw, cw / 2 - HERO_FOCUS_X * dw));
+      geo.ox = ox;
+      geo.dw = dw;
+      geo.dh = dh;
+      video.style.objectPosition = dw > cw ? `${(ox / (cw - dw)) * 100}% 0%` : '50% 0%';
+
+      // Hover shape: the polygon in screen pixels. On narrow screens it is pulled in toward the person
+      // so it doesn't cover the whole width (a tap anywhere would open the drawer).
+      const squeeze = cw < 640 ? 0.7 : 1;
+      const pts = HERO_SHAPE.map(([fx, fy]) => {
+        const x = ox + (HERO_TIP.x + (fx - HERO_TIP.x) * squeeze) * dw;
+        return `${x.toFixed(1)} ${(fy * dh).toFixed(1)}`;
+      });
+      const d = `M${pts.join('L')}Z`;
+      const key = `${d}|${cw}|${ch}`;
+      if (key !== lastD) {
+        lastD = key;
+        hot.setAttribute('d', d);
+        // Dim layer = the whole hero (plus a margin, so its blurred edge stays offscreen) with the shape cut out (even-odd fill)
+        dim?.setAttribute('d', `M-120 -120H${cw + 120}V${ch + 120}H-120Z${d}`);
+        // Pool of light: a half-ellipse sitting on the bottom edge of the hero, under the beam
+        const rx = HERO_POOL_RX * dw * squeeze;
+        pool?.setAttribute('cx', (ox + HERO_TIP.x * dw).toFixed(1));
+        pool?.setAttribute('cy', String(ch));
+        pool?.setAttribute('rx', rx.toFixed(1));
+        pool?.setAttribute('ry', (rx * 0.25).toFixed(1));
+      }
+
+      const tx = ox + HERO_TIP.x * dw;
+      const ty = HERO_TIP.y * dh;
+      const half = tip.offsetWidth / 2 + 8;
+      tip.style.left = `${Math.min(Math.max(tx, half), cw - half)}px`;
+      tip.style.top = `${Math.max(ty, 56)}px`;
+    };
+    raf = requestAnimationFrame(frame);
+
+    // ?hotspot=debug — readout of the cursor position as a fraction of the video frame
+    const onMove = (e: PointerEvent) => {
+      if (!hud) return;
+      const r = hero.getBoundingClientRect();
+      const x = (e.clientX - r.left - geo.ox) / geo.dw;
+      const y = (e.clientY - r.top) / geo.dh;
+      hud.textContent = `t=${video.currentTime.toFixed(2)}s  x=${x.toFixed(3)}  y=${y.toFixed(3)}`;
+    };
+    if (debug && hud) {
+      hud.dataset.on = '1';
+      hero.addEventListener('pointermove', onMove);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      hero.removeEventListener('pointermove', onMove);
+    };
+  }, []);
+
+  // Hero drawer — Esc or a click outside closes it; focus moves into it on open.
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const drawer = drawerRef.current;
+    const hot = hotspotRef.current;
+    drawer?.focus();
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setDrawerOpen(false);
+        hot?.focus({ preventScroll: true });
+      }
+    }
+    function onDown(e: PointerEvent) {
+      const t = e.target as Node;
+      if (drawer?.contains(t) || hot?.contains(t)) return;
+      setDrawerOpen(false);
+    }
+    window.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onDown);
+    };
+  }, [drawerOpen]);
 
   function openPlayer(embedSrc?: string) {
     if (closeTimerRef.current) {
@@ -341,6 +490,198 @@ export default function Home() {
         @media (prefers-reduced-motion: reduce) {
           .hero-figure-3d { animation: none; }
         }
+        /* ── HERO HOTSPOT / TOOLTIP / DRAWER (person in web-hero.mp4) ── */
+        .hero-hot-svg {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          overflow: hidden;
+        }
+        /* Green spotlight. The hotspot path is the invisible hit area AND the beam of light: its fill is a green
+           gradient and it is blurred, so the edges are soft. Blur and opacity never change what the cursor hits,
+           so the hover area stays exactly the cone in HERO_SHAPE. Layer order matters (the ~ selectors below):
+           hotspot, then dim, then pool. */
+        .hero-hotspot {
+          fill: url(#hero-beam);
+          stroke: none;
+          opacity: 0;
+          filter: blur(14px);
+          pointer-events: all;
+          cursor: pointer;
+          outline: none;
+          -webkit-tap-highlight-color: transparent;
+          transition: opacity 0.35s ease;
+        }
+        .hero-hotspot:hover,
+        .hero-hotspot:focus-visible,
+        .hero-hotspot.active { opacity: 1; }
+        .hero-hotspot[data-debug] {
+          fill: transparent;
+          stroke: rgba(255,230,0,0.9);
+          stroke-width: 2;
+          stroke-dasharray: 8 6;
+          opacity: 1;
+          filter: none;
+        }
+        .hero-hot-dim {
+          fill: rgba(2,10,5,0.70);
+          fill-rule: evenodd;
+          opacity: 0;
+          filter: blur(26px);
+          pointer-events: none;
+          transition: opacity 0.35s ease;
+        }
+        .hero-hot-pool {
+          fill: url(#hero-pool);
+          opacity: 0;
+          filter: blur(10px);
+          pointer-events: none;
+          transition: opacity 0.35s ease;
+        }
+        .hero-hotspot:hover ~ .hero-hot-dim,
+        .hero-hotspot:focus-visible ~ .hero-hot-dim,
+        .hero-hotspot.active ~ .hero-hot-dim,
+        .hero-hotspot:hover ~ .hero-hot-pool,
+        .hero-hotspot:focus-visible ~ .hero-hot-pool,
+        .hero-hotspot.active ~ .hero-hot-pool { opacity: 1; }
+
+        .hero-tip {
+          position: absolute;
+          left: 0;
+          top: 0;
+          z-index: 4;
+          pointer-events: none;
+          white-space: nowrap;
+          padding: 7px 12px;
+          background: #fef8f3;
+          color: #16432a;
+          font-family: 'Poppins_semibold', monospace;
+          font-size: 0.72rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          border: 1px solid rgba(26,158,74,0.35);
+          border-radius: 3px;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+          transform: translate(-50%, calc(-100% - 12px));
+          transition: opacity 0.2s ease;
+        }
+        .hero-tip::after {
+          content: '';
+          position: absolute;
+          left: 50%;
+          bottom: -5px;
+          width: 9px;
+          height: 9px;
+          background: #fef8f3;
+          border-right: 1px solid rgba(26,158,74,0.35);
+          border-bottom: 1px solid rgba(26,158,74,0.35);
+          transform: translateX(-50%) rotate(45deg);
+        }
+        .hero-tip--off { opacity: 0; }
+        .hero-tip .tip-touch { display: none; }
+        @media (hover: none) {
+          .hero-tip .tip-hover { display: none; }
+          .hero-tip .tip-touch { display: inline; }
+        }
+
+        .hero-debug {
+          display: none;
+          position: absolute;
+          left: 8px;
+          bottom: 8px;
+          z-index: 7;
+          padding: 6px 10px;
+          background: rgba(0,0,0,0.85);
+          color: #4dff91;
+          font: 12px monospace;
+          pointer-events: none;
+        }
+        .hero-debug[data-on] { display: block; }
+
+        .hero-drawer {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 6;
+          display: flex;
+          flex-direction: column;
+          width: min(400px, 100%);
+          background: rgba(5,15,8,0.94);
+          border-left: 1px solid rgba(26,158,74,0.5);
+          box-shadow: -12px 0 48px rgba(0,0,0,0.7);
+          -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+          outline: none;
+          transform: translateX(100%);
+          visibility: hidden;
+          transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s linear 0.35s;
+        }
+        .hero-drawer.open {
+          transform: none;
+          visibility: visible;
+          transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s;
+        }
+        .hero-drawer-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-shrink: 0;
+          padding: 0 8px 0 18px;
+          height: 52px;
+          border-bottom: 1px solid rgba(26,158,74,0.25);
+        }
+        .hero-drawer-title {
+          font-family: 'Poppins_semibold', monospace;
+          font-size: 0.75rem;
+          letter-spacing: 0.28em;
+          color: #4dff91;
+        }
+        .hero-drawer-close {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          color: #4dff91;
+          background: none;
+          border: none;
+          cursor: pointer;
+          transition: color 0.15s ease;
+        }
+        .hero-drawer-close:hover { color: #fff; }
+        .hero-drawer-body {
+          display: flex;
+          flex: 1;
+          flex-direction: column;
+          gap: 14px;
+          min-height: 0;
+          overflow-y: auto;
+          padding: 16px 18px 20px;
+        }
+        .hero-drawer-cta {
+          justify-content: center;
+          width: 100%;
+          text-decoration: none;
+        }
+        @media (max-width: 767px) {
+          .hero-drawer {
+            top: auto;
+            left: 0;
+            width: auto;
+            max-height: 78%;
+            padding-bottom: calc(var(--home-btn-size, 0px) + (var(--home-btn-gap, 0px) * 2) + env(safe-area-inset-bottom));
+            border-left: none;
+            border-top: 1px solid rgba(26,158,74,0.5);
+            box-shadow: 0 -12px 48px rgba(0,0,0,0.7);
+            transform: translateY(100%);
+          }
+        }
+
         /* ── HERO TAGLINE — responsive size/spacing ── */
         .hero-tagline {
           font-size: 1.75em;
@@ -645,8 +986,9 @@ export default function Home() {
           <div className="relative flex-1 overflow-hidden bg-[#1a2b1e]">
 
             {/* Active section — releases / home */}
+            {/* CRT scanline effect DISABLED — to restore, add the `scanline` class back to the div below. */}
             <div
-              className="scanline absolute inset-0 flex overflow-hidden"
+              className="absolute inset-0 flex overflow-hidden"
               style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}
             >
 
@@ -719,11 +1061,21 @@ export default function Home() {
               <div className="no-scrollbar flex-1 min-h-0 overflow-y-auto flex flex-col pt-[60px] md:pt-0">
 
                 {/* ═══ NEW LABEL HERO — "REALEST. TRUEST." ═══ */}
-                  <div className="hero-main relative flex-shrink-0 overflow-hidden">
+                  <div ref={heroRef} className="hero-main relative flex-shrink-0 overflow-hidden">
                   {/* Background — animated game icons */}
                   <GameIconsBackground opacity={1.5} />
 
-                  {/* Hero figure — centered, 3D sway, white background keyed out */}
+                  {/* Hero background video — top-aligned so the top of the frame is never cropped */}
+                  <video
+                    ref={heroVideoRef}
+                    src={`${MEDIA_BASE}/web-hero.mp4`}
+                    autoPlay muted loop playsInline
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover object-top"
+                  />
+
+                  {/* Hero figure (cutout) — DISABLED. To restore, delete the `false &&` wrapper and its closing `)}` below. */}
+                  {false && (
                   <div className="absolute inset-0 flex items-end justify-center pointer-events-none" aria-hidden="true">
                     <div className="hero-figure-glow" />
                     <div className="hero-figure-3d">
@@ -744,19 +1096,105 @@ export default function Home() {
                       </filter>
                     </svg>
                   </div>
+                  )}
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,16,12,0.7) 0%, transparent 25%, transparent 60%, rgba(10,16,12,0.95) 100%)' }} />
+                  {/* Hero hotspot — an SVG shape over the person; hover highlights, click opens the drawer.
+                      The dim and pool layers must stay AFTER the hotspot path (the CSS uses the ~ sibling selector). */}
+                  <svg className="hero-hot-svg">
+                    <defs>
+                      {/* Beam of light: brightest at the top centre, fading outward and downward */}
+                      <radialGradient id="hero-beam" cx="0.5" cy="0" r="1" fx="0.5" fy="0">
+                        <stop offset="0" stopColor="#8dffb8" stopOpacity="0.45" />
+                        <stop offset="0.45" stopColor="#4dff91" stopOpacity="0.2" />
+                        <stop offset="1" stopColor="#1a9e4a" stopOpacity="0.06" />
+                      </radialGradient>
+                      {/* Pool of light where the beam lands */}
+                      <radialGradient id="hero-pool" cx="0.5" cy="0.5" r="0.5">
+                        <stop offset="0" stopColor="#8dffb8" stopOpacity="0.55" />
+                        <stop offset="0.6" stopColor="#4dff91" stopOpacity="0.22" />
+                        <stop offset="1" stopColor="#4dff91" stopOpacity="0" />
+                      </radialGradient>
+                    </defs>
+                    <path
+                      ref={hotspotRef}
+                      role="button"
+                      tabIndex={0}
+                      className={`hero-hotspot${drawerOpen ? ' active' : ''}`}
+                      aria-label="Learn about Alexx A-Game"
+                      aria-haspopup="dialog"
+                      aria-expanded={drawerOpen}
+                      onClick={() => setDrawerOpen((o) => !o)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setDrawerOpen((o) => !o);
+                        }
+                      }}
+                    />
+                    <path ref={dimRef} className="hero-hot-dim" />
+                    <ellipse ref={poolRef} className="hero-hot-pool" />
+                  </svg>
+                  <div ref={tipRef} className={`hero-tip${drawerOpen ? ' hero-tip--off' : ''}`} aria-hidden="true">
+                    <span className="tip-hover">Hover to learn about A-Game</span>
+                    <span className="tip-touch">Tap to learn about A-Game</span>
+                  </div>
+                  <div ref={debugRef} className="hero-debug" />
+
                   {/* Hero overlay — name above cutout; panels left/right (desktop) */}
                   <div className="absolute inset-0 z-[3] pointer-events-none">
+                    {/* Artist name heading — DISABLED. To restore, delete the `false &&` wrapper and its closing `)}`. */}
+                    {false && (
                     <h1 className="hero-artist-name">ALEXX A-GAME</h1>
+                    )}
 
+                    {/* Side panels DISABLED — their content now lives in the hero drawer. To restore, delete the `false &&` wrappers. */}
+                    {false && (
                     <div className="hero-side hero-side-left">
                       <RadioPanel onTuneIn={() => openPlayer(RADIO_EMBED)} />
                       <FeaturedPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
                     </div>
+                    )}
 
+                    {false && (
                     <div className="hero-side hero-side-right">
                       <StoryPanel />
                       <SocialsPanel />
+                    </div>
+                    )}
+                  </div>
+
+                  {/* Hero drawer — stays open until closed (button, Esc, or click outside) */}
+                  <div
+                    ref={drawerRef}
+                    role="dialog"
+                    aria-label="About Alexx A-Game"
+                    tabIndex={-1}
+                    className={`hero-drawer${drawerOpen ? ' open' : ''}`}
+                  >
+                    <div className="hero-drawer-head">
+                      <span className="hero-drawer-title">MEET ALEXX A-GAME</span>
+                      <button
+                        type="button"
+                        className="hero-drawer-close"
+                        aria-label="Close"
+                        onClick={() => {
+                          setDrawerOpen(false);
+                          hotspotRef.current?.focus({ preventScroll: true });
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M6 6l12 12M18 6L6 18" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="hero-drawer-body">
+                      <StoryPanel />
+                      <FeaturedPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
+                      <SocialsPanel />
+                      <RadioPanel onTuneIn={() => openPlayer(RADIO_EMBED)} />
+                      <a href="/discography" className="listen-btn hero-drawer-cta">
+                        VIEW DISCOGRAPHY →
+                      </a>
                     </div>
                   </div>
 
@@ -805,7 +1243,8 @@ export default function Home() {
                     </button>
                   </div>
                 </div>
-                {/* Hero panels — stacked fallback when they can't sit beside the cutout */}
+                {/* Stacked hero panels DISABLED — their content now lives in the hero drawer. To restore, delete the `false &&` wrapper and its closing `)}`. */}
+                {false && (
                 <div
                   className="hero-stack flex-shrink-0 relative z-[2] px-6 py-10"
                   style={{ background: 'linear-gradient(180deg, #0c1510 0%, #0f1a12 100%)' }}
@@ -817,6 +1256,7 @@ export default function Home() {
                     <SocialsPanel />
                   </div>
                 </div>
+                )}
 
                 
                 <div
