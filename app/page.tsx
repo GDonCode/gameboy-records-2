@@ -1062,8 +1062,6 @@ export default function Home() {
 
                 {/* ═══ NEW LABEL HERO — "REALEST. TRUEST." ═══ */}
                   <div ref={heroRef} className="hero-main relative flex-shrink-0 overflow-hidden">
-                  {/* Background — animated game icons */}
-                  <GameIconsBackground opacity={1.5} />
 
                   {/* Hero background video — top-aligned so the top of the frame is never cropped */}
                   <video
