@@ -26,12 +26,33 @@ const RADIO_EMBED = 'https://www.youtube.com/embed/videoseries?list=PL5jjb3J99wR
 const RELEASE_EMBED = 'https://www.youtube.com/embed/etLGFz3dtsM?si=tzBYcOWR4rJUbu9J&autoplay=1&controls=1';
 const SPOTIFY_URL = 'https://open.spotify.com/track/3tcAFyDjx0YBBJ2Y6TvVVh?si=a50460c499134546';
 
-const SOCIAL_LINKS = [
-  { label: 'YouTube',     href: 'https://www.youtube.com/playlist?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo', icon: '/youtube.png' },
-  { label: 'Apple Music', href: 'https://music.apple.com/us/song/rise-up-now-guitar-version/6809729519',     icon: '/apple-music.png' },
-  { label: 'Spotify',     href: SPOTIFY_URL,                                                                 icon: '/spotify.png' },
-  { label: 'Audiomack',   href: 'https://audiomack.com/alexxagame',                                          icon: '/audiomack.png' },
-  { label: 'SoundCloud',  href: 'https://soundcloud.com/alexxagame',                                         icon: '/soundcloud.png' },
+// Social profiles shown in the "FOLLOW ALEXX" panel. A link with an empty href is not rendered.
+// TODO: paste the real Instagram and TikTok profile URLs here (e.g. 'https://www.instagram.com/<handle>/').
+const INSTAGRAM_URL = 'https://www.instagram.com/alexxagame/';
+const TIKTOK_URL = 'https://www.tiktok.com/@alexxagame';
+
+const SOCIAL_LINKS: { label: string; href: string; icon?: string; svg?: React.ReactNode }[] = [
+  {
+    label: 'Instagram',
+    href: INSTAGRAM_URL,
+    svg: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
+  {
+    label: 'TikTok',
+    href: TIKTOK_URL,
+    svg: (
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z" />
+      </svg>
+    ),
+  },
+  { label: 'YouTube', href: 'https://www.youtube.com/playlist?list=PL5jjb3J99wR7DQiFdlhXnit_1bZt2a4Bo', icon: '/youtube.png' },
 ];
 
 // ── HERO HOTSPOT — the person in web-hero.mp4 ────────────────────────────────
@@ -126,7 +147,7 @@ function SocialsPanel() {
     <div className="hero-panel">
       <div className="hero-panel-title">FOLLOW ALEXX</div>
       <div className="flex flex-wrap gap-[10px]">
-        {SOCIAL_LINKS.map((s) => (
+        {SOCIAL_LINKS.filter((s) => s.href).map((s) => (
           <a
             key={s.label}
             href={s.href}
@@ -137,7 +158,7 @@ function SocialsPanel() {
             title={s.label}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.icon} alt="" />
+            {s.icon ? <img src={s.icon} alt="" /> : s.svg}
           </a>
         ))}
       </div>
@@ -145,6 +166,62 @@ function SocialsPanel() {
   );
 }
   
+// ── SPOTLIGHT PANELS (appear beside the beam while the spotlight is active) ───
+// Streaming / distribution links for the featured release (YouTube plays in the mini-player).
+const RELEASE_LINKS = [
+  { label: 'Apple Music', href: 'https://music.apple.com/us/song/rise-up-now-guitar-version/6809729519', icon: '/apple-music.png' },
+  { label: 'Spotify',     href: SPOTIFY_URL,                                                                 icon: '/spotify.png' },
+  { label: 'Audiomack',   href: 'https://audiomack.com/alexxagame',                                          icon: '/audiomack.png' },
+  { label: 'SoundCloud',  href: 'https://soundcloud.com/alexxagame',                                         icon: '/soundcloud.png' },
+];
+
+function ReleaseLinksPanel({ onPlay }: { onPlay: () => void }) {
+  return (
+    <div className="hero-panel">
+      <div className="hero-panel-title">FEATURED RELEASE</div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="https://img.youtube.com/vi/etLGFz3dtsM/mqdefault.jpg"
+        alt="Rise Up Now (Guitar Version)"
+        className="hero-release-art"
+        style={{ height: '84px' }}
+      />
+      <div className="hero-panel-text" style={{ margin: '8px 0 10px' }}>
+        <strong style={{ color: '#fff' }}>Rise Up Now (Guitar Version)</strong>
+        <br />
+        Alexx A-Game
+      </div>
+      <div className="hero-dispo-grid">
+        <button type="button" className="hero-dispo-link" onClick={onPlay}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/youtube.png" alt="" />
+          YOUTUBE
+        </button>
+        {RELEASE_LINKS.map((l) => (
+          <a
+            key={l.label}
+            href={l.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-dispo-link"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={l.icon} alt="" />
+            {l.label.toUpperCase()}
+          </a>
+        ))}
+      </div>
+      <a
+        href="/discography"
+        className="listen-btn hero-drawer-cta"
+        style={{ marginTop: '12px', padding: '0 12px', fontSize: '0.8em', letterSpacing: '0.12em' }}
+      >
+        VIEW DISCOGRAPHY →
+      </a>
+    </div>
+  );
+}
+
 export default function Home() {
   const [playerMounted,  setPlayerMounted]  = useState(false);
   const [playerVisible,  setPlayerVisible]  = useState(false);
@@ -163,6 +240,29 @@ export default function Home() {
 
   // Hero hotspot + drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Spotlight panels — visible while the spotlight or a panel is hovered/focused.
+  // The short hide delay lets the cursor cross the gap between the beam and a panel.
+  const [spotOn, setSpotOn] = useState(false);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
+  const rightPanelRef = useRef<HTMLDivElement>(null);
+  const spotTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showSpot = () => {
+    if (spotTimerRef.current) {
+      clearTimeout(spotTimerRef.current);
+      spotTimerRef.current = null;
+    }
+    setSpotOn(true);
+  };
+  const hideSpot = () => {
+    if (spotTimerRef.current) clearTimeout(spotTimerRef.current);
+    spotTimerRef.current = setTimeout(() => {
+      setSpotOn(false);
+      spotTimerRef.current = null;
+    }, 300);
+  };
+  useEffect(() => () => {
+    if (spotTimerRef.current) clearTimeout(spotTimerRef.current);
+  }, []);
   const heroRef = useRef<HTMLDivElement>(null);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
   const hotspotRef = useRef<SVGPathElement>(null);
@@ -266,6 +366,19 @@ export default function Home() {
       const half = tip.offsetWidth / 2 + 8;
       tip.style.left = `${Math.min(Math.max(tx, half), cw - half)}px`;
       tip.style.top = `${Math.max(ty, 56)}px`;
+
+      // Spotlight panels: Bio sits left of the beam, release + links sit right of it.
+      // Measured on the beam's edges at mid-height of the frame, so they follow the video on every screen size.
+      const lp = leftPanelRef.current;
+      const rp = rightPanelRef.current;
+      if (lp && rp) {
+        const yc = 0.5;
+        const xAt = (a: [number, number], b: [number, number]) => a[0] + (b[0] - a[0]) * ((yc - a[1]) / (b[1] - a[1]));
+        const beamL = ox + (HERO_TIP.x + (xAt(HERO_SHAPE[0], HERO_SHAPE[1]) - HERO_TIP.x) * squeeze) * dw;
+        const beamR = ox + (HERO_TIP.x + (xAt(HERO_SHAPE[3], HERO_SHAPE[2]) - HERO_TIP.x) * squeeze) * dw;
+        lp.style.left = `${Math.max(12, beamL - 28 - lp.offsetWidth)}px`;
+        rp.style.left = `${Math.max(12, Math.min(beamR + 28, cw - rp.offsetWidth - 12))}px`;
+      }
     };
     raf = requestAnimationFrame(frame);
 
@@ -680,6 +793,112 @@ export default function Home() {
             box-shadow: 0 -12px 48px rgba(0,0,0,0.7);
             transform: translateY(100%);
           }
+        }
+
+        /* ── HERO SPOTLIGHT PANELS (Bio left / release + links right of the beam; desktop hover only) ── */
+        .hero-spot-panel {
+          display: none;
+          position: absolute;
+          left: 0;
+          top: 54%;
+          z-index: 5;
+          flex-direction: column;
+          gap: 12px;
+          width: clamp(230px, 22vw, 320px);
+          max-height: 88%;
+          overflow-y: auto;
+          scrollbar-width: none;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-50%) translateX(var(--spot-shift, 0px));
+          transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s linear 0.35s;
+        }
+        .hero-spot-panel::-webkit-scrollbar { display: none; }
+        .hero-spot-left  { --spot-shift: 18px; }
+        .hero-spot-right { --spot-shift: -18px; }
+        .hero-spot-panel.on {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(-50%);
+          transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s;
+        }
+        @media (hover: hover) and (min-width: 960px) {
+          .hero-spot-panel { display: flex; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-spot-panel,
+          .hero-spot-panel.on { transition: none; transform: translateY(-50%); }
+        }
+        .hero-dispo-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 6px;
+        }
+        .hero-dispo-link {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 100%;
+          height: 34px;
+          padding: 0 8px;
+          font-family: 'Poppins_semibold', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.08em;
+          text-align: left;
+          text-decoration: none;
+          color: #fff;
+          background: rgba(10,20,14,0.55);
+          border: 1px solid rgba(77,255,145,0.35);
+          border-radius: 2px;
+          cursor: pointer;
+          transition: transform 0.07s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .hero-dispo-link img { width: 18px; height: 18px; object-fit: contain; border-radius: 3px; flex-shrink: 0; }
+        .hero-dispo-link:hover {
+          transform: translateY(-1px);
+          background: rgba(26,158,74,0.25);
+          border-color: #4dff91;
+          box-shadow: 0 4px 14px rgba(13,92,41,0.5), 0 0 14px rgba(77,255,145,0.35);
+        }
+
+        /* ── SOCIAL ICONS (inline SVG) + MOBILE CAROUSEL ── */
+        .hero-social-icon { color: #fff; }
+        .hero-social-icon svg { display: block; width: 24px; height: 24px; }
+        .hero-carousel { display: none; }
+        @media (max-width: 767px) {
+          /* No spotlight on phones: hide the hotspot, tooltip, debug readout and drawer */
+          .hero-hot-svg,
+          .hero-tip,
+          .hero-debug,
+          .hero-drawer { display: none !important; }
+
+          .hero-carousel {
+            display: flex;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 48%;
+            bottom: calc(var(--home-btn-size, 0px) + (var(--home-btn-gap, 0px) * 2) + env(safe-area-inset-bottom));
+            z-index: 5;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 0 16px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-padding: 0 16px;
+            overscroll-behavior-x: contain;
+            -webkit-overflow-scrolling: touch;
+          }
+          .hero-carousel::after { content: ''; flex: 0 0 4px; }
+          .hero-carousel-item {
+            flex: 0 0 min(82vw, 340px);
+            max-height: 100%;
+            overflow-y: auto;
+            scroll-snap-align: start;
+            scrollbar-width: none;
+          }
+          .hero-carousel-item::-webkit-scrollbar { display: none; }
         }
 
         /* ── HERO TAGLINE — responsive size/spacing ── */
@@ -1117,8 +1336,12 @@ export default function Home() {
                       ref={hotspotRef}
                       role="button"
                       tabIndex={0}
-                      className={`hero-hotspot${drawerOpen ? ' active' : ''}`}
+                      className={`hero-hotspot${drawerOpen || spotOn ? ' active' : ''}`}
                       aria-label="Learn about Alexx A-Game"
+                      onPointerEnter={showSpot}
+                      onPointerLeave={hideSpot}
+                      onFocus={showSpot}
+                      onBlur={hideSpot}
                       aria-haspopup="dialog"
                       aria-expanded={drawerOpen}
                       onClick={() => setDrawerOpen((o) => !o)}
@@ -1132,7 +1355,7 @@ export default function Home() {
                     <path ref={dimRef} className="hero-hot-dim" />
                     <ellipse ref={poolRef} className="hero-hot-pool" />
                   </svg>
-                  <div ref={tipRef} className={`hero-tip${drawerOpen ? ' hero-tip--off' : ''}`} aria-hidden="true">
+                  <div ref={tipRef} className={`hero-tip${drawerOpen || spotOn ? ' hero-tip--off' : ''}`} aria-hidden="true">
                     <span className="tip-hover">Hover to learn about A-Game</span>
                     <span className="tip-touch">Tap to learn about A-Game</span>
                   </div>
@@ -1159,6 +1382,47 @@ export default function Home() {
                       <SocialsPanel />
                     </div>
                     )}
+                  </div>
+
+                  {/* Spotlight panels — fade in beside the beam while the spotlight is active (desktop hover only).
+                      Bio + socials on the left; featured release (platform links + discography button) on the right.
+                      Positioned by the hero frame loop (left style); hidden while the drawer is open. */}
+                  <div
+                    ref={leftPanelRef}
+                    className={`hero-spot-panel hero-spot-left${spotOn && !drawerOpen ? ' on' : ''}`}
+                    aria-hidden={!(spotOn && !drawerOpen)}
+                    onPointerEnter={showSpot}
+                    onPointerLeave={hideSpot}
+                    onFocus={showSpot}
+                    onBlur={hideSpot}
+                  >
+                    <StoryPanel />
+                    <SocialsPanel />
+                  </div>
+                  <div
+                    ref={rightPanelRef}
+                    className={`hero-spot-panel hero-spot-right${spotOn && !drawerOpen ? ' on' : ''}`}
+                    aria-hidden={!(spotOn && !drawerOpen)}
+                    onPointerEnter={showSpot}
+                    onPointerLeave={hideSpot}
+                    onFocus={showSpot}
+                    onBlur={hideSpot}
+                  >
+                    <ReleaseLinksPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
+                  </div>
+
+                  {/* Mobile carousel — phones get no hover/spotlight; the same sections sit in a horizontal swipe row
+                      over the lower half of the hero (shown by CSS at max-width 767px only). */}
+                  <div className="hero-carousel no-scrollbar" role="region" aria-label="About Alexx A-Game">
+                    <div className="hero-carousel-item">
+                      <StoryPanel />
+                    </div>
+                    <div className="hero-carousel-item">
+                      <ReleaseLinksPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
+                    </div>
+                    <div className="hero-carousel-item">
+                      <SocialsPanel />
+                    </div>
                   </div>
 
                   {/* Hero drawer — stays open until closed (button, Esc, or click outside) */}
