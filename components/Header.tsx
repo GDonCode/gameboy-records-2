@@ -122,7 +122,7 @@ export default function Header() {
               <button
                 type="button"
                 className={`inline-block px-5 py-2 rounded-md cursor-pointer transition-all duration-200 ${
-                  pathname === '/karaoke' || pathname === '/guitar'
+                  pathname === '/karaoke' || pathname === '/guitar' || pathname === '/trivia'
                     ? 'bg-[#1a9e4a] text-white font-bold'
                     : 'text-[#16432a] hover:scale-110'
                 }`}
@@ -155,6 +155,7 @@ export default function Header() {
                 {[
                   { href: '/karaoke', label: 'KARAOKE' },
                   { href: '/guitar', label: 'GUITAR' },
+                  { href: '/trivia', label: 'TRIVIA' },
                 ].map((item) => (
                   <li key={item.href}>
                     <a
@@ -252,6 +253,7 @@ export default function Header() {
               { href: '/discography', label: 'DISCOGRAPHY', viewBox: '0 0 24 24', d: 'M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20zM12 9a3 3 0 1 1 0 6 3 3 0 1 1 0-6z' },
               { href: '/karaoke', label: 'KARAOKE', heading: 'VIBES', viewBox: '0 0 640 640', d: 'M320 64C267 64 224 107 224 160L224 288C224 341 267 384 320 384C373 384 416 341 416 288L416 160C416 107 373 64 320 64zM176 248C176 234.7 165.3 224 152 224C138.7 224 128 234.7 128 248L128 288C128 385.9 201.3 466.7 296 478.5L296 528L248 528C234.7 528 224 538.7 224 552C224 565.3 234.7 576 248 576L392 576C405.3 576 416 565.3 416 552C416 538.7 405.3 528 392 528L344 528L344 478.5C438.7 466.7 512 385.9 512 288L512 248C512 234.7 501.3 224 488 224C474.7 224 464 234.7 464 248L464 288C464 367.5 399.5 432 320 432C240.5 432 176 367.5 176 288L176 248z' },
               { href: '/guitar', label: 'GUITAR', viewBox: '0 0 512 512', d: 'M465 7c-9.4-9.4-24.6-9.4-33.9 0L383 55c-2.4 2.4-4.3 5.3-5.5 8.5l-15.4 41-77.5 77.6c-45.1-29.4-99.3-30.2-131 1.6c-11 11-18 24.6-21.4 39.6c-3.7 16.6-19.1 30.7-36.1 31.6c-25.6 1.3-49.3 10.7-66.3 27.7c-43.7 43.7-35.1 123 19.1 177.1s133.5 62.8 177.1 19.1c17-17 26.4-40.7 27.7-66.3c.9-17 15-32.3 31.6-36.1c15-3.4 28.6-10.5 39.6-21.4c31.8-31.8 31-85.9 1.6-131l77.6-77.6 41-15.4c3.2-1.2 6.1-3.1 8.5-5.5l48-48c9.4-9.4 9.4-24.6 0-33.9L465 7zM208 256a48 48 0 1 1 0 96 48 48 0 1 1 0-96z' },
+              { href: '/trivia', label: 'TRIVIA', viewBox: '0 0 24 24', d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z' },
             ].map((item) => (
               <li key={item.href}>
                 {item.heading && (
