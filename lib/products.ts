@@ -70,6 +70,16 @@ export const products: Product[] = [
     sizes: ['S', 'M', 'L', 'XL'],
     category: 'hoodie',
   },
+  {
+    id: 'test-t',
+    slug: 'test-t',
+    name: 'Test T-Shirt',
+    price: 9.99,
+    images: ['/black-t.png'],
+    description: 'TEST PRODUCT - not for sale.',
+    sizes: ['S', 'M', 'L', 'XL'],
+    category: 't-shirt',
+  },
 ];
 
 export function getProductBySlug(slug: string): Product | undefined {
