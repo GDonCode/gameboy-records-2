@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
 import Footer from '@/components/Footer';
-import { getSongOfTheDay, PLATFORMS, recordSongStream } from '@/lib/song-of-the-day';
+import { getSongOfTheDay, PLATFORMS, recordSongStream, type StreamPlatform } from '@/lib/song-of-the-day';
 
 
 const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
@@ -171,31 +171,32 @@ function SocialsPanel() {
 // the signed-in user's daily streaming quest. YouTube plays in the mini-player like the other releases.
 function SongOfTheDayPanel({ onPlay }: { onPlay: (embedSrc: string) => void }) {
   const song = getSongOfTheDay();
+  // Same order as the featured release links: YouTube, Apple Music, Spotify.
+  const order: StreamPlatform[] = ['youtube', 'apple', 'spotify'];
+  const platforms = order.map((id) => PLATFORMS.find((p) => p.id === id)!);
   return (
     <div className="hero-panel">
-      <div className="hero-panel-title">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#4dff91] animate-pulse" />
-        A-GAME&apos;S SONG OF THE DAY
+      <div className="hero-panel-title">A-GAME&apos;S SONG OF THE DAY</div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={song.art}
+        alt={song.title}
+        className="hero-release-art"
+        style={{ height: '84px' }}
+      />
+      <div className="hero-panel-text" style={{ margin: '8px 0 10px' }}>
+        <strong style={{ color: '#fff' }}>{song.title}</strong>
+        <br />
+        {song.artist}
+        {song.meta.length > 0 && (
+          <>
+            <br />
+            {song.meta.map((m) => m.value).join(' · ')}
+          </>
+        )}
       </div>
-      <div className="hero-sotd">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={song.art} alt={`${song.title} cover art`} className="hero-sotd-art" />
-        <div className="hero-panel-text min-w-0">
-          <strong style={{ color: '#fff' }}>{song.title}</strong>
-          <br />
-          {song.artist}
-          <dl className="hero-sotd-meta">
-            {song.meta.map((m) => (
-              <div key={m.label}>
-                <dt>{m.label}</dt>
-                <dd>{m.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </div>
-      <div className="hero-sotd-links">
-        {PLATFORMS.map((p) =>
+      <div className="hero-dispo-grid">
+        {platforms.map((p) =>
           p.id === 'youtube' ? (
             <button
               key={p.id}
@@ -923,21 +924,6 @@ export default function Home() {
           cursor: pointer;
           transition: transform 0.07s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        .hero-sotd { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
-        .hero-sotd-art {
-          width: 64px;
-          height: 64px;
-          flex-shrink: 0;
-          object-fit: cover;
-          border: 1px solid rgba(77,255,145,0.35);
-          border-radius: 2px;
-        }
-        .hero-sotd-meta { margin: 6px 0 0; font-size: 0.85em; }
-        .hero-sotd-meta div { display: flex; gap: 6px; }
-        .hero-sotd-meta dt { color: rgba(255,255,255,0.5); }
-        .hero-sotd-meta dd { margin: 0; color: #4dff91; }
-        .hero-sotd-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .hero-sotd-links .hero-dispo-link { flex-direction: column; justify-content: center; gap: 4px; height: 52px; text-align: center; font-size: 0.56rem; }
         .hero-dispo-link img { width: 18px; height: 18px; object-fit: contain; border-radius: 3px; flex-shrink: 0; }
         .hero-dispo-link:hover {
           transform: translateY(-1px);
