@@ -879,7 +879,13 @@ export default function Home() {
         }
         .hero-spot-panel::-webkit-scrollbar { display: none; }
         .hero-spot-left  { --spot-shift: 18px; }
-        .hero-spot-right { --spot-shift: -18px; }
+        .hero-spot-right {
+          --spot-shift: -18px;
+          flex-direction: row;
+          align-items: flex-start;
+          width: auto;
+        }
+        .hero-spot-right > * { width: clamp(250px, 19vw, 300px); flex-shrink: 0; }
         .hero-spot-panel.on {
           opacity: 1;
           visibility: visible;
@@ -895,7 +901,7 @@ export default function Home() {
         }
         .hero-dispo-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 6px;
         }
         .hero-dispo-link {
@@ -919,8 +925,8 @@ export default function Home() {
         }
         .hero-sotd { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
         .hero-sotd-art {
-          width: 76px;
-          height: 76px;
+          width: 64px;
+          height: 64px;
           flex-shrink: 0;
           object-fit: cover;
           border: 1px solid rgba(77,255,145,0.35);
@@ -1464,7 +1470,7 @@ export default function Home() {
                   </div>
 
                   {/* Spotlight panels — fade in beside the beam while the spotlight is active (desktop hover only).
-                      Bio + socials on the left; featured release (platform links + discography button) on the right.
+                      Bio + socials on the left; featured release and song of the day side by side on the right.
                       Positioned by the hero frame loop (left style); hidden while the drawer is open. */}
                   <div
                     ref={leftPanelRef}
@@ -1476,7 +1482,6 @@ export default function Home() {
                     onBlur={hideSpot}
                   >
                     <StoryPanel />
-                    <SongOfTheDayPanel onPlay={openPlayer} />
                     <SocialsPanel />
                   </div>
                   <div
@@ -1489,6 +1494,7 @@ export default function Home() {
                     onBlur={hideSpot}
                   >
                     <ReleaseLinksPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
+                    <SongOfTheDayPanel onPlay={openPlayer} />
                   </div>
 
                   {/* Mobile carousel — phones get no hover/spotlight; the same sections sit in a horizontal swipe row
@@ -1498,10 +1504,10 @@ export default function Home() {
                       <StoryPanel />
                     </div>
                     <div className="hero-carousel-item">
-                      <SongOfTheDayPanel onPlay={openPlayer} />
+                      <ReleaseLinksPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
                     </div>
                     <div className="hero-carousel-item">
-                      <ReleaseLinksPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
+                      <SongOfTheDayPanel onPlay={openPlayer} />
                     </div>
                     <div className="hero-carousel-item">
                       <SocialsPanel />
@@ -1534,8 +1540,8 @@ export default function Home() {
                     </div>
                     <div className="hero-drawer-body">
                       <StoryPanel />
-                      <SongOfTheDayPanel onPlay={openPlayer} />
                       <FeaturedPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
+                      <SongOfTheDayPanel onPlay={openPlayer} />
                       <SocialsPanel />
                       <RadioPanel onTuneIn={() => openPlayer(RADIO_EMBED)} />
                       <a href="/discography" className="listen-btn hero-drawer-cta">
