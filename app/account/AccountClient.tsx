@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, CreditCard, Lock, MapPin, MessageCircleMore } from 'lucide-react';
+import { ArrowLeft, CreditCard, Lock, MessageCircleMore } from 'lucide-react';
 import AccountSidebar from '@/components/AccountSidebar';
 import HomeTab from '@/components/account/HomeTab';
 import OrdersTab from '@/components/account/OrdersTab';
@@ -68,15 +68,6 @@ export default function AccountClient({ user, orders, quests, claims, initialTab
         return <PersonalInfoTab user={user} memberSince={memberSince} />;
       case 'orders':
         return <OrdersTab orders={orders} />;
-      case 'addresses':
-        return (
-          <ComingSoonTab
-            icon={MapPin}
-            title="Your addresses"
-            subtitle="Where we ship your merch."
-            message="You'll be able to save shipping addresses here for faster checkout."
-          />
-        );
       case 'security':
         return (
           <ComingSoonTab

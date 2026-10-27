@@ -4,7 +4,6 @@ export const ACCOUNT_TABS = [
   'home',
   'orders',
   'personal',
-  'addresses',
   'security',
   'payments',
   'support',

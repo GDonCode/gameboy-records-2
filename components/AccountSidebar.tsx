@@ -5,7 +5,6 @@ import {
   House,
   Truck,
   UserRound,
-  MapPin,
   Lock,
   CreditCard,
   MessageCircleMore,
@@ -37,8 +36,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     heading: 'Settings',
     items: [
-      { tab: 'personal', label: 'Personal info', subtitle: 'Photo, name & email', icon: UserRound },
-      { tab: 'addresses', label: 'Your addresses', subtitle: 'Add a shipping address', icon: MapPin },
+      { tab: 'personal', label: 'Personal info', subtitle: 'Photo, name, email & address', icon: UserRound },
       { tab: 'security', label: 'Login & security', subtitle: 'Password & sign-in', icon: Lock },
       { tab: 'payments', label: 'Payments', subtitle: 'Add a payment method', icon: CreditCard },
     ],
