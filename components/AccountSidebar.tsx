@@ -4,8 +4,6 @@
 import {
   House,
   Truck,
-  ReceiptText,
-  Heart,
   UserRound,
   MapPin,
   Lock,
@@ -33,9 +31,7 @@ const NAV_GROUPS: NavGroup[] = [
     heading: 'Account',
     items: [
       { tab: 'home', label: 'Home', subtitle: 'Rewards & overview', icon: House },
-      { tab: 'orders', label: 'My orders', subtitle: 'Track, manage & return', icon: Truck },
-      { tab: 'archived', label: 'Archived orders', subtitle: 'Past & completed orders', icon: ReceiptText },
-      { tab: 'saved', label: 'Saved items', subtitle: 'Merch you saved for later', icon: Heart },
+      { tab: 'orders', label: 'My orders', subtitle: 'Current & archived orders', icon: Truck },
     ],
   },
   {

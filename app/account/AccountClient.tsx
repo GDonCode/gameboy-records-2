@@ -2,31 +2,31 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Archive, CreditCard, Lock, MapPin, MessageCircleMore, Package } from 'lucide-react';
+import { ArrowLeft, CreditCard, Lock, MapPin, MessageCircleMore } from 'lucide-react';
 import AccountSidebar from '@/components/AccountSidebar';
 import HomeTab from '@/components/account/HomeTab';
-import SavedItemsTab from '@/components/account/SavedItemsTab';
+import OrdersTab from '@/components/account/OrdersTab';
 import PersonalInfoTab from '@/components/account/PersonalInfoTab';
 import ComingSoonTab from '@/components/account/ComingSoonTab';
 import {
   isAccountTab,
   type AccountTab,
   type AccountUser,
+  type Order,
   type QuestStatus,
   type RewardClaim,
-  type SavedItem,
 } from '@/components/account/types';
 
 interface AccountClientProps {
   user: AccountUser;
-  savedItems: SavedItem[];
+  orders: Order[];
   quests: QuestStatus[];
   claims: RewardClaim[];
   initialTab: AccountTab | null;
   signOutAction: () => Promise<void>;
 }
 
-export default function AccountClient({ user, savedItems, quests, claims, initialTab, signOutAction }: AccountClientProps) {
+export default function AccountClient({ user, orders, quests, claims, initialTab, signOutAction }: AccountClientProps) {
   const [tab, setTab] = useState<AccountTab>(initialTab ?? 'home');
   // Mobile only: show the menu first unless the URL already points at a tab.
   const [mobileView, setMobileView] = useState<'menu' | 'content'>(initialTab ? 'content' : 'menu');
@@ -64,28 +64,10 @@ export default function AccountClient({ user, savedItems, quests, claims, initia
     switch (tab) {
       case 'home':
         return <HomeTab user={user} memberSince={memberSince} quests={quests} claims={claims} onSelectTab={selectTab} />;
-      case 'saved':
-        return <SavedItemsTab initialItems={savedItems} />;
       case 'personal':
         return <PersonalInfoTab user={user} memberSince={memberSince} />;
       case 'orders':
-        return (
-          <ComingSoonTab
-            icon={Package}
-            title="My orders"
-            subtitle="Track, manage and return your orders."
-            message="Your merch orders will show up here once checkout goes live."
-          />
-        );
-      case 'archived':
-        return (
-          <ComingSoonTab
-            icon={Archive}
-            title="Archived orders"
-            subtitle="Past and completed orders."
-            message="Completed orders you archive will be kept here."
-          />
-        );
+        return <OrdersTab orders={orders} />;
       case 'addresses':
         return (
           <ComingSoonTab

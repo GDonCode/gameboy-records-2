@@ -3,8 +3,6 @@
 export const ACCOUNT_TABS = [
   'home',
   'orders',
-  'archived',
-  'saved',
   'personal',
   'addresses',
   'security',
@@ -27,13 +25,31 @@ export interface AccountUser {
   avatar_url: string | null;
 }
 
-export interface SavedItem {
-  id: string;
+export type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+
+// Finished orders live under the "Archived" view of My orders.
+export function isArchivedOrder(status: OrderStatus): boolean {
+  return status === 'delivered' || status === 'cancelled' || status === 'returned';
+}
+
+export interface OrderItem {
   product_id: string;
   name: string;
-  price: number;
-  image: string | null;
   slug: string;
+  image: string | null;
+  size: string;
+  quantity: number;
+  price: number;
+}
+
+export interface Order {
+  id: string;
+  number: string;
+  created_at: string;
+  status: OrderStatus;
+  total: number;
+  tracking_url: string | null;
+  items: OrderItem[];
 }
 
 export type QuestAction =

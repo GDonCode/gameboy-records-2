@@ -2,12 +2,11 @@
 import { redirect } from 'next/navigation';
 import { auth, signOut } from '@/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { products } from '@/lib/products';
 import { getQuestStatus } from '@/lib/quests';
 import { getRewardClaims } from '@/lib/claims';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
-import { isAccountTab, type SavedItem } from '@/components/account/types';
+import { isAccountTab, type Order } from '@/components/account/types';
 import AccountClient from './AccountClient';
 
 export const revalidate = 0;
@@ -30,27 +29,9 @@ export default async function AccountPage({
 
   if (error || !user) redirect('/account/login');
 
-  const { data: wishlistRows, error: wishlistError } = await supabaseAdmin
-    .from('wishlist_items')
-    .select('id, product_id, created_at')
-    .eq('user_id', session.user.id)
-    .order('created_at', { ascending: true });
-
-  if (wishlistError) {
-    console.error('Failed to fetch saved items:', wishlistError.message);
-  }
-
-  const savedItems: SavedItem[] = (wishlistRows ?? []).map((row) => {
-    const product = products.find((p) => p.id === row.product_id);
-    return {
-      id: row.id,
-      product_id: row.product_id,
-      name: product?.name ?? 'Unknown product',
-      price: product?.price ?? 0,
-      image: product?.images?.[0] ?? null,
-      slug: product?.slug ?? row.product_id,
-    };
-  });
+  // Checkout isn't live yet, so there is no orders table to read from.
+  // Load the user's orders here once it exists; OrdersTab already handles current vs archived.
+  const orders: Order[] = [];
 
   const [quests, claims] = await Promise.all([
     getQuestStatus(session.user.id),
@@ -70,7 +51,7 @@ export default async function AccountPage({
       <MobileBottomNav />
       <AccountClient
         user={user}
-        savedItems={savedItems}
+        orders={orders}
         quests={quests}
         claims={claims}
         initialTab={initialTab}
