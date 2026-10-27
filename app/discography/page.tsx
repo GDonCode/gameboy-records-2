@@ -43,8 +43,9 @@ export default async function DiscographyPage() {
       <MobileBottomNav />
       <main className="relative flex-1 min-h-0">
         <DiscographyFeed initial={initial} />
-        {/* Compact neon title over the feed, so the videos keep the whole screen. */}
-        <NeonHeading size="sm" align="left" className="pointer-events-none absolute left-4 top-[74px] z-20 lg:left-12 lg:top-6">
+        {/* Compact neon title over the feed, so the videos keep the whole screen. Hidden on very short phone
+            screens (e.g. turned sideways), where the video info needs the room. */}
+        <NeonHeading size="sm" align="left" className="pointer-events-none absolute left-4 top-[74px] z-20 lg:left-12 lg:top-6 max-lg:[@media(max-height:560px)]:hidden">
           Discography
         </NeonHeading>
       </main>

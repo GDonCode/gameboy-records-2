@@ -16,7 +16,7 @@ export default function NeonHeading({
   children: ReactNode;
   /** Small line above the title. */
   kicker?: ReactNode;
-  /** Small line below the tube, e.g. "by ALEXX A-GAME". */
+  /** Small line below the title, e.g. "by ALEXX A-GAME". */
   subtitle?: ReactNode;
   align?: 'center' | 'left';
   size?: 'lg' | 'sm';
@@ -28,10 +28,6 @@ export default function NeonHeading({
     <div className={`flex flex-col ${centered ? 'items-center text-center' : 'items-start text-left'} ${className}`}>
       {kicker && <p className="neon-kicker mb-3 text-[11px] md:text-[12px]">{kicker}</p>}
       <Tag className={`neon-heading neon-heading--${size}`}>{children}</Tag>
-      <span
-        aria-hidden="true"
-        className={`neon-tube ${centered ? '' : 'neon-tube--left'} ${size === 'lg' ? 'mt-4 w-[min(70%,420px)]' : 'mt-2 w-full'}`}
-      />
       {subtitle && <p className={`neon-kicker ${size === 'lg' ? 'mt-3 text-[11px] md:text-[13px]' : 'mt-1.5 text-[9px]'}`}>{subtitle}</p>}
     </div>
   );
