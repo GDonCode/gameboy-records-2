@@ -32,7 +32,10 @@ export type SecurityEventKind =
   | 'password_set'
   | 'password_check_failed'
   | 'signed_out_everywhere'
-  | 'email_changed';
+  | 'email_changed'
+  | 'payment_method_added'
+  | 'payment_method_removed'
+  | 'payment_method_failed';
 
 export interface SecurityEvent {
   id: string;
@@ -107,4 +110,22 @@ export interface QuestStatus {
 export interface RewardClaim {
   level: number;
   status: 'claimed' | 'fulfilled';
+}
+
+export interface PaymentMethod {
+  id: string;
+  provider: string;
+  type: 'card' | 'paypal';
+  brand: string | null;
+  last4: string | null;
+  exp_month: number | null;
+  exp_year: number | null;
+  label: string | null;
+  is_default: boolean;
+}
+
+export interface PaymentsInfo {
+  /** The processor set in PAYMENTS_PROVIDER, or null when adding methods isn't available yet. */
+  provider: string | null;
+  methods: PaymentMethod[];
 }

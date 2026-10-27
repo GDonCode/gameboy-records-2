@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { signIn, signOut } from 'next-auth/react';
 import {
   AlertTriangle,
+  CreditCard,
   Eye,
   EyeOff,
   KeyRound,
@@ -380,6 +381,9 @@ const EVENT_LABELS: Record<SecurityEventKind, { label: string; icon: LucideIcon;
   password_check_failed: { label: 'Wrong password entered', icon: AlertTriangle, warn: true },
   signed_out_everywhere: { label: 'Signed out of other devices', icon: LogOut },
   email_changed: { label: 'Email changed', icon: Mail },
+  payment_method_added: { label: 'Payment method added', icon: CreditCard },
+  payment_method_removed: { label: 'Payment method removed', icon: CreditCard },
+  payment_method_failed: { label: 'Payment method declined', icon: AlertTriangle, warn: true },
 };
 
 function ActivityPanel({ security }: { security: SecurityInfo }) {

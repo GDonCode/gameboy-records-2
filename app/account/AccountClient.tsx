@@ -2,11 +2,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, CreditCard, MessageCircleMore } from 'lucide-react';
+import { ArrowLeft, MessageCircleMore } from 'lucide-react';
 import AccountSidebar from '@/components/AccountSidebar';
 import HomeTab from '@/components/account/HomeTab';
 import OrdersTab from '@/components/account/OrdersTab';
 import SecurityTab from '@/components/account/SecurityTab';
+import PaymentsTab from '@/components/account/PaymentsTab';
 import PersonalInfoTab from '@/components/account/PersonalInfoTab';
 import ComingSoonTab from '@/components/account/ComingSoonTab';
 import {
@@ -15,6 +16,7 @@ import {
   type AccountUser,
   type Address,
   type SecurityInfo,
+  type PaymentsInfo,
   type Order,
   type QuestStatus,
   type RewardClaim,
@@ -25,13 +27,14 @@ interface AccountClientProps {
   orders: Order[];
   addresses: Address[];
   security: SecurityInfo;
+  payments: PaymentsInfo;
   quests: QuestStatus[];
   claims: RewardClaim[];
   initialTab: AccountTab | null;
   signOutAction: () => Promise<void>;
 }
 
-export default function AccountClient({ user, orders, addresses, security, quests, claims, initialTab, signOutAction }: AccountClientProps) {
+export default function AccountClient({ user, orders, addresses, security, payments, quests, claims, initialTab, signOutAction }: AccountClientProps) {
   const [tab, setTab] = useState<AccountTab>(initialTab ?? 'home');
   // Mobile only: show the menu first unless the URL already points at a tab.
   const [mobileView, setMobileView] = useState<'menu' | 'content'>(initialTab ? 'content' : 'menu');
@@ -76,14 +79,7 @@ export default function AccountClient({ user, orders, addresses, security, quest
       case 'security':
         return <SecurityTab email={user.email} security={security} />;
       case 'payments':
-        return (
-          <ComingSoonTab
-            icon={CreditCard}
-            title="Payments"
-            subtitle="Saved payment methods."
-            message="Saved payment methods will live here once checkout goes live."
-          />
-        );
+        return <PaymentsTab payments={payments} />;
       case 'support':
         return (
           <ComingSoonTab
