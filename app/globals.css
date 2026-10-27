@@ -193,6 +193,24 @@ body {
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.07); }
 }
+/* Per-letter flutter: a tired tube that's steady most of the time, then stutters for a split second.
+   It dims rather than going fully dark, the way a failing neon tube does. */
+.neon-letter { display: inline-block; }
+.neon-letter--flutter {
+  animation: neon-flutter var(--flutter-duration, 9s) linear var(--flutter-delay, 0s) infinite;
+}
+@keyframes neon-flutter {
+  0%, 88%, 100% { opacity: 1; }
+  88.6% { opacity: 0.55; }
+  89.2% { opacity: 1; }
+  90.4% { opacity: 0.32; }
+  91% { opacity: 0.85; }
+  91.5% { opacity: 0.45; }
+  92.4% { opacity: 1; }
+  95.5% { opacity: 1; }
+  96% { opacity: 0.7; }
+  96.6% { opacity: 1; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .neon-heading { animation: none; }
+  .neon-heading, .neon-letter--flutter { animation: none; }
 }
