@@ -3,6 +3,7 @@
 import { NextResponse } from 'next/server';
 import { getMemberId } from '@/lib/account-session';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { logSecurityEvent } from '@/lib/account-security';
 import { MAX_CODE_ATTEMPTS, codesMatch, hashCode } from '@/lib/email-change';
 
 export async function POST(request: Request) {
@@ -61,5 +62,6 @@ export async function POST(request: Request) {
     .eq('user_id', userId)
     .is('used_at', null);
 
+  await logSecurityEvent(userId, 'email_changed', request);
   return NextResponse.json({ email: req.new_email });
 }

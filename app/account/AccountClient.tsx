@@ -2,10 +2,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, CreditCard, Lock, MessageCircleMore } from 'lucide-react';
+import { ArrowLeft, CreditCard, MessageCircleMore } from 'lucide-react';
 import AccountSidebar from '@/components/AccountSidebar';
 import HomeTab from '@/components/account/HomeTab';
 import OrdersTab from '@/components/account/OrdersTab';
+import SecurityTab from '@/components/account/SecurityTab';
 import PersonalInfoTab from '@/components/account/PersonalInfoTab';
 import ComingSoonTab from '@/components/account/ComingSoonTab';
 import {
@@ -13,6 +14,7 @@ import {
   type AccountTab,
   type AccountUser,
   type Address,
+  type SecurityInfo,
   type Order,
   type QuestStatus,
   type RewardClaim,
@@ -22,13 +24,14 @@ interface AccountClientProps {
   user: AccountUser;
   orders: Order[];
   addresses: Address[];
+  security: SecurityInfo;
   quests: QuestStatus[];
   claims: RewardClaim[];
   initialTab: AccountTab | null;
   signOutAction: () => Promise<void>;
 }
 
-export default function AccountClient({ user, orders, addresses, quests, claims, initialTab, signOutAction }: AccountClientProps) {
+export default function AccountClient({ user, orders, addresses, security, quests, claims, initialTab, signOutAction }: AccountClientProps) {
   const [tab, setTab] = useState<AccountTab>(initialTab ?? 'home');
   // Mobile only: show the menu first unless the URL already points at a tab.
   const [mobileView, setMobileView] = useState<'menu' | 'content'>(initialTab ? 'content' : 'menu');
@@ -71,14 +74,7 @@ export default function AccountClient({ user, orders, addresses, quests, claims,
       case 'orders':
         return <OrdersTab orders={orders} />;
       case 'security':
-        return (
-          <ComingSoonTab
-            icon={Lock}
-            title="Login & security"
-            subtitle="Password and sign-in settings."
-            message="Changing your password and sign-in settings is on the way."
-          />
-        );
+        return <SecurityTab email={user.email} security={security} />;
       case 'payments':
         return (
           <ComingSoonTab

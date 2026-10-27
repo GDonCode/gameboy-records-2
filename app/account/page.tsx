@@ -7,6 +7,7 @@ import { getRewardClaims } from '@/lib/claims';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import { getAddresses } from '@/lib/addresses';
+import { getSecurityInfo } from '@/lib/account-security';
 import { isAccountTab, type AccountUser, type Order } from '@/components/account/types';
 import AccountClient from './AccountClient';
 
@@ -38,10 +39,11 @@ export default async function AccountPage({
   // Load the user's orders here once it exists; OrdersTab already handles current vs archived.
   const orders: Order[] = [];
 
-  const [quests, claims, addresses] = await Promise.all([
+  const [quests, claims, addresses, security] = await Promise.all([
     getQuestStatus(session.user.id),
     getRewardClaims(session.user.id),
     getAddresses(session.user.id),
+    getSecurityInfo(session.user.id, user.has_password),
   ]);
   const { tab } = await searchParams;
   const initialTab = isAccountTab(tab) ? tab : null;
@@ -59,6 +61,7 @@ export default async function AccountPage({
         user={user}
         orders={orders}
         addresses={addresses}
+        security={security}
         quests={quests}
         claims={claims}
         initialTab={initialTab}

@@ -26,6 +26,27 @@ export interface AccountUser {
   has_password: boolean;
 }
 
+export type SecurityEventKind =
+  | 'sign_in'
+  | 'password_changed'
+  | 'password_set'
+  | 'password_check_failed'
+  | 'signed_out_everywhere'
+  | 'email_changed';
+
+export interface SecurityEvent {
+  id: string;
+  kind: SecurityEventKind;
+  user_agent: string | null;
+  created_at: string;
+}
+
+export interface SecurityInfo {
+  hasPassword: boolean;
+  passwordChangedAt: string | null;
+  events: SecurityEvent[];
+}
+
 export interface Address {
   id: string;
   full_name: string;

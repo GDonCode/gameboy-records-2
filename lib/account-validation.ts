@@ -97,3 +97,22 @@ export function validateAddress(raw: unknown): { value: AddressInput } | { error
     },
   };
 }
+
+export const PASSWORD_MIN = 8;
+
+// A short list of the passwords attackers try first. Not exhaustive; length does most of the work.
+const COMMON_PASSWORDS = new Set([
+  'password', 'password1', 'password123', '12345678', '123456789', '1234567890', 'qwerty123', 'qwertyuiop',
+  '11111111', '00000000', 'iloveyou', 'abc12345', 'letmein1', 'welcome1', 'admin123', 'sunshine', 'football',
+  'baseball', 'princess', 'gameboyrecords', 'gameboy123',
+]);
+
+/** Same rules for registering, changing and setting a password. bcrypt only reads the first 72 bytes. */
+export function validateNewPassword(value: unknown, email?: string): string | null {
+  if (typeof value !== 'string' || !value) return 'Enter a new password.';
+  if (value.length < PASSWORD_MIN) return `Password must be at least ${PASSWORD_MIN} characters.`;
+  if (new TextEncoder().encode(value).length > 72) return 'Password is too long. Try a shorter one.';
+  if (COMMON_PASSWORDS.has(value.toLowerCase())) return 'That password is too common. Choose another.';
+  if (email && value.toLowerCase() === email.toLowerCase()) return 'Don’t use your email as your password.';
+  return null;
+}

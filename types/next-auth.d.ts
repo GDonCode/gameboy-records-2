@@ -19,5 +19,11 @@ declare module 'next-auth/jwt' {
   interface JWT {
     artistId?: string;
     isAdmin?: boolean;
+    accountId?: string;
+    role?: string;
+    /** When this session signed in (ms). Sessions older than users.sessions_valid_after are ended. */
+    signedInAt?: number;
+    /** When the session was last checked against users.sessions_valid_after (ms). */
+    sessionCheckedAt?: number;
   }
 }

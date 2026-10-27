@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { OAuth2Client } from 'google-auth-library';
 import { awardPoints, SIGNUP_BONUS } from '@/lib/points';
+import { logSecurityEvent, memberSessionStillValid } from '@/lib/account-security';
 
 const googleClient = new OAuth2Client();
 
@@ -48,7 +49,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const email = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
         if (!email || !password) return null;
@@ -63,8 +64,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!user.password_hash) return null;
 
         const valid = await bcrypt.compare(password, user.password_hash);
-        if (!valid) return null;
+        if (!valid) {
+          await logSecurityEvent(user.id, 'password_check_failed', request);
+          return null;
+        }
 
+        await logSecurityEvent(user.id, 'sign_in', request);
         return {
           id: user.id,
           email: user.email,
@@ -78,7 +83,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         credential: { label: 'Google credential', type: 'text' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const idToken = credentials?.credential as string | undefined;
         const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
         if (!idToken || !clientId) return null;
@@ -119,6 +124,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           await awardPoints(created.id, SIGNUP_BONUS, 'signup_bonus');
         }
 
+        await logSecurityEvent(user.id, 'sign_in', request);
+
         return {
           id: user.id,
           email: user.email,
@@ -133,6 +140,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.accountId = user.id;
         token.role = (user as any).role;
+        token.signedInAt = Date.now();
+        token.sessionCheckedAt = Date.now();
+      }
+
+      // Members: end this session if it signed in before a password change or "sign out of other devices".
+      if (token.role === 'user' && token.accountId && !user && !(await memberSessionStillValid(token))) {
+        return null;
       }
       // After a member edits their name or email, the account page calls update() so the
       // session matches the database. Only the server-side values are trusted, never client input.

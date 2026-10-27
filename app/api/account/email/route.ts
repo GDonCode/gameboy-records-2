@@ -1,11 +1,11 @@
 // app/api/account/email/route.ts
 // Step 1 of changing the account email: check the password and email a code to the new address.
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
 import { getMemberId } from '@/lib/account-session';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { validateEmail } from '@/lib/account-validation';
 import { sendEmailChangeCode } from '@/lib/mailer';
+import { PASSWORD_CHECK_ERRORS, checkCurrentPassword } from '@/lib/account-security';
 import { CODE_TTL_MINUTES, MAX_REQUESTS_PER_HOUR, generateCode, hashCode } from '@/lib/email-change';
 
 export async function POST(request: Request) {
@@ -16,7 +16,6 @@ export async function POST(request: Request) {
   const result = validateEmail(body?.newEmail);
   if ('error' in result) return NextResponse.json({ error: result.error }, { status: 400 });
   const newEmail = result.value;
-  const password = typeof body?.password === 'string' ? body.password : '';
 
   const { data: user, error: userError } = await supabaseAdmin
     .from('users')
@@ -37,8 +36,11 @@ export async function POST(request: Request) {
   if (newEmail === user.email) {
     return NextResponse.json({ error: 'That’s already your email.' }, { status: 400 });
   }
-  if (!password || Buffer.byteLength(password, 'utf8') > 72 || !(await bcrypt.compare(password, user.password_hash))) {
-    return NextResponse.json({ error: 'Your current password is incorrect.' }, { status: 400 });
+  // Wrong passwords are logged and rate-limited (shared with the Login & security tab).
+  const check = await checkCurrentPassword(userId, user.password_hash, body?.password, request);
+  if (check !== 'ok') {
+    const { error, status } = PASSWORD_CHECK_ERRORS[check];
+    return NextResponse.json({ error }, { status });
   }
 
   const { data: taken } = await supabaseAdmin.from('users').select('id').eq('email', newEmail).maybeSingle();

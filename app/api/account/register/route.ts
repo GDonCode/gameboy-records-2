@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { awardPoints, SIGNUP_BONUS } from '@/lib/points';
+import { validateNewPassword } from '@/lib/account-validation';
 
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,8 +42,10 @@ export async function POST(request: Request) {
   if (displayName.trim().length > 50) {
     return NextResponse.json({ error: 'Display name must be 50 characters or fewer.' }, { status: 400 });
   }
-  if (Buffer.byteLength(password, 'utf8') > 72) {
-    return NextResponse.json({ error: 'Password is too long. Try a shorter one.' }, { status: 400 });
+  // The browser checks these too, but only this check counts.
+  const passwordError = validateNewPassword(password, normalizedEmail);
+  if (passwordError) {
+    return NextResponse.json({ error: passwordError }, { status: 400 });
   }
 
   const password_hash = await bcrypt.hash(password, 10);
