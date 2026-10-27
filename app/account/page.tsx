@@ -6,7 +6,8 @@ import { getQuestStatus } from '@/lib/quests';
 import { getRewardClaims } from '@/lib/claims';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
-import { isAccountTab, type Order } from '@/components/account/types';
+import { getAddresses } from '@/lib/addresses';
+import { isAccountTab, type AccountUser, type Order } from '@/components/account/types';
 import AccountClient from './AccountClient';
 
 export const revalidate = 0;
@@ -21,21 +22,26 @@ export default async function AccountPage({
     redirect('/account/login');
   }
 
-  const { data: user, error } = await supabaseAdmin
+  const { data: row, error } = await supabaseAdmin
     .from('users')
-    .select('id, email, display_name, points_balance, created_at, avatar_url')
+    .select('id, email, display_name, points_balance, created_at, avatar_url, password_hash')
     .eq('id', session.user.id)
     .single();
 
-  if (error || !user) redirect('/account/login');
+  if (error || !row) redirect('/account/login');
+
+  // Never send the password hash to the browser; the client only needs to know whether one exists.
+  const { password_hash, ...rest } = row;
+  const user: AccountUser = { ...rest, has_password: !!password_hash };
 
   // Checkout isn't live yet, so there is no orders table to read from.
   // Load the user's orders here once it exists; OrdersTab already handles current vs archived.
   const orders: Order[] = [];
 
-  const [quests, claims] = await Promise.all([
+  const [quests, claims, addresses] = await Promise.all([
     getQuestStatus(session.user.id),
     getRewardClaims(session.user.id),
+    getAddresses(session.user.id),
   ]);
   const { tab } = await searchParams;
   const initialTab = isAccountTab(tab) ? tab : null;
@@ -52,6 +58,7 @@ export default async function AccountPage({
       <AccountClient
         user={user}
         orders={orders}
+        addresses={addresses}
         quests={quests}
         claims={claims}
         initialTab={initialTab}

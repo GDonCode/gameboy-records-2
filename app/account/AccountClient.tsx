@@ -12,6 +12,7 @@ import {
   isAccountTab,
   type AccountTab,
   type AccountUser,
+  type Address,
   type Order,
   type QuestStatus,
   type RewardClaim,
@@ -20,13 +21,14 @@ import {
 interface AccountClientProps {
   user: AccountUser;
   orders: Order[];
+  addresses: Address[];
   quests: QuestStatus[];
   claims: RewardClaim[];
   initialTab: AccountTab | null;
   signOutAction: () => Promise<void>;
 }
 
-export default function AccountClient({ user, orders, quests, claims, initialTab, signOutAction }: AccountClientProps) {
+export default function AccountClient({ user, orders, addresses, quests, claims, initialTab, signOutAction }: AccountClientProps) {
   const [tab, setTab] = useState<AccountTab>(initialTab ?? 'home');
   // Mobile only: show the menu first unless the URL already points at a tab.
   const [mobileView, setMobileView] = useState<'menu' | 'content'>(initialTab ? 'content' : 'menu');
@@ -65,7 +67,7 @@ export default function AccountClient({ user, orders, quests, claims, initialTab
       case 'home':
         return <HomeTab user={user} memberSince={memberSince} quests={quests} claims={claims} onSelectTab={selectTab} />;
       case 'personal':
-        return <PersonalInfoTab user={user} memberSince={memberSince} />;
+        return <PersonalInfoTab user={user} memberSince={memberSince} addresses={addresses} />;
       case 'orders':
         return <OrdersTab orders={orders} />;
       case 'security':

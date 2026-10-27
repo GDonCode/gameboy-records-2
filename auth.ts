@@ -129,10 +129,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.accountId = user.id;
         token.role = (user as any).role;
+      }
+      // After a member edits their name or email, the account page calls update() so the
+      // session matches the database. Only the server-side values are trusted, never client input.
+      if (trigger === 'update' && token.role === 'user' && token.accountId) {
+        const { data } = await supabaseAdmin
+          .from('users')
+          .select('email, display_name')
+          .eq('id', token.accountId as string)
+          .single();
+        if (data) {
+          token.email = data.email;
+          token.name = data.display_name;
+        }
       }
       return token;
     },

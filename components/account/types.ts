@@ -22,6 +22,21 @@ export interface AccountUser {
   points_balance: number | null;
   created_at: string;
   avatar_url: string | null;
+  /** False for Google-only accounts, whose email can't be changed here. */
+  has_password: boolean;
+}
+
+export interface Address {
+  id: string;
+  full_name: string;
+  line1: string;
+  line2: string | null;
+  city: string;
+  region: string | null;
+  postal_code: string | null;
+  country_code: string;
+  phone: string | null;
+  is_default: boolean;
 }
 
 export type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
