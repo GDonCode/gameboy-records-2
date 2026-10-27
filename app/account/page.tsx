@@ -10,6 +10,7 @@ import { getAddresses } from '@/lib/addresses';
 import { getSecurityInfo } from '@/lib/account-security';
 import { getPaymentMethods } from '@/lib/payments/methods';
 import { getPaymentProvider } from '@/lib/payments/provider';
+import { getSupportRequests } from '@/lib/support-requests';
 import { isAccountTab, type AccountUser, type Order } from '@/components/account/types';
 import AccountClient from './AccountClient';
 
@@ -41,12 +42,13 @@ export default async function AccountPage({
   // Load the user's orders here once it exists; OrdersTab already handles current vs archived.
   const orders: Order[] = [];
 
-  const [quests, claims, addresses, security, paymentMethods] = await Promise.all([
+  const [quests, claims, addresses, security, paymentMethods, supportRequests] = await Promise.all([
     getQuestStatus(session.user.id),
     getRewardClaims(session.user.id),
     getAddresses(session.user.id),
     getSecurityInfo(session.user.id, user.has_password),
     getPaymentMethods(session.user.id),
+    getSupportRequests(session.user.id),
   ]);
   const payments = { provider: getPaymentProvider()?.id ?? null, methods: paymentMethods };
   const { tab } = await searchParams;
@@ -67,6 +69,7 @@ export default async function AccountPage({
         addresses={addresses}
         security={security}
         payments={payments}
+        supportRequests={supportRequests}
         quests={quests}
         claims={claims}
         initialTab={initialTab}

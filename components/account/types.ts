@@ -129,3 +129,15 @@ export interface PaymentsInfo {
   provider: string | null;
   methods: PaymentMethod[];
 }
+
+export interface SupportRequest {
+  id: string;
+  reference: string;
+  topic: string;
+  subject: string;
+  message: string;
+  order_number: string | null;
+  status: 'open' | 'resolved';
+  created_at: string;
+  resolved_at: string | null;
+}

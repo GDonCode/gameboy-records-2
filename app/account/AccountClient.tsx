@@ -2,14 +2,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, MessageCircleMore } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import AccountSidebar from '@/components/AccountSidebar';
 import HomeTab from '@/components/account/HomeTab';
 import OrdersTab from '@/components/account/OrdersTab';
 import SecurityTab from '@/components/account/SecurityTab';
 import PaymentsTab from '@/components/account/PaymentsTab';
+import SupportTab from '@/components/account/SupportTab';
 import PersonalInfoTab from '@/components/account/PersonalInfoTab';
-import ComingSoonTab from '@/components/account/ComingSoonTab';
 import {
   isAccountTab,
   type AccountTab,
@@ -17,6 +17,7 @@ import {
   type Address,
   type SecurityInfo,
   type PaymentsInfo,
+  type SupportRequest,
   type Order,
   type QuestStatus,
   type RewardClaim,
@@ -28,13 +29,14 @@ interface AccountClientProps {
   addresses: Address[];
   security: SecurityInfo;
   payments: PaymentsInfo;
+  supportRequests: SupportRequest[];
   quests: QuestStatus[];
   claims: RewardClaim[];
   initialTab: AccountTab | null;
   signOutAction: () => Promise<void>;
 }
 
-export default function AccountClient({ user, orders, addresses, security, payments, quests, claims, initialTab, signOutAction }: AccountClientProps) {
+export default function AccountClient({ user, orders, addresses, security, payments, supportRequests, quests, claims, initialTab, signOutAction }: AccountClientProps) {
   const [tab, setTab] = useState<AccountTab>(initialTab ?? 'home');
   // Mobile only: show the menu first unless the URL already points at a tab.
   const [mobileView, setMobileView] = useState<'menu' | 'content'>(initialTab ? 'content' : 'menu');
@@ -81,14 +83,7 @@ export default function AccountClient({ user, orders, addresses, security, payme
       case 'payments':
         return <PaymentsTab payments={payments} />;
       case 'support':
-        return (
-          <ComingSoonTab
-            icon={MessageCircleMore}
-            title="Customer support"
-            subtitle="Get help with orders and more."
-            message="Support chat is on the way. Help with orders will be available here."
-          />
-        );
+        return <SupportTab email={user.email} initialRequests={supportRequests} onSelectTab={selectTab} />;
     }
   }
 

@@ -3,6 +3,7 @@
 // (EMAIL_USER / EMAIL_PASS, where EMAIL_PASS is a Google app password).
 
 import nodemailer from 'nodemailer';
+import { escapeHtml } from '@/lib/support';
 
 let transporter: nodemailer.Transporter | null = null;
 
@@ -81,6 +82,84 @@ export async function sendPasswordChangedNotice(to: string, displayName: string,
         <p>Hi ${name},</p>
         <p>${line}</p>
         <p><strong>${help}</strong></p>
+      </div>
+    `,
+  });
+}
+
+// ── SUPPORT ──────────────────────────────────────────────────────────────────
+// Where support requests are delivered. Set SUPPORT_EMAIL to use a different inbox.
+const SUPPORT_INBOX = () => process.env.SUPPORT_EMAIL || 'info@gameboyrecords.com';
+
+interface SupportMailRequest {
+  reference: string;
+  topicLabel: string;
+  subject: string;
+  message: string;
+  orderNumber: string | null;
+}
+
+interface SupportMailMember {
+  id: string;
+  email: string;
+  name: string;
+  points: number;
+  memberSince: string;
+}
+
+const esc = escapeHtml;
+
+/** To the support inbox. Replying to it emails the member directly. */
+export async function sendSupportRequestToStaff(req: SupportMailRequest, member: SupportMailMember): Promise<void> {
+  const details: [string, string][] = [
+    ['Reference', req.reference],
+    ['Topic', req.topicLabel],
+    ...(req.orderNumber ? ([['Order number', req.orderNumber]] as [string, string][]) : []),
+    ['Member', `${member.name} <${member.email}>`],
+    ['Member since', member.memberSince],
+    ['Points', member.points.toLocaleString('en-US')],
+    ['Account id', member.id],
+  ];
+  await getTransporter().sendMail({
+    from: `"Gameboy Records Support" <${process.env.EMAIL_USER}>`,
+    to: SUPPORT_INBOX(),
+    replyTo: { name: member.name, address: member.email },
+    subject: `[${req.reference}] ${req.subject}`,
+    text: [...details.map(([k, v]) => `${k}: ${v}`), '', req.message, '', 'Reply to this email to answer the member.'].join('\n'),
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #16432a; max-width: 600px;">
+        <table style="border-collapse: collapse; margin-bottom: 16px;">
+          ${details.map(([k, v]) => `<tr><td style="padding: 2px 12px 2px 0; color: #5b7a66;">${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}
+        </table>
+        <p style="white-space: pre-wrap; border-left: 3px solid #1a9e4a; padding-left: 12px;">${esc(req.message)}</p>
+        <p style="color: #5b7a66; font-size: 13px;">Reply to this email to answer the member.</p>
+      </div>
+    `,
+  });
+}
+
+/** To the member, so they have the reference and a copy of what they sent. */
+export async function sendSupportConfirmation(req: SupportMailRequest, member: SupportMailMember): Promise<void> {
+  await getTransporter().sendMail({
+    from: `"Gameboy Records Support" <${process.env.EMAIL_USER}>`,
+    to: member.email,
+    replyTo: SUPPORT_INBOX(),
+    subject: `We got your message [${req.reference}]`,
+    text: [
+      `Hi ${member.name},`,
+      '',
+      `Thanks for getting in touch. Your reference is ${req.reference}. We'll reply to this email address.`,
+      '',
+      `Subject: ${req.subject}`,
+      '',
+      req.message,
+    ].join('\n'),
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #16432a; max-width: 600px;">
+        <p>Hi ${esc(member.name)},</p>
+        <p>Thanks for getting in touch. Your reference is <strong>${esc(req.reference)}</strong>. We'll reply to this email address.</p>
+        <p style="color: #5b7a66;">Subject: ${esc(req.subject)}</p>
+        <p style="white-space: pre-wrap; border-left: 3px solid #1a9e4a; padding-left: 12px;">${esc(req.message)}</p>
       </div>
     `,
   });
