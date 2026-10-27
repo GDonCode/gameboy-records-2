@@ -28,10 +28,13 @@ export async function GET() {
     return {
       id: row.id,
       product_id: row.product_id,
-      name: product?.name ?? 'Unknown product',
+      name: product?.name ?? 'Unavailable item',
       price: product?.price ?? 0,
       image: product?.images?.[0] ?? null,
       slug: product?.slug ?? row.product_id,
+      sizes: product?.sizes ?? [],
+      // Saved items that were taken out of the shop stay listed, flagged, until the member removes them.
+      available: !!getProduct(row.product_id),
     };
   });
 

@@ -20,7 +20,7 @@ export default function WishlistButton({
   return (
     <button
       type="button"
-      aria-label={saved ? `Remove ${productName} from saved items` : `Save ${productName} for later`}
+      aria-label={saved ? `Remove ${productName} from wishlist` : `Add ${productName} to wishlist`}
       aria-pressed={saved}
       onClick={onToggle}
       className="group/wishlist absolute top-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md cursor-pointer transition-transform active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1a9e4a]"

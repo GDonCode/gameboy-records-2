@@ -1,7 +1,7 @@
 // lib/use-wishlist.ts
 'use client';
 
-// Saved-for-later hearts on the shop, linked to /api/wishlist. Updates show immediately and roll back
+// Wishlist hearts on the shop, linked to /api/wishlist. Updates show immediately and roll back
 // if the server refuses. Moved from app/shop/page.tsx.
 
 import { useEffect, useState } from 'react';
@@ -45,7 +45,7 @@ export function useWishlist() {
       if (!res.ok) throw new Error();
     } catch {
       flip(productId, wasSaved);
-      setError('Couldn’t update your saved items. Please try again.');
+      setError('Couldn’t update your wishlist. Please try again.');
     }
   }
 
