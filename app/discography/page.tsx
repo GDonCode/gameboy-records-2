@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import DiscographyFeed from '@/components/discography/DiscographyFeed';
+import NeonHeading from '@/components/NeonHeading';
 import { getDiscographyPage } from '@/lib/discography';
 
 export const metadata: Metadata = {
@@ -41,8 +42,11 @@ export default async function DiscographyPage() {
       <Header />
       <MobileBottomNav />
       <main className="relative flex-1 min-h-0">
-        <h1 className="sr-only">Discography</h1>
         <DiscographyFeed initial={initial} />
+        {/* Compact neon title over the feed, so the videos keep the whole screen. */}
+        <NeonHeading size="sm" align="left" className="pointer-events-none absolute left-4 top-[74px] z-20 lg:left-12 lg:top-6">
+          Discography
+        </NeonHeading>
       </main>
     </div>
   );

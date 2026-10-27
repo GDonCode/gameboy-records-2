@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import NeonHeading from '@/components/NeonHeading';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import Footer from '@/components/Footer';
@@ -109,19 +110,9 @@ export default function ShowsPage() {
         <GameIconsBackground />
 
         <div className="relative z-[1] flex flex-col items-center px-6 py-20 text-center">
-          <h1
-            style={{
-              fontFamily: "'Poppins_semibold', monospace",
-              fontSize: '3em',
-              color: '#4dff91',
-              letterSpacing: '0.2em',
-              textShadow: '0 0 20px rgba(77,255,145,0.25)',
-            }}
-          >
-            SHOWS
-          </h1>
+          <NeonHeading>Shows</NeonHeading>
           <p
-            className="mt-3 max-w-[560px]"
+            className="mt-5 max-w-[560px]"
             style={{ fontFamily: "'Poppins', monospace", fontSize: '1.1em', color: '#e8f5ec', lineHeight: 1.6, opacity: 0.8 }}
           >
             Tour dates are being booked. Be the first to know when we announce a show near you.

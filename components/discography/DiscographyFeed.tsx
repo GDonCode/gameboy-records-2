@@ -428,7 +428,7 @@ export default function DiscographyFeed({ initial }: { initial: DiscographyPage 
               )}
               <div className="absolute inset-0 bg-black/45" aria-hidden="true" />
 
-              <div className="relative mx-auto grid h-full max-w-[1500px] grid-cols-1 items-center lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-12 lg:px-12 lg:py-10">
+              <div className="relative mx-auto grid h-full max-w-[1500px] grid-cols-1 items-center lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-12 lg:px-12 lg:pt-20 lg:pb-10">
                 <div className="-mt-[22vh] lg:mt-0">
                   {near && (
                     <VideoFrame

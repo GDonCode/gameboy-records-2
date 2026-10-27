@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import Footer from '@/components/Footer';
+import NeonHeading from '@/components/NeonHeading';
 import ProductCard from '@/components/shop/ProductCard';
 import {
   COLOR_OPTIONS,
@@ -72,14 +73,9 @@ function ShopContent() {
       <div className="relative flex-1 overflow-hidden" style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}>
         <div className="absolute inset-0 z-[1] flex flex-col overflow-y-auto">
           <main className="flex-1 px-4 pt-[76px] pb-10 md:px-8 md:pt-8">
-            <section className="mb-6 md:mb-8">
-              <h1 style={{ fontFamily: "'Poppins_semibold', sans-serif" }} className="text-[34px] md:text-5xl uppercase leading-none text-[#FEFEFA]">
-                &ldquo;RISE&rdquo; COLLECTION
-              </h1>
-              <p style={{ fontFamily: "'Poppins', sans-serif" }} className="mt-2 ml-1 text-[12px] md:text-sm tracking-[0.35em] text-[#3dc97e]">
-                by ALEXX A-GAME
-              </p>
-            </section>
+            <NeonHeading align="left" subtitle="by Alexx A-Game" className="mb-7 md:mb-9">
+              &ldquo;Rise&rdquo; Collection
+            </NeonHeading>
 
             <div className="mb-5">
               <MobileFilterBar {...filterProps} />
