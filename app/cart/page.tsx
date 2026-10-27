@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { emitCartCount } from '@/lib/cart-sync';
+import { MAX_CART_QUANTITY } from '@/lib/products';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 
@@ -211,7 +212,9 @@ export default function CartPage() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="w-8 h-8 border border-[#1a9e4a]/30 text-[#16432a] cursor-pointer"
+                          disabled={item.quantity >= MAX_CART_QUANTITY}
+                          aria-label="Increase quantity"
+                          className="w-8 h-8 border border-[#1a9e4a]/30 text-[#16432a] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           +
                         </button>

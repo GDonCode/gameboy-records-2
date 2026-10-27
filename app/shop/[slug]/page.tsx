@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
-import { getProductBySlug, getRelatedProducts } from '@/lib/products';
+import { MAX_CART_QUANTITY, getProductBySlug, getRelatedProducts } from '@/lib/products';
 
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
@@ -132,8 +132,10 @@ export default function ProductPage() {
                 </span>
                 <button
                   type="button"
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#e8f5ec] cursor-pointer"
+                  onClick={() => setQuantity((q) => Math.min(MAX_CART_QUANTITY, q + 1))}
+                  disabled={quantity >= MAX_CART_QUANTITY}
+                  aria-label="Increase quantity"
+                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#e8f5ec] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   +
                 </button>

@@ -7,6 +7,9 @@ export interface Product {
   description: string;
   sizes: string[]; // ASSUMPTION: generic S/M/L/XL — replace with real sizing per product
   category: 't-shirt' | 'hoodie';
+  color: 'black' | 'white' | 'gray';
+  /** Only listed in development (e.g. a cheap product for testing checkout). Hidden from the live shop and cart. */
+  testOnly?: boolean;
 }
 
 export const products: Product[] = [
@@ -19,6 +22,7 @@ export const products: Product[] = [
     description: 'TODO: add real product description.',
     sizes: ['S', 'M', 'L', 'XL'],
     category: 't-shirt',
+    color: 'black',
   },
   {
     id: 'gray-t',
@@ -29,6 +33,7 @@ export const products: Product[] = [
     description: 'TODO: add real product description.',
     sizes: ['S', 'M', 'L', 'XL'],
     category: 't-shirt',
+    color: 'gray',
   },
   {
     id: 'white-t',
@@ -39,6 +44,7 @@ export const products: Product[] = [
     description: 'TODO: add real product description.',
     sizes: ['S', 'M', 'L', 'XL'],
     category: 't-shirt',
+    color: 'white',
   },
   {
     id: 'black-h',
@@ -49,6 +55,7 @@ export const products: Product[] = [
     description: 'TODO: add real product description.',
     sizes: ['S', 'M', 'L', 'XL'],
     category: 'hoodie',
+    color: 'black',
   },
   {
     id: 'white-h',
@@ -59,6 +66,7 @@ export const products: Product[] = [
     description: 'TODO: add real product description.',
     sizes: ['S', 'M', 'L', 'XL'],
     category: 'hoodie',
+    color: 'white',
   },
   {
     id: 'gray-h',
@@ -69,6 +77,7 @@ export const products: Product[] = [
     description: 'TODO: add real product description.',
     sizes: ['S', 'M', 'L', 'XL'],
     category: 'hoodie',
+    color: 'gray',
   },
   {
     id: 'test-t',
@@ -79,15 +88,36 @@ export const products: Product[] = [
     description: 'TEST PRODUCT - not for sale.',
     sizes: ['S', 'M', 'L', 'XL'],
     category: 't-shirt',
+    color: 'black',
+    testOnly: true,
   },
 ];
 
+/** Most of one item a single cart line can hold. */
+export const MAX_CART_QUANTITY = 10;
+
+export function isListed(product: Product): boolean {
+  return !product.testOnly || process.env.NODE_ENV !== 'production';
+}
+
+/** Products shown in the shop, in catalog order. */
+export const listedProducts: Product[] = products.filter(isListed);
+
+export function getProduct(id: string): Product | undefined {
+  return listedProducts.find((p) => p.id === id);
+}
+
 export function getProductBySlug(slug: string): Product | undefined {
-  return products.find((p) => p.slug === slug);
+  return listedProducts.find((p) => p.slug === slug);
 }
 
 export function getRelatedProducts(product: Product, limit = 3): Product[] {
-  return products
+  return listedProducts
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, limit);
+}
+
+const priceFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+export function formatPrice(amount: number): string {
+  return priceFormat.format(amount);
 }

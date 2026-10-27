@@ -2,7 +2,12 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { products } from '@/lib/products';
+import { MAX_CART_QUANTITY, getProduct, products } from '@/lib/products';
+
+// A whole number from 1 to MAX_CART_QUANTITY, or null.
+function validQuantity(value: unknown): number | null {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= MAX_CART_QUANTITY ? value : null;
+}
 
 export async function GET() {
   const session = await auth();
@@ -17,7 +22,8 @@ export async function GET() {
     .order('created_at', { ascending: true });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Failed to load cart:', error.message);
+    return NextResponse.json({ error: 'Could not load your cart.' }, { status: 500 });
   }
 
   const items = (data ?? []).map((row) => {
@@ -42,13 +48,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
   }
 
-  const { productId, size, quantity } = await request.json();
+  const { productId, size, quantity } = (await request.json().catch(() => ({}))) ?? {};
 
-  if (!productId || !size) {
-    return NextResponse.json({ error: 'productId and size are required.' }, { status: 400 });
+  // Only real, listed products in sizes they come in.
+  const product = typeof productId === 'string' ? getProduct(productId) : undefined;
+  if (!product) {
+    return NextResponse.json({ error: 'That product isn’t available.' }, { status: 400 });
   }
-
-  const addQty = Number.isFinite(quantity) && quantity > 0 ? quantity : 1;
+  if (typeof size !== 'string' || !product.sizes.includes(size)) {
+    return NextResponse.json({ error: 'Choose a size.' }, { status: 400 });
+  }
+  const addQty = quantity === undefined ? 1 : validQuantity(quantity);
+  if (!addQty) {
+    return NextResponse.json({ error: `Quantity must be between 1 and ${MAX_CART_QUANTITY}.` }, { status: 400 });
+  }
 
   const { data: existing, error: fetchError } = await supabaseAdmin
     .from('cart_items')
@@ -59,28 +72,34 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (fetchError) {
-    return NextResponse.json({ error: fetchError.message }, { status: 500 });
+    console.error('Failed to read cart:', fetchError.message);
+    return NextResponse.json({ error: 'Could not update your cart. Please try again.' }, { status: 500 });
   }
 
   if (existing) {
+    if (existing.quantity >= MAX_CART_QUANTITY) {
+      return NextResponse.json({ error: `You can have up to ${MAX_CART_QUANTITY} of each item.` }, { status: 400 });
+    }
     const { error: updateError } = await supabaseAdmin
       .from('cart_items')
-      .update({ quantity: existing.quantity + addQty })
+      .update({ quantity: Math.min(existing.quantity + addQty, MAX_CART_QUANTITY) })
       .eq('id', existing.id);
 
     if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 });
+      console.error('Failed to update cart:', updateError.message);
+      return NextResponse.json({ error: 'Could not update your cart. Please try again.' }, { status: 500 });
     }
   } else {
     const { error: insertError } = await supabaseAdmin.from('cart_items').insert({
       user_id: session.user.id,
-      product_id: productId,
+      product_id: product.id,
       size,
       quantity: addQty,
     });
 
     if (insertError) {
-      return NextResponse.json({ error: insertError.message }, { status: 500 });
+      console.error('Failed to add to cart:', insertError.message);
+      return NextResponse.json({ error: 'Could not update your cart. Please try again.' }, { status: 500 });
     }
   }
 
@@ -93,10 +112,13 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
   }
 
-  const { id, quantity } = await request.json();
+  const { id, quantity } = (await request.json().catch(() => ({}))) ?? {};
 
-  if (!id || !Number.isFinite(quantity) || quantity < 1) {
-    return NextResponse.json({ error: 'id and a positive quantity are required.' }, { status: 400 });
+  if (typeof id !== 'string' || !id) {
+    return NextResponse.json({ error: 'id is required.' }, { status: 400 });
+  }
+  if (!validQuantity(quantity)) {
+    return NextResponse.json({ error: `Quantity must be between 1 and ${MAX_CART_QUANTITY}.` }, { status: 400 });
   }
 
   const { error } = await supabaseAdmin
@@ -106,7 +128,8 @@ export async function PATCH(request: Request) {
     .eq('user_id', session.user.id);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Failed to update cart quantity:', error.message);
+    return NextResponse.json({ error: 'Could not update your cart. Please try again.' }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });
@@ -118,9 +141,9 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
   }
 
-  const { id } = await request.json();
+  const { id } = (await request.json().catch(() => ({}))) ?? {};
 
-  if (!id) {
+  if (typeof id !== 'string' || !id) {
     return NextResponse.json({ error: 'id is required.' }, { status: 400 });
   }
 
@@ -131,7 +154,8 @@ export async function DELETE(request: Request) {
     .eq('user_id', session.user.id);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Failed to remove cart item:', error.message);
+    return NextResponse.json({ error: 'Could not update your cart. Please try again.' }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });
