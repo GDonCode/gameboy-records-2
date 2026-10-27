@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Check } from 'lucide-react';
+import { getSongOfTheDay, PLATFORMS, recordSongStream } from '@/lib/song-of-the-day';
 import { Panel } from './Panel';
 import type { AccountTab, QuestStatus } from './types';
 
@@ -114,6 +115,25 @@ export default function QuestsPanel({
               <Link href={q.action.href} className={BUTTON_CLASS} style={BODY}>
                 {q.actionLabel}
               </Link>
+            )}
+            {!q.done && q.action.kind === 'stream' && (
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Listen on">
+                {PLATFORMS.map((p) => (
+                  <a
+                    key={p.id}
+                    href={getSongOfTheDay().links[p.id]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Listen on ${p.label}`}
+                    title={p.label}
+                    onClick={() => recordSongStream(p.id).then((ok) => ok && router.refresh())}
+                    className="flex items-center justify-center w-10 h-10 rounded-[6px] bg-[#1a9e4a] hover:bg-[#149262] transition-colors"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={p.icon} alt="" className="w-5 h-5 object-contain" />
+                  </a>
+                ))}
+              </div>
             )}
             {!q.done && q.action.kind === 'subscribe' && (
               <button

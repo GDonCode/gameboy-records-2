@@ -3,6 +3,7 @@
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { localDayKey } from '@/lib/day';
+import { SONG_OF_THE_DAY_POINTS, getSongOfTheDay } from '@/lib/song-of-the-day';
 import type { QuestStatus } from '@/components/account/types';
 
 export const PROFILE_PHOTO_POINTS = 10;
@@ -27,9 +28,9 @@ export async function getQuestStatus(userId: string): Promise<QuestStatus[]> {
       .in('reason', ['profile_photo', 'first_save', 'newsletter_signup']),
     supabaseAdmin
       .from('points_transactions')
-      .select('ref_id')
+      .select('reason, ref_id')
       .eq('user_id', userId)
-      .eq('reason', 'guitar_milestone')
+      .in('reason', ['guitar_milestone', 'song_of_the_day'])
       .like('ref_id', `${today}:%`),
   ]);
 
@@ -37,7 +38,10 @@ export async function getQuestStatus(userId: string): Promise<QuestStatus[]> {
   if (dailyResult.error) console.error('Failed to load daily quest status:', dailyResult.error.message);
 
   const onceDone = new Set((onceResult.data ?? []).map((r) => r.reason));
-  const dailyDone = new Set((dailyResult.data ?? []).map((r) => r.ref_id));
+  const dailyRows = dailyResult.data ?? [];
+  const guitarDone = new Set(dailyRows.filter((r) => r.reason === 'guitar_milestone').map((r) => r.ref_id));
+  const songDone = dailyRows.some((r) => r.reason === 'song_of_the_day');
+  const song = getSongOfTheDay(today);
 
   return [
     {
@@ -70,6 +74,16 @@ export async function getQuestStatus(userId: string): Promise<QuestStatus[]> {
       action: { kind: 'subscribe' },
       actionLabel: 'Subscribe',
     },
+    {
+      id: 'song_of_the_day',
+      title: "Stream A-Game's song of the day",
+      description: `Listen to "${song.title}" on Spotify, YouTube or Apple Music. Resets daily.`,
+      points: SONG_OF_THE_DAY_POINTS,
+      cadence: 'daily',
+      done: songDone,
+      action: { kind: 'stream' },
+      actionLabel: 'Listen',
+    },
     ...GUITAR_MILESTONES.map(
       (m): QuestStatus => ({
         id: `guitar_${m.score}`,
@@ -77,7 +91,7 @@ export async function getQuestStatus(userId: string): Promise<QuestStatus[]> {
         description: 'Reach this score in a single run today. Resets daily.',
         points: m.points,
         cadence: 'daily',
-        done: dailyDone.has(`${today}:${m.score}`),
+        done: guitarDone.has(`${today}:${m.score}`),
         action: { kind: 'href', href: '/guitar' },
         actionLabel: 'Play',
       })

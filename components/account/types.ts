@@ -54,7 +54,8 @@ export interface Order {
 export type QuestAction =
   | { kind: 'tab'; tab: AccountTab }
   | { kind: 'href'; href: string }
-  | { kind: 'subscribe' };
+  | { kind: 'subscribe' }
+  | { kind: 'stream' };
 
 export interface QuestStatus {
   id: string;

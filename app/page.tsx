@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
 import Footer from '@/components/Footer';
+import { getSongOfTheDay, PLATFORMS, recordSongStream } from '@/lib/song-of-the-day';
 
 
 const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
@@ -166,6 +167,69 @@ function SocialsPanel() {
   );
 }
   
+// "A-Game's song of the day" — rotates daily (see lib/song-of-the-day.ts). Opening any link counts toward
+// the signed-in user's daily streaming quest. YouTube plays in the mini-player like the other releases.
+function SongOfTheDayPanel({ onPlay }: { onPlay: (embedSrc: string) => void }) {
+  const song = getSongOfTheDay();
+  return (
+    <div className="hero-panel">
+      <div className="hero-panel-title">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#4dff91] animate-pulse" />
+        A-GAME&apos;S SONG OF THE DAY
+      </div>
+      <div className="hero-sotd">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={song.art} alt={`${song.title} cover art`} className="hero-sotd-art" />
+        <div className="hero-panel-text min-w-0">
+          <strong style={{ color: '#fff' }}>{song.title}</strong>
+          <br />
+          {song.artist}
+          <dl className="hero-sotd-meta">
+            {song.meta.map((m) => (
+              <div key={m.label}>
+                <dt>{m.label}</dt>
+                <dd>{m.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+      <div className="hero-sotd-links">
+        {PLATFORMS.map((p) =>
+          p.id === 'youtube' ? (
+            <button
+              key={p.id}
+              type="button"
+              className="hero-dispo-link"
+              onClick={() => {
+                recordSongStream(p.id);
+                onPlay(`https://www.youtube.com/embed/${song.youtubeId}?autoplay=1&controls=1`);
+              }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p.icon} alt="" />
+              {p.label.toUpperCase()}
+            </button>
+          ) : (
+            <a
+              key={p.id}
+              href={song.links[p.id]}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-dispo-link"
+              onClick={() => recordSongStream(p.id)}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p.icon} alt="" />
+              {p.label.toUpperCase()}
+            </a>
+          )
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── SPOTLIGHT PANELS (appear beside the beam while the spotlight is active) ───
 // Streaming / distribution links for the featured release (YouTube plays in the mini-player).
 const RELEASE_LINKS = [
@@ -853,6 +917,21 @@ export default function Home() {
           cursor: pointer;
           transition: transform 0.07s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
         }
+        .hero-sotd { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+        .hero-sotd-art {
+          width: 76px;
+          height: 76px;
+          flex-shrink: 0;
+          object-fit: cover;
+          border: 1px solid rgba(77,255,145,0.35);
+          border-radius: 2px;
+        }
+        .hero-sotd-meta { margin: 6px 0 0; font-size: 0.85em; }
+        .hero-sotd-meta div { display: flex; gap: 6px; }
+        .hero-sotd-meta dt { color: rgba(255,255,255,0.5); }
+        .hero-sotd-meta dd { margin: 0; color: #4dff91; }
+        .hero-sotd-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .hero-sotd-links .hero-dispo-link { flex-direction: column; justify-content: center; gap: 4px; height: 52px; text-align: center; font-size: 0.56rem; }
         .hero-dispo-link img { width: 18px; height: 18px; object-fit: contain; border-radius: 3px; flex-shrink: 0; }
         .hero-dispo-link:hover {
           transform: translateY(-1px);
@@ -1397,6 +1476,7 @@ export default function Home() {
                     onBlur={hideSpot}
                   >
                     <StoryPanel />
+                    <SongOfTheDayPanel onPlay={openPlayer} />
                     <SocialsPanel />
                   </div>
                   <div
@@ -1416,6 +1496,9 @@ export default function Home() {
                   <div className="hero-carousel no-scrollbar" role="region" aria-label="About Alexx A-Game">
                     <div className="hero-carousel-item">
                       <StoryPanel />
+                    </div>
+                    <div className="hero-carousel-item">
+                      <SongOfTheDayPanel onPlay={openPlayer} />
                     </div>
                     <div className="hero-carousel-item">
                       <ReleaseLinksPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
@@ -1451,6 +1534,7 @@ export default function Home() {
                     </div>
                     <div className="hero-drawer-body">
                       <StoryPanel />
+                      <SongOfTheDayPanel onPlay={openPlayer} />
                       <FeaturedPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
                       <SocialsPanel />
                       <RadioPanel onTuneIn={() => openPlayer(RADIO_EMBED)} />
