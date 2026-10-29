@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useCartCount } from '@/lib/cart-sync';
 function Corners() {
@@ -13,6 +13,57 @@ function Corners() {
       <span className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px] border-[#1a9e4a] pointer-events-none z-50" />
       <span className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#1a9e4a] pointer-events-none z-50" />
     </>
+  );
+}
+
+// Miniature Game Boy d-pad, centered on a corner of the desktop nav box.
+const DPAD_ARROWS = ['M12 3.3l2 2.7h-4z', 'M12 20.7l2-2.7h-4z', 'M3.3 12l2.7-2v4z', 'M20.7 12l-2.7-2v4z'];
+
+function DPad({ className }: { className: string }) {
+  // Unique gradient ids so the two instances don't collide.
+  const id = useId();
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      className={`absolute w-6 h-6 pointer-events-none drop-shadow-[0_1.5px_1px_rgba(14,40,24,0.45)] ${className}`}
+      aria-hidden="true"
+    >
+      <defs>
+        {/* Body: lit from the top-left */}
+        <linearGradient id={`${id}-body`} gradientUnits="userSpaceOnUse" x1="4" y1="2" x2="20" y2="22">
+          <stop offset="0" stopColor="#3fcf74" />
+          <stop offset="0.45" stopColor="#1fa851" />
+          <stop offset="1" stopColor="#127535" />
+        </linearGradient>
+        {/* Center pivot: concave dimple, shaded opposite to the body */}
+        <linearGradient id={`${id}-dimple`} gradientUnits="userSpaceOnUse" x1="12" y1="9.2" x2="12" y2="14.8">
+          <stop offset="0" stopColor="#0f6a30" />
+          <stop offset="1" stopColor="#34c56b" />
+        </linearGradient>
+        <linearGradient id={`${id}-shine`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity="0.35" />
+          <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <g fill="#0c3a1f">
+        <rect x="7.6" y="0.6" width="8.8" height="22.8" rx="1.7" />
+        <rect x="0.6" y="7.6" width="22.8" height="8.8" rx="1.7" />
+      </g>
+      <g fill={`url(#${id}-body)`}>
+        <rect x="8.3" y="1.3" width="7.4" height="21.4" rx="1.1" />
+        <rect x="1.3" y="8.3" width="21.4" height="7.4" rx="1.1" />
+      </g>
+      <rect x="8.3" y="1.3" width="7.4" height="5" rx="1.1" fill={`url(#${id}-shine)`} />
+      <circle cx="12" cy="12" r="2.8" fill={`url(#${id}-dimple)`} />
+      {/* Arrows: solid white, with a dark offset copy underneath for an embossed look */}
+      <g fill="#0c3a1f" fillOpacity={0.45} transform="translate(0 0.35)">
+        {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
+      </g>
+      <g fill="#fff">
+        {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
+      </g>
+    </svg>
   );
 }
 
@@ -89,7 +140,9 @@ export default function Header() {
 
                 {/* Nav — desktop only; mobile uses the hamburger menu below */}
         {/* Unified pill nav container, styled after the Aurelia Dental header nav pattern */}
-        <nav className="hidden md:flex items-center self-center md:ml-auto md:mr-8">
+        <nav className="hidden md:flex relative items-center self-center md:ml-auto md:mr-8">
+          <DPad className="top-0 left-0 -translate-x-1/2 -translate-y-1/2 z-10" />
+          <DPad className="top-0 right-0 translate-x-1/2 -translate-y-1/2 z-10" />
           <ul
             className="flex items-center gap-1 bg-[#1a9e4a]/[0.1] border border-[#1a9e4a]/20 px-3 py-2"
           >
