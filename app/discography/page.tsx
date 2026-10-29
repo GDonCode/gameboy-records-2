@@ -3,25 +3,24 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import DiscographyFeed from '@/components/discography/DiscographyFeed';
-import NeonHeading from '@/components/NeonHeading';
-import { getDiscographyPage } from '@/lib/discography';
+import { getDiscography } from '@/lib/discography';
 
 export const metadata: Metadata = {
   title: 'Discography',
   description: 'Music videos from Alexx A-Game and Gameboy Records. Watch, share and listen on your favourite platform.',
 };
 
-// Refresh the first page of videos from YouTube at most once an hour.
+// Refresh the videos from YouTube at most once an hour.
 export const revalidate = 3600;
 
 export default async function DiscographyPage() {
-  const initial = await getDiscographyPage();
+  const releases = await getDiscography();
 
   // Search engines: the videos on this page.
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    itemListElement: initial.releases.map((r, i) => ({
+    itemListElement: releases.map((r, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       item: {
@@ -41,13 +40,9 @@ export default async function DiscographyPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <Header />
       <MobileBottomNav />
-      <main className="relative flex-1 min-h-0">
-        <DiscographyFeed initial={initial} />
-        {/* Compact neon title over the feed, so the videos keep the whole screen. Hidden on very short phone
-            screens (e.g. turned sideways), where the video info needs the room. */}
-        <NeonHeading size="sm" align="left" className="pointer-events-none absolute left-4 top-[74px] z-20 lg:left-12 lg:top-6 max-lg:[@media(max-height:560px)]:hidden">
-          Discography
-        </NeonHeading>
+      {/* Phones: the header floats over the page, so leave room for it. */}
+      <main className="relative min-h-0 flex-1 pt-[60px] md:pt-0">
+        <DiscographyFeed releases={releases} />
       </main>
     </div>
   );
