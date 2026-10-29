@@ -16,6 +16,33 @@ function Corners() {
   );
 }
 
+// Miniature Game Boy d-pad, centered on a corner of the desktop nav box.
+function DPad({ className }: { className: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      className={`absolute w-6 h-6 pointer-events-none drop-shadow-[0_1px_1px_rgba(22,67,42,0.35)] ${className}`}
+      aria-hidden="true"
+    >
+      <path
+        d="M8.5 1h7v7.5H23v7h-7.5V23h-7v-7.5H1v-7h7.5z"
+        fill="#1a9e4a"
+        stroke="#16432a"
+        strokeWidth={0.75}
+        strokeLinejoin="round"
+      />
+      <g fill="none" stroke="#fff" strokeWidth={1.1} strokeLinejoin="round">
+        <path d="M12 3.4l2.1 2.8H9.9z" />
+        <path d="M12 20.6l2.1-2.8H9.9z" />
+        <path d="M3.4 12l2.8-2.1v4.2z" />
+        <path d="M20.6 12l-2.8-2.1v4.2z" />
+        <circle cx="12" cy="12" r="1.6" strokeWidth={0.9} />
+      </g>
+    </svg>
+  );
+}
+
 const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
 
 export default function Header() {
@@ -89,7 +116,9 @@ export default function Header() {
 
                 {/* Nav — desktop only; mobile uses the hamburger menu below */}
         {/* Unified pill nav container, styled after the Aurelia Dental header nav pattern */}
-        <nav className="hidden md:flex items-center self-center md:ml-auto md:mr-8">
+        <nav className="hidden md:flex relative items-center self-center md:ml-auto md:mr-8">
+          <DPad className="top-0 left-0 -translate-x-1/2 -translate-y-1/2 z-10" />
+          <DPad className="top-0 right-0 translate-x-1/2 -translate-y-1/2 z-10" />
           <ul
             className="flex items-center gap-1 bg-[#1a9e4a]/[0.1] border border-[#1a9e4a]/20 px-3 py-2"
           >
