@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useCartCount } from '@/lib/cart-sync';
 function Corners() {
@@ -17,27 +17,51 @@ function Corners() {
 }
 
 // Miniature Game Boy d-pad, centered on a corner of the desktop nav box.
+const DPAD_ARROWS = ['M12 3.3l2 2.7h-4z', 'M12 20.7l2-2.7h-4z', 'M3.3 12l2.7-2v4z', 'M20.7 12l-2.7-2v4z'];
+
 function DPad({ className }: { className: string }) {
+  // Unique gradient ids so the two instances don't collide.
+  const id = useId();
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className={`absolute w-6 h-6 pointer-events-none drop-shadow-[0_1px_1px_rgba(22,67,42,0.35)] ${className}`}
+      className={`absolute w-6 h-6 pointer-events-none drop-shadow-[0_1.5px_1px_rgba(14,40,24,0.45)] ${className}`}
       aria-hidden="true"
     >
-      <path
-        d="M8.5 1h7v7.5H23v7h-7.5V23h-7v-7.5H1v-7h7.5z"
-        fill="#1a9e4a"
-        stroke="#16432a"
-        strokeWidth={0.75}
-        strokeLinejoin="round"
-      />
-      <g fill="none" stroke="#fff" strokeWidth={1.1} strokeLinejoin="round">
-        <path d="M12 3.4l2.1 2.8H9.9z" />
-        <path d="M12 20.6l2.1-2.8H9.9z" />
-        <path d="M3.4 12l2.8-2.1v4.2z" />
-        <path d="M20.6 12l-2.8-2.1v4.2z" />
-        <circle cx="12" cy="12" r="1.6" strokeWidth={0.9} />
+      <defs>
+        {/* Body: lit from the top-left */}
+        <linearGradient id={`${id}-body`} gradientUnits="userSpaceOnUse" x1="4" y1="2" x2="20" y2="22">
+          <stop offset="0" stopColor="#3fcf74" />
+          <stop offset="0.45" stopColor="#1fa851" />
+          <stop offset="1" stopColor="#127535" />
+        </linearGradient>
+        {/* Center pivot: concave dimple, shaded opposite to the body */}
+        <linearGradient id={`${id}-dimple`} gradientUnits="userSpaceOnUse" x1="12" y1="9.2" x2="12" y2="14.8">
+          <stop offset="0" stopColor="#0f6a30" />
+          <stop offset="1" stopColor="#34c56b" />
+        </linearGradient>
+        <linearGradient id={`${id}-shine`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity="0.35" />
+          <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <g fill="#0c3a1f">
+        <rect x="7.6" y="0.6" width="8.8" height="22.8" rx="1.7" />
+        <rect x="0.6" y="7.6" width="22.8" height="8.8" rx="1.7" />
+      </g>
+      <g fill={`url(#${id}-body)`}>
+        <rect x="8.3" y="1.3" width="7.4" height="21.4" rx="1.1" />
+        <rect x="1.3" y="8.3" width="21.4" height="7.4" rx="1.1" />
+      </g>
+      <rect x="8.3" y="1.3" width="7.4" height="5" rx="1.1" fill={`url(#${id}-shine)`} />
+      <circle cx="12" cy="12" r="2.8" fill={`url(#${id}-dimple)`} />
+      {/* Arrows: solid white, with a dark offset copy underneath for an embossed look */}
+      <g fill="#0c3a1f" fillOpacity={0.45} transform="translate(0 0.35)">
+        {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
+      </g>
+      <g fill="#fff">
+        {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
       </g>
     </svg>
   );
