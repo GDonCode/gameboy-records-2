@@ -68,12 +68,70 @@ const HERO_SHAPE: [number, number][] = [
   [0.630, 1.100],
   [0.420, -0.100],
 ];
-// Half-width of the pool of light where the beam lands on the bottom edge of the hero, as a fraction of the video width.
-const HERO_POOL_RX = 0.26;
 // Where the tooltip points (the top of the head), as a fraction of the video frame.
 const HERO_TIP = { x: 0.37, y: 0.10 };
 // Horizontal centre of the person (0–1). On narrow screens the video is shifted sideways to keep it in view.
 const HERO_FOCUS_X = 0.37;
+
+// ── HERO BEAM — the visible light, painted from the same cone as the hover shape ───────────────────────
+// The cone's two sides meet at a point above the frame: the lamp. The light is a conic gradient centred on
+// that point, so its brightness falls off smoothly with angle across the cone (no shape edges anywhere)
+// and it keeps going past the bottom of the frame instead of stopping on a floor.
+type Pt = number[];
+
+// Conic gradient stops for a bell-shaped band of light: `peak` at the centre angle, fading to nothing.
+// `sigma` and `span` are in degrees; the band covers centre ± span.
+function bellStops(rgb: string, peak: number, sigma: number, span: number, steps = 32) {
+  const stops: string[] = [];
+  for (let k = 0; k <= steps; k++) {
+    const a = (k / steps) * span * 2;
+    const x = (a - span) / sigma;
+    stops.push(`rgba(${rgb},${(peak * Math.exp(-(x * x) / 2)).toFixed(4)}) ${a.toFixed(3)}deg`);
+  }
+  return stops.join(',');
+}
+
+function paintBeam(dim: HTMLElement, body: HTMLElement, core: HTMLElement, tl: Pt, bl: Pt, br: Pt, tr: Pt, ch: number) {
+  // Slopes (dx per dy) of the cone's left and right sides, and where they meet
+  const sL = (bl[0] - tl[0]) / (bl[1] - tl[1]);
+  const sR = (br[0] - tr[0]) / (br[1] - tr[1]);
+  if (sR - sL < 1e-3) return;
+  const ay = tl[1] + (tr[0] - tl[0]) / (sL - sR);
+  const ax = tl[0] + sL * (ay - tl[1]);
+  // CSS conic angles: 0deg points up, clockwise, so straight down is 180deg
+  const degL = 180 - (Math.atan(sL) * 180) / Math.PI;
+  const degR = 180 - (Math.atan(sR) * 180) / Math.PI;
+  const centre = (degL + degR) / 2;
+  const half = (degL - degR) / 2;
+  const at = `at ${ax.toFixed(1)}px ${ay.toFixed(1)}px`;
+  const conic = (rgb: string, peak: number, sigma: number, span: number) =>
+    `conic-gradient(from ${(centre - span).toFixed(3)}deg ${at},${bellStops(rgb, peak, sigma, span)},transparent ${(span * 2).toFixed(3)}deg)`;
+
+  // Light fades with distance from the lamp but never cuts off
+  const top = Math.max(0, -ay);
+  const fade = `radial-gradient(circle ${at},#000 ${top.toFixed(0)}px,rgba(0,0,0,0.45) ${(top + ch * 1.2).toFixed(0)}px)`;
+
+  // Glow where the beam enters through the top edge
+  const topHalf = (tr[0] - tl[0]) / 2;
+  const glowX = (tl[0] + tr[0]) / 2 + ((sL + sR) / 2) * -tl[1];
+  const glow = `radial-gradient(${(topHalf * 2.2).toFixed(1)}px ${(topHalf * 1.4).toFixed(1)}px at ${glowX.toFixed(1)}px 0px,rgba(214,255,228,0.4),rgba(77,255,145,0.14) 45%,rgba(77,255,145,0.04) 75%,transparent)`;
+
+  body.style.background = `${glow},${conic('60,240,125', 0.42, half * 0.62, half * 2.6)}`;
+  body.style.maskImage = fade;
+  core.style.background = conic('190,255,212', 0.4, half * 0.26, half);
+  core.style.maskImage = fade;
+
+  // Darken the rest of the hero: fully dim outside the beam, easing to clear at its centre
+  const dSigma = half * 0.85;
+  const dSpan = dSigma * 3.2;
+  const dimStops: string[] = [];
+  for (let k = 0; k <= 32; k++) {
+    const a = (k / 32) * dSpan * 2;
+    const x = (a - dSpan) / dSigma;
+    dimStops.push(`rgba(2,10,5,${(0.7 * (1 - Math.exp(-(x * x) / 2))).toFixed(4)}) ${a.toFixed(3)}deg`);
+  }
+  dim.style.background = `conic-gradient(from ${(centre - dSpan).toFixed(3)}deg ${at},${dimStops.join(',')},rgba(2,10,5,0.7) ${(dSpan * 2).toFixed(3)}deg)`;
+}
 
 function RadioPanel({ onTuneIn }: { onTuneIn: () => void }) {
   return (
@@ -331,8 +389,9 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
   const hotspotRef = useRef<SVGPathElement>(null);
-  const dimRef = useRef<SVGPathElement>(null);
-  const poolRef = useRef<SVGEllipseElement>(null);
+  const beamDimRef = useRef<HTMLDivElement>(null);
+  const beamBodyRef = useRef<HTMLDivElement>(null);
+  const beamCoreRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const debugRef = useRef<HTMLDivElement>(null);
@@ -366,8 +425,9 @@ export default function Home() {
     const hero = heroRef.current;
     const video = heroVideoRef.current;
     const hot = hotspotRef.current;
-    const dim = dimRef.current;
-    const pool = poolRef.current;
+    const dim = beamDimRef.current;
+    const body = beamBodyRef.current;
+    const core = beamCoreRef.current;
     const tip = tipRef.current;
     const hud = debugRef.current;
     if (!hero || !video || !hot || !tip) return;
@@ -407,23 +467,14 @@ export default function Home() {
       // Hover shape: the polygon in screen pixels. On narrow screens it is pulled in toward the person
       // so it doesn't cover the whole width (a tap anywhere would open the drawer).
       const squeeze = cw < 640 ? 0.7 : 1;
-      const pts = HERO_SHAPE.map(([fx, fy]) => {
-        const x = ox + (HERO_TIP.x + (fx - HERO_TIP.x) * squeeze) * dw;
-        return `${x.toFixed(1)} ${(fy * dh).toFixed(1)}`;
-      });
-      const d = `M${pts.join('L')}Z`;
+      const toX = (fx: number) => ox + (HERO_TIP.x + (fx - HERO_TIP.x) * squeeze) * dw;
+      const [tl, bl, br, tr] = HERO_SHAPE.map(([fx, fy]) => [toX(fx), fy * dh]);
+      const d = `M${[tl, bl, br, tr].map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L')}Z`;
       const key = `${d}|${cw}|${ch}`;
       if (key !== lastD) {
         lastD = key;
         hot.setAttribute('d', d);
-        // Dim layer = the whole hero (plus a margin, so its blurred edge stays offscreen) with the shape cut out (even-odd fill)
-        dim?.setAttribute('d', `M-120 -120H${cw + 120}V${ch + 120}H-120Z${d}`);
-        // Pool of light: a half-ellipse sitting on the bottom edge of the hero, under the beam
-        const rx = HERO_POOL_RX * dw * squeeze;
-        pool?.setAttribute('cx', (ox + HERO_TIP.x * dw).toFixed(1));
-        pool?.setAttribute('cy', String(ch));
-        pool?.setAttribute('rx', rx.toFixed(1));
-        pool?.setAttribute('ry', (rx * 0.25).toFixed(1));
+        if (dim && body && core) paintBeam(dim, body, core, tl, bl, br, tr, ch);
       }
 
       const tx = ox + HERO_TIP.x * dw;
@@ -678,53 +729,44 @@ export default function Home() {
           pointer-events: none;
           overflow: hidden;
         }
-        /* Green spotlight. The hotspot path is the invisible hit area AND the beam of light: its fill is a green
-           gradient and it is blurred, so the edges are soft. Blur and opacity never change what the cursor hits,
-           so the hover area stays exactly the cone in HERO_SHAPE. Layer order matters (the ~ selectors below):
-           hotspot, then dim, then pool. */
+        /* Green spotlight. The hotspot path is only the invisible hit area (exactly the cone in HERO_SHAPE);
+           the light and the dimming around it are painted by paintBeam() into the .hero-beam layers. */
         .hero-hotspot {
-          fill: url(#hero-beam);
+          fill: transparent;
           stroke: none;
-          opacity: 0;
-          filter: blur(14px);
           pointer-events: all;
           cursor: pointer;
           outline: none;
           -webkit-tap-highlight-color: transparent;
-          transition: opacity 0.35s ease;
         }
-        .hero-hotspot:hover,
-        .hero-hotspot:focus-visible,
-        .hero-hotspot.active { opacity: 1; }
         .hero-hotspot[data-debug] {
           fill: transparent;
           stroke: rgba(255,230,0,0.9);
           stroke-width: 2;
           stroke-dasharray: 8 6;
-          opacity: 1;
-          filter: none;
         }
-        .hero-hot-dim {
-          fill: rgba(2,10,5,0.70);
-          fill-rule: evenodd;
-          opacity: 0;
-          filter: blur(26px);
+        .hero-beam-dim,
+        .hero-beam {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
           pointer-events: none;
-          transition: opacity 0.35s ease;
-        }
-        .hero-hot-pool {
-          fill: url(#hero-pool);
           opacity: 0;
-          filter: blur(10px);
-          pointer-events: none;
-          transition: opacity 0.35s ease;
+          transition: opacity 0.45s ease;
         }
-        .hero-hotspot:hover ~ .hero-hot-dim,
-        .hero-hotspot:focus-visible ~ .hero-hot-dim,
-        .hero-hotspot.active ~ .hero-hot-dim,
-        .hero-hotspot:hover ~ .hero-hot-pool,
-        .hero-hotspot:focus-visible ~ .hero-hot-pool,
-        .hero-hotspot.active ~ .hero-hot-pool { opacity: 1; }
+        /* Screen blend: the light brightens what it falls on instead of tinting it flat */
+        .hero-beam { mix-blend-mode: screen; }
+        .hero-beam > div { position: absolute; inset: 0; }
+        .hero-beam-dim.on,
+        .hero-beam.on { opacity: 1; }
+        .hero-beam.on .hero-beam-core { animation: hero-beam-breathe 5s ease-in-out infinite; }
+        @keyframes hero-beam-breathe {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.75; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-beam.on .hero-beam-core { animation: none; }
+        }
 
         .hero-tip {
           position: absolute;
@@ -939,6 +981,8 @@ export default function Home() {
         @media (max-width: 767px) {
           /* No spotlight on phones: hide the hotspot, tooltip, debug readout and drawer */
           .hero-hot-svg,
+          .hero-beam-dim,
+          .hero-beam,
           .hero-tip,
           .hero-debug,
           .hero-drawer { display: none !important; }
@@ -1387,22 +1431,8 @@ export default function Home() {
                   )}
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,16,12,0.7) 0%, transparent 25%, transparent 60%, rgba(10,16,12,0.95) 100%)' }} />
                   {/* Hero hotspot — an SVG shape over the person; hover highlights, click opens the drawer.
-                      The dim and pool layers must stay AFTER the hotspot path (the CSS uses the ~ sibling selector). */}
+                      The light itself is drawn in the .hero-beam layers below. */}
                   <svg className="hero-hot-svg">
-                    <defs>
-                      {/* Beam of light: brightest at the top centre, fading outward and downward */}
-                      <radialGradient id="hero-beam" cx="0.5" cy="0" r="1" fx="0.5" fy="0">
-                        <stop offset="0" stopColor="#8dffb8" stopOpacity="0.45" />
-                        <stop offset="0.45" stopColor="#4dff91" stopOpacity="0.2" />
-                        <stop offset="1" stopColor="#1a9e4a" stopOpacity="0.06" />
-                      </radialGradient>
-                      {/* Pool of light where the beam lands */}
-                      <radialGradient id="hero-pool" cx="0.5" cy="0.5" r="0.5">
-                        <stop offset="0" stopColor="#8dffb8" stopOpacity="0.55" />
-                        <stop offset="0.6" stopColor="#4dff91" stopOpacity="0.22" />
-                        <stop offset="1" stopColor="#4dff91" stopOpacity="0" />
-                      </radialGradient>
-                    </defs>
                     <path
                       ref={hotspotRef}
                       role="button"
@@ -1423,9 +1453,13 @@ export default function Home() {
                         }
                       }}
                     />
-                    <path ref={dimRef} className="hero-hot-dim" />
-                    <ellipse ref={poolRef} className="hero-hot-pool" />
                   </svg>
+                  {/* Spotlight light and the dimming around it — purely visual, painted by paintBeam() */}
+                  <div ref={beamDimRef} className={`hero-beam-dim${drawerOpen || spotOn ? ' on' : ''}`} aria-hidden="true" />
+                  <div className={`hero-beam${drawerOpen || spotOn ? ' on' : ''}`} aria-hidden="true">
+                    <div ref={beamBodyRef} />
+                    <div ref={beamCoreRef} className="hero-beam-core" />
+                  </div>
                   <div ref={tipRef} className={`hero-tip${drawerOpen || spotOn ? ' hero-tip--off' : ''}`} aria-hidden="true">
                     <span className="tip-hover">Hover to learn about A-Game</span>
                     <span className="tip-touch">Tap to learn about A-Game</span>
