@@ -10,13 +10,6 @@ export const PROFILE_PHOTO_POINTS = 10;
 export const FIRST_SAVE_POINTS = 10;
 export const NEWSLETTER_POINTS = 15;
 
-// Each tier pays once per local day. Keep the scores within what the guitar route accepts.
-export const GUITAR_MILESTONES = [
-  { score: 10, points: 5 },
-  { score: 25, points: 10 },
-  { score: 50, points: 15 },
-] as const;
-
 export async function getQuestStatus(userId: string): Promise<QuestStatus[]> {
   const today = localDayKey();
 
@@ -28,9 +21,9 @@ export async function getQuestStatus(userId: string): Promise<QuestStatus[]> {
       .in('reason', ['profile_photo', 'first_save', 'newsletter_signup']),
     supabaseAdmin
       .from('points_transactions')
-      .select('reason, ref_id')
+      .select('reason')
       .eq('user_id', userId)
-      .in('reason', ['guitar_milestone', 'song_of_the_day'])
+      .eq('reason', 'song_of_the_day')
       .like('ref_id', `${today}:%`),
   ]);
 
@@ -39,8 +32,7 @@ export async function getQuestStatus(userId: string): Promise<QuestStatus[]> {
 
   const onceDone = new Set((onceResult.data ?? []).map((r) => r.reason));
   const dailyRows = dailyResult.data ?? [];
-  const guitarDone = new Set(dailyRows.filter((r) => r.reason === 'guitar_milestone').map((r) => r.ref_id));
-  const songDone = dailyRows.some((r) => r.reason === 'song_of_the_day');
+  const songDone = dailyRows.length > 0;
   const song = getSongOfTheDay(today);
 
   return [
@@ -84,17 +76,5 @@ export async function getQuestStatus(userId: string): Promise<QuestStatus[]> {
       action: { kind: 'stream' },
       actionLabel: 'Listen',
     },
-    ...GUITAR_MILESTONES.map(
-      (m): QuestStatus => ({
-        id: `guitar_${m.score}`,
-        title: `Guitar Tiles: score ${m.score}`,
-        description: 'Reach this score in a single run today. Resets daily.',
-        points: m.points,
-        cadence: 'daily',
-        done: guitarDone.has(`${today}:${m.score}`),
-        action: { kind: 'href', href: '/guitar' },
-        actionLabel: 'Play',
-      })
-    ),
   ];
 }

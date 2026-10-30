@@ -333,6 +333,10 @@ export default function Home() {
   const hotspotRef = useRef<SVGPathElement>(null);
   const dimRef = useRef<SVGPathElement>(null);
   const poolRef = useRef<SVGEllipseElement>(null);
+  const beamHazeRef = useRef<SVGPathElement>(null);
+  const beamBodyRef = useRef<SVGPathElement>(null);
+  const beamCoreRef = useRef<SVGPathElement>(null);
+  const beamSourceRef = useRef<SVGEllipseElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const debugRef = useRef<HTMLDivElement>(null);
@@ -368,6 +372,10 @@ export default function Home() {
     const hot = hotspotRef.current;
     const dim = dimRef.current;
     const pool = poolRef.current;
+    const haze = beamHazeRef.current;
+    const body = beamBodyRef.current;
+    const core = beamCoreRef.current;
+    const source = beamSourceRef.current;
     const tip = tipRef.current;
     const hud = debugRef.current;
     if (!hero || !video || !hot || !tip) return;
@@ -407,11 +415,20 @@ export default function Home() {
       // Hover shape: the polygon in screen pixels. On narrow screens it is pulled in toward the person
       // so it doesn't cover the whole width (a tap anywhere would open the drawer).
       const squeeze = cw < 640 ? 0.7 : 1;
-      const pts = HERO_SHAPE.map(([fx, fy]) => {
-        const x = ox + (HERO_TIP.x + (fx - HERO_TIP.x) * squeeze) * dw;
-        return `${x.toFixed(1)} ${(fy * dh).toFixed(1)}`;
-      });
-      const d = `M${pts.join('L')}Z`;
+      const toX = (fx: number) => ox + (HERO_TIP.x + (fx - HERO_TIP.x) * squeeze) * dw;
+      // The cone narrowed toward its own centre line: width 1 is the full hover shape.
+      // Nested narrower cones build the beam's bright core.
+      const [tl, bl, br, tr] = HERO_SHAPE;
+      const topMid = (tl[0] + tr[0]) / 2;
+      const botMid = (bl[0] + br[0]) / 2;
+      const cone = (width: number) => {
+        const pts = HERO_SHAPE.map(([fx, fy], i) => {
+          const mid = i === 0 || i === 3 ? topMid : botMid;
+          return `${toX(mid + (fx - mid) * width).toFixed(1)} ${(fy * dh).toFixed(1)}`;
+        });
+        return `M${pts.join('L')}Z`;
+      };
+      const d = cone(1);
       const key = `${d}|${cw}|${ch}`;
       if (key !== lastD) {
         lastD = key;
@@ -424,6 +441,16 @@ export default function Home() {
         pool?.setAttribute('cy', String(ch));
         pool?.setAttribute('rx', rx.toFixed(1));
         pool?.setAttribute('ry', (rx * 0.25).toFixed(1));
+        // Visible light, in layers from a wide soft haze to a narrow near-white core
+        haze?.setAttribute('d', d);
+        body?.setAttribute('d', cone(0.62));
+        core?.setAttribute('d', cone(0.26));
+        // Glow where the beam enters at the top edge, as if the lamp sits just above the frame
+        const topHalf = (toX(tr[0]) - toX(tl[0])) / 2;
+        source?.setAttribute('cx', toX(topMid).toFixed(1));
+        source?.setAttribute('cy', '0');
+        source?.setAttribute('rx', (topHalf * 1.6).toFixed(1));
+        source?.setAttribute('ry', (topHalf * 0.55).toFixed(1));
       }
 
       const tx = ox + HERO_TIP.x * dw;
@@ -678,31 +705,23 @@ export default function Home() {
           pointer-events: none;
           overflow: hidden;
         }
-        /* Green spotlight. The hotspot path is the invisible hit area AND the beam of light: its fill is a green
-           gradient and it is blurred, so the edges are soft. Blur and opacity never change what the cursor hits,
-           so the hover area stays exactly the cone in HERO_SHAPE. Layer order matters (the ~ selectors below):
-           hotspot, then dim, then pool. */
+        /* Green spotlight. The hotspot path is only the invisible hit area (exactly the cone in HERO_SHAPE);
+           the light itself is drawn in .hero-beam-svg above it. Layer order matters (the ~ selector below):
+           hotspot, then dim. */
         .hero-hotspot {
-          fill: url(#hero-beam);
+          fill: transparent;
           stroke: none;
-          opacity: 0;
-          filter: blur(14px);
           pointer-events: all;
           cursor: pointer;
           outline: none;
           -webkit-tap-highlight-color: transparent;
           transition: opacity 0.35s ease;
         }
-        .hero-hotspot:hover,
-        .hero-hotspot:focus-visible,
-        .hero-hotspot.active { opacity: 1; }
         .hero-hotspot[data-debug] {
           fill: transparent;
           stroke: rgba(255,230,0,0.9);
           stroke-width: 2;
           stroke-dasharray: 8 6;
-          opacity: 1;
-          filter: none;
         }
         .hero-hot-dim {
           fill: rgba(2,10,5,0.70);
@@ -712,19 +731,38 @@ export default function Home() {
           pointer-events: none;
           transition: opacity 0.35s ease;
         }
-        .hero-hot-pool {
-          fill: url(#hero-pool);
-          opacity: 0;
-          filter: blur(10px);
-          pointer-events: none;
-          transition: opacity 0.35s ease;
-        }
         .hero-hotspot:hover ~ .hero-hot-dim,
         .hero-hotspot:focus-visible ~ .hero-hot-dim,
-        .hero-hotspot.active ~ .hero-hot-dim,
-        .hero-hotspot:hover ~ .hero-hot-pool,
-        .hero-hotspot:focus-visible ~ .hero-hot-pool,
-        .hero-hotspot.active ~ .hero-hot-pool { opacity: 1; }
+        .hero-hotspot.active ~ .hero-hot-dim { opacity: 1; }
+
+        /* The light: screen-blended over the video so it brightens what it falls on instead of tinting it flat.
+           Haze → body → core get narrower, sharper and whiter, like a real beam in a dusty room. */
+        .hero-beam-svg {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          overflow: hidden;
+          mix-blend-mode: screen;
+          opacity: 0;
+          transition: opacity 0.45s ease;
+        }
+        .hero-beam-svg.on { opacity: 1; }
+        .hero-beam-haze   { fill: url(#hero-beam-haze);   filter: blur(28px); }
+        .hero-beam-body   { fill: url(#hero-beam-body);   filter: blur(14px); }
+        .hero-beam-core   { fill: url(#hero-beam-core);   filter: blur(7px); }
+        .hero-beam-source { fill: url(#hero-beam-source); filter: blur(10px); }
+        .hero-hot-pool    { fill: url(#hero-pool);        filter: blur(12px); }
+        .hero-beam-svg.on .hero-beam-core { animation: hero-beam-breathe 5s ease-in-out infinite; }
+        @keyframes hero-beam-breathe {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.78; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-beam-svg.on .hero-beam-core { animation: none; }
+        }
 
         .hero-tip {
           position: absolute;
@@ -939,6 +977,7 @@ export default function Home() {
         @media (max-width: 767px) {
           /* No spotlight on phones: hide the hotspot, tooltip, debug readout and drawer */
           .hero-hot-svg,
+          .hero-beam-svg,
           .hero-tip,
           .hero-debug,
           .hero-drawer { display: none !important; }
@@ -1389,20 +1428,6 @@ export default function Home() {
                   {/* Hero hotspot — an SVG shape over the person; hover highlights, click opens the drawer.
                       The dim and pool layers must stay AFTER the hotspot path (the CSS uses the ~ sibling selector). */}
                   <svg className="hero-hot-svg">
-                    <defs>
-                      {/* Beam of light: brightest at the top centre, fading outward and downward */}
-                      <radialGradient id="hero-beam" cx="0.5" cy="0" r="1" fx="0.5" fy="0">
-                        <stop offset="0" stopColor="#8dffb8" stopOpacity="0.45" />
-                        <stop offset="0.45" stopColor="#4dff91" stopOpacity="0.2" />
-                        <stop offset="1" stopColor="#1a9e4a" stopOpacity="0.06" />
-                      </radialGradient>
-                      {/* Pool of light where the beam lands */}
-                      <radialGradient id="hero-pool" cx="0.5" cy="0.5" r="0.5">
-                        <stop offset="0" stopColor="#8dffb8" stopOpacity="0.55" />
-                        <stop offset="0.6" stopColor="#4dff91" stopOpacity="0.22" />
-                        <stop offset="1" stopColor="#4dff91" stopOpacity="0" />
-                      </radialGradient>
-                    </defs>
                     <path
                       ref={hotspotRef}
                       role="button"
@@ -1424,7 +1449,43 @@ export default function Home() {
                       }}
                     />
                     <path ref={dimRef} className="hero-hot-dim" />
+                  </svg>
+                  {/* Beam of light — purely visual, shaped by the hero frame loop from HERO_SHAPE */}
+                  <svg className={`hero-beam-svg${drawerOpen || spotOn ? ' on' : ''}`} aria-hidden="true">
+                    <defs>
+                      {/* Each layer fades from the lamp at the top toward the floor */}
+                      <linearGradient id="hero-beam-haze" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#4dff91" stopOpacity="0.30" />
+                        <stop offset="0.6" stopColor="#1a9e4a" stopOpacity="0.14" />
+                        <stop offset="1" stopColor="#1a9e4a" stopOpacity="0.08" />
+                      </linearGradient>
+                      <linearGradient id="hero-beam-body" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#8dffb8" stopOpacity="0.42" />
+                        <stop offset="0.55" stopColor="#4dff91" stopOpacity="0.16" />
+                        <stop offset="1" stopColor="#4dff91" stopOpacity="0.1" />
+                      </linearGradient>
+                      <linearGradient id="hero-beam-core" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#eafff1" stopOpacity="0.55" />
+                        <stop offset="0.5" stopColor="#b8ffd2" stopOpacity="0.2" />
+                        <stop offset="1" stopColor="#8dffb8" stopOpacity="0" />
+                      </linearGradient>
+                      <radialGradient id="hero-beam-source" cx="0.5" cy="0.5" r="0.5">
+                        <stop offset="0" stopColor="#f2fff6" stopOpacity="0.8" />
+                        <stop offset="0.45" stopColor="#8dffb8" stopOpacity="0.35" />
+                        <stop offset="1" stopColor="#4dff91" stopOpacity="0" />
+                      </radialGradient>
+                      {/* Pool of light where the beam lands */}
+                      <radialGradient id="hero-pool" cx="0.5" cy="0.5" r="0.5">
+                        <stop offset="0" stopColor="#c9ffdc" stopOpacity="0.6" />
+                        <stop offset="0.5" stopColor="#4dff91" stopOpacity="0.2" />
+                        <stop offset="1" stopColor="#4dff91" stopOpacity="0" />
+                      </radialGradient>
+                    </defs>
+                    <path ref={beamHazeRef} className="hero-beam-haze" />
+                    <path ref={beamBodyRef} className="hero-beam-body" />
+                    <path ref={beamCoreRef} className="hero-beam-core" />
                     <ellipse ref={poolRef} className="hero-hot-pool" />
+                    <ellipse ref={beamSourceRef} className="hero-beam-source" />
                   </svg>
                   <div ref={tipRef} className={`hero-tip${drawerOpen || spotOn ? ' hero-tip--off' : ''}`} aria-hidden="true">
                     <span className="tip-hover">Hover to learn about A-Game</span>

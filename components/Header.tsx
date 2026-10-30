@@ -161,7 +161,7 @@ export default function Header() {
                   }`}
                   style={{
                     fontFamily: "'Poppins_semibold', monospace",
-                    fontSize: '1.1em',
+                    fontSize: '1.21em',
                     letterSpacing: '0.05em',
                   }}
                 >
@@ -175,13 +175,13 @@ export default function Header() {
               <button
                 type="button"
                 className={`inline-block px-5 py-2 rounded-md cursor-pointer transition-all duration-200 ${
-                  pathname === '/karaoke' || pathname === '/guitar' || pathname === '/trivia'
+                  pathname === '/karaoke' || pathname === '/trivia'
                     ? 'bg-[#1a9e4a] text-white font-bold'
                     : 'text-[#16432a] hover:scale-110'
                 }`}
                 style={{
                   fontFamily: "'Poppins_semibold', monospace",
-                  fontSize: '1.1em',
+                  fontSize: '1.21em',
                   letterSpacing: '0.05em',
                 }}
               >
@@ -207,24 +207,30 @@ export default function Header() {
               >
                 {[
                   { href: '/karaoke', label: 'KARAOKE' },
-                  { href: '/guitar', label: 'GUITAR' },
                   { href: '/trivia', label: 'TRIVIA' },
                 ].map((item) => (
                   <li key={item.href}>
                     <a
                       href={item.href}
-                      className={`block px-5 py-2 whitespace-nowrap transition-all duration-200 ${
+                      className={`group/item block px-5 py-2 whitespace-nowrap transition-all duration-200 ${
                         pathname === item.href
                           ? 'bg-[#1a9e4a] text-white font-bold'
-                          : 'text-[#16432a] hover:bg-[#1a9e4a]/10'
+                          : 'bg-[#1a9e4a]/10 text-[#16432a]'
                       }`}
                       style={{
                         fontFamily: "'Poppins_semibold', monospace",
-                        fontSize: '1em',
+                        fontSize: '1.1em',
                         letterSpacing: '0.1em',
                       }}
                     >
-                      {item.label}
+                      {/* Zoom the label, not the row, so it stays inside the dropdown */}
+                      <span
+                        className={`inline-block origin-left transition-transform duration-200 ${
+                          pathname === item.href ? '' : 'group-hover/item:scale-110'
+                        }`}
+                      >
+                        {item.label}
+                      </span>
                     </a>
                   </li>
                 ))}
@@ -305,7 +311,6 @@ export default function Header() {
               { href: '/shop', label: 'SHOP', viewBox: '0 0 640 512', d: 'M211.8 0c7.8 0 14.3 5.7 16.7 13.2C240.8 51.9 277.1 80 320 80s79.2-28.1 91.5-66.8C413.9 5.7 420.4 0 428.2 0h12.6c22.5 0 44.2 7.9 61.5 22.3L628.5 127.4c6.6 5.5 10.7 13.5 11.4 22.1s-2.1 17.1-7.8 23.6l-56 64c-11.4 13.1-31.2 14.6-44.6 3.5L480 197.7V448c0 35.3-28.7 64-64 64H224c-35.3 0-64-28.7-64-64V197.7l-51.5 42.9c-13.3 11.1-33.1 9.6-44.6-3.5l-56-64c-5.7-6.5-8.5-15-7.8-23.6s4.8-16.6 11.4-22.1L137.7 22.3C155 7.9 176.7 0 199.2 0h12.6z' },
               { href: '/discography', label: 'DISCOGRAPHY', viewBox: '0 0 24 24', d: 'M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20zM12 9a3 3 0 1 1 0 6 3 3 0 1 1 0-6z' },
               { href: '/karaoke', label: 'KARAOKE', heading: 'VIBES', viewBox: '0 0 640 640', d: 'M320 64C267 64 224 107 224 160L224 288C224 341 267 384 320 384C373 384 416 341 416 288L416 160C416 107 373 64 320 64zM176 248C176 234.7 165.3 224 152 224C138.7 224 128 234.7 128 248L128 288C128 385.9 201.3 466.7 296 478.5L296 528L248 528C234.7 528 224 538.7 224 552C224 565.3 234.7 576 248 576L392 576C405.3 576 416 565.3 416 552C416 538.7 405.3 528 392 528L344 528L344 478.5C438.7 466.7 512 385.9 512 288L512 248C512 234.7 501.3 224 488 224C474.7 224 464 234.7 464 248L464 288C464 367.5 399.5 432 320 432C240.5 432 176 367.5 176 288L176 248z' },
-              { href: '/guitar', label: 'GUITAR', viewBox: '0 0 512 512', d: 'M465 7c-9.4-9.4-24.6-9.4-33.9 0L383 55c-2.4 2.4-4.3 5.3-5.5 8.5l-15.4 41-77.5 77.6c-45.1-29.4-99.3-30.2-131 1.6c-11 11-18 24.6-21.4 39.6c-3.7 16.6-19.1 30.7-36.1 31.6c-25.6 1.3-49.3 10.7-66.3 27.7c-43.7 43.7-35.1 123 19.1 177.1s133.5 62.8 177.1 19.1c17-17 26.4-40.7 27.7-66.3c.9-17 15-32.3 31.6-36.1c15-3.4 28.6-10.5 39.6-21.4c31.8-31.8 31-85.9 1.6-131l77.6-77.6 41-15.4c3.2-1.2 6.1-3.1 8.5-5.5l48-48c9.4-9.4 9.4-24.6 0-33.9L465 7zM208 256a48 48 0 1 1 0 96 48 48 0 1 1 0-96z' },
               { href: '/trivia', label: 'TRIVIA', viewBox: '0 0 24 24', d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z' },
             ].map((item) => (
               <li key={item.href}>
