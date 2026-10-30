@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import Header from '@/components/Header';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GameIconsBackground from '@/components/GameIconsBackground';
@@ -109,12 +109,13 @@ function paintBeam(dim: HTMLElement, body: HTMLElement, core: HTMLElement, tl: P
 
   // Light fades with distance from the lamp but never cuts off
   const top = Math.max(0, -ay);
-  const fade = `radial-gradient(circle ${at},#000 ${top.toFixed(0)}px,rgba(0,0,0,0.45) ${(top + ch * 1.2).toFixed(0)}px)`;
+  // …and eases in over the first stretch below the top edge, so there's no hot spot where it enters
+  const fade = `radial-gradient(circle ${at},rgba(0,0,0,0.3) ${top.toFixed(0)}px,#000 ${(top + ch * 0.28).toFixed(0)}px,rgba(0,0,0,0.45) ${(top + ch * 1.2).toFixed(0)}px)`;
 
   // Glow where the beam enters through the top edge
   const topHalf = (tr[0] - tl[0]) / 2;
   const glowX = (tl[0] + tr[0]) / 2 + ((sL + sR) / 2) * -tl[1];
-  const glow = `radial-gradient(${(topHalf * 2.2).toFixed(1)}px ${(topHalf * 1.4).toFixed(1)}px at ${glowX.toFixed(1)}px 0px,rgba(214,255,228,0.4),rgba(77,255,145,0.14) 45%,rgba(77,255,145,0.04) 75%,transparent)`;
+  const glow = `radial-gradient(${(topHalf * 2.2).toFixed(1)}px ${(topHalf * 1.4).toFixed(1)}px at ${glowX.toFixed(1)}px 0px,rgba(214,255,228,0.14),rgba(77,255,145,0.06) 45%,transparent)`;
 
   body.style.background = `${glow},${conic('60,240,125', 0.42, half * 0.62, half * 2.6)}`;
   body.style.maskImage = fade;
@@ -227,14 +228,13 @@ function SocialsPanel() {
   
 // "A-Game's song of the day" — rotates daily (see lib/song-of-the-day.ts). Opening any link counts toward
 // the signed-in user's daily streaming quest. YouTube plays in the mini-player like the other releases.
-function SongOfTheDayPanel({ onPlay }: { onPlay: (embedSrc: string) => void }) {
+function SongOfTheDayPanel({ onPlay, bare = false }: { onPlay: (embedSrc: string) => void; bare?: boolean }) {
   const song = getSongOfTheDay();
   // Same order as the featured release links: YouTube, Apple Music, Spotify.
   const order: StreamPlatform[] = ['youtube', 'apple', 'spotify'];
   const platforms = order.map((id) => PLATFORMS.find((p) => p.id === id)!);
-  return (
-    <div className="hero-panel">
-      <div className="hero-panel-title">A-GAME&apos;S SONG OF THE DAY</div>
+  const body = (
+    <>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={song.art}
@@ -285,6 +285,13 @@ function SongOfTheDayPanel({ onPlay }: { onPlay: (embedSrc: string) => void }) {
           )
         )}
       </div>
+    </>
+  );
+  if (bare) return body;
+  return (
+    <div className="hero-panel">
+      <div className="hero-panel-title">A-GAME&apos;S SONG OF THE DAY</div>
+      {body}
     </div>
   );
 }
@@ -298,10 +305,9 @@ const RELEASE_LINKS = [
   { label: 'SoundCloud',  href: 'https://soundcloud.com/alexxagame',                                         icon: '/soundcloud.png' },
 ];
 
-function ReleaseLinksPanel({ onPlay }: { onPlay: () => void }) {
-  return (
-    <div className="hero-panel">
-      <div className="hero-panel-title">FEATURED RELEASE</div>
+function ReleaseLinksPanel({ onPlay, bare = false }: { onPlay: () => void; bare?: boolean }) {
+  const body = (
+    <>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="https://img.youtube.com/vi/etLGFz3dtsM/mqdefault.jpg"
@@ -336,14 +342,158 @@ function ReleaseLinksPanel({ onPlay }: { onPlay: () => void }) {
       </div>
       <a
         href="/discography"
-        className="listen-btn hero-drawer-cta"
+        className="listen-btn hero-cta"
         style={{ marginTop: '12px', padding: '0 12px', fontSize: '0.8em', letterSpacing: '0.12em' }}
       >
         VIEW DISCOGRAPHY →
       </a>
+    </>
+  );
+  if (bare) return body;
+  return (
+    <div className="hero-panel">
+      <div className="hero-panel-title">FEATURED RELEASE</div>
+      {body}
     </div>
   );
 }
+
+// A spotlight card: a hero panel with a green header. Click the header to collapse the card to its title;
+// drag it to move the card anywhere in the hero. A drag only starts after a few pixels of movement, so a
+// plain click still collapses. Arrow keys on the focused header move it too. Where the card sits is kept
+// in `posRef` (px from the hero's top-left); until it has been moved, the hero frame loop places it.
+type CardPos = { x: number; y: number } | null;
+
+function SpotCard({
+  title,
+  icon,
+  cardRef,
+  posRef,
+  visible,
+  shift,
+  onShow,
+  onHide,
+  children,
+}: {
+  title: string;
+  icon: ReactNode;
+  cardRef: RefObject<HTMLDivElement | null>;
+  posRef: RefObject<CardPos>;
+  visible: boolean;
+  shift: number;
+  onShow: () => void;
+  onHide: () => void;
+  children: ReactNode;
+}) {
+  const [collapsed, setCollapsed] = useState(false);
+  const drag = useRef({ id: -1, x0: 0, y0: 0, left0: 0, top0: 0, moved: false });
+
+  const moveTo = (x: number, y: number) => {
+    const card = cardRef.current;
+    const hero = card?.parentElement;
+    if (!card || !hero) return;
+    const nx = Math.min(Math.max(0, x), hero.clientWidth - card.offsetWidth);
+    const ny = Math.min(Math.max(0, y), hero.clientHeight - card.offsetHeight);
+    posRef.current = { x: nx, y: ny };
+    card.style.left = `${nx}px`;
+    card.style.top = `${ny}px`;
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      className={`hero-panel hero-spot-card${visible ? ' on' : ''}${collapsed ? ' collapsed' : ''}`}
+      style={{ '--spot-shift': `${shift}px` } as React.CSSProperties}
+      aria-hidden={!visible}
+      onPointerEnter={onShow}
+      onPointerLeave={onHide}
+      onFocus={onShow}
+      onBlur={onHide}
+    >
+      <button
+        type="button"
+        className="hero-card-head"
+        aria-expanded={!collapsed}
+        title="Click to collapse · drag to move"
+        onPointerDown={(e) => {
+          const card = cardRef.current;
+          if (!card || e.button !== 0) return;
+          drag.current = { id: e.pointerId, x0: e.clientX, y0: e.clientY, left0: card.offsetLeft, top0: card.offsetTop, moved: false };
+          e.currentTarget.setPointerCapture(e.pointerId);
+          // Bring the card being handled above the other one
+          document.querySelectorAll<HTMLElement>('.hero-spot-card').forEach((c) => c.classList.remove('front'));
+          card.classList.add('front');
+        }}
+        onPointerMove={(e) => {
+          const d = drag.current;
+          if (d.id !== e.pointerId) return;
+          const dx = e.clientX - d.x0;
+          const dy = e.clientY - d.y0;
+          if (!d.moved && Math.hypot(dx, dy) < 5) return;
+          if (!d.moved) {
+            d.moved = true;
+            cardRef.current?.classList.add('dragging');
+          }
+          moveTo(d.left0 + dx, d.top0 + dy);
+        }}
+        onPointerUp={(e) => {
+          if (drag.current.id !== e.pointerId) return;
+          drag.current.id = -1;
+          cardRef.current?.classList.remove('dragging');
+        }}
+        onPointerCancel={() => {
+          drag.current.id = -1;
+          drag.current.moved = false;
+          cardRef.current?.classList.remove('dragging');
+        }}
+        onClick={() => {
+          // The click that ends a drag doesn't collapse the card
+          if (drag.current.moved) {
+            drag.current.moved = false;
+            return;
+          }
+          setCollapsed((c) => !c);
+        }}
+        onKeyDown={(e) => {
+          const step = e.shiftKey ? 48 : 16;
+          const delta: Record<string, [number, number]> = {
+            ArrowLeft: [-step, 0],
+            ArrowRight: [step, 0],
+            ArrowUp: [0, -step],
+            ArrowDown: [0, step],
+          };
+          const card = cardRef.current;
+          if (!delta[e.key] || !card) return;
+          e.preventDefault();
+          moveTo(card.offsetLeft + delta[e.key][0], card.offsetTop + delta[e.key][1]);
+        }}
+      >
+        <span className="hero-card-icon" aria-hidden="true">{icon}</span>
+        <span className="hero-card-title">{title}</span>
+        <svg className="hero-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      <div className="hero-card-body" hidden={collapsed}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Vinyl record (featured release) and music note (song of the day)
+const RECORD_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <circle cx="12" cy="12" r="9.5" />
+    <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none" />
+    <path d="M12 5.5a6.5 6.5 0 0 1 6.5 6.5" strokeWidth="1.5" />
+  </svg>
+);
+const NOTE_ICON = (
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20 3.5v11.2a3.3 3.3 0 1 1-2-3V7.4l-8 1.7v7.6a3.3 3.3 0 1 1-2-3V5.5a1 1 0 0 1 .8-1l10-2.1A1 1 0 0 1 20 3.5z" />
+  </svg>
+);
 
 export default function Home() {
   const [playerMounted,  setPlayerMounted]  = useState(false);
@@ -361,13 +511,14 @@ export default function Home() {
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
    const playerRef = useRef<HTMLDivElement>(null);
 
-  // Hero hotspot + drawer
-  const [drawerOpen, setDrawerOpen] = useState(false);
   // Spotlight panels — visible while the spotlight or a panel is hovered/focused.
   // The short hide delay lets the cursor cross the gap between the beam and a panel.
   const [spotOn, setSpotOn] = useState(false);
-  const leftPanelRef = useRef<HTMLDivElement>(null);
   const rightPanelRef = useRef<HTMLDivElement>(null);
+  const releaseCardRef = useRef<HTMLDivElement>(null);
+  const songCardRef = useRef<HTMLDivElement>(null);
+  const releaseCardPos = useRef<CardPos>(null);
+  const songCardPos = useRef<CardPos>(null);
   const spotTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const showSpot = () => {
     if (spotTimerRef.current) {
@@ -393,7 +544,6 @@ export default function Home() {
   const beamBodyRef = useRef<HTMLDivElement>(null);
   const beamCoreRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
-  const drawerRef = useRef<HTMLDivElement>(null);
   const debugRef = useRef<HTMLDivElement>(null);
 
   // Mobile: collapse the expanded mini-player to its pull tab on any tap outside it
@@ -465,7 +615,7 @@ export default function Home() {
       video.style.objectPosition = dw > cw ? `${(ox / (cw - dw)) * 100}% 0%` : '50% 0%';
 
       // Hover shape: the polygon in screen pixels. On narrow screens it is pulled in toward the person
-      // so it doesn't cover the whole width (a tap anywhere would open the drawer).
+      // so it doesn't cover the whole width.
       const squeeze = cw < 640 ? 0.7 : 1;
       const toX = (fx: number) => ox + (HERO_TIP.x + (fx - HERO_TIP.x) * squeeze) * dw;
       const [tl, bl, br, tr] = HERO_SHAPE.map(([fx, fy]) => [toX(fx), fy * dh]);
@@ -483,17 +633,49 @@ export default function Home() {
       tip.style.left = `${Math.min(Math.max(tx, half), cw - half)}px`;
       tip.style.top = `${Math.max(ty, 56)}px`;
 
-      // Spotlight panels: Bio sits left of the beam, release + links sit right of it.
-      // Measured on the beam's edges at mid-height of the frame, so they follow the video on every screen size.
-      const lp = leftPanelRef.current;
+      // Spotlight panels: bio + socials sit right of the beam; the release and song-of-the-day cards start
+      // left of it. Measured on the beam's edges at mid-height of the frame, so they follow the video on every
+      // screen size. A card the visitor has dragged stays where they put it (kept inside the hero).
       const rp = rightPanelRef.current;
-      if (lp && rp) {
+      const c1 = releaseCardRef.current;
+      const c2 = songCardRef.current;
+      if (rp && c1 && c2) {
         const yc = 0.5;
         const xAt = (a: [number, number], b: [number, number]) => a[0] + (b[0] - a[0]) * ((yc - a[1]) / (b[1] - a[1]));
         const beamL = ox + (HERO_TIP.x + (xAt(HERO_SHAPE[0], HERO_SHAPE[1]) - HERO_TIP.x) * squeeze) * dw;
         const beamR = ox + (HERO_TIP.x + (xAt(HERO_SHAPE[3], HERO_SHAPE[2]) - HERO_TIP.x) * squeeze) * dw;
-        lp.style.left = `${Math.max(12, beamL - 28 - lp.offsetWidth)}px`;
         rp.style.left = `${Math.max(12, Math.min(beamR + 28, cw - rp.offsetWidth - 12))}px`;
+
+        // Default spot: side by side if there is room left of the beam, otherwise stacked
+        const gap = 12;
+        const w1 = c1.offsetWidth, h1 = c1.offsetHeight;
+        const w2 = c2.offsetWidth, h2 = c2.offsetHeight;
+        const right = beamL - 28;
+        let d1: { x: number; y: number };
+        let d2: { x: number; y: number };
+        if (right - 12 >= w1 + gap + w2) {
+          const y = ch * 0.54 - Math.max(h1, h2) / 2;
+          d2 = { x: right - w2, y };
+          d1 = { x: d2.x - gap - w1, y };
+        } else {
+          const y = ch * 0.54 - (h1 + gap + h2) / 2;
+          d1 = { x: right - w1, y };
+          d2 = { x: right - w2, y: y + h1 + gap };
+        }
+        const place = (card: HTMLDivElement, p: { x: number; y: number }) => {
+          const x = Math.min(Math.max(12, p.x), cw - card.offsetWidth - 12);
+          const y = Math.min(Math.max(12, p.y), ch - card.offsetHeight - 12);
+          card.style.left = `${x}px`;
+          card.style.top = `${y}px`;
+        };
+        const clampMoved = (card: HTMLDivElement, p: { x: number; y: number }) => {
+          card.style.left = `${Math.min(Math.max(0, p.x), cw - card.offsetWidth)}px`;
+          card.style.top = `${Math.min(Math.max(0, p.y), ch - card.offsetHeight)}px`;
+        };
+        if (releaseCardPos.current) clampMoved(c1, releaseCardPos.current);
+        else place(c1, d1);
+        if (songCardPos.current) clampMoved(c2, songCardPos.current);
+        else place(c2, d2);
       }
     };
     raf = requestAnimationFrame(frame);
@@ -517,31 +699,6 @@ export default function Home() {
       hero.removeEventListener('pointermove', onMove);
     };
   }, []);
-
-  // Hero drawer — Esc or a click outside closes it; focus moves into it on open.
-  useEffect(() => {
-    if (!drawerOpen) return;
-    const drawer = drawerRef.current;
-    const hot = hotspotRef.current;
-    drawer?.focus();
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setDrawerOpen(false);
-        hot?.focus({ preventScroll: true });
-      }
-    }
-    function onDown(e: PointerEvent) {
-      const t = e.target as Node;
-      if (drawer?.contains(t) || hot?.contains(t)) return;
-      setDrawerOpen(false);
-    }
-    window.addEventListener('keydown', onKey);
-    document.addEventListener('pointerdown', onDown);
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.removeEventListener('pointerdown', onDown);
-    };
-  }, [drawerOpen]);
 
   function openPlayer(embedSrc?: string) {
     if (closeTimerRef.current) {
@@ -821,88 +978,13 @@ export default function Home() {
         }
         .hero-debug[data-on] { display: block; }
 
-        .hero-drawer {
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          z-index: 6;
-          display: flex;
-          flex-direction: column;
-          width: min(400px, 100%);
-          background: rgba(5,15,8,0.94);
-          border-left: 1px solid rgba(26,158,74,0.5);
-          box-shadow: -12px 0 48px rgba(0,0,0,0.7);
-          -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
-          outline: none;
-          transform: translateX(100%);
-          visibility: hidden;
-          transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s linear 0.35s;
-        }
-        .hero-drawer.open {
-          transform: none;
-          visibility: visible;
-          transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s;
-        }
-        .hero-drawer-head {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          flex-shrink: 0;
-          padding: 0 8px 0 18px;
-          height: 52px;
-          border-bottom: 1px solid rgba(26,158,74,0.25);
-        }
-        .hero-drawer-title {
-          font-family: 'Poppins_semibold', monospace;
-          font-size: 0.75rem;
-          letter-spacing: 0.28em;
-          color: #4dff91;
-        }
-        .hero-drawer-close {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 40px;
-          height: 40px;
-          padding: 0;
-          color: #4dff91;
-          background: none;
-          border: none;
-          cursor: pointer;
-          transition: color 0.15s ease;
-        }
-        .hero-drawer-close:hover { color: #fff; }
-        .hero-drawer-body {
-          display: flex;
-          flex: 1;
-          flex-direction: column;
-          gap: 14px;
-          min-height: 0;
-          overflow-y: auto;
-          padding: 16px 18px 20px;
-        }
-        .hero-drawer-cta {
+        .hero-cta {
           justify-content: center;
           width: 100%;
           text-decoration: none;
         }
-        @media (max-width: 767px) {
-          .hero-drawer {
-            top: auto;
-            left: 0;
-            width: auto;
-            max-height: 78%;
-            padding-bottom: calc(var(--home-btn-size, 0px) + (var(--home-btn-gap, 0px) * 2) + env(safe-area-inset-bottom));
-            border-left: none;
-            border-top: 1px solid rgba(26,158,74,0.5);
-            box-shadow: 0 -12px 48px rgba(0,0,0,0.7);
-            transform: translateY(100%);
-          }
-        }
 
-        /* ── HERO SPOTLIGHT PANELS (Bio left / release + links right of the beam; desktop hover only) ── */
+        /* ── HERO SPOTLIGHT PANELS (bio right of the beam, release + song cards left; desktop hover only) ── */
         .hero-spot-panel {
           display: none;
           position: absolute;
@@ -921,26 +1003,75 @@ export default function Home() {
           transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s linear 0.35s;
         }
         .hero-spot-panel::-webkit-scrollbar { display: none; }
-        .hero-spot-left  { --spot-shift: 18px; }
-        .hero-spot-right {
-          --spot-shift: -18px;
-          flex-direction: row;
-          align-items: flex-start;
-          width: auto;
-        }
-        .hero-spot-right > * { width: clamp(250px, 19vw, 300px); flex-shrink: 0; }
+        .hero-spot-right { --spot-shift: -18px; }
         .hero-spot-panel.on {
           opacity: 1;
           visibility: visible;
           transform: translateY(-50%);
           transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s;
         }
+        /* Release + song cards: free-floating, positioned by left/top in px */
+        .hero-spot-card {
+          display: none;
+          position: absolute;
+          left: 0;
+          top: 0;
+          z-index: 5;
+          width: clamp(250px, 19vw, 300px);
+          padding: 0;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateX(var(--spot-shift, 0px));
+          transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s linear 0.35s;
+        }
+        .hero-spot-card.on {
+          opacity: 1;
+          visibility: visible;
+          transform: none;
+          transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), visibility 0s;
+        }
+        .hero-spot-card.front { z-index: 6; }
+        .hero-spot-card.dragging { box-shadow: 0 18px 48px rgba(0,0,0,0.7), 0 0 28px rgba(26,158,74,0.25); }
+        .hero-card-head {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          width: 100%;
+          height: 40px;
+          padding: 0 12px 0 14px;
+          background: #1a9e4a;
+          color: #fff;
+          border: none;
+          cursor: grab;
+          touch-action: none;
+          user-select: none;
+          transition: background 0.15s ease;
+        }
+        .hero-card-head:hover { background: #1fb055; }
+        .hero-spot-card.dragging .hero-card-head { cursor: grabbing; }
+        .hero-card-head:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+        .hero-card-icon { display: inline-flex; flex-shrink: 0; }
+        .hero-card-icon svg { width: 16px; height: 16px; }
+        .hero-card-title {
+          flex: 1;
+          text-align: left;
+          font-family: 'Poppins_semibold', monospace;
+          font-size: 0.72em;
+          letter-spacing: 0.24em;
+          white-space: nowrap;
+        }
+        .hero-card-chevron { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.2s ease; }
+        .hero-spot-card.collapsed .hero-card-chevron { transform: rotate(-90deg); }
+        .hero-card-body { padding: 14px 18px 16px; }
         @media (hover: hover) and (min-width: 960px) {
-          .hero-spot-panel { display: flex; }
+          .hero-spot-panel,
+          .hero-spot-card { display: flex; flex-direction: column; }
         }
         @media (prefers-reduced-motion: reduce) {
           .hero-spot-panel,
           .hero-spot-panel.on { transition: none; transform: translateY(-50%); }
+          .hero-spot-card,
+          .hero-spot-card.on { transition: none; transform: none; }
         }
         .hero-dispo-grid {
           display: grid;
@@ -979,13 +1110,12 @@ export default function Home() {
         .hero-social-icon svg { display: block; width: 24px; height: 24px; }
         .hero-carousel { display: none; }
         @media (max-width: 767px) {
-          /* No spotlight on phones: hide the hotspot, tooltip, debug readout and drawer */
+          /* No spotlight on phones: hide the hotspot, light, tooltip and debug readout */
           .hero-hot-svg,
           .hero-beam-dim,
           .hero-beam,
           .hero-tip,
-          .hero-debug,
-          .hero-drawer { display: none !important; }
+          .hero-debug { display: none !important; }
 
           .hero-carousel {
             display: flex;
@@ -1430,37 +1560,27 @@ export default function Home() {
                   </div>
                   )}
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(10,16,12,0.7) 0%, transparent 25%, transparent 60%, rgba(10,16,12,0.95) 100%)' }} />
-                  {/* Hero hotspot — an SVG shape over the person; hover highlights, click opens the drawer.
+                  {/* Hero hotspot — an SVG shape over the person; hover (or keyboard focus) turns the spotlight on.
                       The light itself is drawn in the .hero-beam layers below. */}
                   <svg className="hero-hot-svg">
                     <path
                       ref={hotspotRef}
-                      role="button"
                       tabIndex={0}
-                      className={`hero-hotspot${drawerOpen || spotOn ? ' active' : ''}`}
-                      aria-label="Learn about Alexx A-Game"
+                      className={`hero-hotspot${spotOn ? ' active' : ''}`}
+                      aria-label="Spotlight on Alexx A-Game"
                       onPointerEnter={showSpot}
                       onPointerLeave={hideSpot}
                       onFocus={showSpot}
                       onBlur={hideSpot}
-                      aria-haspopup="dialog"
-                      aria-expanded={drawerOpen}
-                      onClick={() => setDrawerOpen((o) => !o)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          setDrawerOpen((o) => !o);
-                        }
-                      }}
                     />
                   </svg>
                   {/* Spotlight light and the dimming around it — purely visual, painted by paintBeam() */}
-                  <div ref={beamDimRef} className={`hero-beam-dim${drawerOpen || spotOn ? ' on' : ''}`} aria-hidden="true" />
-                  <div className={`hero-beam${drawerOpen || spotOn ? ' on' : ''}`} aria-hidden="true">
+                  <div ref={beamDimRef} className={`hero-beam-dim${spotOn ? ' on' : ''}`} aria-hidden="true" />
+                  <div className={`hero-beam${spotOn ? ' on' : ''}`} aria-hidden="true">
                     <div ref={beamBodyRef} />
                     <div ref={beamCoreRef} className="hero-beam-core" />
                   </div>
-                  <div ref={tipRef} className={`hero-tip${drawerOpen || spotOn ? ' hero-tip--off' : ''}`} aria-hidden="true">
+                  <div ref={tipRef} className={`hero-tip${spotOn ? ' hero-tip--off' : ''}`} aria-hidden="true">
                     <span className="tip-hover">Hover to learn about A-Game</span>
                     <span className="tip-touch">Tap to learn about A-Game</span>
                   </div>
@@ -1473,7 +1593,7 @@ export default function Home() {
                     <h1 className="hero-artist-name">ALEXX A-GAME</h1>
                     )}
 
-                    {/* Side panels DISABLED — their content now lives in the hero drawer. To restore, delete the `false &&` wrappers. */}
+                    {/* Side panels DISABLED — their content now lives in the spotlight panels. To restore, delete the `false &&` wrappers. */}
                     {false && (
                     <div className="hero-side hero-side-left">
                       <RadioPanel onTuneIn={() => openPlayer(RADIO_EMBED)} />
@@ -1490,12 +1610,12 @@ export default function Home() {
                   </div>
 
                   {/* Spotlight panels — fade in beside the beam while the spotlight is active (desktop hover only).
-                      Bio + socials on the left; featured release and song of the day side by side on the right.
-                      Positioned by the hero frame loop (left style); hidden while the drawer is open. */}
+                      Bio + socials on the right; the featured release and song of the day cards on the left
+                      (collapsible and draggable). Positioned by the hero frame loop. */}
                   <div
-                    ref={leftPanelRef}
-                    className={`hero-spot-panel hero-spot-left${spotOn && !drawerOpen ? ' on' : ''}`}
-                    aria-hidden={!(spotOn && !drawerOpen)}
+                    ref={rightPanelRef}
+                    className={`hero-spot-panel hero-spot-right${spotOn ? ' on' : ''}`}
+                    aria-hidden={!spotOn}
                     onPointerEnter={showSpot}
                     onPointerLeave={hideSpot}
                     onFocus={showSpot}
@@ -1504,18 +1624,30 @@ export default function Home() {
                     <StoryPanel />
                     <SocialsPanel />
                   </div>
-                  <div
-                    ref={rightPanelRef}
-                    className={`hero-spot-panel hero-spot-right${spotOn && !drawerOpen ? ' on' : ''}`}
-                    aria-hidden={!(spotOn && !drawerOpen)}
-                    onPointerEnter={showSpot}
-                    onPointerLeave={hideSpot}
-                    onFocus={showSpot}
-                    onBlur={hideSpot}
+                  <SpotCard
+                    title="FEATURED RELEASE"
+                    icon={RECORD_ICON}
+                    cardRef={releaseCardRef}
+                    posRef={releaseCardPos}
+                    visible={spotOn}
+                    shift={18}
+                    onShow={showSpot}
+                    onHide={hideSpot}
                   >
-                    <ReleaseLinksPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
-                    <SongOfTheDayPanel onPlay={openPlayer} />
-                  </div>
+                    <ReleaseLinksPanel bare onPlay={() => openPlayer(RELEASE_EMBED)} />
+                  </SpotCard>
+                  <SpotCard
+                    title="SONG OF THE DAY"
+                    icon={NOTE_ICON}
+                    cardRef={songCardRef}
+                    posRef={songCardPos}
+                    visible={spotOn}
+                    shift={18}
+                    onShow={showSpot}
+                    onHide={hideSpot}
+                  >
+                    <SongOfTheDayPanel bare onPlay={openPlayer} />
+                  </SpotCard>
 
                   {/* Mobile carousel — phones get no hover/spotlight; the same sections sit in a horizontal swipe row
                       over the lower half of the hero (shown by CSS at max-width 767px only). */}
@@ -1531,42 +1663,6 @@ export default function Home() {
                     </div>
                     <div className="hero-carousel-item">
                       <SocialsPanel />
-                    </div>
-                  </div>
-
-                  {/* Hero drawer — stays open until closed (button, Esc, or click outside) */}
-                  <div
-                    ref={drawerRef}
-                    role="dialog"
-                    aria-label="About Alexx A-Game"
-                    tabIndex={-1}
-                    className={`hero-drawer${drawerOpen ? ' open' : ''}`}
-                  >
-                    <div className="hero-drawer-head">
-                      <span className="hero-drawer-title">MEET ALEXX A-GAME</span>
-                      <button
-                        type="button"
-                        className="hero-drawer-close"
-                        aria-label="Close"
-                        onClick={() => {
-                          setDrawerOpen(false);
-                          hotspotRef.current?.focus({ preventScroll: true });
-                        }}
-                      >
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <path d="M6 6l12 12M18 6L6 18" />
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="hero-drawer-body">
-                      <StoryPanel />
-                      <FeaturedPanel onPlay={() => openPlayer(RELEASE_EMBED)} />
-                      <SongOfTheDayPanel onPlay={openPlayer} />
-                      <SocialsPanel />
-                      <RadioPanel onTuneIn={() => openPlayer(RADIO_EMBED)} />
-                      <a href="/discography" className="listen-btn hero-drawer-cta">
-                        VIEW DISCOGRAPHY →
-                      </a>
                     </div>
                   </div>
 
@@ -1615,7 +1711,7 @@ export default function Home() {
                     </button>
                   </div>
                 </div>
-                {/* Stacked hero panels DISABLED — their content now lives in the hero drawer. To restore, delete the `false &&` wrapper and its closing `)}`. */}
+                {/* Stacked hero panels DISABLED — their content now lives in the spotlight panels. To restore, delete the `false &&` wrapper and its closing `)}`. */}
                 {false && (
                 <div
                   className="hero-stack flex-shrink-0 relative z-[2] px-6 py-10"
