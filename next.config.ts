@@ -4,8 +4,6 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.
 const wooHost = process.env.WOOCOMMERCE_URL ? new URL(process.env.WOOCOMMERCE_URL).hostname : null;
 
 const nextConfig: NextConfig = {
-  // Hostinger (Node.js hosting / VPS): `npm run build` produces a self-contained server in .next/standalone.
-  output: 'standalone',
   // Dev only: lets phones on your Wi-Fi load dev assets. Use your PC's IPv4 from `ipconfig`.
   allowedDevOrigins: ['192.168.39.122'],
   poweredByHeader: false,

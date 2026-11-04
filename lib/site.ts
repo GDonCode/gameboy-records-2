@@ -16,6 +16,9 @@ export const INSTAGRAM_HANDLE = '@gameboyrecordsofficial';
 export const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
 export const LOGO_URL = `${MEDIA_BASE}/gameboy-logo-removebg-preview.png`;
 
+/** Default share card (app/opengraph-image.tsx), for pages that set their own Open Graph details. */
+export const OG_IMAGE = { url: '/opengraph-image', width: 1200, height: 630, alt: 'Gameboy Records — independent label of Alexx A-Game' };
+
 export const SITE_DESCRIPTION =
   'Gameboy Records is the independent label founded by Alexx A-Game. Music, limited merchandise and live shows, released on our own terms.';
 

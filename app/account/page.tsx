@@ -5,16 +5,20 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { getQuestStatus } from '@/lib/quests';
 import { getRewardClaims } from '@/lib/claims';
 import Header from '@/components/Header';
-import MobileBottomNav from '@/components/MobileBottomNav';
+import type { Metadata } from 'next';
 import { getAddresses } from '@/lib/addresses';
 import { getSecurityInfo } from '@/lib/account-security';
-import { getPaymentMethods } from '@/lib/payments/methods';
-import { getPaymentProvider } from '@/lib/payments/provider';
+import { getOrders } from '@/lib/orders';
 import { getSupportRequests } from '@/lib/support-requests';
-import { isAccountTab, type AccountUser, type Order } from '@/components/account/types';
+import { isAccountTab, type AccountUser } from '@/components/account/types';
 import AccountClient from './AccountClient';
 
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: 'Your Playaz Club',
+  robots: { index: false, follow: false },
+};
 
 export default async function AccountPage({
   searchParams,
@@ -38,19 +42,14 @@ export default async function AccountPage({
   const { password_hash, ...rest } = row;
   const user: AccountUser = { ...rest, has_password: !!password_hash };
 
-  // Checkout isn't live yet, so there is no orders table to read from.
-  // Load the user's orders here once it exists; OrdersTab already handles current vs archived.
-  const orders: Order[] = [];
-
-  const [quests, claims, addresses, security, paymentMethods, supportRequests] = await Promise.all([
+  const [orders, quests, claims, addresses, security, supportRequests] = await Promise.all([
+    getOrders(session.user.id),
     getQuestStatus(session.user.id),
     getRewardClaims(session.user.id),
     getAddresses(session.user.id),
     getSecurityInfo(session.user.id, user.has_password),
-    getPaymentMethods(session.user.id),
     getSupportRequests(session.user.id),
   ]);
-  const payments = { provider: getPaymentProvider()?.id ?? null, methods: paymentMethods };
   const { tab } = await searchParams;
   const initialTab = isAccountTab(tab) ? tab : null;
 
@@ -60,15 +59,13 @@ export default async function AccountPage({
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-dvh overflow-hidden">
       <Header />
-      <MobileBottomNav />
       <AccountClient
         user={user}
         orders={orders}
         addresses={addresses}
         security={security}
-        payments={payments}
         supportRequests={supportRequests}
         quests={quests}
         claims={claims}

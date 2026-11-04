@@ -6,7 +6,6 @@ import {
   Truck,
   UserRound,
   Lock,
-  CreditCard,
   MessageCircleMore,
   LogOut,
   type LucideIcon,
@@ -27,9 +26,9 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    heading: 'Account',
+    heading: 'Playaz Club',
     items: [
-      { tab: 'home', label: 'Home', subtitle: 'Rewards & overview', icon: House },
+      { tab: 'home', label: 'Home', subtitle: 'Club Points & rewards', icon: House },
       { tab: 'orders', label: 'My orders', subtitle: 'Current & archived orders', icon: Truck },
     ],
   },
@@ -38,7 +37,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { tab: 'personal', label: 'Personal info', subtitle: 'Photo, name, email & address', icon: UserRound },
       { tab: 'security', label: 'Login & security', subtitle: 'Password & sign-in', icon: Lock },
-      { tab: 'payments', label: 'Payments', subtitle: 'Add a payment method', icon: CreditCard },
     ],
   },
 ];
@@ -61,13 +59,13 @@ interface AccountSidebarProps {
 
 const ROW_BASE =
   'group flex items-center gap-4 w-full pl-3 pr-3 py-2.5 rounded-r-[10px] border-l-[3px] text-left transition-colors duration-200 cursor-pointer';
-const ROW_IDLE = 'border-transparent text-[#16432a] hover:bg-[#1a9e4a]/10';
-const ROW_ACTIVE = 'border-[#1a9e4a] bg-[#1a9e4a]/15 text-[#1a9e4a]';
+const ROW_IDLE = 'border-transparent text-[#0B0A07] hover:bg-[#2C8663]/10';
+const ROW_ACTIVE = 'border-[#2C8663] bg-[#2C8663]/15 text-[#2C8663]';
 
 function IconTile({ icon: Icon }: { icon: LucideIcon }) {
   return (
-    <span className="flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-[8px] bg-white border border-[#16432a]/10 shadow-[0_1px_2px_rgba(22,67,42,0.08)]">
-      <Icon className="w-5 h-5 text-[#1a9e4a]" strokeWidth={2.25} />
+    <span className="flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-[8px] bg-white border border-[#0B0A07]/10 shadow-[0_1px_2px_rgba(11,10,7,0.08)]">
+      <Icon className="w-5 h-5 text-[#2C8663]" strokeWidth={2.25} />
     </span>
   );
 }
@@ -76,7 +74,7 @@ function RowText({ label, subtitle }: { label: string; subtitle: string }) {
   return (
     <span className="flex flex-col min-w-0">
       <span style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}>{label}</span>
-      <span className="text-[0.8em] text-[#16432a]/60">{subtitle}</span>
+      <span className="text-[0.8em] text-[#0B0A07]/60">{subtitle}</span>
     </span>
   );
 }
@@ -110,29 +108,29 @@ export default function AccountSidebar({
   return (
     <aside
       aria-label="Account navigation"
-      className={`flex-shrink-0 w-full md:w-[300px] md:h-full md:overflow-y-auto bg-[#EDEAE0] px-4 pt-20 pb-10 md:pt-8 md:border-r border-[#16432a]/10 ${className}`}
+      className={`flex-shrink-0 w-full md:w-[300px] md:h-full md:overflow-y-auto bg-[#EDEAE0] on-light text-[#0B0A07] px-4 pt-8 pb-10 md:pt-8 md:border-r border-[#0B0A07]/10 ${className}`}
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       {/* Account header */}
-      <div className="flex items-center gap-3 px-3 pb-5 mb-2 border-b border-[#16432a]/15">
+      <div className="flex items-center gap-3 px-3 pb-5 mb-2 border-b border-[#0B0A07]/15">
         {avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-[#1a9e4a]" />
+          <img src={avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-[#2C8663]" />
         ) : (
-          <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#16432a] text-white">
+          <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#0B0A07] text-white">
             {firstName.charAt(0).toUpperCase()}
           </span>
         )}
-        <span className="text-[#16432a] text-[1.05em]" style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}>
-          {firstName}&apos;s Account
+        <span className="text-[#0B0A07] text-[1.05em]" style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}>
+          {firstName}&apos;s Playaz Club
         </span>
       </div>
 
       <nav className="flex flex-col">
         {NAV_GROUPS.map((group) => (
-          <div key={group.heading} className="flex flex-col gap-1 py-3 border-b border-[#16432a]/15">
+          <div key={group.heading} className="flex flex-col gap-1 py-3 border-b border-[#0B0A07]/15">
             <h2
-              className="px-3 pt-1 pb-2 text-[0.75em] tracking-[0.2em] text-[#16432a]/70"
+              className="px-3 pt-1 pb-2 text-[0.75em] tracking-[0.2em] text-[#0B0A07]/70"
               style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
             >
               {group.heading.toUpperCase()}
@@ -143,7 +141,7 @@ export default function AccountSidebar({
 
         <div className="flex flex-col gap-1 py-3">
           <h2
-            className="px-3 pt-1 pb-2 text-[0.75em] tracking-[0.2em] text-[#16432a]/70"
+            className="px-3 pt-1 pb-2 text-[0.75em] tracking-[0.2em] text-[#0B0A07]/70"
             style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
           >
             HELP

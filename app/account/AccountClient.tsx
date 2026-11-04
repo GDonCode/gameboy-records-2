@@ -7,7 +7,6 @@ import AccountSidebar from '@/components/AccountSidebar';
 import HomeTab from '@/components/account/HomeTab';
 import OrdersTab from '@/components/account/OrdersTab';
 import SecurityTab from '@/components/account/SecurityTab';
-import PaymentsTab from '@/components/account/PaymentsTab';
 import SupportTab from '@/components/account/SupportTab';
 import PersonalInfoTab from '@/components/account/PersonalInfoTab';
 import {
@@ -16,7 +15,6 @@ import {
   type AccountUser,
   type Address,
   type SecurityInfo,
-  type PaymentsInfo,
   type SupportRequest,
   type Order,
   type QuestStatus,
@@ -28,7 +26,6 @@ interface AccountClientProps {
   orders: Order[];
   addresses: Address[];
   security: SecurityInfo;
-  payments: PaymentsInfo;
   supportRequests: SupportRequest[];
   quests: QuestStatus[];
   claims: RewardClaim[];
@@ -36,7 +33,7 @@ interface AccountClientProps {
   signOutAction: () => Promise<void>;
 }
 
-export default function AccountClient({ user, orders, addresses, security, payments, supportRequests, quests, claims, initialTab, signOutAction }: AccountClientProps) {
+export default function AccountClient({ user, orders, addresses, security, supportRequests, quests, claims, initialTab, signOutAction }: AccountClientProps) {
   const [tab, setTab] = useState<AccountTab>(initialTab ?? 'home');
   // Mobile only: show the menu first unless the URL already points at a tab.
   const [mobileView, setMobileView] = useState<'menu' | 'content'>(initialTab ? 'content' : 'menu');
@@ -80,8 +77,6 @@ export default function AccountClient({ user, orders, addresses, security, payme
         return <OrdersTab orders={orders} />;
       case 'security':
         return <SecurityTab email={user.email} security={security} />;
-      case 'payments':
-        return <PaymentsTab payments={payments} />;
       case 'support':
         return <SupportTab email={user.email} initialRequests={supportRequests} onSelectTab={selectTab} />;
     }
@@ -90,8 +85,8 @@ export default function AccountClient({ user, orders, addresses, security, payme
   return (
     <div
       ref={scrollRef}
-            className="mobile-home-pad flex-1 min-h-0 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden"
-      style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%)' }}
+            className="flex-1 min-h-0 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden"
+      style={{ background: '#0B0A07' }}
     >
       <AccountSidebar
         displayName={user.display_name}
@@ -103,8 +98,9 @@ export default function AccountClient({ user, orders, addresses, security, payme
       />
 
       <main
+        id="main"
         ref={mainRef}
-        className={`flex-1 md:min-h-0 md:overflow-y-auto px-5 md:px-10 pt-20 md:pb-16 md:pt-10 ${
+        className={`flex-1 md:min-h-0 md:overflow-y-auto px-5 md:px-10 pt-8 pb-16 md:pt-10 ${
           mobileView === 'menu' ? 'hidden md:block' : 'block'
         }`}
       >
@@ -112,7 +108,7 @@ export default function AccountClient({ user, orders, addresses, security, payme
           <button
             type="button"
             onClick={backToMenu}
-            className="md:hidden inline-flex items-center gap-2 self-start text-[0.85em] tracking-[0.1em] text-[#4dff91]"
+            className="md:hidden inline-flex items-center gap-2 self-start text-[0.85em] tracking-[0.1em] text-[#5FBF97]"
             style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             <ArrowLeft className="w-4 h-4" />

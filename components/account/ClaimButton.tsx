@@ -37,13 +37,13 @@ export default function ClaimButton({ level }: { level: number }) {
         type="button"
         onClick={claim}
         disabled={busy}
-        className="px-3 py-1 rounded-full bg-[#4dff91] text-[#0c1510] text-[0.7em] tracking-[0.15em] shadow-[0_0_12px_rgba(77,255,145,0.6)] animate-pulse disabled:animate-none disabled:opacity-60 cursor-pointer"
+        className="px-3 py-1 rounded-full bg-[#5FBF97] text-[#15130F] text-[0.7em] tracking-[0.15em] shadow-[0_0_12px_rgba(95,191,151,0.6)] animate-pulse disabled:animate-none disabled:opacity-60 cursor-pointer"
         style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
       >
         {busy ? 'CLAIMING…' : 'CLAIM'}
       </button>
       {error && (
-        <span className="text-[#ff6b6b] text-[0.65em]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <span className="text-[#F0A39C] text-[0.65em]" style={{ fontFamily: "'Poppins', sans-serif" }}>
           {error}
         </span>
       )}

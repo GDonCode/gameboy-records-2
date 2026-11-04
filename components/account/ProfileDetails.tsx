@@ -308,7 +308,7 @@ export default function ProfileDetails({ user, memberSince }: { user: AccountUse
       <NameRow initialName={user.display_name} onSaved={refreshAfterSave} />
       <EmailRow initialEmail={user.email} hasPassword={user.has_password} onSaved={refreshAfterSave} />
       <Row label="Member since">{memberSince}</Row>
-      <Row label="Points">{(user.points_balance ?? 0).toLocaleString('en-US')}</Row>
+      <Row label="Club Points">{(user.points_balance ?? 0).toLocaleString('en-US')}</Row>
     </dl>
   );
 }

@@ -70,7 +70,7 @@ function Newsletter() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="field flex-1 min-w-0"
+          className="field sm:flex-1 min-w-0"
         />
         <Button type="submit" variant="light" disabled={busy}>
           {busy ? 'Sending' : 'Subscribe'}

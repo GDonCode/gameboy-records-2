@@ -11,13 +11,13 @@ import JsonLd from '@/components/JsonLd';
 import { getCatalog } from '@/lib/catalog';
 import { applyShopQuery, facets, parseShopQuery } from '@/lib/shop-filters';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { ARTIST, CLUB_NAME, SITE_URL } from '@/lib/site';
+import { ARTIST, CLUB_NAME, SITE_URL, OG_IMAGE } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Shop',
   description: `Limited apparel from Gameboy Records and ${ARTIST}. Tees, hoodies and sweatpants made in small runs. Members earn Club Points on every order.`,
   alternates: { canonical: '/shop' },
-  openGraph: { url: '/shop', title: 'Shop | Gameboy Records' },
+  openGraph: { url: '/shop', title: 'Shop | Gameboy Records', images: [OG_IMAGE] },
 };
 
 async function memberBalance(): Promise<{ signedIn: boolean; balance: number | null }> {

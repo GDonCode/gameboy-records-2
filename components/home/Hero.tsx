@@ -10,16 +10,15 @@ import { ARTIST, MEDIA_BASE } from '@/lib/site';
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(false);
 
-  // Respect reduced motion: start paused, and let the visitor choose.
+  // Start the film unless the visitor prefers reduced motion; they can always play or pause it.
   useEffect(() => {
     const v = videoRef.current;
-    if (!v) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      v.pause();
-      setPlaying(false);
-    }
+    if (!v || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    v.play()
+      .then(() => setPlaying(true))
+      .catch(() => setPlaying(false));
   }, []);
 
   function toggle() {
@@ -40,7 +39,6 @@ export default function Hero() {
         ref={videoRef}
         src={`${MEDIA_BASE}/web-hero.mp4`}
         poster={`${MEDIA_BASE}/IMG_7478-Retouched.jpg`}
-        autoPlay
         muted
         loop
         playsInline

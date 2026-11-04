@@ -148,7 +148,7 @@ function AddressForm({
   );
 
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-[10px] border border-[#1a9e4a]/40 bg-[#1a9e4a]/5 p-5" style={BODY}>
+    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-[10px] border border-[#2C8663]/40 bg-[#2C8663]/5 p-5" style={BODY}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="sm:col-span-2">
           <Field id="addr-country_code" label="Country" error={errors.country_code}>
@@ -185,7 +185,7 @@ function AddressForm({
 
       {canSetDefault && (
         <label className="flex items-center gap-2 text-[0.85em] text-white/80 cursor-pointer">
-          <input type="checkbox" checked={makeDefault} onChange={(e) => setMakeDefault(e.target.checked)} disabled={busy} className="accent-[#1a9e4a] w-4 h-4" />
+          <input type="checkbox" checked={makeDefault} onChange={(e) => setMakeDefault(e.target.checked)} disabled={busy} className="accent-[#2C8663] w-4 h-4" />
           Use as my default shipping address
         </label>
       )}
@@ -297,8 +297,8 @@ export default function AddressBook({ initialAddresses }: { initialAddresses: Ad
 
       {mode.kind === 'list' && addresses.length === 0 && (
         <div className="flex flex-col items-center text-center gap-4 rounded-[10px] border border-dashed border-white/15 py-10 px-4">
-          <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#1a9e4a]/15 border border-[#1a9e4a]/40">
-            <MapPin className="w-5 h-5 text-[#4dff91]" strokeWidth={2} />
+          <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#2C8663]/15 border border-[#2C8663]/40">
+            <MapPin className="w-5 h-5 text-[#5FBF97]" strokeWidth={2} />
           </span>
           <p className="text-[0.95em] text-white/70">No saved addresses yet. Add one for faster checkout.</p>
           <button type="button" className={PRIMARY_BUTTON} onClick={() => open({ kind: 'add' })}>
@@ -326,13 +326,13 @@ export default function AddressBook({ initialAddresses }: { initialAddresses: Ad
               <li
                 key={a.id}
                 className={`flex flex-col gap-4 rounded-[10px] border p-5 ${
-                  a.is_default ? 'border-[#4dff91]/60 bg-[#1a9e4a]/10' : 'border-white/10 bg-white/[0.02]'
+                  a.is_default ? 'border-[#5FBF97]/60 bg-[#2C8663]/10' : 'border-white/10 bg-white/[0.02]'
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <AddressLines a={a} />
                   {a.is_default && (
-                    <span className="flex-shrink-0 px-2.5 py-1 rounded-full text-[0.65em] tracking-[0.15em] text-[#0c1510] bg-[#4dff91]" style={SEMI}>
+                    <span className="flex-shrink-0 px-2.5 py-1 rounded-full text-[0.65em] tracking-[0.15em] text-[#15130F] bg-[#5FBF97]" style={SEMI}>
                       DEFAULT
                     </span>
                   )}

@@ -49,14 +49,14 @@ export default function UnlockForm({ next }: { next: string }) {
         placeholder="Password"
         aria-invalid={!!error}
         aria-describedby={error ? 'site-password-error' : undefined}
-        className="h-12 w-full border border-[#1a9e4a]/40 bg-white/5 px-4 text-[15px] text-white placeholder:text-white/35 outline-none transition-colors focus:border-[#4dff91] focus:bg-white/[0.08] aria-[invalid=true]:border-[#ff6b6b]"
+        className="h-12 w-full border border-[#2C8663]/40 bg-white/5 px-4 text-[15px] text-white placeholder:text-white/35 outline-none transition-colors focus:border-[#5FBF97] focus:bg-white/[0.08] aria-[invalid=true]:border-[#F0A39C]"
       />
-      {error && <p id="site-password-error" role="alert" className="text-left text-[13px] text-[#ff8a8a]">{error}</p>}
+      {error && <p id="site-password-error" role="alert" className="text-left text-[13px] text-[#F0A39C]">{error}</p>}
       <button
         type="submit"
         disabled={busy}
         style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
-        className="h-12 w-full bg-[#1a9e4a] text-[13px] tracking-[0.18em] text-white transition-colors hover:bg-[#149262] disabled:opacity-60 cursor-pointer"
+        className="h-12 w-full bg-[#2C8663] text-[13px] tracking-[0.18em] text-white transition-colors hover:bg-[#226B4F] disabled:opacity-60 cursor-pointer"
       >
         {busy ? 'CHECKING…' : 'ENTER'}
       </button>

@@ -29,7 +29,7 @@ function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] 
         {/* Track */}
         <div className="absolute left-0 right-0 top-[23px] h-2 rounded-full bg-white/10" aria-hidden="true" />
         <div
-          className="absolute left-0 top-[23px] h-2 rounded-full bg-gradient-to-r from-[#1a9e4a] to-[#4dff91] shadow-[0_0_12px_rgba(77,255,145,0.55)] transition-[width] duration-700"
+          className="absolute left-0 top-[23px] h-2 rounded-full bg-gradient-to-r from-[#2C8663] to-[#5FBF97] shadow-[0_0_12px_rgba(95,191,151,0.55)] transition-[width] duration-700"
           style={{ width: `${progress.fillPercent}%` }}
           aria-hidden="true"
         />
@@ -42,16 +42,16 @@ function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] 
 
           const nodeClass =
             state === 'unlocked'
-              ? 'bg-[#1a9e4a] border-[#4dff91] text-white'
+              ? 'bg-[#2C8663] border-[#5FBF97] text-white'
               : state === 'next'
-                ? 'bg-[#0f1a12] border-[#4dff91] text-[#4dff91] shadow-[0_0_14px_rgba(77,255,145,0.6)]'
-                : 'bg-[#0c1510] border-white/15 text-white/40';
+                ? 'bg-[#15130F] border-[#5FBF97] text-[#5FBF97] shadow-[0_0_14px_rgba(95,191,151,0.6)]'
+                : 'bg-[#15130F] border-white/15 text-white/40';
 
           const cardClass =
             state === 'unlocked'
-              ? 'border-[#1a9e4a]/60 bg-[#1a9e4a]/10'
+              ? 'border-[#2C8663]/60 bg-[#2C8663]/10'
               : state === 'next'
-                ? 'border-[#4dff91] bg-[#4dff91]/5'
+                ? 'border-[#5FBF97] bg-[#5FBF97]/5'
                 : 'border-white/10 bg-white/[0.02] opacity-60';
 
           return (
@@ -69,19 +69,19 @@ function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] 
               >
                 {state === 'next' && (
                   <span
-                    className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-[#4dff91] text-[#0c1510] text-[0.65em] tracking-[0.15em]"
+                    className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-[#5FBF97] text-[#15130F] text-[0.65em] tracking-[0.15em]"
                     style={MONO}
                   >
                     NEXT
                   </span>
                 )}
-                <span className="relative flex items-center justify-center w-11 h-11 rounded-[8px] bg-[#0c1510] border border-white/10">
+                <span className="relative flex items-center justify-center w-11 h-11 rounded-[8px] bg-[#15130F] border border-white/10">
                   <Icon
-                    className={`w-5 h-5 ${state === 'locked' ? 'text-white/40' : 'text-[#4dff91]'}`}
+                    className={`w-5 h-5 ${state === 'locked' ? 'text-white/40' : 'text-[#5FBF97]'}`}
                     strokeWidth={2}
                   />
                   {state === 'locked' && (
-                    <Lock className="absolute -bottom-1.5 -right-1.5 w-4 h-4 p-0.5 rounded-full bg-[#0c1510] text-white/60" />
+                    <Lock className="absolute -bottom-1.5 -right-1.5 w-4 h-4 p-0.5 rounded-full bg-[#15130F] text-white/60" />
                   )}
                 </span>
                 <span className="text-[0.8em] leading-tight text-white" style={BODY}>
@@ -93,7 +93,7 @@ function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] 
                 {state === 'unlocked' &&
                   (claim ? (
                     <span
-                      className="px-2 py-0.5 rounded-full border border-[#4dff91]/60 text-[#4dff91] text-[0.65em] tracking-[0.15em]"
+                      className="px-2 py-0.5 rounded-full border border-[#5FBF97]/60 text-[#5FBF97] text-[0.65em] tracking-[0.15em]"
                       style={MONO}
                     >
                       {claim.status === 'fulfilled' ? 'DELIVERED' : 'CLAIMED'}
@@ -134,7 +134,7 @@ export default function HomeTab({
   ).length;
 
   const stats = [
-    { label: 'Points balance', value: progress.points.toLocaleString('en-US') },
+    { label: 'Club Points', value: progress.points.toLocaleString('en-US') },
     { label: 'Rewards unlocked', value: `${progress.unlockedCount} / ${totalTiers}` },
     { label: 'Next reward', value: progress.nextTier ? progress.nextTier.name : 'All unlocked' },
   ];
@@ -153,8 +153,8 @@ export default function HomeTab({
         <dl className="lg:w-[300px] flex flex-col gap-4 rounded-[10px] bg-[#EDEAE0] p-5">
           {stats.map((s) => (
             <div key={s.label} className="flex items-center justify-between gap-4" style={BODY}>
-              <dt className="text-[0.85em] text-[#16432a]/70">{s.label}</dt>
-              <dd className="text-[#16432a] text-right" style={MONO}>
+              <dt className="text-[0.85em] text-[#0B0A07]/70">{s.label}</dt>
+              <dd className="text-[#0B0A07] text-right" style={MONO}>
                 {s.value}
               </dd>
             </div>
@@ -174,7 +174,7 @@ export default function HomeTab({
             </p>
           </div>
           <div className="flex flex-col md:items-end">
-            <span className="text-[2.2em] leading-none text-[#4dff91] drop-shadow-[0_0_12px_rgba(77,255,145,0.35)]" style={MONO}>
+            <span className="text-[2.2em] leading-none text-[#5FBF97] drop-shadow-[0_0_12px_rgba(95,191,151,0.35)]" style={MONO}>
               {progress.points.toLocaleString('en-US')} PTS
             </span>
             <span className="text-[0.85em] text-white/60 mt-1" style={BODY}>
@@ -187,10 +187,10 @@ export default function HomeTab({
 
         {unclaimedCount > 0 && (
           <div
-            className="flex items-center gap-3 rounded-[10px] border border-[#4dff91] bg-[#4dff91]/10 px-4 py-3"
+            className="flex items-center gap-3 rounded-[10px] border border-[#5FBF97] bg-[#5FBF97]/10 px-4 py-3"
             role="status"
           >
-            <Gift className="w-5 h-5 text-[#4dff91]" />
+            <Gift className="w-5 h-5 text-[#5FBF97]" />
             <span className="text-[0.9em] text-white" style={BODY}>
               You have {unclaimedCount} {unclaimedCount === 1 ? 'reward' : 'rewards'} ready to claim.
             </span>
@@ -209,16 +209,16 @@ export default function HomeTab({
         </h2>
         <ul className="flex flex-col gap-3 text-white/80" style={BODY}>
           <li>
-            <span className="text-[#4dff91]">40 point welcome bonus</span> just for joining. You&apos;re already on your way.
+            <span className="text-[#5FBF97]">40 point welcome bonus</span> just for joining. You&apos;re already on your way.
           </li>
           <li>
-            <span className="text-[#4dff91]">1 point</span> for every $1 spent on Gameboy Records merch.
+            <span className="text-[#5FBF97]">1 point</span> for every $1 spent on Gameboy Records merch.
           </li>
           <li>
-            <span className="text-[#4dff91]">Bonus points</span> on new drops and live show nights. Watch for them.
+            <span className="text-[#5FBF97]">Bonus Club Points</span> on new drops and live show nights. Watch for them.
           </li>
           <li>
-            <span className="text-[#4dff91]">Claim your rewards</span> as you level up. Tap CLAIM on an unlocked reward and we&apos;ll be in touch about delivery.
+            <span className="text-[#5FBF97]">Claim your rewards</span> as you level up. Tap CLAIM on an unlocked reward and we&apos;ll be in touch about delivery.
           </li>
         </ul>
       </Panel>

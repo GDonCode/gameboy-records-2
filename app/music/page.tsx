@@ -4,13 +4,13 @@ import PageShell from '@/components/PageShell';
 import MusicFeed from '@/components/music/MusicFeed';
 import JsonLd from '@/components/JsonLd';
 import { getDiscography } from '@/lib/discography';
-import { ARTIST, SITE_URL } from '@/lib/site';
+import { ARTIST, OG_IMAGE, SITE_URL } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Music',
   description: `The complete discography of ${ARTIST}, from A-Game Everyday to Still A Rise. Watch every release in order.`,
   alternates: { canonical: '/music' },
-  openGraph: { url: '/music', title: `Music | ${ARTIST}` },
+  openGraph: { url: '/music', title: `Music | ${ARTIST}`, images: [OG_IMAGE] },
 };
 
 // Refresh from YouTube at most once an hour.

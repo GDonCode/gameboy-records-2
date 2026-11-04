@@ -119,13 +119,13 @@ export default function Header() {
     {/* Tap-outside backdrop for the mobile menu */}
     {menuOpen && (
       <div
-        className="fixed inset-0 z-[35] md:hidden"
+        className="fixed inset-0 z-[35] lg:hidden"
         onClick={() => setMenuOpen(false)}
         aria-hidden="true"
       />
     )}
     <header
-      className={`on-light sticky top-0 left-0 right-0 flex-shrink-0 bg-[#EDEAE0] text-[#0B0A07] z-40 transition-transform duration-300 ease-in-out md:translate-y-0 ${
+      className={`on-light sticky top-0 left-0 right-0 flex-shrink-0 bg-[#EDEAE0] text-[#0B0A07] z-40 transition-transform duration-300 ease-in-out lg:translate-y-0 ${
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
       }`}
     >
@@ -141,7 +141,7 @@ export default function Header() {
 
                 {/* Nav — desktop only; mobile uses the hamburger menu below */}
         {/* Unified pill nav container, styled after the Aurelia Dental header nav pattern */}
-        <nav aria-label="Main" className="hidden md:flex relative items-center self-center md:ml-auto md:mr-8">
+        <nav aria-label="Main" className="hidden lg:flex relative items-center self-center md:ml-auto md:mr-8">
           <DPad className="top-0 left-0 -translate-x-1/2 -translate-y-1/2 z-10" />
           <DPad className="top-0 right-0 translate-x-1/2 -translate-y-1/2 z-10" />
           <ul
@@ -244,7 +244,7 @@ export default function Header() {
         </nav>
 
         {/* Account / Cart — desktop only placeholders, sized for future profile photo avatar */}
-        <div className="hidden md:flex items-center self-center gap-3 flex-shrink-0">
+        <div className="hidden lg:flex items-center self-center gap-3 flex-shrink-0">
                     <Link
             href={session ? '/account' : '/account/login'}
             aria-label={session ? 'Your account' : 'Sign in or join the Playaz Club'}
@@ -286,7 +286,7 @@ export default function Header() {
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
-          className="md:hidden relative inline-flex items-center justify-center self-center w-11 h-11 rounded-[6px] flex-shrink-0 bg-[#2C8663] text-white"
+          className="lg:hidden relative inline-flex items-center justify-center self-center w-11 h-11 rounded-[6px] flex-shrink-0 bg-[#2C8663] text-white"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-6 h-6 block" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
             {menuOpen ? (
@@ -306,7 +306,7 @@ export default function Header() {
         <nav
           id="mobile-menu"
           aria-label="Mobile"
-                    className="md:hidden absolute top-full right-0 w-max min-w-[220px] bg-[#EDEAE0] border-t border-l border-b border-[#2C8663]/20 rounded-bl-[6px] shadow-lg"
+                    className="lg:hidden absolute top-full right-0 w-max min-w-[220px] bg-[#EDEAE0] border-t border-l border-b border-[#2C8663]/20 rounded-bl-[6px] shadow-lg"
         >
           <ul className="flex flex-col py-2">
             {[

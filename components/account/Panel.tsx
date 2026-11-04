@@ -6,7 +6,7 @@ export function TabHeading({ eyebrow, title, subtitle }: { eyebrow?: string; tit
     <div className="flex flex-col gap-2">
       {eyebrow && (
         <span
-          className="text-[0.75em] tracking-[0.25em] text-[#4dff91]"
+          className="text-[0.75em] tracking-[0.25em] text-[#5FBF97]"
           style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
         >
           {eyebrow}
@@ -29,7 +29,7 @@ export function TabHeading({ eyebrow, title, subtitle }: { eyebrow?: string; tit
 
 export function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <section className={`bg-[#0f1a12] border border-[rgba(26,158,74,0.3)] rounded-[12px] p-6 md:p-8 ${className}`}>
+    <section className={`bg-[#15130F] border border-[rgba(44,134,99,0.3)] rounded-[12px] p-6 md:p-8 ${className}`}>
       {children}
     </section>
   );

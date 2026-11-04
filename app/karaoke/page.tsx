@@ -2,8 +2,6 @@
 
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header';
-import GameIconsBackground from '@/components/GameIconsBackground';
-import MobileBottomNav from '@/components/MobileBottomNav';
 import styles from './karaoke.module.css';
 
 interface LyricLine {
@@ -677,10 +675,9 @@ export default function KaraokePage() {
   return (
     <div className={styles.page}>
       <Header />
-      <MobileBottomNav />
 
-      <main className={styles.main}>
-        <GameIconsBackground />
+      <main id="main" className={styles.main}>
+        <h1 className="sr-only">Karaoke</h1>
 
         {/* ── SONG PICKER BAR ───────────────────────────────────── */}
         <div className={styles.pickerBar}>
@@ -758,6 +755,7 @@ export default function KaraokePage() {
             <input
               type="range"
               className={styles.seekBar}
+              aria-label={`Seek within ${activeSong.title}`}
               min={0}
               max={duration || 0}
               step={0.1}
@@ -780,7 +778,7 @@ export default function KaraokePage() {
         </div>
 
         {/* ── LYRICS ── directly on page background, no container ── */}
-        <div className={styles.lyricsArea}>
+        <div className={styles.lyricsArea} tabIndex={0} role="region" aria-label={`Lyrics: ${activeSong.title}`}>
           {activeSong.lyrics.map((line, i) => (
             <div
               key={i}

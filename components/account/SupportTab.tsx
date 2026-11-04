@@ -34,18 +34,18 @@ const formatDate = (iso: string) =>
 // ── HELP TOPICS ──────────────────────────────────────────────────────────────
 function HelpTopics({ onSelectTab }: { onSelectTab: (tab: AccountTab) => void }) {
   const go = (tab: AccountTab, label: string) => (
-    <button type="button" className="text-[#4dff91] hover:underline underline-offset-4 cursor-pointer" onClick={() => onSelectTab(tab)}>
+    <button type="button" className="text-[#5FBF97] hover:underline underline-offset-4 cursor-pointer" onClick={() => onSelectTab(tab)}>
       {label}
     </button>
   );
   const topics: { q: string; a: ReactNode }[] = [
     {
-      q: 'How do I earn points?',
-      a: <>You get 40 points for joining. Earn more by completing quests on your {go('home', 'account Home')}, like adding a profile photo, joining the newsletter, and daily quests such as streaming A-Game&apos;s song of the day. Daily quests reset at midnight, Jamaica time.</>,
+      q: 'How do I earn Club Points?',
+      a: <>You get 40 Club Points for joining the Playaz Club. Earn more by completing quests on your {go('home', 'account Home')}, like adding a profile photo, joining the newsletter, and daily quests such as streaming A-Game&apos;s song of the day. Daily quests reset at midnight, Jamaica time.</>,
     },
     {
       q: 'How do I claim a reward?',
-      a: <>When your points reach a tier on the Reward Pass ({go('home', 'account Home')}), tap CLAIM on it and we&apos;ll be in touch about delivery. It&apos;s marked DELIVERED once it&apos;s on its way to you.</>,
+      a: <>When your Club Points reach a tier on the Reward Pass ({go('home', 'account Home')}), tap CLAIM on it and we&apos;ll be in touch about delivery. It&apos;s marked DELIVERED once it&apos;s on its way to you.</>,
     },
     {
       q: 'Where can I see my orders?',
@@ -71,7 +71,7 @@ function HelpTopics({ onSelectTab }: { onSelectTab: (tab: AccountTab) => void })
       <div className="flex flex-col divide-y divide-white/10" style={BODY}>
         {topics.map((t) => (
           <details key={t.q} className="group py-1">
-            <summary className="flex items-center justify-between gap-4 py-3 cursor-pointer list-none text-white hover:text-[#4dff91] [&::-webkit-details-marker]:hidden">
+            <summary className="flex items-center justify-between gap-4 py-3 cursor-pointer list-none text-white hover:text-[#5FBF97] [&::-webkit-details-marker]:hidden">
               {t.q}
               <ChevronDown className="w-4 h-4 flex-shrink-0 transition-transform group-open:rotate-180" aria-hidden="true" />
             </summary>
@@ -208,7 +208,7 @@ function RequestItem({ r, busy, onStatus }: { r: SupportRequest; busy: boolean; 
           </span>
           <span
             className={`px-2.5 py-1 rounded-full text-[0.65em] tracking-[0.15em] border ${
-              r.status === 'open' ? 'border-[#4dff91]/50 text-[#4dff91] bg-[#4dff91]/10' : 'border-white/15 text-white/60 bg-white/5'
+              r.status === 'open' ? 'border-[#5FBF97]/50 text-[#5FBF97] bg-[#5FBF97]/10' : 'border-white/15 text-white/60 bg-white/5'
             }`}
             style={SEMI}
           >
@@ -218,7 +218,7 @@ function RequestItem({ r, busy, onStatus }: { r: SupportRequest; busy: boolean; 
         </summary>
         <div className="flex flex-col gap-3 pb-4">
           {r.order_number && <p className="text-[0.85em] text-white/60">Order number: <span className="text-white/85">{r.order_number}</span></p>}
-          <p className="whitespace-pre-wrap break-words text-[0.9em] text-white/75 border-l-2 border-[#1a9e4a]/60 pl-3">{r.message}</p>
+          <p className="whitespace-pre-wrap break-words text-[0.9em] text-white/75 border-l-2 border-[#2C8663]/60 pl-3">{r.message}</p>
           <p className="text-[0.8em] text-white/50">
             {r.status === 'open'
               ? 'We’ll reply by email. To add details, reply to your confirmation email.'
@@ -276,18 +276,18 @@ export default function SupportTab({
 
       <Panel className="flex flex-col gap-5">
         <div className="flex items-start gap-3">
-          <MessageCircleMore className="w-5 h-5 mt-1 flex-shrink-0 text-[#4dff91]" aria-hidden="true" />
+          <MessageCircleMore className="w-5 h-5 mt-1 flex-shrink-0 text-[#5FBF97]" aria-hidden="true" />
           <div style={BODY}>
             <h2 className="text-[1.15em] text-white" style={SEMI}>Send us a message</h2>
             <p className="text-[0.85em] text-white/55">
               Prefer email? Write to{' '}
-              <a href={`mailto:${SUPPORT_EMAIL}`} className="text-[#4dff91] hover:underline underline-offset-4">{SUPPORT_EMAIL}</a>.
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="text-[#5FBF97] hover:underline underline-offset-4">{SUPPORT_EMAIL}</a>.
             </p>
           </div>
         </div>
         {sentRef && (
-          <div role="status" className="flex items-start gap-3 rounded-[10px] border border-[#4dff91]/40 bg-[#1a9e4a]/10 p-4" style={BODY}>
-            <Mail className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#4dff91]" aria-hidden="true" />
+          <div role="status" className="flex items-start gap-3 rounded-[10px] border border-[#5FBF97]/40 bg-[#2C8663]/10 p-4" style={BODY}>
+            <Mail className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#5FBF97]" aria-hidden="true" />
             <p className={`${SUCCESS_TEXT} text-[0.9em]`}>
               Message sent. Your reference is <strong>{sentRef}</strong>, and a copy is on its way to {email}.
             </p>

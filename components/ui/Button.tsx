@@ -48,6 +48,7 @@ export default function Button(props: AsLink | AsButton) {
   const inner = <span className="inline-flex items-center gap-2.5">{children}</span>;
 
   if (props.href !== undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { href, external, variant: _v, size: _s, className: _c, children: _ch, ...rest } = props as AsLink;
     const isExternal = external ?? /^(https?:|mailto:|tel:)/.test(href);
     if (isExternal) {
@@ -64,6 +65,7 @@ export default function Button(props: AsLink | AsButton) {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { variant: _v, size: _s, className: _c, children: _ch, type = 'button', ...rest } = props as AsButton;
   return (
     <button type={type} className={cls} {...rest}>

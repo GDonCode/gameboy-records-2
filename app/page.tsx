@@ -7,13 +7,13 @@ import FeaturedRelease from '@/components/home/FeaturedRelease';
 import ShowsFeature from '@/components/home/ShowsFeature';
 import JsonLd from '@/components/JsonLd';
 import { FEATURED_RELEASES } from '@/lib/releases';
-import { ARTIST, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
+import { ARTIST, SITE_DESCRIPTION, SITE_NAME, SITE_URL, OG_IMAGE } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: { absolute: `${SITE_NAME} — Independent label of ${ARTIST}` },
   description: SITE_DESCRIPTION,
   alternates: { canonical: '/' },
-  openGraph: { url: '/', title: SITE_NAME, description: SITE_DESCRIPTION },
+  openGraph: { url: '/', title: SITE_NAME, description: SITE_DESCRIPTION, images: [OG_IMAGE] },
 };
 
 const releasesJsonLd = FEATURED_RELEASES.map((r) => ({
