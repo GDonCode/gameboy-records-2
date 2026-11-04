@@ -1,201 +1,118 @@
-'use client';
-
-import { useState } from 'react';
-import { useParams, notFound, useRouter } from 'next/navigation';
+// app/shop/[slug]/page.tsx — Product
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '@/components/Header';
-import MobileBottomNav from '@/components/MobileBottomNav';
-import GameIconsBackground from '@/components/GameIconsBackground';
-import { MAX_CART_QUANTITY, getProductBySlug, getRelatedProducts } from '@/lib/products';
+import { notFound } from 'next/navigation';
+import PageShell from '@/components/PageShell';
+import JsonLd from '@/components/JsonLd';
+import Icon from '@/components/icons';
+import ProductPurchase from '@/components/shop/ProductPurchase';
+import { getProductBySlug, getRelatedProducts } from '@/lib/catalog';
+import { pointsForOrder } from '@/lib/club';
+import { formatPrice } from '@/lib/products';
+import { POINTS_NAME, SITE_NAME, SITE_URL } from '@/lib/site';
 
-export default function ProductPage() {
-  const params = useParams<{ slug: string }>();
-  const router = useRouter();
-  const [activeImage, setActiveImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [addToCartError, setAddToCartError] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState(1);
+type Props = { params: Promise<{ slug: string }> };
 
-  const product = getProductBySlug(params.slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const product = await getProductBySlug((await params).slug);
+  if (!product) return { title: 'Not found' };
+  const description = product.description.split('\n')[0].slice(0, 160);
+  return {
+    title: product.name,
+    description,
+    alternates: { canonical: `/shop/${product.slug}` },
+    openGraph: {
+      url: `/shop/${product.slug}`,
+      title: `${product.name} | ${SITE_NAME}`,
+      description,
+      images: product.images.slice(0, 1).map((src) => ({ url: src, alt: product.name })),
+    },
+  };
+}
 
-  if (!product) {
-    notFound();
-  }
+export default async function ProductPage({ params }: Props) {
+  const product = await getProductBySlug((await params).slug);
+  if (!product) notFound();
+  const related = await getRelatedProducts(product);
 
-  const related = getRelatedProducts(product);
-
-  async function handleAddToCart() {
-    if (!selectedSize || !product) return;
-
-    setIsAddingToCart(true);
-    setAddToCartError(null);
-
-    const res = await fetch('/api/cart', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId: product.id, size: selectedSize, quantity }),
-    });
-
-    setIsAddingToCart(false);
-
-    if (res.status === 401) {
-      router.push('/account/login');
-      return;
-    }
-
-    if (!res.ok) {
-      setAddToCartError('Failed to add item. Try again.');
-      return;
-    }
-
-    router.push('/cart');
-  }
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: product.images.map((src) => (src.startsWith('http') ? src : `${SITE_URL}${src}`)),
+    description: product.description,
+    sku: product.id,
+    category: product.categoryLabel,
+    brand: { '@type': 'Brand', name: SITE_NAME },
+    offers: {
+      '@type': 'Offer',
+      url: `${SITE_URL}/shop/${product.slug}`,
+      priceCurrency: product.currency,
+      price: product.price.toFixed(2),
+      availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+      seller: { '@id': `${SITE_URL}/#label` },
+    },
+  };
 
   return (
-    <>
-            <Header />
-      <MobileBottomNav />
-      <div className="relative w-full h-screen overflow-hidden" style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}>
-      <GameIconsBackground opacity={1.5} />
-      <div className="mobile-home-pad absolute inset-0 z-[1] overflow-y-auto px-8 py-10">
-        <div className="flex flex-col md:flex-row gap-10 md:items-start">
-          <div className="w-full md:w-[600px] flex-shrink-0">
-            <div style={{ aspectRatio: '1 / 1' }} className="relative w-full bg-[#F6F6F4] border-2 border-[#2f8a68]/10 overflow-hidden">
-              <Image src={product.images[activeImage]} alt={product.name} fill className="object-cover" />
-            </div>
-            {product.images.length > 1 && (
-              <div className="flex gap-3 mt-4">
-                {product.images.map((img, i) => (
-                  <button
-                    key={img}
-                    type="button"
-                    onClick={() => setActiveImage(i)}
-                    className={`relative w-16 h-16 border-2 ${i === activeImage ? 'border-[#1a9e4a]' : 'border-transparent'}`}
-                  >
-                    <Image src={img} alt={`${product.name} thumbnail ${i + 1}`} fill className="object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="flex-1">
-            <h1 style={{ fontFamily: "'Poppins', monospace" }} className="text-2xl text-[#FEFEFA] mb-2">
-              {product.name}
-            </h1>
-            <p style={{ fontFamily: "'Poppins', monospace" }} className="text-xl text-[#1a9e4a] mb-6">
-              ${product.price.toFixed(2)}
-            </p>
-            <p style={{ fontFamily: "'Poppins', monospace" }} className="text-[#e8f5ec]/80 mb-6">
-              {product.description}
-            </p>
-
-            <div className="mb-6">
-              <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#e8f5ec] mb-2">
-                Size
-              </h2>
-              <div className="flex gap-2">
-                {product.sizes.map((size) => (
-                  <button
-                    key={size}
-                    type="button"
-                    onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 border cursor-pointer ${
-                      selectedSize === size
-                        ? 'bg-[#1a9e4a] text-white border-[#1a9e4a]'
-                        : 'border-[#1a9e4a]/30 text-[#e8f5ec]'
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-[#e8f5ec] mb-2">
-                Quantity
-              </h2>
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  disabled={quantity <= 1}
-                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#e8f5ec] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  −
-                </button>
-                <span style={{ fontFamily: "'Poppins', monospace" }} className="w-8 text-center text-[#e8f5ec]">
-                  {quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => Math.min(MAX_CART_QUANTITY, q + 1))}
-                  disabled={quantity >= MAX_CART_QUANTITY}
-                  aria-label="Increase quantity"
-                  className="w-9 h-9 border border-[#1a9e4a]/30 text-[#e8f5ec] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              disabled={!selectedSize || isAddingToCart}
-              className="w-full py-3 bg-[#1a9e4a] text-white font-semibold disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {isAddingToCart ? 'Adding…' : 'Add to Cart'}
-            </button>
-            {addToCartError && (
-              <p style={{ fontFamily: "'Poppins', monospace" }} className="text-sm text-red-400 mt-2">
-                {addToCartError}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {related.length > 0 && (
-          <div className="mt-16">
-            <h2 style={{ fontFamily: "'Poppins', monospace" }} className="text-lg text-[#e8f5ec] mb-4">
-              You may also like
-            </h2>
-            <div className="flex flex-wrap gap-6">
-              {related.map((r) => (
-                <Link
-                  key={r.id}
-                  href={`/shop/${r.slug}`}
-                  className="group w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] bg-[linear-gradient(to_bottom,white_0%,white_18%,#a9cdb6_45%,#5fa584_68%,#1a9e4a_100%)]"
-                >
-                  <div style={{ aspectRatio: '4 / 5' }} className="relative w-full bg-[#F6F6F4] border-2 border-b-0 border-[#2f8a68]/10 overflow-hidden">
-                    <Image src={r.images[0]} alt={r.name} fill className="object-cover" />
-                  </div>
-                  <div className="w-full px-4 py-4">
-                    <span style={{ fontFamily: "'Poppins', monospace" }} className="block font-semibold text-white">
-                      {r.name}
-                    </span>
-                    <span style={{ fontFamily: "'Poppins', monospace" }} className="block font-semibold text-white">
-                      ${r.price.toFixed(2)}
-                    </span>
-                    <div className="w-full flex justify-end mt-2">
-                      <span
-                        style={{ fontFamily: "'Poppins', monospace" }}
-                        className="text-xs text-white transition-transform duration-200 group-hover:underline hover:scale-110 hover:underline"
-                      >
-                        View Product
-                      </span>
-                    </div>
-                  </div>
+    <PageShell>
+      <JsonLd data={jsonLd} />
+      <div className="on-light bg-bone text-ink">
+        <div className="container-site pt-8 pb-16 md:pt-12 md:pb-24">
+          <nav aria-label="Breadcrumb" className="mb-8">
+            <ol className="list-none p-0 m-0 flex items-center gap-2 text-[0.75rem] uppercase tracking-[0.16em] text-stone">
+              <li>
+                <Link href="/shop" className="hover:text-ink underline-offset-4 hover:underline">
+                  Shop
                 </Link>
-              ))}
+              </li>
+              <li aria-hidden="true">/</li>
+              <li>
+                <Link href={`/shop?type=${product.category}`} className="hover:text-ink underline-offset-4 hover:underline">
+                  {product.categoryLabel}
+                </Link>
+              </li>
+              <li aria-hidden="true">/</li>
+              <li aria-current="page" className="text-ink truncate">
+                {product.name}
+              </li>
+            </ol>
+          </nav>
+
+          <ProductPurchase product={product} points={pointsForOrder(product.price)} pointsName={POINTS_NAME} />
+        </div>
+      </div>
+
+      {related.length > 0 && (
+        <section aria-labelledby="related-title" className="bg-ink section-y">
+          <div className="container-site">
+            <div className="flex items-end justify-between gap-6 mb-10">
+              <h2 id="related-title" className="display m-0 text-[1.75rem] md:text-[2.25rem]">
+                Wear it with
+              </h2>
+              <Link href="/shop" className="zoom-content inline-flex text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-paper">
+                <span className="inline-flex items-center gap-2">
+                  All apparel <Icon name="arrow-right" className="w-3 h-3" />
+                </span>
+              </Link>
             </div>
+            <ul className="list-none p-0 m-0 grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
+              {related.map((r) => (
+                <li key={r.id} className={related.length === 3 ? 'last:hidden lg:last:block' : ''}>
+                  <Link href={`/shop/${r.slug}`} className="zoom-media group block">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-[#E2DED2]">
+                      <Image src={r.images[0]} alt={r.name} fill sizes="(min-width: 1024px) 30vw, 50vw" className="object-cover" />
+                    </div>
+                    <p className="m-0 mt-4 text-[0.95rem]">{r.name}</p>
+                    <p className="m-0 mt-1 text-[0.85rem] text-mist">{formatPrice(r.price, r.currency)}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-        )}
-      </div>
-      </div>
-    </>
+        </section>
+      )}
+    </PageShell>
   );
 }

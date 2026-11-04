@@ -2,7 +2,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { MAX_CART_QUANTITY, getProduct, products } from '@/lib/products';
+import { MAX_CART_QUANTITY } from '@/lib/products';
+import { getCatalog, getProduct } from '@/lib/catalog';
 
 // A whole number from 1 to MAX_CART_QUANTITY, or null.
 function validQuantity(value: unknown): number | null {
@@ -26,10 +27,11 @@ export async function GET() {
     return NextResponse.json({ error: 'Could not load your cart.' }, { status: 500 });
   }
 
+  const { products } = await getCatalog();
   const items = (data ?? []).map((row) => {
     const product = products.find((p) => p.id === row.product_id);
     // Products taken out of the shop stay in the cart, flagged, so the member sees what happened.
-    const available = !!getProduct(row.product_id) && !!product?.sizes.includes(row.size);
+    const available = !!product?.inStock && !!product?.sizes.includes(row.size);
     return {
       id: row.id,
       product_id: row.product_id,
@@ -56,8 +58,8 @@ export async function POST(request: Request) {
   const { productId, size, quantity } = (await request.json().catch(() => ({}))) ?? {};
 
   // Only real, listed products in sizes they come in.
-  const product = typeof productId === 'string' ? getProduct(productId) : undefined;
-  if (!product) {
+  const product = typeof productId === 'string' ? await getProduct(productId) : undefined;
+  if (!product || !product.inStock) {
     return NextResponse.json({ error: 'That product isn’t available.' }, { status: 400 });
   }
   if (typeof size !== 'string' || !product.sizes.includes(size)) {
@@ -135,7 +137,7 @@ export async function PATCH(request: Request) {
     .eq('user_id', session.user.id)
     .maybeSingle();
   if (!line) return NextResponse.json({ error: 'That item isn’t in your cart.' }, { status: 404 });
-  if (!getProduct(line.product_id)) {
+  if (!(await getProduct(line.product_id))) {
     return NextResponse.json({ error: 'That product isn’t available anymore.' }, { status: 400 });
   }
 
@@ -163,7 +165,7 @@ async function changeSize(userId: string, id: string, size: unknown) {
     .maybeSingle();
   if (!line) return NextResponse.json({ error: 'That item isn’t in your cart.' }, { status: 404 });
 
-  const product = getProduct(line.product_id);
+  const product = await getProduct(line.product_id);
   if (!product) return NextResponse.json({ error: 'That product isn’t available.' }, { status: 400 });
   if (typeof size !== 'string' || !product.sizes.includes(size)) {
     return NextResponse.json({ error: 'Choose a size.' }, { status: 400 });

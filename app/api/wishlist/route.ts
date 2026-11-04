@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { getProduct, products } from '@/lib/products';
+import { getCatalog, getProduct } from '@/lib/catalog';
 import { awardPoints } from '@/lib/points';
 import { FIRST_SAVE_POINTS } from '@/lib/quests';
 
@@ -23,6 +23,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Could not load your saved items.' }, { status: 500 });
   }
 
+  const { products } = await getCatalog();
   const items = (data ?? []).map((row) => {
     const product = products.find((p) => p.id === row.product_id);
     return {
@@ -34,7 +35,7 @@ export async function GET() {
       slug: product?.slug ?? row.product_id,
       sizes: product?.sizes ?? [],
       // Saved items that were taken out of the shop stay listed, flagged, until the member removes them.
-      available: !!getProduct(row.product_id),
+      available: !!product?.inStock,
     };
   });
 
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
 
   const { productId } = (await request.json().catch(() => ({}))) ?? {};
 
-  if (typeof productId !== 'string' || !getProduct(productId)) {
+  if (typeof productId !== 'string' || !(await getProduct(productId))) {
     return NextResponse.json({ error: 'That product isn’t available.' }, { status: 400 });
   }
 
