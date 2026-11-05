@@ -45,7 +45,7 @@ export default function Hero() {
         preload="metadata"
         aria-hidden="true"
         tabIndex={-1}
-        className="absolute inset-0 -z-10 w-full h-full object-cover object-top"
+        className="absolute inset-0 -z-10 w-full h-full object-cover object-top -scale-x-100"
       />
       <div
         className="absolute inset-0 -z-10"
@@ -53,7 +53,7 @@ export default function Hero() {
         style={{ background: 'linear-gradient(to bottom, rgba(11,10,7,0.55) 0%, rgba(11,10,7,0.1) 30%, rgba(11,10,7,0.35) 60%, rgba(11,10,7,0.96) 100%)' }}
       />
 
-      <div className="container-site flex flex-col justify-end pb-16 md:pb-24 pt-32">
+      <div className="container-site flex flex-col justify-center pt-12 pb-16 md:pt-16 md:pb-24">
         <p className="eyebrow text-gold-light m-0 mb-6 animate-fade-up">Singer · Songwriter · Guitarist</p>
         <NeonHeading as="h1" id="hero-title" size="xl" align="left" className="max-w-[16ch]">
           {ARTIST}
