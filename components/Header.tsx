@@ -62,7 +62,7 @@ function DPad({ className }: { className: string }) {
       <g fill="#0F3326" fillOpacity={0.45} transform="translate(0 0.35)">
         {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
       </g>
-      <g fill="#fff">
+      <g fill="#A8895A">
         {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
       </g>
     </svg>

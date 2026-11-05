@@ -54,12 +54,16 @@ export default function Hero() {
       />
 
       <div className="container-site flex flex-col justify-end pb-16 md:pb-24 pt-32">
-        <p className="eyebrow text-gold-light m-0 mb-6 animate-fade-up">Gameboy Records · Founded by {ARTIST}</p>
+        <p className="eyebrow text-gold-light m-0 mb-6 animate-fade-up">Singer · Songwriter · Guitarist</p>
         <NeonHeading as="h1" id="hero-title" size="xl" align="left" className="max-w-[16ch]">
-          Realest sound. Truest vision.
+          {ARTIST}
         </NeonHeading>
-        <p className="mt-6 mb-0 max-w-[46ch] text-[1rem] md:text-[1.125rem] leading-relaxed text-paper/85 animate-fade-up">
-          An independent label. Music, limited apparel and live shows from {ARTIST}, released on our own terms.
+        <p className="mt-5 mb-0 text-[1.1rem] md:text-[1.35rem] font-semibold uppercase tracking-[0.18em] text-paper animate-fade-up">
+          Realest sound. Truest vision.
+        </p>
+        <p className="mt-5 mb-0 max-w-[48ch] text-[1rem] md:text-[1.125rem] leading-relaxed text-paper/85 animate-fade-up">
+          Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. The music, the merch and the shows
+          come straight from him, through his own label, Gameboy Records.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row gap-3">
           <Button href="/shop" variant="primary" size="lg">
