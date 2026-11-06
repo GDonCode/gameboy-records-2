@@ -5,7 +5,7 @@
 'use client';
 
 import { useState } from 'react';
-import NeonHeading from '@/components/NeonHeading';
+import PageTitle from '@/components/PageTitle';
 import GameIconsBackground from '@/components/GameIconsBackground';
 import type { Show } from '@/lib/shows';
 
@@ -27,7 +27,7 @@ function Badge({ viewBox, d, label, size = 'w-7 h-7' }: { viewBox: string; d: st
           <path d={d} />
         </svg>
       </span>
-      <span style={{ fontFamily: SEMI, fontSize: '0.85em', letterSpacing: '0.14em', color: '#4dff91' }}>{label}</span>
+      <span style={{ fontFamily: SEMI, fontSize: '0.85em', letterSpacing: '0.14em', color: '#E2BA0A' }}>{label}</span>
     </div>
   );
 }
@@ -38,8 +38,8 @@ function ShowRow({ show }: { show: Show }) {
   const directions = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${show.venue}, ${show.address}`)}`;
   const label = show.status === 'sold-out' ? 'SOLD OUT' : show.status === 'announced' ? 'ON SALE SOON' : show.status === 'members-presale' ? 'MEMBERS PRESALE' : 'TICKETS';
   return (
-    <li className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 px-6 py-5 text-left border border-[rgba(26,158,74,0.25)] bg-[rgba(255,255,255,0.03)]">
-      <span style={{ fontFamily: SEMI, letterSpacing: '0.14em', color: '#4dff91' }} className="sm:w-[150px] shrink-0">
+    <li className="panel-ink flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 px-6 py-5 text-left">
+      <span style={{ fontFamily: SEMI, letterSpacing: '0.14em', color: '#E2BA0A' }} className="sm:w-[150px] shrink-0">
         {date}
       </span>
       <span className="flex-1" style={{ fontFamily: BODY }}>
@@ -51,7 +51,7 @@ function ShowRow({ show }: { show: Show }) {
         </a>
       </span>
       {show.ticketUrl && (show.status === 'on-sale' || show.status === 'members-presale') ? (
-        <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer" className="shows-notify-btn zoom-content justify-center" aria-label={`${label}: ${show.city} (opens in a new tab)`}>
+        <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer" className="shows-notify-btn btn-hard zoom-content justify-center" aria-label={`${label}: ${show.city} (opens in a new tab)`}>
           <span>{label}</span>
         </a>
       ) : (
@@ -89,8 +89,7 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
 
   return (
     <div
-      className="relative flex-1 overflow-hidden min-h-[calc(100svh-var(--header-h))]"
-      style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%)' }}
+      className="paper-ink relative flex-1 overflow-hidden min-h-[calc(100svh-var(--header-h))]"
     >
       <style>{`
         .shows-placeholder-icon {
@@ -100,21 +99,19 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
           width: 64px;
           height: 64px;
           border-radius: 50%;
-          background: linear-gradient(175deg, #0A9A48 0%, #067F3A 100%);
-          border: 1px solid #067F3A;
-          border-bottom-color: #044F24;
-          border-right-color: #05652E;
-          box-shadow: 0 4px 0 #044F24, 0 6px 16px rgba(26,86,64,0.5), inset 0 1px 0 rgba(255,255,255,0.35);
+          background: #067F3A;
+          border: 3px solid #F5F5F5;
+          box-shadow: 4px 4px 0 #E2BA0A;
         }
         .shows-email-input {
           flex: 1 1 auto;
           min-width: 0;
           height: 48px;
           padding: 0 1rem;
-          border: 1px solid rgba(26,158,74,0.25);
-          border-radius: 2px;
+          border: 2px solid rgba(245,245,245,0.4);
+          border-radius: 0;
           outline: none;
-          background: rgba(255,255,255,0.05);
+          background: #15130F;
           color: #fff;
           font-family: 'Poppins', sans-serif;
           font-size: 0.9em;
@@ -122,8 +119,7 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
         }
         .shows-email-input::placeholder { color: rgba(255,255,255,0.45); }
         .shows-email-input:focus {
-          border-color: #4dff91;
-          box-shadow: 0 0 0 1px #4dff91, 0 0 12px rgba(77,255,145,0.15);
+          border-color: #E2BA0A;
         }
         /* Primary call to action, in the gold: the original raised button shape. */
         .shows-notify-btn {
@@ -135,27 +131,21 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
           align-items: center;
           padding: 0 22px;
           height: 48px;
-          background: linear-gradient(175deg, #F0C928 0%, #E2BA0A 100%);
-          border: 1px solid #E2BA0A;
-          border-bottom-color: #8A7006;
-          border-right-color: #B39208;
-          box-shadow: 0 4px 0 #8A7006, 0 6px 16px rgba(138,112,6,0.45), inset 0 1px 0 rgba(255,255,255,0.45);
+          background: #E2BA0A;
           cursor: pointer;
-          transition: box-shadow 0.07s ease, background 0.08s ease;
           user-select: none;
           white-space: nowrap;
         }
-        .shows-notify-btn:hover:not(:disabled) {
-          background: linear-gradient(175deg, #F5D44A 0%, #E8C21C 100%);
-          box-shadow: 0 4px 0 #8A7006, 0 8px 18px rgba(138,112,6,0.5), 0 0 14px rgba(226,186,10,0.45);
-        }
+        .shows-notify-btn:hover:not(:disabled) { background: #F0C928; }
         .shows-notify-btn:disabled { opacity: 0.5; cursor: not-allowed; }
       `}</style>
 
       <GameIconsBackground />
 
       <div className="relative z-[1] flex flex-col items-center px-6 py-20 text-center">
-        <NeonHeading>Shows</NeonHeading>
+        <PageTitle tone="dark" ghost="Live" className="w-full max-w-[900px]">
+          Shows
+        </PageTitle>
         <p className="mt-5 max-w-[560px]" style={{ fontFamily: BODY, fontSize: '1.1em', color: '#e8f5ec', lineHeight: 1.6, opacity: 0.8 }}>
           {shows.length > 0 ? 'Upcoming dates. Playaz Club members get first access to tickets.' : 'Tour dates are being booked. Be the first to know when we announce a show near you.'}
         </p>
@@ -197,11 +187,11 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
               required
               className="shows-email-input"
             />
-            <button type="submit" disabled={isSubmitting} className="shows-notify-btn zoom-content justify-center">
+            <button type="submit" disabled={isSubmitting} className="shows-notify-btn btn-hard zoom-content justify-center">
               <span>{isSubmitting ? 'SENDING…' : 'NOTIFY ME'}</span>
             </button>
           </form>
-          <p role="status" aria-live="polite" className="mt-3 min-h-[1.4em]" style={{ fontFamily: BODY, fontSize: '0.85em', color: status.type === 'success' ? '#4dff91' : '#ff8a8a' }}>
+          <p role="status" aria-live="polite" className="mt-3 min-h-[1.4em]" style={{ fontFamily: BODY, fontSize: '0.85em', color: status.type === 'success' ? '#38B26A' : '#F0A39C' }}>
             {status.message}
           </p>
         </div>

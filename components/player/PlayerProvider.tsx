@@ -63,7 +63,7 @@ export default function PlayerProvider({ children }: { children: ReactNode }) {
       {current && (
         <section
           aria-label="Now playing"
-          className={`fixed z-[200] right-3 left-3 bottom-3 sm:left-auto sm:right-6 sm:bottom-6 sm:w-[360px] bg-ink border border-line-inv shadow-soft transition-[transform,opacity] duration-[400ms] ease-[var(--ease-quiet)] ${
+          className={`fixed z-[200] right-3 left-3 bottom-3 sm:left-auto sm:right-6 sm:bottom-6 sm:w-[360px] bg-ink border-2 border-paper/40 shadow-[6px_6px_0_var(--color-gold)] transition-[transform,opacity] duration-[400ms] ease-[var(--ease-quiet)] ${
             visible ? 'translate-y-0 opacity-100' : 'translate-y-[calc(100%+40px)] opacity-0 pointer-events-none'
           }`}
         >

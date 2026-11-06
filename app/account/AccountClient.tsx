@@ -85,8 +85,7 @@ export default function AccountClient({ user, orders, addresses, security, suppo
   return (
     <div
       ref={scrollRef}
-            className="flex-1 min-h-0 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden"
-      style={{ background: '#0B0A07' }}
+      className="paper-ink flex-1 min-h-0 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden"
     >
       <AccountSidebar
         displayName={user.display_name}

@@ -34,7 +34,7 @@ export default function MerchFeature() {
         </ul>
 
         <div className="mt-12 flex justify-center">
-          <Button href="/shop" variant="light" size="lg" className="btn-hard">
+          <Button href="/shop" variant="light" size="lg" >
             Shop all apparel
             <Icon name="arrow-right" className="w-3.5 h-3.5" />
           </Button>

@@ -34,7 +34,7 @@ function OrderCard({ order }: { order: Order }) {
   const itemCount = order.items.reduce((n, i) => n + i.quantity, 0);
 
   return (
-    <article className="bg-[#15130F] border border-[rgba(6,127,58,0.3)] rounded-[12px] overflow-hidden" style={BODY}>
+    <article className="bg-[#15130F] border border-[rgba(6,127,58,0.3)] rounded-none overflow-hidden" style={BODY}>
       <header className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-[rgba(6,127,58,0.2)]">
         <div className="flex flex-col">
           <span className="text-white" style={MONO}>Order #{order.number}</span>
@@ -50,7 +50,7 @@ function OrderCard({ order }: { order: Order }) {
       <ul className="flex flex-col divide-y divide-white/5">
         {order.items.map((item) => (
           <li key={`${item.product_id}-${item.size}`} className="flex items-center gap-4 px-5 py-3">
-            <Link href={`/shop/${item.slug}`} className="relative w-14 h-14 flex-shrink-0 rounded-[8px] overflow-hidden bg-[#EAEAEA]">
+            <Link href={`/shop/${item.slug}`} className="relative w-14 h-14 flex-shrink-0 rounded-none overflow-hidden bg-[#EAEAEA]">
               {item.image && <Image src={item.image} alt={item.name} fill className="object-cover" />}
             </Link>
             <div className="flex flex-col min-w-0 flex-1">
@@ -89,7 +89,7 @@ export default function OrdersTab({ orders }: { orders: Order[] }) {
     <div className="flex flex-col gap-8">
       <TabHeading title="My orders" subtitle="Track, manage and return your orders." />
 
-      <div role="tablist" aria-label="Order status" className="inline-flex self-start gap-1 p-1 rounded-[10px] bg-white/5 border border-white/10">
+      <div role="tablist" aria-label="Order status" className="inline-flex self-start gap-1 p-1 rounded-none bg-white/5 border border-white/10">
         {views.map((v) => {
           const active = v.value === view;
           return (
@@ -99,7 +99,7 @@ export default function OrdersTab({ orders }: { orders: Order[] }) {
               role="tab"
               aria-selected={active}
               onClick={() => setView(v.value)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-[8px] text-[0.85em] tracking-[0.08em] uppercase cursor-pointer transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-none text-[0.85em] tracking-[0.08em] uppercase cursor-pointer transition-colors ${
                 active ? 'bg-[#067F3A] text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
               }`}
               style={MONO}
@@ -130,7 +130,7 @@ export default function OrdersTab({ orders }: { orders: Order[] }) {
           {view === 'current' && (
             <Link
               href="/shop"
-              className="px-5 py-2.5 rounded-[6px] bg-[#067F3A] text-white text-[0.85em] tracking-[0.1em] hover:bg-[#05652E] transition-colors"
+              className="px-5 py-2.5 rounded-none bg-[#067F3A] text-white text-[0.85em] tracking-[0.1em] hover:bg-[#05652E] transition-colors"
               style={BODY}
             >
               BROWSE THE SHOP

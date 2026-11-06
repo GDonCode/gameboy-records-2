@@ -10,7 +10,9 @@
    Shadow:    one soft shadow for overlays only (`shadow-soft`)
    Grid:      4 columns on phones, 12 from 1024px; 16px / 24px / 32px gaps
    Motion:    buttons and links keep their container still; the content inside zooms on hover
-   Titles:    page titles are flickering neon signs (components/NeonHeading.tsx), always on ink
+   Surfaces:  two, both with a printed-paper grain: paper (browse: home, shop, about) and ink (play and member: shows,
+              trivia, karaoke, account). Titles are heavy type over a huge outlined ghost of the word (components/PageTitle.tsx)
+   Edges:     hard offset shadows on buttons and framed pictures; --edge is ink on paper and paper on ink
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* ── FONTS ─────────────────────────────────────────────────────────────────── */
@@ -70,7 +72,9 @@ html {
 body {
   margin: 0;
   min-height: 100dvh;
-  background: var(--color-ink);
+  background-color: var(--color-ink);
+  background-image: var(--grain-dark);
+  background-size: 320px 320px;
   color: var(--color-paper);
   font-family: var(--font-sans);
   font-weight: 400;
@@ -88,6 +92,8 @@ body {
   outline-offset: 3px;
 }
 .on-light :focus-visible { outline-color: var(--color-green-deep); }
+:root { --edge: var(--color-paper); }
+.on-light { --edge: var(--color-ink); }
 
 /* Skip link: hidden until focused. */
 .skip-link {
@@ -168,8 +174,8 @@ body {
   width: 100%;
   height: 48px;
   padding: 0 16px;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--color-line-inv);
+  border-radius: 0;
+  border: 2px solid rgba(245, 245, 245, 0.3);
   background: var(--color-ink-2);
   color: var(--color-paper);
   font: inherit;
@@ -182,10 +188,10 @@ body {
 .field-light {
   background: #fff;
   color: var(--color-ink);
-  border-color: var(--color-line);
+  border-color: var(--color-ink);
 }
 .field-light::placeholder { color: rgba(92, 90, 85, 0.8); }
-.field-light:hover { border-color: rgba(11, 10, 7, 0.3); }
+.field-light:hover { border-color: var(--color-green-deep); }
 .field-light:focus { border-color: var(--color-green-deep); }
 textarea.field { height: auto; padding-block: 12px; resize: vertical; }
 select.field { appearance: none; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 40px; }
@@ -217,82 +223,11 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
   --home-btn-space: 0px;
 }
 
-/* ── NEON HEADING (components/NeonHeading.tsx) ───────────────────────────── */
-/* A softly lit neon sign: pale mint core with a gentle green halo. Switches on with a brief flicker,
-   then breathes very slowly. Both animations are skipped for reduced motion. */
-.neon-heading {
-  margin: 0;
-  font-family: 'Poppins_semibold', 'Poppins', sans-serif;
-  font-weight: normal;
-  line-height: 1.05;
-  color: #d9ffe8;
-  text-transform: uppercase;
-  text-shadow:
-    0 0 1px rgba(255, 255, 255, 0.42),
-    0 0 4px rgba(77, 255, 145, 0.6),
-    0 0 10px rgba(77, 255, 145, 0.42),
-    0 0 24px rgba(77, 255, 145, 0.27),
-    0 0 48px rgba(26, 158, 74, 0.21);
-  animation: neon-on 1.6s ease-out both, neon-breathe 7s ease-in-out 1.6s infinite;
-}
-.neon-heading--lg {
-  font-size: clamp(1.9rem, 7.2vw, 3.25rem);
-  letter-spacing: clamp(0.08em, 1.6vw, 0.2em);
-}
-.neon-heading--xl {
-  font-size: clamp(2.4rem, 9vw, 5.5rem);
-  letter-spacing: clamp(0.06em, 1.2vw, 0.14em);
-}
-.neon-heading--sm {
-  font-size: 1rem;
-  letter-spacing: 0.24em;
-}
-.neon-kicker {
-  font-family: 'Poppins', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.35em;
-  color: #3dc97e;
-  text-shadow: 0 0 10px rgba(61, 201, 126, 0.21);
-}
-
-/* A sign switching on: a couple of gentle stutters, then steady. */
-@keyframes neon-on {
-  0% { opacity: 0.45; }
-  8% { opacity: 0.95; }
-  12% { opacity: 0.6; }
-  20% { opacity: 1; }
-  24% { opacity: 0.75; }
-  34%, 100% { opacity: 1; }
-}
-@keyframes neon-breathe {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.07); }
-}
-/* Per-letter flutter: a tired tube that's steady most of the time, then stutters for a split second.
-   It dims rather than going fully dark, the way a failing neon tube does. */
-.neon-letter { display: inline-block; }
-.neon-letter--flutter {
-  animation: neon-flutter var(--flutter-duration, 9s) linear var(--flutter-delay, 0s) infinite;
-}
-@keyframes neon-flutter {
-  0%, 88%, 100% { opacity: 1; }
-  88.6% { opacity: 0.55; }
-  89.2% { opacity: 1; }
-  90.4% { opacity: 0.32; }
-  91% { opacity: 0.85; }
-  91.5% { opacity: 0.45; }
-  92.4% { opacity: 1; }
-  95.5% { opacity: 1; }
-  96% { opacity: 0.7; }
-  96.6% { opacity: 1; }
-}
-
-
 /* ── PAPER GRAIN + HARD-EDGE STYLE ─────────────────────────────────────────── */
 /* Printed-paper texture, generated in SVG so there's no image to load: fine speckle plus short fibres. */
 :root {
   --grain-light: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='a'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .22 0 0 0 0 .2 0 0 0 0 .12 0 0 0 1.1 -.46'/></filter><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='.06 .9' numOctaves='2' stitchTiles='stitch' seed='4'/><feColorMatrix values='0 0 0 0 .3 0 0 0 0 .26 0 0 0 0 .15 0 0 0 .9 -.5'/></filter><rect width='100%' height='100%' filter='url(%23a)'/><rect width='100%' height='100%' filter='url(%23b)'/></svg>");
-  --grain-dark: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='a'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch' seed='9'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 -.4'/></filter><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='.05 .9' numOctaves='2' stitchTiles='stitch' seed='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .8 -.5'/></filter><rect width='100%' height='100%' filter='url(%23a)'/><rect width='100%' height='100%' filter='url(%23b)'/></svg>");
+  --grain-dark: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='a'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch' seed='9'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .36 -.15'/></filter><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='.05 .9' numOctaves='2' stitchTiles='stitch' seed='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .35 -.24'/></filter><rect width='100%' height='100%' filter='url(%23a)'/><rect width='100%' height='100%' filter='url(%23b)'/></svg>");
 }
 @utility paper {
   background-color: var(--color-paper);
@@ -321,29 +256,41 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
 }
 /* Offset "printed" shadow, used on buttons and framed pictures. */
 @utility hard {
-  box-shadow: 6px 6px 0 var(--color-ink);
+  box-shadow: 6px 6px 0 var(--edge);
+}
+@utility frame {
+  border: 3px solid var(--edge);
 }
 .btn-hard {
-  border: 2.5px solid var(--color-ink);
-  box-shadow: 4px 4px 0 var(--color-ink);
-  transition: transform 120ms ease, box-shadow 120ms ease, background-color 300ms;
+  border: 2.5px solid var(--edge);
+  box-shadow: 4px 4px 0 var(--edge);
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 300ms, color 300ms;
 }
-.btn-hard:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--color-ink); }
-.btn-hard:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--color-ink); }
-.btn-hard-inv { border-color: var(--color-paper); box-shadow: 4px 4px 0 var(--color-paper); }
-.btn-hard-inv:hover { box-shadow: 6px 6px 0 var(--color-paper); }
-.btn-hard-inv:active { box-shadow: 0 0 0 var(--color-paper); }
+.btn-hard:hover:not(:disabled) { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--edge); }
+.btn-hard:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--edge); }
+
+/* Framed panels. Ink panels on ink surfaces, white panels on paper. */
+.panel-ink {
+  background: var(--color-ink-2);
+  border: 2px solid rgba(245, 245, 245, 0.22);
+  box-shadow: 6px 6px 0 var(--color-green-deep);
+}
+.panel-paper {
+  background: #fff;
+  border: 3px solid var(--color-ink);
+  box-shadow: 6px 6px 0 var(--color-ink);
+}
 
 /* Section title: the word sits over a huge outlined copy of itself. */
-.ghost-title { position: relative; display: grid; place-items: center; min-height: 7rem; overflow: hidden; text-align: center; }
+.ghost-title { position: relative; display: grid; place-items: center; min-height: clamp(3.6rem, 14vw, 8.5rem); overflow: hidden; text-align: center; }
 .ghost-title__ghost {
   position: absolute; inset: 0; display: grid; place-items: center;
   font-weight: 700; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase;
-  font-size: clamp(3.4rem, 16vw, 10rem);
+  font-size: clamp(3.4rem, 14vw, 8.5rem);
   color: transparent; -webkit-text-stroke: 2px rgba(6, 127, 58, 0.3);
   user-select: none; pointer-events: none;
 }
-.on-ink .ghost-title__ghost { -webkit-text-stroke-color: rgba(226, 186, 10, 0.32); }
+.on-ink .ghost-title__ghost, .ghost-title--dark .ghost-title__ghost { -webkit-text-stroke-color: rgba(226, 186, 10, 0.32); }
 
 /* Scrolling ribbon. Stops for reduced motion. */
 .ribbon-track { display: flex; width: max-content; animation: ribbon 36s linear infinite; }

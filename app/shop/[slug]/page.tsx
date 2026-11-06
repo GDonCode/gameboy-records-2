@@ -58,7 +58,7 @@ export default async function ProductPage({ params }: Props) {
   return (
     <PageShell>
       <JsonLd data={jsonLd} />
-      <div className="on-light bg-bone text-ink">
+      <div className="on-light paper text-ink">
         <div className="container-site pt-8 pb-16 md:pt-12 md:pb-24">
           <nav aria-label="Breadcrumb" className="mb-8">
             <ol className="list-none p-0 m-0 flex items-center gap-2 text-[0.75rem] uppercase tracking-[0.16em] text-stone">
@@ -83,7 +83,7 @@ export default async function ProductPage({ params }: Props) {
       </div>
 
       {related.length > 0 && (
-        <section aria-labelledby="related-title" className="bg-ink section-y">
+        <section aria-labelledby="related-title" className="paper-ink border-t-4 border-paper section-y">
           <div className="container-site">
             <div className="flex items-end justify-between gap-6 mb-10">
               <h2 id="related-title" className="display m-0 text-[1.75rem] md:text-[2.25rem]">
@@ -99,7 +99,7 @@ export default async function ProductPage({ params }: Props) {
               {related.map((r) => (
                 <li key={r.id} className={related.length === 3 ? 'last:hidden lg:last:block' : ''}>
                   <Link href={`/shop/${r.slug}`} className="zoom-media group block">
-                    <div className="relative aspect-[4/5] overflow-hidden bg-[#EAEAEA]">
+                    <div className="frame relative aspect-[4/5] overflow-hidden bg-[#EAEAEA]">
                       <Image src={r.images[0]} alt={r.name} fill sizes="(min-width: 1024px) 30vw, 50vw" className="object-cover" />
                     </div>
                     <p className="m-0 mt-4 text-[0.95rem]">{r.name}</p>

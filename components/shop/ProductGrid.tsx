@@ -19,11 +19,11 @@ export default function ProductGrid({ products }: { products: Product[] }) {
         role="status"
         aria-live="polite"
         style={{ fontFamily: "'Poppins', sans-serif" }}
-        className={status ? 'mb-4 rounded-[6px] border border-[#ff6b6b]/40 bg-[#ff6b6b]/10 px-3 py-2 text-[13px] text-[#ffb3b3]' : 'sr-only'}
+        className={status ? 'mb-4 border-2 border-danger bg-danger/5 px-3 py-2 text-[13px] text-danger' : 'sr-only'}
       >
         {status ?? ''}
       </p>
-      <ul className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 list-none p-0 m-0">
+      <ul className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8 list-none p-0 m-0">
         {products.map((product, i) => (
           <li key={product.id}>
             <ProductCard

@@ -27,7 +27,7 @@ export default function ClubBand() {
             </li>
           ))}
         </ul>
-        <Button href="/account/login?mode=register" variant="dark" size="lg" className="btn-hard mt-2">
+        <Button href="/account/login?mode=register" variant="dark" size="lg" className="mt-2">
           Create account
           <Icon name="arrow-right" className="w-3.5 h-3.5" />
         </Button>

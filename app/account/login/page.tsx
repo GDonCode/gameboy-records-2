@@ -1,7 +1,7 @@
 // app/account/login/page.tsx — Sign in / Join the Playaz Club
 import type { Metadata } from 'next';
 import PageShell from '@/components/PageShell';
-import NeonHeading from '@/components/NeonHeading';
+import PageTitle from '@/components/PageTitle';
 import AuthForm from '@/components/AuthForm';
 import { CLUB_NAME } from '@/lib/site';
 
@@ -16,10 +16,10 @@ export default async function AccountLoginPage({ searchParams }: { searchParams:
   const { mode } = await searchParams;
   return (
     <PageShell>
-      <div className="bg-ink pt-14 md:pt-20">
-        <NeonHeading kicker="Members" subtitle="Club Points · Early access · Rewards">
+      <div className="paper-ink pt-12 md:pt-16">
+        <PageTitle tone="dark" ghost="Join" kicker="Members" subtitle="Club Points · Early access · Rewards">
           {CLUB_NAME}
-        </NeonHeading>
+        </PageTitle>
       </div>
       <AuthForm initialMode={mode === 'register' ? 'register' : 'signin'} />
     </PageShell>

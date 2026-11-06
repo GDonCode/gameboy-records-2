@@ -47,11 +47,11 @@ export default function Hero() {
           Reggae and dancehall out of Jamaica. The music, the merch and the shows come straight from him, through his own label.
         </p>
         <div className="mt-9 flex flex-col sm:flex-row gap-4">
-          <Button href="/shop" variant="green" size="lg" className="btn-hard">
+          <Button href="/shop" variant="green" size="lg" >
             Shop the collection
             <Icon name="arrow-right" className="w-3.5 h-3.5" />
           </Button>
-          <Button href="/shows" variant="light" size="lg" className="btn-hard">
+          <Button href="/shows" variant="light" size="lg" >
             Get tickets
           </Button>
         </div>

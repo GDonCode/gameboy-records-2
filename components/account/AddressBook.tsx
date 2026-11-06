@@ -148,7 +148,7 @@ function AddressForm({
   );
 
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-[10px] border border-[#067F3A]/40 bg-[#067F3A]/5 p-5" style={BODY}>
+    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-none border border-[#067F3A]/40 bg-[#067F3A]/5 p-5" style={BODY}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="sm:col-span-2">
           <Field id="addr-country_code" label="Country" error={errors.country_code}>
@@ -296,7 +296,7 @@ export default function AddressBook({ initialAddresses }: { initialAddresses: Ad
       )}
 
       {mode.kind === 'list' && addresses.length === 0 && (
-        <div className="flex flex-col items-center text-center gap-4 rounded-[10px] border border-dashed border-white/15 py-10 px-4">
+        <div className="flex flex-col items-center text-center gap-4 rounded-none border border-dashed border-white/15 py-10 px-4">
           <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#067F3A]/15 border border-[#067F3A]/40">
             <MapPin className="w-5 h-5 text-[#38B26A]" strokeWidth={2} />
           </span>
@@ -325,7 +325,7 @@ export default function AddressBook({ initialAddresses }: { initialAddresses: Ad
             ) : (
               <li
                 key={a.id}
-                className={`flex flex-col gap-4 rounded-[10px] border p-5 ${
+                className={`flex flex-col gap-4 rounded-none border p-5 ${
                   a.is_default ? 'border-[#38B26A]/60 bg-[#067F3A]/10' : 'border-white/10 bg-white/[0.02]'
                 }`}
               >

@@ -286,7 +286,7 @@ export default function SupportTab({
           </div>
         </div>
         {sentRef && (
-          <div role="status" className="flex items-start gap-3 rounded-[10px] border border-[#38B26A]/40 bg-[#067F3A]/10 p-4" style={BODY}>
+          <div role="status" className="flex items-start gap-3 rounded-none border border-[#38B26A]/40 bg-[#067F3A]/10 p-4" style={BODY}>
             <Mail className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#38B26A]" aria-hidden="true" />
             <p className={`${SUCCESS_TEXT} text-[0.9em]`}>
               Message sent. Your reference is <strong>{sentRef}</strong>, and a copy is on its way to {email}.

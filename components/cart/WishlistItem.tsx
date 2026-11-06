@@ -24,7 +24,7 @@ export default function WishlistItem({
 
   return (
     <li className={`flex gap-3 ${busy ? 'opacity-70' : ''}`}>
-      <Link href={href} tabIndex={-1} aria-hidden="true" className="relative h-16 w-16 flex-shrink-0 overflow-hidden border border-[#0B0A07]/10 bg-[#EAEAEA]">
+      <Link href={href} tabIndex={-1} aria-hidden="true" className="relative h-16 w-16 flex-shrink-0 overflow-hidden border-2 border-[#0B0A07] bg-[#EAEAEA]">
         {item.image && <Image src={item.image} alt="" fill sizes="64px" className={`object-cover ${item.available ? '' : 'grayscale opacity-60'}`} />}
       </Link>
       <div className="min-w-0 flex-1" style={BODY}>

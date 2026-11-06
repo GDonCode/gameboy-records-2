@@ -25,7 +25,7 @@ export default function ShowsFeature() {
                 Tour dates are being booked. Rooms are kept small on purpose, so the {CLUB_NAME} and the newsletter hear first.
               </p>
             </div>
-            <Button href="/shows" variant="primary" size="lg" className="btn-hard btn-hard-inv self-start md:self-auto">
+            <Button href="/shows" variant="primary" size="lg" className="self-start md:self-auto">
               Get notified
             </Button>
           </div>
@@ -40,7 +40,7 @@ export default function ShowsFeature() {
                   </p>
                 </div>
                 {s.ticketUrl && s.status !== 'sold-out' ? (
-                  <Button href={s.ticketUrl} variant="primary" size="md" className="btn-hard btn-hard-inv self-start md:self-auto">
+                  <Button href={s.ticketUrl} variant="primary" size="md" className="self-start md:self-auto">
                     Tickets
                     <Icon name="arrow-right" className="w-3 h-3" />
                   </Button>

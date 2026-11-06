@@ -37,8 +37,8 @@ export default function ProductCard({
   const href = `/shop/${product.slug}`;
 
   return (
-    <article className="group relative flex flex-col overflow-hidden bg-white shadow-[0_4px_16px_rgba(22,67,42,0.18)] transition-shadow duration-300 hover:shadow-[0_8px_28px_rgba(22,67,42,0.28)]">
-      <div className="relative aspect-square w-full overflow-hidden bg-[#F6F6F6]">
+    <article className="group relative flex flex-col overflow-hidden bg-white frame hard transition-[transform,box-shadow] duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_var(--color-green-deep)]">
+      <div className="relative aspect-square w-full overflow-hidden border-b-[3px] border-ink bg-[#F6F6F6]">
         <Link href={href} tabIndex={-1} aria-hidden="true" className="absolute inset-0">
           <Image
             src={product.images[0]}
@@ -50,7 +50,7 @@ export default function ProductCard({
           />
         </Link>
         {!product.inStock && (
-          <span style={SEMI} className="absolute left-3 top-3 z-10 bg-[#0E3A20] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-white">
+          <span style={SEMI} className="absolute left-3 top-3 z-10 bg-ink px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-white">
             Sold out
           </span>
         )}

@@ -3,7 +3,9 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #0B0A07;
+  background-color: #0B0A07;
+  background-image: var(--grain-dark);
+  background-size: 320px 320px;
 }
 
 .main {

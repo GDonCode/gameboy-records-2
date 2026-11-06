@@ -31,7 +31,8 @@ const SIZES: Record<ButtonSize, string> = {
 
 export function buttonClass(variant: ButtonVariant = 'primary', size: ButtonSize = 'md', extra = '') {
   const isText = variant === 'text' || variant === 'text-dark';
-  return `${BASE} ${VARIANTS[variant]} ${isText ? 'h-auto px-0 text-[0.75rem]' : SIZES[size]} ${extra}`.trim();
+  // Solid buttons get the site's hard offset edge (ink on paper, paper on ink, via --edge).
+  return `${BASE} ${VARIANTS[variant]} ${isText ? 'h-auto px-0 text-[0.75rem]' : `btn-hard ${SIZES[size]}`} ${extra}`.trim();
 }
 
 interface CommonProps {

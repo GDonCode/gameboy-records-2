@@ -64,7 +64,7 @@ const ROW_ACTIVE = 'border-[#067F3A] bg-[#067F3A]/15 text-[#067F3A]';
 
 function IconTile({ icon: Icon }: { icon: LucideIcon }) {
   return (
-    <span className="flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-[8px] bg-white border border-[#0B0A07]/10 shadow-[0_1px_2px_rgba(11,10,7,0.08)]">
+    <span className="flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-none bg-white border border-[#0B0A07]/10 shadow-[0_1px_2px_rgba(11,10,7,0.08)]">
       <Icon className="w-5 h-5 text-[#067F3A]" strokeWidth={2.25} />
     </span>
   );
@@ -108,7 +108,7 @@ export default function AccountSidebar({
   return (
     <aside
       aria-label="Account navigation"
-      className={`flex-shrink-0 w-full md:w-[300px] md:h-full md:overflow-y-auto bg-[#F5F5F5] on-light text-[#0B0A07] px-4 pt-8 pb-10 md:pt-8 md:border-r border-[#0B0A07]/10 ${className}`}
+      className={`flex-shrink-0 w-full md:w-[300px] md:h-full md:overflow-y-auto paper on-light text-[#0B0A07] px-4 pt-8 pb-10 md:pt-8 md:border-r-4 border-[#0B0A07] ${className}`}
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       {/* Account header */}

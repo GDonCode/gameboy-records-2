@@ -62,7 +62,7 @@ export default function ProductPurchase({ product, points, pointsName }: { produ
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
       {/* Gallery */}
       <div className="lg:col-span-7">
-        <div className="zoom-media relative aspect-[4/5] overflow-hidden bg-[#EAEAEA]">
+        <div className="zoom-media frame hard relative aspect-[4/5] overflow-hidden bg-[#EAEAEA]">
           <Image src={product.images[active]} alt={`${product.name}${product.images.length > 1 ? `, view ${active + 1}` : ''}`} fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
         </div>
         {product.images.length > 1 && (
@@ -74,7 +74,7 @@ export default function ProductPurchase({ product, points, pointsName }: { produ
                   onClick={() => setActive(i)}
                   aria-label={`Show view ${i + 1}`}
                   aria-pressed={i === active}
-                  className={`relative block w-full aspect-square overflow-hidden bg-[#EAEAEA] cursor-pointer outline-offset-2 ${i === active ? 'ring-1 ring-ink' : 'opacity-70 hover:opacity-100'}`}
+                  className={`relative block w-full aspect-square overflow-hidden bg-[#EAEAEA] cursor-pointer outline-offset-2 ${i === active ? 'ring-2 ring-ink' : 'opacity-70 hover:opacity-100'}`}
                 >
                   <Image src={src} alt="" fill sizes="120px" className="object-cover" />
                 </button>
@@ -105,7 +105,7 @@ export default function ProductPurchase({ product, points, pointsName }: { produ
                 {product.sizes.map((s) => (
                   <label key={s} className="relative">
                     <input type="radio" name="size" value={s} checked={size === s} onChange={() => setSize(s)} className="peer sr-only" />
-                    <span className="flex items-center justify-center h-12 rounded-xs border border-ink/25 text-[0.85rem] font-medium cursor-pointer transition-colors hover:border-ink peer-checked:bg-ink peer-checked:border-ink peer-checked:text-paper peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-green-deep">
+                    <span className="flex items-center justify-center h-12 border-2 border-ink text-[0.85rem] font-semibold cursor-pointer transition-colors hover:bg-gold peer-checked:bg-ink peer-checked:border-ink peer-checked:text-paper peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-green-deep">
                       {s}
                     </span>
                   </label>
@@ -117,7 +117,7 @@ export default function ProductPurchase({ product, points, pointsName }: { produ
               <p className="eyebrow text-ink m-0 mb-3" id="qty-label">
                 Quantity
               </p>
-              <div className="inline-flex items-center border border-ink/25 rounded-xs" role="group" aria-labelledby="qty-label">
+              <div className="inline-flex items-center border-2 border-ink" role="group" aria-labelledby="qty-label">
                 <button type="button" onClick={() => setQuantity((q) => Math.max(1, q - 1))} disabled={quantity <= 1} aria-label="Decrease quantity" className="w-12 h-12 inline-flex items-center justify-center disabled:opacity-30 cursor-pointer">
                   <Icon name="minus" className="w-3 h-3" />
                 </button>
@@ -151,7 +151,7 @@ export default function ProductPurchase({ product, points, pointsName }: { produ
           <p className="mt-10 mb-0 inline-block bg-ink text-paper px-4 py-3 text-[0.8rem] font-semibold uppercase tracking-[0.16em]">Sold out</p>
         )}
 
-        <ul className="list-none p-0 m-0 mt-10 border-t border-line divide-y divide-line text-[0.9rem]">
+        <ul className="list-none p-0 m-0 mt-10 border-t-2 border-ink divide-y-2 divide-ink/15 text-[0.9rem]">
           <li className="flex items-center gap-3 py-4">
             <Icon name="truck" className="w-4 h-4 text-green-deep" /> Made to order for you, then shipped. Delivery times are shown at checkout.
           </li>

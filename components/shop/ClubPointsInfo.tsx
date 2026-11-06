@@ -15,7 +15,7 @@ const WAYS: { icon: IconName; title: string; text: string }[] = [
 export default function ClubPointsInfo({ signedIn, balance }: { signedIn: boolean; balance?: number | null }) {
   const highlights = REWARD_TIERS.slice(0, 4);
   return (
-    <section aria-labelledby="club-points-title" className="bg-ink text-paper section-y">
+    <section aria-labelledby="club-points-title" className="paper-ink text-paper border-t-4 border-paper section-y">
       <div className="container-site grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <p className="eyebrow text-gold-light m-0 mb-5">{CLUB_NAME}</p>
@@ -35,7 +35,7 @@ export default function ClubPointsInfo({ signedIn, balance }: { signedIn: boolea
                     <span className="text-[2rem] font-semibold text-gold-light">{balance.toLocaleString('en-US')}</span>
                   </p>
                 )}
-                <Button href="/account" variant="outline">
+                <Button href="/account" variant="outline" size="lg">
                   View your rewards
                 </Button>
               </div>

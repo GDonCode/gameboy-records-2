@@ -49,14 +49,14 @@ export default function UnlockForm({ next }: { next: string }) {
         placeholder="Password"
         aria-invalid={!!error}
         aria-describedby={error ? 'site-password-error' : undefined}
-        className="h-12 w-full border border-[#067F3A]/40 bg-white/5 px-4 text-[15px] text-white placeholder:text-white/35 outline-none transition-colors focus:border-[#38B26A] focus:bg-white/[0.08] aria-[invalid=true]:border-[#F0A39C]"
+        className="h-12 w-full border-2 border-paper/40 bg-ink-2 px-4 text-[15px] text-white placeholder:text-white/45 outline-none transition-colors focus:border-gold aria-[invalid=true]:border-[#F0A39C]"
       />
       {error && <p id="site-password-error" role="alert" className="text-left text-[13px] text-[#F0A39C]">{error}</p>}
       <button
         type="submit"
         disabled={busy}
         style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
-        className="h-12 w-full bg-[#067F3A] text-[13px] tracking-[0.18em] text-white transition-colors hover:bg-[#05652E] disabled:opacity-60 cursor-pointer"
+        className="btn-hard h-12 w-full bg-gold text-[13px] tracking-[0.18em] text-ink hover:bg-[#F0C928] disabled:opacity-60 cursor-pointer"
       >
         {busy ? 'CHECKING…' : 'ENTER'}
       </button>

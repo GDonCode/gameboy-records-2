@@ -13,7 +13,7 @@ const BODY = { fontFamily: "'Poppins', sans-serif" };
 const SEMI = { fontFamily: "'Poppins_semibold', sans-serif" };
 
 const BUTTON_CLASS =
-  'px-4 py-2 rounded-[6px] bg-[#067F3A] text-white text-[0.8em] tracking-[0.1em] hover:bg-[#05652E] transition-colors disabled:opacity-60 cursor-pointer';
+  'px-4 py-2 rounded-none bg-[#067F3A] text-white text-[0.8em] tracking-[0.1em] hover:bg-[#05652E] transition-colors disabled:opacity-60 cursor-pointer';
 
 export default function QuestsPanel({
   quests,
@@ -76,7 +76,7 @@ export default function QuestsPanel({
         {[...open, ...done].map((q) => (
           <li
             key={q.id}
-            className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 rounded-[10px] border px-4 py-3 ${
+            className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 rounded-none border px-4 py-3 ${
               q.done ? 'border-white/10 bg-white/[0.02] opacity-60' : 'border-[#067F3A]/40 bg-[#067F3A]/5'
             }`}
           >
@@ -127,7 +127,7 @@ export default function QuestsPanel({
                     aria-label={`Listen on ${p.label}`}
                     title={p.label}
                     onClick={() => recordSongStream(p.id).then((ok) => ok && router.refresh())}
-                    className="flex items-center justify-center w-10 h-10 rounded-[6px] bg-[#067F3A] hover:bg-[#05652E] transition-colors"
+                    className="flex items-center justify-center w-10 h-10 rounded-none bg-[#067F3A] hover:bg-[#05652E] transition-colors"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.icon} alt="" className="w-5 h-5 object-contain" />

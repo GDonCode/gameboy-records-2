@@ -37,7 +37,7 @@ export default function ClaimButton({ level }: { level: number }) {
         type="button"
         onClick={claim}
         disabled={busy}
-        className="px-3 py-1 rounded-full bg-[#38B26A] text-[#15130F] text-[0.7em] tracking-[0.15em] shadow-[0_0_12px_rgba(56,178,106,0.6)] animate-pulse disabled:animate-none disabled:opacity-60 cursor-pointer"
+        className="btn-hard px-3 py-1 bg-[#E2BA0A] text-[#15130F] text-[0.7em] tracking-[0.15em] hover:bg-[#F0C928] disabled:opacity-60 cursor-pointer"
         style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
       >
         {busy ? 'CLAIMING…' : 'CLAIM'}

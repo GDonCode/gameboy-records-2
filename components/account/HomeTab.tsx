@@ -65,7 +65,7 @@ function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] 
               </div>
 
               <div
-                className={`relative mt-4 w-[118px] flex flex-col items-center gap-2 rounded-[10px] border px-2 pt-4 pb-3 text-center ${cardClass}`}
+                className={`relative mt-4 w-[118px] flex flex-col items-center gap-2 rounded-none border px-2 pt-4 pb-3 text-center ${cardClass}`}
               >
                 {state === 'next' && (
                   <span
@@ -75,7 +75,7 @@ function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] 
                     NEXT
                   </span>
                 )}
-                <span className="relative flex items-center justify-center w-11 h-11 rounded-[8px] bg-[#15130F] border border-white/10">
+                <span className="relative flex items-center justify-center w-11 h-11 rounded-none bg-[#15130F] border border-white/10">
                   <Icon
                     className={`w-5 h-5 ${state === 'locked' ? 'text-white/40' : 'text-[#38B26A]'}`}
                     strokeWidth={2}
@@ -150,7 +150,7 @@ export default function HomeTab({
             subtitle={`Member since ${memberSince}`}
           />
         </div>
-        <dl className="lg:w-[300px] flex flex-col gap-4 rounded-[10px] bg-[#F5F5F5] p-5">
+        <dl className="lg:w-[300px] flex flex-col gap-4 rounded-none bg-[#F5F5F5] p-5">
           {stats.map((s) => (
             <div key={s.label} className="flex items-center justify-between gap-4" style={BODY}>
               <dt className="text-[0.85em] text-[#0B0A07]/70">{s.label}</dt>
@@ -187,7 +187,7 @@ export default function HomeTab({
 
         {unclaimedCount > 0 && (
           <div
-            className="flex items-center gap-3 rounded-[10px] border border-[#38B26A] bg-[#38B26A]/10 px-4 py-3"
+            className="flex items-center gap-3 rounded-none border border-[#38B26A] bg-[#38B26A]/10 px-4 py-3"
             role="status"
           >
             <Gift className="w-5 h-5 text-[#38B26A]" />

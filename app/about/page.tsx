@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import PageShell from '@/components/PageShell';
-import NeonHeading from '@/components/NeonHeading';
+import PageTitle from '@/components/PageTitle';
 import JsonLd from '@/components/JsonLd';
 import Icon from '@/components/icons';
 import Button from '@/components/ui/Button';
@@ -37,7 +37,7 @@ const person = {
 /** A portrait in a frame that holds still while the photo zooms on hover. */
 function Portrait({ n, alt, className = '', sizes, priority }: { n: 1 | 2 | 3 | 4; alt: string; className?: string; sizes: string; priority?: boolean }) {
   return (
-    <figure className={`zoom-media relative m-0 overflow-hidden bg-ink-2 ${className}`}>
+    <figure className={`zoom-media frame hard relative m-0 overflow-hidden bg-ink-2 ${className}`}>
       <Image src={PORTRAIT(n)} alt={alt} fill sizes={sizes} priority={priority} className="object-cover" />
     </figure>
   );
@@ -49,16 +49,16 @@ export default function AboutPage() {
       <JsonLd data={person} />
 
       {/* Title */}
-      <section className="bg-ink pt-16 pb-12 md:pt-24 md:pb-16">
+      <section className="paper-ink pt-14 pb-12 md:pt-20 md:pb-16">
         <div className="container-site">
-          <NeonHeading kicker="Singer · Songwriter · Guitarist" subtitle={`Founder of ${SITE_NAME}`}>
+          <PageTitle tone="dark" ghost="About" kicker="Singer · Songwriter · Guitarist" subtitle={`Founder of ${SITE_NAME}`}>
             {ARTIST}
-          </NeonHeading>
+          </PageTitle>
         </div>
       </section>
 
       {/* 1 — Introduction */}
-      <section aria-label="Introduction" className="bg-ink pb-20 md:pb-28">
+      <section aria-label="Introduction" className="paper-ink pb-20 md:pb-28">
         <div className="container-site grid gap-10 lg:grid-cols-12 lg:items-center">
           <Portrait n={1} alt={`${ARTIST} in a green beret and black suit, one hand raised to his face`} className="aspect-[4/5] lg:col-span-6" sizes="(min-width: 1024px) 50vw, 100vw" priority />
           <div className="lg:col-span-5 lg:col-start-8 flex flex-col gap-6 text-[1.05rem] leading-relaxed text-paper/85">
@@ -74,7 +74,7 @@ export default function AboutPage() {
       </section>
 
       {/* 2 — Beginnings */}
-      <section aria-labelledby="about-start" className="on-light bg-bone text-ink section-y">
+      <section aria-labelledby="about-start" className="on-light paper text-ink section-y">
         <div className="container-site grid gap-10 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-5 flex flex-col gap-6 text-[1.05rem] leading-relaxed text-stone order-2 lg:order-1">
             <h2 id="about-start" className="display m-0 text-[2rem] md:text-[2.75rem] text-ink">
@@ -94,17 +94,17 @@ export default function AboutPage() {
       </section>
 
       {/* Pull quote */}
-      <section aria-label="In his words" className="bg-ink section-y">
+      <section aria-label="In his words" className="paper-green border-y-4 border-ink section-y">
         <figure className="container-site m-0 text-center">
           <blockquote className="m-0">
-            <p className="neon-heading neon-heading--lg m-0 mx-auto max-w-[20ch]">Time fi every go getta rise up.</p>
+            <p className="display m-0 mx-auto max-w-[18ch] text-[2.25rem] sm:text-[3.25rem] lg:text-[4.25rem] text-paper [text-shadow:4px_4px_0_var(--color-ink)]">Time fi every go getta rise up.</p>
           </blockquote>
-          <figcaption className="mt-6 eyebrow text-gold-light">{ARTIST} · Rise Up Now (Guitar Version)</figcaption>
+          <figcaption className="mt-8 eyebrow text-gold">{ARTIST} · Rise Up Now (Guitar Version)</figcaption>
         </figure>
       </section>
 
       {/* 3 — Growth */}
-      <section aria-labelledby="about-growth" className="bg-ink pb-20 md:pb-28">
+      <section aria-labelledby="about-growth" className="paper-ink pt-20 pb-20 md:pt-28 md:pb-28">
         <div className="container-site grid gap-10 lg:grid-cols-12 lg:items-center">
           <Portrait n={3} alt={`${ARTIST} in a tan suede jacket and sunglasses, standing in low light`} className="aspect-[2/3] max-h-[760px] lg:col-span-5" sizes="(min-width: 1024px) 42vw, 100vw" />
           <div className="lg:col-span-6 lg:col-start-7 flex flex-col gap-6 text-[1.05rem] leading-relaxed text-paper/85">
@@ -127,7 +127,7 @@ export default function AboutPage() {
       </section>
 
       {/* 4 — Now */}
-      <section aria-labelledby="about-now" className="relative isolate overflow-hidden bg-ink">
+      <section aria-labelledby="about-now" className="paper-ink relative isolate overflow-hidden border-t-4 border-paper">
         <div className="grid lg:grid-cols-2">
           <Portrait n={4} alt={`${ARTIST} on stage, singing into a microphone with an electric guitar`} className="aspect-[4/5] lg:aspect-auto lg:min-h-[720px]" sizes="(min-width: 1024px) 50vw, 100vw" />
           <div className="flex items-center px-4 py-16 md:px-12 lg:px-16">

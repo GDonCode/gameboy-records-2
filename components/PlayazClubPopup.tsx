@@ -89,7 +89,7 @@ export default function PlayazClubPopup() {
       aria-labelledby="playaz-title"
       className="m-auto w-[calc(100%-32px)] max-w-[880px] p-0 bg-transparent text-paper backdrop:bg-ink/80 backdrop:backdrop-blur-sm open:animate-fade-up"
     >
-      <div className="grid md:grid-cols-[1fr_1.1fr] bg-ink border border-line-inv shadow-soft">
+      <div className="grid md:grid-cols-[1fr_1.1fr] paper-ink border-[3px] border-paper shadow-[8px_8px_0_var(--color-gold)]">
         <div className="relative hidden md:block min-h-[520px] bg-ink-2">
           {/* This is a placeholder image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}

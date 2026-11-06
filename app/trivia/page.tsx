@@ -1,7 +1,7 @@
 // app/trivia/page.tsx — Trivia
 import type { Metadata } from 'next';
 import PageShell from '@/components/PageShell';
-import NeonHeading from '@/components/NeonHeading';
+import PageTitle from '@/components/PageTitle';
 import TriviaGame from '@/components/TriviaGame';
 import GameIconsBackground from '@/components/GameIconsBackground';
 import { ARTIST, CLUB_NAME, OG_IMAGE } from '@/lib/site';
@@ -16,12 +16,12 @@ export const metadata: Metadata = {
 export default function TriviaPage() {
   return (
     <PageShell>
-      <section className="relative overflow-hidden bg-ink flex-1 pt-16 pb-24 md:pt-24">
+      <section className="paper-ink relative overflow-hidden flex-1 pt-12 pb-24 md:pt-20">
         <GameIconsBackground opacity={1.5} />
         <div className="relative z-[1] container-site flex flex-col items-center">
-          <NeonHeading kicker="Vibes" subtitle={`For the ${CLUB_NAME}`} className="mb-12">
+          <PageTitle tone="dark" ghost="Play" kicker="Vibes" subtitle={`For the ${CLUB_NAME}`} className="mb-10 w-full">
             Tricky Tempo Trivia
-          </NeonHeading>
+          </PageTitle>
           <TriviaGame />
         </div>
       </section>

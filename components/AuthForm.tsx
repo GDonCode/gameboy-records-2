@@ -272,7 +272,9 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           min-height: calc(100svh - var(--header-h) - 160px);
           display: flex;
           padding: 24px 16px;
-          background: #0B0A07;
+          background-color: #0B0A07;
+          background-image: var(--grain-dark);
+          background-size: 320px 320px;
         }
         .acct-inner {
           position: relative;

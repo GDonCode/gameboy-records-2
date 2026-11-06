@@ -121,7 +121,7 @@ function Leaderboard({ reloadKey }: { reloadKey: number }) {
   }, [reloadKey]);
 
   return (
-    <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-4">
+    <div className="w-full panel-ink p-4">
       <h2
         className="mb-3 text-center text-sm tracking-[0.25em] text-[#38B26A]"
         style={{ fontFamily: FONT_BOLD }}
@@ -167,9 +167,10 @@ const primaryButton: React.CSSProperties = {
   letterSpacing: '0.12em',
   color: '#fff',
   padding: '12px 32px',
-  borderRadius: '999px',
-  border: '1px solid #067F3A',
-  background: 'linear-gradient(175deg, #067F3A 0%, #05652E 100%)',
+  borderRadius: 0,
+  border: '2.5px solid #F5F5F5',
+  boxShadow: '4px 4px 0 #F5F5F5',
+  background: '#067F3A',
   cursor: 'pointer',
 };
 
@@ -402,7 +403,7 @@ export default function TriviaGame() {
     const signedIn = status === 'authenticated';
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-5 text-center">
+        <div className="w-full panel-ink p-5 text-center">
           <p className="text-sm leading-relaxed text-white/80" style={{ fontFamily: FONT }}>
             {ROUND_SIZES.length} rounds, {TOTAL_QUESTIONS} questions, 10 seconds each. Every question is read aloud,
             and the clock starts the moment the reading does. Turn your sound on.
@@ -440,7 +441,7 @@ export default function TriviaGame() {
   if (phase === 'roundIntro') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-8 text-center">
+        <div className="w-full panel-ink p-8 text-center">
           <h2 className="text-2xl tracking-[0.2em] text-[#38B26A]" style={{ fontFamily: FONT_BOLD }}>
             {ROUND_TITLES[upcomingRound]}
           </h2>
@@ -461,7 +462,7 @@ export default function TriviaGame() {
   if (phase === 'error') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-red-500/40 bg-[#15130F]/70 p-6 text-center">
+        <div className="w-full panel-ink p-6 text-center">
           <p className="text-sm text-white/80" style={{ fontFamily: FONT }}>{errorMsg}</p>
           <button
             type="button"
@@ -482,7 +483,7 @@ export default function TriviaGame() {
   if (phase === 'final') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-6 text-center">
+        <div className="w-full panel-ink p-6 text-center">
           <h2 className="text-sm tracking-[0.25em] text-[#38B26A]" style={{ fontFamily: FONT_BOLD }}>FINAL SCORE</h2>
           <p className="mt-2 text-5xl text-[#FEFEFA]" style={{ fontFamily: FONT_BOLD }}>{score}</p>
           <p className="mt-1 text-sm text-white/70" style={{ fontFamily: FONT }}>
@@ -525,7 +526,7 @@ export default function TriviaGame() {
         </div>
       </div>
 
-      <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-5">
+      <div className="w-full panel-ink p-5">
         {question.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img

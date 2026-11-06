@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { emitCartCount } from '@/lib/cart-sync';
 import { formatPrice } from '@/lib/products';
 import PageShell from '@/components/PageShell';
+import PageTitle from '@/components/PageTitle';
 import { CLUB_NAME } from '@/lib/site';
 import { pointsForOrder } from '@/lib/club';
 import CartLineItem from '@/components/cart/CartLineItem';
@@ -223,7 +224,7 @@ export default function CartPage() {
   }
 
   const summary = lines.length > 0 && (
-    <aside aria-labelledby="summary-title" className="border border-[#05652E]/20 bg-white p-5 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(var(--header-h)+24px)]" style={BODY}>
+    <aside aria-labelledby="summary-title" className="panel-paper p-5 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(var(--header-h)+24px)]" style={BODY}>
       <h2 id="summary-title" style={SEMI} className={`${SECTION_TITLE} mb-4`}>Order summary</h2>
       <dl className="flex flex-col gap-2.5 text-[14px] text-[#0B0A07]">
         <div className="flex justify-between">
@@ -249,7 +250,7 @@ export default function CartPage() {
         type="button"
         onClick={checkout}
         disabled={checkingOut || hasUnavailable || availableCount === 0}
-        className="zoom-content mt-5 w-full h-14 rounded-[2px] bg-[#E2BA0A] text-[13px] font-semibold uppercase tracking-[0.16em] text-[#0B0A07] hover:bg-[#F0C928] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+        className="btn-hard zoom-content mt-5 w-full h-14 rounded-[2px] bg-[#E2BA0A] text-[13px] font-semibold uppercase tracking-[0.16em] text-[#0B0A07] hover:bg-[#F0C928] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
       >
         <span>{checkingOut ? 'Opening secure checkout' : 'Checkout'}</span>
       </button>
@@ -264,16 +265,11 @@ export default function CartPage() {
 
   return (
     <PageShell>
-      <div className="on-light flex-1 w-full bg-[#F5F5F5] text-[#0B0A07] px-4 pt-10 pb-16 sm:px-6 md:px-10 md:pt-14">
+      <div className="on-light flex-1 w-full paper text-[#0B0A07] px-4 pt-10 pb-16 sm:px-6 md:px-10 md:pt-14">
         <div className="mx-auto max-w-[1180px]">
-          <div className="mb-6 flex items-baseline justify-between gap-4 md:mb-8">
-            <h1 className="m-0 text-[28px] font-semibold uppercase leading-none tracking-[0.04em] text-[#0B0A07] md:text-[40px]">Your cart</h1>
-            {status === 'ready' && (
-              <p style={BODY} className="text-[14px] text-[#0B0A07]/60">
-                {itemCount} {itemCount === 1 ? 'item' : 'items'}
-              </p>
-            )}
-          </div>
+          <PageTitle ghost="Bag" subtitle={status === 'ready' ? `${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : undefined} className="mb-8 md:mb-12">
+            Your cart
+          </PageTitle>
 
           <div aria-live="polite" style={BODY}>
             {notice && (
@@ -311,7 +307,7 @@ export default function CartPage() {
           {status === 'error' && (
             <div style={BODY} className="border border-[#A3322A]/25 bg-white px-5 py-8 text-center">
               <p className="text-[15px] text-[#0B0A07]">We couldn’t load your cart.</p>
-              <button type="button" onClick={() => { setStatus('loading'); load(); }} style={SEMI} className="mt-4 bg-[#05652E] px-5 py-2.5 text-[13px] tracking-[0.08em] text-white hover:bg-[#044F24] cursor-pointer">
+              <button type="button" onClick={() => { setStatus('loading'); load(); }} style={SEMI} className="btn-hard mt-4 bg-[#05652E] px-5 py-2.5 text-[13px] tracking-[0.08em] text-white hover:bg-[#044F24] cursor-pointer">
                 TRY AGAIN
               </button>
             </div>
@@ -325,7 +321,7 @@ export default function CartPage() {
                   <div style={BODY} className="border border-dashed border-[#05652E]/30 bg-white px-5 py-12 text-center">
                     <p style={SEMI} className="text-[17px] text-[#0B0A07]">Your cart is empty</p>
                     <p className="mt-1 text-[14px] text-[#0B0A07]/60">The Rise Collection is in the shop, in small runs.</p>
-                    <Link href="/shop" style={SEMI} className="mt-5 inline-block bg-[#0B0A07] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F5F5F5] hover:bg-[#1F1C17]">
+                    <Link href="/shop" style={SEMI} className="btn-hard mt-5 inline-block bg-[#0B0A07] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F5F5F5] hover:bg-[#1F1C17]">
                       Shop the collection
                     </Link>
                   </div>

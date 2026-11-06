@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import { auth } from '@/auth';
 import PageShell from '@/components/PageShell';
-import NeonHeading from '@/components/NeonHeading';
+import PageTitle from '@/components/PageTitle';
 import ProductGrid from '@/components/shop/ProductGrid';
 import ClubPointsInfo from '@/components/shop/ClubPointsInfo';
 import JsonLd from '@/components/JsonLd';
@@ -39,18 +39,18 @@ export default async function ShopPage() {
   return (
     <PageShell>
       <JsonLd data={itemList} />
-      <section aria-label="Products" style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}>
-        <div className="mx-auto w-full max-w-[1180px] px-4 pt-10 pb-16 md:px-8 md:pt-12 md:pb-20">
-          <NeonHeading align="left" subtitle={`by ${ARTIST}`} className="mb-7 md:mb-9">
-            &ldquo;Rise&rdquo; Collection
-          </NeonHeading>
+      <section aria-label="Products" className="on-light paper text-ink">
+        <div className="mx-auto w-full max-w-[1180px] px-4 pt-12 pb-16 md:px-8 md:pt-16 md:pb-24">
+          <PageTitle ghost="Shop" subtitle={`by ${ARTIST}`} className="mb-10 md:mb-14">
+            Rise Collection
+          </PageTitle>
 
           {catalog.error ? (
-            <p style={{ fontFamily: "'Poppins', sans-serif" }} className="py-16 text-center text-[15px] text-[#e8f5ec]/80">
+            <p style={{ fontFamily: "'Poppins', sans-serif" }} className="py-16 text-center text-[15px] text-stone">
               {catalog.error}
             </p>
           ) : products.length === 0 ? (
-            <p style={{ fontFamily: "'Poppins', sans-serif" }} className="py-16 text-center text-[15px] text-[#e8f5ec]/80">
+            <p style={{ fontFamily: "'Poppins', sans-serif" }} className="py-16 text-center text-[15px] text-stone">
               The next drop is on its way. Playaz Club members hear first.
             </p>
           ) : (
