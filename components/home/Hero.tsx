@@ -34,71 +34,69 @@ export default function Hero() {
   }
 
   return (
-    <section aria-labelledby="hero-title" className="on-light paper text-ink relative overflow-hidden">
-      <div className="container-site flex flex-col items-center text-center pt-10 pb-14 md:pt-16 md:pb-24">
-        <h1 id="hero-title" className="m-0 w-full max-w-[1000px]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/gameboy-records-logo.jpg" alt={SITE_NAME} width={1600} height={325} className="w-full h-auto mix-blend-multiply animate-fade-up" />
-        </h1>
-        <p className="mt-4 mb-0 text-[0.66rem] sm:text-[0.9rem] font-semibold uppercase tracking-[0.26em] sm:tracking-[0.42em] pl-[0.26em] sm:pl-[0.42em] animate-fade-up">
-          Independent label of {ARTIST}
-        </p>
-        <p className="mt-6 mb-0 max-w-[48ch] text-[1.05rem] leading-relaxed text-stone animate-fade-up">
-          Reggae and dancehall out of Jamaica. The music, the merch and the shows come straight from him, through his own label.
-        </p>
-        <div className="mt-9 flex flex-col sm:flex-row gap-4">
-          <Button href="/shop" variant="green" size="lg" >
-            Shop the collection
-            <Icon name="arrow-right" className="w-3.5 h-3.5" />
-          </Button>
-          <Button href="/shows" variant="light" size="lg" >
-            Get tickets
-          </Button>
-        </div>
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-center min-h-[calc(100svh-var(--header-h))]">
+      {/* The film fills the whole hero */}
+      <video
+        ref={videoRef}
+        src={`${MEDIA_BASE}/web-hero.mp4`}
+        poster={`${MEDIA_BASE}/IMG_7478-Retouched.jpg`}
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+        tabIndex={-1}
+        className="absolute inset-0 -z-10 w-full h-full object-cover object-top -scale-x-100"
+      />
+      {/* Darkens the film behind the panel and along the bottom edge */}
+      <div
+        className="absolute inset-0 -z-10"
+        aria-hidden="true"
+        style={{ background: 'linear-gradient(to bottom, rgba(11,10,7,0.35) 0%, rgba(11,10,7,0.15) 40%, rgba(11,10,7,0.7) 100%), linear-gradient(to right, rgba(11,10,7,0.55) 0%, rgba(11,10,7,0) 65%)' }}
+      />
 
-        {/* The film, framed */}
-        <div className="relative mt-14 md:mt-20 w-full max-w-[1040px]">
-          <div className="relative aspect-[4/3] sm:aspect-video overflow-hidden bg-ink border-[3px] border-ink hard">
-            <video
-              ref={videoRef}
-              src={`${MEDIA_BASE}/web-hero.mp4`}
-              poster={`${MEDIA_BASE}/IMG_7478-Retouched.jpg`}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              aria-hidden="true"
-              tabIndex={-1}
-              className="absolute inset-0 w-full h-full object-cover object-top -scale-x-100"
-            />
-            <button
-              type="button"
-              onClick={toggle}
-              aria-label={playing ? 'Pause background video' : 'Play background video'}
-              className="zoom-content absolute right-3 bottom-3 inline-flex items-center justify-center w-11 h-11 rounded-full bg-ink/70 border border-paper/40 text-paper hover:border-paper cursor-pointer"
-            >
-              <span>
-                {playing ? (
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
-                    <rect x="5" y="4" width="5" height="16" />
-                    <rect x="14" y="4" width="5" height="16" />
-                  </svg>
-                ) : (
-                  <Icon name="play" className="w-3.5 h-3.5" />
-                )}
-              </span>
-            </button>
+      <div className="container-site py-10 md:py-16">
+        {/* The logo is on white, so it sits on a paper panel where it blends into the grain */}
+        <div className="on-light paper text-ink w-full max-w-[600px] mx-auto md:mx-0 border-[3px] border-ink p-6 sm:p-8 md:p-10 text-center md:text-left shadow-[8px_8px_0_var(--color-gold)] animate-fade-up">
+          <h1 id="hero-title" className="m-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/gameboy-records-logo.jpg" alt={SITE_NAME} width={1600} height={325} className="w-full h-auto mix-blend-multiply" />
+          </h1>
+          <p className="mt-4 mb-0 text-[0.66rem] sm:text-[0.8rem] font-semibold uppercase tracking-[0.26em] sm:tracking-[0.34em]">
+            Independent label of {ARTIST}
+          </p>
+          <p className="mt-5 mb-0 text-[1rem] leading-relaxed text-stone">
+            Reggae and dancehall out of Jamaica. The music, the merch and the shows come straight from him, through his own label.
+          </p>
+          <div className="mt-7 flex flex-col sm:flex-row gap-4 sm:justify-center md:justify-start">
+            <Button href="/shop" variant="green" size="lg">
+              Shop the collection
+              <Icon name="arrow-right" className="w-3.5 h-3.5" />
+            </Button>
+            <Button href="/shows" variant="light" size="lg">
+              Get tickets
+            </Button>
           </div>
-          <span
-            aria-hidden="true"
-            className="hidden md:grid place-items-center absolute -right-6 -bottom-8 w-28 h-28 rounded-full bg-gold border-[3px] border-ink text-ink text-center text-[0.8rem] font-bold uppercase leading-tight tracking-[0.14em] rotate-12 shadow-[4px_4px_0_var(--color-ink)]"
-          >
-            Press
-            <br />
-            start
-          </span>
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={playing ? 'Pause background video' : 'Play background video'}
+        className="zoom-content absolute right-4 bottom-4 md:right-8 md:bottom-8 inline-flex items-center justify-center w-11 h-11 rounded-full bg-ink/70 border border-paper/40 text-paper hover:border-paper cursor-pointer"
+      >
+        <span>
+          {playing ? (
+            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
+              <rect x="5" y="4" width="5" height="16" />
+              <rect x="14" y="4" width="5" height="16" />
+            </svg>
+          ) : (
+            <Icon name="play" className="w-3.5 h-3.5" />
+          )}
+        </span>
+      </button>
     </section>
   );
 }
