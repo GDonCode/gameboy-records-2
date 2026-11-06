@@ -96,8 +96,8 @@ function PasswordInput({
 function MethodRow({ icon: Icon, title, children }: { icon: LucideIcon; title: string; children: ReactNode }) {
   return (
     <li className="flex items-start gap-4 py-4">
-      <span className="flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-full bg-[#2C8663]/15 border border-[#2C8663]/40">
-        <Icon className="w-[18px] h-[18px] text-[#5FBF97]" />
+      <span className="flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-full bg-[#067F3A]/15 border border-[#067F3A]/40">
+        <Icon className="w-[18px] h-[18px] text-[#38B26A]" />
       </span>
       <div className="min-w-0">
         <p className="text-white" style={SEMI}>{title}</p>
@@ -403,7 +403,7 @@ function ActivityPanel({ security }: { security: SecurityInfo }) {
             const device = describeDevice(ev.user_agent);
             return (
               <li key={ev.id} className="flex items-center gap-4 py-3">
-                <Icon className={`w-[18px] h-[18px] flex-shrink-0 ${meta.warn ? 'text-[#F0A39C]' : 'text-[#5FBF97]'}`} aria-hidden="true" />
+                <Icon className={`w-[18px] h-[18px] flex-shrink-0 ${meta.warn ? 'text-[#F0A39C]' : 'text-[#38B26A]'}`} aria-hidden="true" />
                 <div className="flex-1 min-w-0">
                   <p className={meta.warn ? 'text-[#F0A39C]' : 'text-white'}>{meta.label}</p>
                   {device && <p className="text-[0.8em] text-white/50">{device}</p>}

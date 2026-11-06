@@ -50,7 +50,7 @@ export default function ProductCard({
           />
         </Link>
         {!product.inStock && (
-          <span style={SEMI} className="absolute left-3 top-3 z-10 bg-[#1B3D30] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-white">
+          <span style={SEMI} className="absolute left-3 top-3 z-10 bg-[#0E3A20] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-white">
             Sold out
           </span>
         )}
@@ -76,17 +76,17 @@ export default function ProductCard({
 
       <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-3.5 md:gap-3 md:px-4">
         <div className="min-w-0">
-          <p style={BODY} className="text-[10px] uppercase leading-none tracking-[0.16em] text-[#1B3D30]/55">
+          <p style={BODY} className="text-[10px] uppercase leading-none tracking-[0.16em] text-[#0E3A20]/55">
             {product.categoryLabel}
           </p>
-          <h3 style={SEMI} className="mt-1.5 text-[14px] leading-snug text-[#1B3D30] sm:text-[15px] md:text-base">
-            <Link href={href} className="line-clamp-2 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2C8663]">
+          <h3 style={SEMI} className="mt-1.5 text-[14px] leading-snug text-[#0E3A20] sm:text-[15px] md:text-base">
+            <Link href={href} className="line-clamp-2 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#067F3A]">
               {product.name}
             </Link>
           </h3>
-          <p style={BODY} className="mt-0.5 text-[12px] leading-tight text-[#2C8663] md:text-[13px]">
+          <p style={BODY} className="mt-0.5 text-[12px] leading-tight text-[#067F3A] md:text-[13px]">
             {formatPrice(product.price, product.currency)}
-            {quantity > 0 && size && <span className="text-[#1B3D30]/55"> · Size {size} in cart</span>}
+            {quantity > 0 && size && <span className="text-[#0E3A20]/55"> · Size {size} in cart</span>}
           </p>
         </div>
         {product.inStock && (

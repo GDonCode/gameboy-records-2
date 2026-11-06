@@ -108,7 +108,7 @@ export default function AccountClient({ user, orders, addresses, security, suppo
           <button
             type="button"
             onClick={backToMenu}
-            className="md:hidden inline-flex items-center gap-2 self-start text-[0.85em] tracking-[0.1em] text-[#5FBF97]"
+            className="md:hidden inline-flex items-center gap-2 self-start text-[0.85em] tracking-[0.1em] text-[#38B26A]"
             style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             <ArrowLeft className="w-4 h-4" />

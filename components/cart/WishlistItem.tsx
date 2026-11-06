@@ -31,7 +31,7 @@ export default function WishlistItem({
         <Link href={href} style={SEMI} className="block text-[14px] leading-snug text-[#0B0A07] hover:underline underline-offset-2">
           {item.name}
         </Link>
-        {item.available && <p className="mt-0.5 text-[12px] text-[#226B4F]">{formatPrice(item.price)}</p>}
+        {item.available && <p className="mt-0.5 text-[12px] text-[#05652E]">{formatPrice(item.price)}</p>}
         {!item.available && <p className="mt-1 text-[12px] text-[#A3322A]">No longer available.</p>}
 
         {choosing && item.available ? (
@@ -46,7 +46,7 @@ export default function WishlistItem({
                   onClick={() => { setChoosing(false); onMoveToCart(s); }}
                   style={SEMI}
                   aria-label={`Move ${item.name} to cart in size ${s}`}
-                  className="h-8 min-w-9 border border-[#226B4F]/40 px-2 text-[12px] text-[#0B0A07] hover:border-[#226B4F] hover:bg-[#226B4F] hover:text-white cursor-pointer disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#226B4F]"
+                  className="h-8 min-w-9 border border-[#05652E]/40 px-2 text-[12px] text-[#0B0A07] hover:border-[#05652E] hover:bg-[#05652E] hover:text-white cursor-pointer disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#05652E]"
                 >
                   {s}
                 </button>
@@ -59,7 +59,7 @@ export default function WishlistItem({
         ) : (
           <div className="mt-2 flex gap-4 text-[13px]">
             {item.available && (
-              <button type="button" disabled={busy} onClick={() => setChoosing(true)} className="text-[#226B4F] underline-offset-4 hover:underline cursor-pointer disabled:opacity-40">
+              <button type="button" disabled={busy} onClick={() => setChoosing(true)} className="text-[#05652E] underline-offset-4 hover:underline cursor-pointer disabled:opacity-40">
                 Move to cart
               </button>
             )}

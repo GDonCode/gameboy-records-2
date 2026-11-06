@@ -223,7 +223,7 @@ export default function CartPage() {
   }
 
   const summary = lines.length > 0 && (
-    <aside aria-labelledby="summary-title" className="border border-[#226B4F]/20 bg-white p-5 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(var(--header-h)+24px)]" style={BODY}>
+    <aside aria-labelledby="summary-title" className="border border-[#05652E]/20 bg-white p-5 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(var(--header-h)+24px)]" style={BODY}>
       <h2 id="summary-title" style={SEMI} className={`${SECTION_TITLE} mb-4`}>Order summary</h2>
       <dl className="flex flex-col gap-2.5 text-[14px] text-[#0B0A07]">
         <div className="flex justify-between">
@@ -236,7 +236,7 @@ export default function CartPage() {
         </div>
         <div className="mt-2 flex justify-between border-t border-[#0B0A07]/10 pt-3" style={SEMI}>
           <dt>Estimated total</dt>
-          <dd className="tabular-nums text-[#226B4F]">{formatPrice(subtotal)}</dd>
+          <dd className="tabular-nums text-[#05652E]">{formatPrice(subtotal)}</dd>
         </div>
       </dl>
       {hasUnavailable && (
@@ -256,7 +256,7 @@ export default function CartPage() {
       <p className="mt-2 text-center text-[12px] text-[#0B0A07]/60">
         You’ll pay on our secure checkout page. Shipping and tax are added there.
       </p>
-      <Link href="/shop" className="mt-4 block text-center text-[13px] text-[#226B4F] underline-offset-4 hover:underline">
+      <Link href="/shop" className="mt-4 block text-center text-[13px] text-[#05652E] underline-offset-4 hover:underline">
         Continue shopping
       </Link>
     </aside>
@@ -280,13 +280,13 @@ export default function CartPage() {
               <div
                 role={notice.kind === 'error' ? 'alert' : 'status'}
                 className={`mb-5 flex items-center justify-between gap-4 border px-4 py-3 text-[14px] ${
-                  notice.kind === 'error' ? 'border-[#A3322A]/30 bg-[#A3322A]/5 text-[#A3322A]' : 'border-[#226B4F]/30 bg-[#226B4F]/5 text-[#0B0A07]'
+                  notice.kind === 'error' ? 'border-[#A3322A]/30 bg-[#A3322A]/5 text-[#A3322A]' : 'border-[#05652E]/30 bg-[#05652E]/5 text-[#0B0A07]'
                 }`}
               >
                 <span>{notice.text}</span>
                 <span className="flex items-center gap-4">
                   {notice.undo && (
-                    <button type="button" onClick={notice.undo} style={SEMI} className="text-[#226B4F] underline underline-offset-4 cursor-pointer">Undo</button>
+                    <button type="button" onClick={notice.undo} style={SEMI} className="text-[#05652E] underline underline-offset-4 cursor-pointer">Undo</button>
                   )}
                   <button type="button" onClick={() => setNotice(null)} aria-label="Dismiss" className="text-[#0B0A07]/50 hover:text-[#0B0A07] cursor-pointer">✕</button>
                 </span>
@@ -297,7 +297,7 @@ export default function CartPage() {
           {status === 'loading' && (
             <div className="flex flex-col gap-4" aria-busy="true" aria-label="Loading your cart">
               {[0, 1].map((i) => (
-                <div key={i} className="flex gap-4 border border-[#226B4F]/10 bg-white p-4">
+                <div key={i} className="flex gap-4 border border-[#05652E]/10 bg-white p-4">
                   <div className="h-24 w-24 animate-pulse bg-[#0B0A07]/10" />
                   <div className="flex flex-1 flex-col gap-2 pt-1">
                     <div className="h-4 w-1/3 animate-pulse bg-[#0B0A07]/10" />
@@ -311,7 +311,7 @@ export default function CartPage() {
           {status === 'error' && (
             <div style={BODY} className="border border-[#A3322A]/25 bg-white px-5 py-8 text-center">
               <p className="text-[15px] text-[#0B0A07]">We couldn’t load your cart.</p>
-              <button type="button" onClick={() => { setStatus('loading'); load(); }} style={SEMI} className="mt-4 bg-[#226B4F] px-5 py-2.5 text-[13px] tracking-[0.08em] text-white hover:bg-[#1c5a42] cursor-pointer">
+              <button type="button" onClick={() => { setStatus('loading'); load(); }} style={SEMI} className="mt-4 bg-[#05652E] px-5 py-2.5 text-[13px] tracking-[0.08em] text-white hover:bg-[#044F24] cursor-pointer">
                 TRY AGAIN
               </button>
             </div>
@@ -322,7 +322,7 @@ export default function CartPage() {
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
               <div className="lg:col-start-1 lg:row-start-1">
                 {lines.length === 0 ? (
-                  <div style={BODY} className="border border-dashed border-[#226B4F]/30 bg-white px-5 py-12 text-center">
+                  <div style={BODY} className="border border-dashed border-[#05652E]/30 bg-white px-5 py-12 text-center">
                     <p style={SEMI} className="text-[17px] text-[#0B0A07]">Your cart is empty</p>
                     <p className="mt-1 text-[14px] text-[#0B0A07]/60">The Rise Collection is in the shop, in small runs.</p>
                     <Link href="/shop" style={SEMI} className="mt-5 inline-block bg-[#0B0A07] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F5F5F5] hover:bg-[#1F1C17]">
@@ -348,7 +348,7 @@ export default function CartPage() {
 
               {summary}
 
-              <section aria-labelledby="wishlist-title" className="border border-[#226B4F]/20 bg-white p-5 lg:col-start-1 lg:row-start-2">
+              <section aria-labelledby="wishlist-title" className="border border-[#05652E]/20 bg-white p-5 lg:col-start-1 lg:row-start-2">
                   <div className="mb-4 flex items-baseline justify-between">
                     <h2 id="wishlist-title" style={SEMI} className={SECTION_TITLE}>Wishlist</h2>
                     {saved.length > 0 && <span style={BODY} className="text-[13px] text-[#0B0A07]/55">{saved.length} saved</span>}
@@ -356,7 +356,7 @@ export default function CartPage() {
                   {saved.length === 0 ? (
                     <p style={BODY} className="text-[14px] text-[#0B0A07]/60">
                       Nothing saved yet. Tap the heart on any item in the{' '}
-                      <Link href="/shop" className="text-[#226B4F] underline underline-offset-4">shop</Link> to save it here.
+                      <Link href="/shop" className="text-[#05652E] underline underline-offset-4">shop</Link> to save it here.
                     </p>
                   ) : (
                     <ul className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 list-none p-0">

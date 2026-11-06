@@ -7,7 +7,7 @@ import { MAX_CART_QUANTITY, formatPrice } from '@/lib/products';
 import { BODY, SEMI, type CartLine } from './types';
 
 const stepBtn =
-  'flex h-8 w-8 items-center justify-center text-[#0B0A07] cursor-pointer transition-colors hover:bg-[#226B4F]/10 disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#226B4F]';
+  'flex h-8 w-8 items-center justify-center text-[#0B0A07] cursor-pointer transition-colors hover:bg-[#05652E]/10 disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#05652E]';
 const linkBtn =
   'text-[13px] underline-offset-4 hover:underline cursor-pointer disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed';
 
@@ -36,7 +36,7 @@ export default function CartLineItem({
   );
 
   return (
-    <li className={`flex gap-4 border bg-white p-4 transition-opacity ${line.available ? 'border-[#226B4F]/20' : 'border-[#A3322A]/25'} ${busy ? 'opacity-70' : ''}`}>
+    <li className={`flex gap-4 border bg-white p-4 transition-opacity ${line.available ? 'border-[#05652E]/20' : 'border-[#A3322A]/25'} ${busy ? 'opacity-70' : ''}`}>
       {href ? <Link href={href} tabIndex={-1} aria-hidden="true">{image}</Link> : image}
 
       <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -45,7 +45,7 @@ export default function CartLineItem({
             <h3 style={SEMI} className="text-[15px] leading-snug text-[#0B0A07]">
               {href ? <Link href={href} className="hover:underline underline-offset-2">{line.name}</Link> : line.name}
             </h3>
-            {line.available && <p style={BODY} className="mt-0.5 text-[13px] text-[#226B4F]">{formatPrice(line.price)}</p>}
+            {line.available && <p style={BODY} className="mt-0.5 text-[13px] text-[#05652E]">{formatPrice(line.price)}</p>}
             {!line.available && (
               <p style={BODY} className="mt-1 text-[12px] text-[#A3322A]">No longer available. Remove it to continue.</p>
             )}
@@ -65,13 +65,13 @@ export default function CartLineItem({
                   onChange={(e) => onSize(e.target.value)}
                   disabled={busy}
                   aria-label={`Size for ${line.name}`}
-                  className="h-8 cursor-pointer border border-[#226B4F]/30 bg-white px-2 text-[13px] text-[#0B0A07] disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#226B4F]"
+                  className="h-8 cursor-pointer border border-[#05652E]/30 bg-white px-2 text-[13px] text-[#0B0A07] disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#05652E]"
                 >
                   {line.sizes.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </label>
 
-              <div role="group" aria-label={`Quantity of ${line.name}`} className="flex items-center border border-[#226B4F]/30">
+              <div role="group" aria-label={`Quantity of ${line.name}`} className="flex items-center border border-[#05652E]/30">
                 <button type="button" className={stepBtn} onClick={() => onQuantity(line.quantity - 1)} disabled={busy || line.quantity <= 1} aria-label={`Decrease quantity of ${line.name}`}>
                   <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="h-3.5 w-3.5"><path d="M5 12h14" /></svg>
                 </button>
@@ -86,7 +86,7 @@ export default function CartLineItem({
 
           <div className="flex items-center gap-4 sm:ml-auto">
             {line.available && (
-              <button type="button" className={`${linkBtn} text-[#226B4F]`} onClick={onSaveForLater} disabled={busy}>
+              <button type="button" className={`${linkBtn} text-[#05652E]`} onClick={onSaveForLater} disabled={busy}>
                 Save for later
               </button>
             )}

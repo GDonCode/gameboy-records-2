@@ -292,7 +292,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           max-width: 380px;
           padding: 4px;
           background: #F5F5F5;
-          border: 1px solid rgba(44,134,99,0.3);
+          border: 1px solid rgba(6,127,58,0.3);
           border-radius: 999px;
         }
         .acct-toggle-thumb {
@@ -302,8 +302,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           left: 4px;
           width: calc(50% - 4px);
           border-radius: 999px;
-          background: linear-gradient(175deg, #2C8663 0%, #226B4F 100%);
-          box-shadow: 0 0 12px rgba(95,191,151,0.25);
+          background: linear-gradient(175deg, #067F3A 0%, #05652E 100%);
+          box-shadow: 0 0 12px rgba(56,178,106,0.25);
           transition: transform 0.25s ease;
         }
         .acct-toggle-thumb[data-mode="register"] { transform: translateX(100%); }
@@ -326,7 +326,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           width: 100%;
           max-width: 380px;
           background: #F5F5F5;
-          border: 1px solid rgba(44,134,99,0.2);
+          border: 1px solid rgba(6,127,58,0.2);
           border-radius: 10px;
           box-shadow: 0 14px 28px rgba(0,0,0,0.45), 0 10px 10px rgba(0,0,0,0.35);
           overflow: hidden;
@@ -387,8 +387,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           cursor: pointer;
           color: rgba(11,10,7,0.55);
         }
-        .acct-pw-toggle:hover { color: #2C8663; }
-        .acct-pw-toggle:focus-visible { outline: 2px solid #2C8663; outline-offset: 1px; }
+        .acct-pw-toggle:hover { color: #067F3A; }
+        .acct-pw-toggle:focus-visible { outline: 2px solid #067F3A; outline-offset: 1px; }
         .acct-input.is-invalid { border-color: #A3322A; }
         .acct-input.is-invalid:focus {
           border-color: #A3322A;
@@ -403,8 +403,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
         .acct-field-error { color: #A3322A; }
         .acct-field-hint { color: rgba(11,10,7,0.55); }
         .acct-input:focus {
-          border-color: #2C8663;
-          box-shadow: 0 0 0 1px #2C8663, 0 0 12px rgba(44,134,99,0.15);
+          border-color: #067F3A;
+          box-shadow: 0 0 0 1px #067F3A, 0 0 12px rgba(6,127,58,0.15);
         }
         .acct-submit,
         .acct-ghost {
@@ -420,9 +420,9 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
         .acct-submit {
           width: 100%;
           margin-top: 16px;
-          background: linear-gradient(175deg, #2C8663 0%, #226B4F 100%);
-          border: 1px solid #2C8663;
-          border-bottom-color: #1A5640;
+          background: linear-gradient(175deg, #067F3A 0%, #05652E 100%);
+          border: 1px solid #067F3A;
+          border-bottom-color: #044F24;
         }
         .acct-ghost {
           background: transparent;
@@ -433,7 +433,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
         .acct-ghost:active { transform: scale(0.95); }
         .acct-submit:focus-visible,
         .acct-ghost:focus-visible {
-          outline: 2px solid #5FBF97;
+          outline: 2px solid #38B26A;
           outline-offset: 3px;
         }
         .acct-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -453,7 +453,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           text-align: center;
         }
         .acct-error { color: #A3322A; }
-        .acct-notice { color: #2C8663; }
+        .acct-notice { color: #067F3A; }
                 .acct-divider {
           display: flex;
           align-items: center;
@@ -526,7 +526,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
             left: -100%;
             width: 200%;
             height: 100%;
-            background: linear-gradient(to right, #226B4F, #2C8663);
+            background: linear-gradient(to right, #05652E, #067F3A);
             color: #F5F5F5;
             transform: translateX(0);
             transition: transform 0.6s ease-in-out;

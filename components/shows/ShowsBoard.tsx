@@ -100,11 +100,11 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
           width: 64px;
           height: 64px;
           border-radius: 50%;
-          background: linear-gradient(175deg, #34a57a 0%, #2C8663 100%);
-          border: 1px solid #2C8663;
-          border-bottom-color: #1A5640;
-          border-right-color: #226B4F;
-          box-shadow: 0 4px 0 #1A5640, 0 6px 16px rgba(26,86,64,0.5), inset 0 1px 0 rgba(255,255,255,0.35);
+          background: linear-gradient(175deg, #0A9A48 0%, #067F3A 100%);
+          border: 1px solid #067F3A;
+          border-bottom-color: #044F24;
+          border-right-color: #05652E;
+          box-shadow: 0 4px 0 #044F24, 0 6px 16px rgba(26,86,64,0.5), inset 0 1px 0 rgba(255,255,255,0.35);
         }
         .shows-email-input {
           flex: 1 1 auto;

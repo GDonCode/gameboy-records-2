@@ -32,7 +32,7 @@ export default async function Image() {
           <span>Realest sound.</span>
           <span>Truest vision.</span>
         </div>
-        <div style={{ marginTop: 36, height: 6, width: 160, background: '#2C8663' }} />
+        <div style={{ marginTop: 36, height: 6, width: 160, background: '#067F3A' }} />
       </div>
     ),
     {

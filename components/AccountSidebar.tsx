@@ -59,13 +59,13 @@ interface AccountSidebarProps {
 
 const ROW_BASE =
   'group flex items-center gap-4 w-full pl-3 pr-3 py-2.5 rounded-r-[10px] border-l-[3px] text-left transition-colors duration-200 cursor-pointer';
-const ROW_IDLE = 'border-transparent text-[#0B0A07] hover:bg-[#2C8663]/10';
-const ROW_ACTIVE = 'border-[#2C8663] bg-[#2C8663]/15 text-[#2C8663]';
+const ROW_IDLE = 'border-transparent text-[#0B0A07] hover:bg-[#067F3A]/10';
+const ROW_ACTIVE = 'border-[#067F3A] bg-[#067F3A]/15 text-[#067F3A]';
 
 function IconTile({ icon: Icon }: { icon: LucideIcon }) {
   return (
     <span className="flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-[8px] bg-white border border-[#0B0A07]/10 shadow-[0_1px_2px_rgba(11,10,7,0.08)]">
-      <Icon className="w-5 h-5 text-[#2C8663]" strokeWidth={2.25} />
+      <Icon className="w-5 h-5 text-[#067F3A]" strokeWidth={2.25} />
     </span>
   );
 }
@@ -115,7 +115,7 @@ export default function AccountSidebar({
       <div className="flex items-center gap-3 px-3 pb-5 mb-2 border-b border-[#0B0A07]/15">
         {avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-[#2C8663]" />
+          <img src={avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-[#067F3A]" />
         ) : (
           <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#0B0A07] text-white">
             {firstName.charAt(0).toUpperCase()}

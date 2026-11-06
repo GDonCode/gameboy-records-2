@@ -2,7 +2,7 @@
 
 /* ─────────────────────────────────────────────────────────────────────────────
    GAMEBOY RECORDS — DESIGN SYSTEM
-   Palette:   green #2C8663 · gold #E2BA0A · paper #F5F5F5 (light sections; "bone" is now the same) · ink #0B0A07
+   Palette:   green #067F3A · gold #E2BA0A · paper #F5F5F5 (light sections; "bone" is now the same) · ink #0B0A07
    Type:      Poppins (self-hosted woff2) with a system-font fallback
    Spacing:   Tailwind's 4px scale. Section rhythm: 64 / 96 / 128px
    Width:     1280px content max, 16px gutter on phones, 32px tablet, 48px desktop
@@ -23,11 +23,11 @@
 @font-face { font-family: 'Poppins_semibold'; src: url('/fonts/poppins/poppins-semibold.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
 
 @theme {
-  --color-green: #2C8663;
+  --color-green: #067F3A;
   /* Same green, one step deeper: used where small white text sits on green, so it reads at WCAG AA. */
-  --color-green-deep: #226B4F;
+  --color-green-deep: #05652E;
   /* Same green, lifted: for small green text on ink. */
-  --color-green-light: #5FBF97;
+  --color-green-light: #38B26A;
   --color-gold: #E2BA0A;
   --color-gold-light: #E2BA0A; /* the gold already reads well on ink (11:1), so small text uses it as is */
   --color-paper: #F5F5F5;

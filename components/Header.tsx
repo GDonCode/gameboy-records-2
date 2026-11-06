@@ -10,10 +10,10 @@ import { LOGO_URL } from '@/lib/site';
 function Corners() {
   return (
     <>
-      <span className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px] border-[#2C8663] pointer-events-none z-50" />
-      <span className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px] border-[#2C8663] pointer-events-none z-50" />
-      <span className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px] border-[#2C8663] pointer-events-none z-50" />
-      <span className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#2C8663] pointer-events-none z-50" />
+      <span className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px] border-[#067F3A] pointer-events-none z-50" />
+      <span className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px] border-[#067F3A] pointer-events-none z-50" />
+      <span className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px] border-[#067F3A] pointer-events-none z-50" />
+      <span className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#067F3A] pointer-events-none z-50" />
     </>
   );
 }
@@ -34,13 +34,13 @@ function DPad({ className }: { className: string }) {
       <defs>
         {/* Body: lit from the top-left */}
         <linearGradient id={`${id}-body`} gradientUnits="userSpaceOnUse" x1="4" y1="2" x2="20" y2="22">
-          <stop offset="0" stopColor="#5FBF97" />
-          <stop offset="0.45" stopColor="#2C8663" />
-          <stop offset="1" stopColor="#1E5E46" />
+          <stop offset="0" stopColor="#38B26A" />
+          <stop offset="0.45" stopColor="#067F3A" />
+          <stop offset="1" stopColor="#045A29" />
         </linearGradient>
         {/* Center pivot: concave dimple, shaded opposite to the body */}
         <linearGradient id={`${id}-dimple`} gradientUnits="userSpaceOnUse" x1="12" y1="9.2" x2="12" y2="14.8">
-          <stop offset="0" stopColor="#1A5640" />
+          <stop offset="0" stopColor="#044F24" />
           <stop offset="1" stopColor="#34c56b" />
         </linearGradient>
         <linearGradient id={`${id}-shine`} x1="0" y1="0" x2="0" y2="1">
@@ -48,7 +48,7 @@ function DPad({ className }: { className: string }) {
           <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <g fill="#0F3326">
+      <g fill="#062C16">
         <rect x="7.6" y="0.6" width="8.8" height="22.8" rx="1.7" />
         <rect x="0.6" y="7.6" width="22.8" height="8.8" rx="1.7" />
       </g>
@@ -59,7 +59,7 @@ function DPad({ className }: { className: string }) {
       <rect x="8.3" y="1.3" width="7.4" height="5" rx="1.1" fill={`url(#${id}-shine)`} />
       <circle cx="12" cy="12" r="2.8" fill={`url(#${id}-dimple)`} />
       {/* Arrows: solid white, with a dark offset copy underneath for an embossed look */}
-      <g fill="#0F3326" fillOpacity={0.45} transform="translate(0 0.35)">
+      <g fill="#062C16" fillOpacity={0.45} transform="translate(0 0.35)">
         {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
       </g>
       <g fill="#E2BA0A">
@@ -145,7 +145,7 @@ export default function Header() {
           <DPad className="top-0 left-0 -translate-x-1/2 -translate-y-1/2 z-10" />
           <DPad className="top-0 right-0 translate-x-1/2 -translate-y-1/2 z-10" />
           <ul
-            className="flex items-center gap-1 bg-[#2C8663]/[0.1] border border-[#2C8663]/20 px-3 py-2"
+            className="flex items-center gap-1 bg-[#067F3A]/[0.1] border border-[#067F3A]/20 px-3 py-2"
           >
             {[
               { href: '/shows', label: 'SHOWS' },
@@ -159,8 +159,8 @@ export default function Header() {
                   aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
                   className={`zoom-content inline-block px-5 py-2 rounded-md cursor-pointer transition-colors duration-200 ${
                     pathname.startsWith(item.href)
-                      ? 'bg-[#2C8663] text-white font-bold'
-                      : 'text-[#1B3D30]'
+                      ? 'bg-[#067F3A] text-white font-bold'
+                      : 'text-[#0E3A20]'
                   }`}
                   style={{
                     fontFamily: "'Poppins_semibold', monospace",
@@ -180,8 +180,8 @@ export default function Header() {
                 aria-haspopup="true"
                 className={`zoom-content inline-block px-5 py-2 rounded-md cursor-pointer transition-colors duration-200 ${
                   pathname === '/karaoke' || pathname === '/trivia'
-                    ? 'bg-[#2C8663] text-white font-bold'
-                    : 'text-[#1B3D30]'
+                    ? 'bg-[#067F3A] text-white font-bold'
+                    : 'text-[#0E3A20]'
                 }`}
                 style={{
                   fontFamily: "'Poppins_semibold', monospace",
@@ -207,7 +207,7 @@ export default function Header() {
               </button>
 
               <ul
-                className="absolute left-0 top-full hidden group-hover:flex group-focus-within:flex flex-col min-w-[160px] bg-[#F5F5F5] border border-[#2C8663]/20 shadow-lg z-50"
+                className="absolute left-0 top-full hidden group-hover:flex group-focus-within:flex flex-col min-w-[160px] bg-[#F5F5F5] border border-[#067F3A]/20 shadow-lg z-50"
               >
                 {[
                   { href: '/karaoke', label: 'KARAOKE' },
@@ -219,8 +219,8 @@ export default function Header() {
                       aria-current={pathname === item.href ? 'page' : undefined}
                       className={`group/item block px-5 py-2 whitespace-nowrap transition-all duration-200 ${
                         pathname === item.href
-                          ? 'bg-[#2C8663] text-white font-bold'
-                          : 'bg-[#2C8663]/10 text-[#1B3D30]'
+                          ? 'bg-[#067F3A] text-white font-bold'
+                          : 'bg-[#067F3A]/10 text-[#0E3A20]'
                       }`}
                       style={{
                         fontFamily: "'Poppins_semibold', monospace",
@@ -249,7 +249,7 @@ export default function Header() {
                     <Link
             href={session ? '/account' : '/account/login'}
             aria-label={session ? 'Your account' : 'Sign in or join the Playaz Club'}
-            className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#2C8663] text-white font-bold transition"
+            className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white font-bold transition"
           >
             <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-120">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-6 h-6 flex-shrink-0 block" fill="currentColor">
@@ -265,7 +265,7 @@ export default function Header() {
           <Link
             href="/cart"
             aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart'}
-            className="group relative cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#2C8663] text-white font-bold transition"
+            className="group relative cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white font-bold transition"
           >
             <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-120">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-6 h-6 flex-shrink-0 block" fill="currentColor">
@@ -287,7 +287,7 @@ export default function Header() {
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
-          className="lg:hidden relative inline-flex items-center justify-center self-center w-11 h-11 rounded-[6px] flex-shrink-0 bg-[#2C8663] text-white"
+          className="lg:hidden relative inline-flex items-center justify-center self-center w-11 h-11 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-6 h-6 block" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
             {menuOpen ? (
@@ -307,7 +307,7 @@ export default function Header() {
         <nav
           id="mobile-menu"
           aria-label="Mobile"
-                    className="lg:hidden absolute top-full right-0 w-max min-w-[220px] bg-[#F5F5F5] border-t border-l border-b border-[#2C8663]/20 rounded-bl-[6px] shadow-lg"
+                    className="lg:hidden absolute top-full right-0 w-max min-w-[220px] bg-[#F5F5F5] border-t border-l border-b border-[#067F3A]/20 rounded-bl-[6px] shadow-lg"
         >
           <ul className="flex flex-col py-2">
             {[
@@ -322,7 +322,7 @@ export default function Header() {
               <li key={item.href}>
                 {item.heading && (
                   <div
-                    className="mt-2 pt-3 pb-1 px-6 border-t border-[#2C8663]/20 text-[#2C8663]"
+                    className="mt-2 pt-3 pb-1 px-6 border-t border-[#067F3A]/20 text-[#067F3A]"
                     style={{
                       fontFamily: "'Poppins_semibold', monospace",
                       fontSize: '0.75em',
@@ -338,8 +338,8 @@ export default function Header() {
                   aria-current={pathname === item.href ? 'page' : undefined}
                                     className={`flex items-center gap-3 px-6 py-3 transition-colors duration-200 ${
                     pathname === item.href
-                      ? 'bg-[#2C8663] text-white font-bold'
-                      : 'text-[#1B3D30] hover:bg-[#2C8663]/10'
+                      ? 'bg-[#067F3A] text-white font-bold'
+                      : 'text-[#0E3A20] hover:bg-[#067F3A]/10'
                   }`}
                   style={{
                     fontFamily: "'Poppins_semibold', monospace",
@@ -354,11 +354,11 @@ export default function Header() {
                 </Link>
               </li>
             ))}
-            <li className="mt-2 pt-2 border-t border-[#2C8663]/20">
+            <li className="mt-2 pt-2 border-t border-[#067F3A]/20">
               <Link
                 href={session ? '/account' : '/account/login'}
                 onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-3 px-6 py-3 text-[#1B3D30] hover:bg-[#2C8663]/10 transition-colors duration-200"
+                                className="flex items-center gap-3 px-6 py-3 text-[#0E3A20] hover:bg-[#067F3A]/10 transition-colors duration-200"
                 style={{
                   fontFamily: "'Poppins_semibold', monospace",
                   fontSize: '1em',
@@ -379,7 +379,7 @@ export default function Header() {
               <Link
                 href="/cart"
                 onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-3 px-6 py-3 text-[#1B3D30] hover:bg-[#2C8663]/10 transition-colors duration-200"
+                                className="flex items-center gap-3 px-6 py-3 text-[#0E3A20] hover:bg-[#067F3A]/10 transition-colors duration-200"
                 style={{
                   fontFamily: "'Poppins_semibold', monospace",
                   fontSize: '1em',
