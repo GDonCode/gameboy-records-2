@@ -312,6 +312,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         .crate-sleeve {
           position: absolute; left: 50%; top: 50%;
           width: var(--sleeve); height: var(--sleeve);
+          transform: translate(-50%, -50%); /* until the script lays the crate out */
           transform-style: preserve-3d; will-change: transform;
           padding: 0; border: 0; background: none; cursor: pointer; pointer-events: auto;
         }
