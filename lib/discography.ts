@@ -1,5 +1,7 @@
 // lib/discography.ts
 // Server-only. Alexx A-Game's discography for the Music page, oldest release first.
+// Two sources are merged: official videos from his YouTube channel, and his Spotify releases
+// (lib/spotify-catalog.ts), which add cover art, Spotify links and the songs that have no video.
 //
 // With YOUTUBE_API_KEY set, releases come from the official artist channel's uploads (cached for an hour), so a
 // new release on YouTube appears here on its own. Only official releases are kept: uploads titled
@@ -8,7 +10,18 @@
 // EXTRA adds releases that live on other channels; FALLBACK is used when YouTube can't be reached.
 
 export interface Release {
-  videoId: string;
+  /** Stable key: the YouTube video id, or `spotify:<track id>` for songs only on Spotify. */
+  id: string;
+  /** YouTube video id, when the song has an official video. */
+  videoId: string | null;
+  /** Spotify track id, when the song is on Spotify. */
+  spotifyTrackId: string | null;
+  appleUrl: string | null;
+  /** Square artwork: the Spotify cover when there is one, otherwise the video thumbnail. */
+  cover: string;
+  /** Credit line under the title, e.g. "Alexx A-Game feat. Tory Lanez". */
+  credit: string;
+  label: string | null;
   /** Song title, without the artist name or upload format. */
   title: string;
   /** Featured artists, e.g. "Tory Lanez". */
@@ -25,6 +38,8 @@ export interface Release {
   /** Length in seconds, when known. */
   duration: number | null;
 }
+
+import { SPOTIFY_RELEASES } from '@/lib/spotify-catalog';
 
 const ARTIST = 'Alexx A-Game';
 const ARTIST_CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID || 'UC2M7qSo99KTIq-WgnCNq50Q';
@@ -117,7 +132,13 @@ function toReleases(raws: Raw[]): Release[] {
     const parsed = parseReleaseTitle(r.title);
     if (!parsed) continue;
     const release: Release = {
+      id: r.videoId,
       videoId: r.videoId,
+      spotifyTrackId: null,
+      appleUrl: null,
+      cover: r.thumbnail ?? `https://i.ytimg.com/vi/${r.videoId}/hqdefault.jpg`,
+      credit: parsed.featuring ? `${ARTIST} feat. ${parsed.featuring}` : ARTIST,
+      label: null,
       ...parsed,
       artist: ARTIST,
       publishedAt: r.publishedAt,
@@ -187,11 +208,55 @@ async function withDurations(releases: Release[]): Promise<Release[]> {
   const ids = releases.map((r) => r.videoId).slice(0, 50).join(',');
   const data = await youtube<{ items?: { id: string; contentDetails?: { duration?: string } }[] }>('videos', { part: 'contentDetails', id: ids });
   const map = new Map((data.items ?? []).map((v) => [v.id, parseDuration(v.contentDetails?.duration)]));
-  return releases.map((r) => ({ ...r, duration: map.get(r.videoId) ?? r.duration }));
+  return releases.map((r) => ({ ...r, duration: (r.videoId ? map.get(r.videoId) : null) ?? r.duration }));
 }
 
-/** Every release, oldest first. Never empty. */
-export async function getDiscography(): Promise<Release[]> {
+const titleKey = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+/** Adds Spotify artwork and links to the video releases, and the songs that are only on Spotify. */
+function withSpotify(releases: Release[]): Release[] {
+  const byTitle = new Map(SPOTIFY_RELEASES.map((s) => [titleKey(s.title), s]));
+  const matched = new Set<string>();
+  const merged = releases.map((r) => {
+    const s = byTitle.get(titleKey(r.title));
+    if (!s) return r;
+    matched.add(s.trackId);
+    // The song came out on whichever platform had it first.
+    const publishedAt = `${s.releasedAt}T00:00:00Z` < r.publishedAt ? `${s.releasedAt}T00:00:00Z` : r.publishedAt;
+    return {
+      ...r,
+      spotifyTrackId: s.trackId,
+      appleUrl: s.appleUrl ?? null,
+      cover: s.cover,
+      credit: s.credit ?? r.credit,
+      project: r.project ?? s.project,
+      label: s.label,
+      publishedAt,
+      year: new Date(publishedAt).getUTCFullYear(),
+    };
+  });
+  const spotifyOnly: Release[] = SPOTIFY_RELEASES.filter((s) => !matched.has(s.trackId)).map((s) => ({
+    id: `spotify:${s.trackId}`,
+    videoId: null,
+    spotifyTrackId: s.trackId,
+    appleUrl: s.appleUrl ?? null,
+    cover: s.cover,
+    credit: s.credit ?? ARTIST,
+    label: s.label,
+    title: s.title,
+    featuring: null,
+    format: null,
+    project: s.project,
+    artist: ARTIST,
+    publishedAt: `${s.releasedAt}T00:00:00Z`,
+    year: Number(s.releasedAt.slice(0, 4)),
+    thumbnail: s.cover,
+    duration: null,
+  }));
+  return [...merged, ...spotifyOnly].sort((a, b) => a.publishedAt.localeCompare(b.publishedAt));
+}
+
+async function videoReleases(): Promise<Release[]> {
   if (!process.env.YOUTUBE_API_KEY) return toReleases([...FALLBACK, ...EXTRA]);
   try {
     const releases = toReleases([...(await channelUploads()), ...EXTRA]);
@@ -201,4 +266,9 @@ export async function getDiscography(): Promise<Release[]> {
     console.error('Failed to load the discography from YouTube:', err);
     return toReleases([...FALLBACK, ...EXTRA]);
   }
+}
+
+/** Every release, oldest first: official videos plus Spotify-only songs. Never empty. */
+export async function getDiscography(): Promise<Release[]> {
+  return withSpotify(await videoReleases());
 }

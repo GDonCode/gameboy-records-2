@@ -8,7 +8,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import Icon from '@/components/icons';
 
 interface PlayerApi {
-  /** Play a YouTube video (11-character id) or a playlist (`list:<id>`). */
+  /** Play a YouTube video (11-character id), a YouTube playlist (`list:<id>`) or a Spotify track (`spotify:<track id>`). */
   play: (id: string, title: string) => void;
   close: () => void;
 }
@@ -22,6 +22,7 @@ export function usePlayer(): PlayerApi {
 }
 
 function embedUrl(id: string) {
+  if (id.startsWith('spotify:')) return `https://open.spotify.com/embed/track/${encodeURIComponent(id.slice(8))}?utm_source=generator&theme=0`;
   const params = 'autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1';
   return id.startsWith('list:')
     ? `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(id.slice(5))}&${params}`
@@ -96,14 +97,14 @@ export default function PlayerProvider({ children }: { children: ReactNode }) {
               </button>
             </div>
           </div>
-          <div className={`overflow-hidden transition-[height] duration-300 ${collapsed ? 'h-0' : 'h-[200px]'}`}>
+          <div className={`overflow-hidden transition-[height] duration-300 ${collapsed ? 'h-0' : current.id.startsWith('spotify:') ? 'h-[152px]' : 'h-[200px]'}`}>
             <iframe
               key={current.id}
               src={embedUrl(current.id)}
-              title={`${current.title} — YouTube player`}
-              allow="autoplay; encrypted-media; picture-in-picture"
+              title={`${current.title} — ${current.id.startsWith('spotify:') ? 'Spotify' : 'YouTube'} player`}
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
               allowFullScreen
-              className="w-full h-[200px] border-0 block"
+              className={`w-full border-0 block ${current.id.startsWith('spotify:') ? 'h-[152px]' : 'h-[200px]'}`}
             />
           </div>
         </section>

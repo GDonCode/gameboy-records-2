@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: supabaseHost, pathname: '/storage/v1/object/public/**' },
       { protocol: 'https', hostname: 'i.ytimg.com' },
+      { protocol: 'https', hostname: 'i.scdn.co' },
       // WooCommerce product photos (Tapstitch syncs its mockups into the store's media library).
       ...(wooHost ? [{ protocol: 'https' as const, hostname: wooHost }] : []),
       { protocol: 'https', hostname: '*.wp.com' },
