@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header';
+import GameIconsBackground from '@/components/GameIconsBackground';
 import styles from './karaoke.module.css';
 
 interface LyricLine {
@@ -678,6 +679,7 @@ export default function KaraokePage() {
 
       <main id="main" className={styles.main}>
         <h1 className="sr-only">Karaoke</h1>
+        <GameIconsBackground />
 
         {/* ── SONG PICKER BAR ───────────────────────────────────── */}
         <div className={styles.pickerBar}>
