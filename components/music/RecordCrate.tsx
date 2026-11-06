@@ -40,14 +40,14 @@ function Details({ release, index, total }: { release: Release; index: number; t
 
   return (
     <div className="flex flex-col items-center text-center gap-[clamp(6px,1.4vh,14px)]" aria-live="polite">
-      <p className="m-0 eyebrow text-gold-light text-[clamp(0.6rem,1.4vh,0.72rem)]">
+      <p className="m-0 eyebrow text-gold-light text-[clamp(0.6rem,1.4vh,0.72rem)] line-clamp-2">
         <span className="sr-only">
           Record {index + 1} of {total}:{' '}
         </span>
         {meta}
       </p>
-      <h2 className="display m-0 text-[clamp(1.3rem,4.4vh,2.75rem)] max-w-[22ch]">{release.title}</h2>
-      <p className="m-0 text-[clamp(0.68rem,1.7vh,0.95rem)] uppercase tracking-[0.22em]" style={{ color: '#4dff91', textShadow: '0 0 16px rgba(77,255,145,0.45)' }}>
+      <h2 className="display m-0 text-[clamp(1.3rem,4.4vh,2.75rem)] max-w-[22ch] line-clamp-2">{release.title}</h2>
+      <p className="m-0 text-[clamp(0.68rem,1.7vh,0.95rem)] uppercase tracking-[0.22em] line-clamp-2" style={{ color: '#4dff91', textShadow: '0 0 16px rgba(77,255,145,0.45)' }}>
         {release.credit}
       </p>
       <ul className="list-none p-0 m-0 mt-[clamp(0px,0.6vh,6px)] flex flex-wrap items-center justify-center gap-2.5">
@@ -178,25 +178,51 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
     [desktop]
   );
 
+  /** The slot whose centre is nearest the middle of the crate. */
+  const nearestSlot = useCallback(
+    (el: HTMLElement) => {
+      const slots = Array.from(el.querySelectorAll<HTMLElement>('.crate-slot'));
+      const center = desktop ? el.scrollLeft + el.clientWidth / 2 : el.scrollTop + el.clientHeight / 2;
+      const mid = (x: HTMLElement) => (desktop ? x.offsetLeft + x.offsetWidth / 2 : x.offsetTop + x.offsetHeight / 2);
+      return slots.reduce((best, s) => (Math.abs(mid(s) - center) < Math.abs(mid(best) - center) ? s : best), slots[0]);
+    },
+    [desktop]
+  );
+
+  /** Scroll position that puts a slot in the middle of the crate. */
+  const slotCenterTarget = useCallback(
+    (el: HTMLElement, slot: HTMLElement) =>
+      desktop ? slot.offsetLeft - (el.clientWidth - slot.offsetWidth) / 2 : slot.offsetTop - (el.clientHeight - slot.offsetHeight) / 2,
+    [desktop]
+  );
+
   // Size the records to the space left once the details have taken theirs, so everything fits on one screen
   // at any window size (short laptop screens and zoomed-in browsers included).
   useLayoutEffect(() => {
     const crate = crateRef.current;
     const stage = stageRef.current;
     if (!crate || !stage) return;
+    let last = '';
     const fit = () => {
       const h = stage.clientHeight;
       const w = stage.clientWidth;
       // The front record is lifted and brought forward, so it needs a little headroom.
       const size = desktop ? Math.min(h * 0.84, w * 0.4, 480) : Math.min(h * 0.74, w * 0.82, 340);
-      crate.style.setProperty('--sleeve', `${Math.max(120, Math.floor(size))}px`);
+      const value = `${Math.max(120, Math.floor(size))}px`;
+      if (value === last) return;
+      last = value;
+      // Changing the record size moves every slot, so remember which record is in front and put it back.
+      const el = scrollerRef.current;
+      const front = el ? nearestSlot(el) : null;
+      crate.style.setProperty('--sleeve', value);
+      if (el && front) jump(el, slotCenterTarget(el, front));
       paint();
     };
     fit();
     const ro = new ResizeObserver(fit);
     ro.observe(stage);
     return () => ro.disconnect();
-  }, [desktop, paint]);
+  }, [desktop, jump, nearestSlot, paint, slotCenterTarget]);
 
   // Start on the first record of the middle copy.
   useLayoutEffect(() => {
@@ -214,42 +240,31 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
     const el = scrollerRef.current;
     if (!el || n === 0) return;
     let frame = 0;
+    let idle: ReturnType<typeof setTimeout> | null = null;
+    // The loop's invisible jump only happens once scrolling has come to rest: jumping mid-swipe would
+    // interrupt the momentum and the snapping, which is what made the crate stutter.
+    const wrap = () => {
+      if (targetRef.current) return; // an arrow-key step is still travelling; it wraps itself
+      const pos = desktop ? el.scrollLeft : el.scrollTop;
+      const copy = (desktop ? el.scrollWidth : el.scrollHeight) / COPIES;
+      if (pos < copy * 0.5) jump(el, pos + copy);
+      else if (pos > copy * 1.5) jump(el, pos - copy);
+    };
     const onScroll = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const pos = desktop ? el.scrollLeft : el.scrollTop;
-        const size = desktop ? el.scrollWidth : el.scrollHeight;
-        const copy = size / COPIES;
-        // Wrap only when the visitor scrolls by hand; arrow-key steps handle their own wrapping.
-        if (!targetRef.current) {
-          if (pos < copy * 0.5) jump(el, pos + copy);
-          else if (pos > copy * 1.5) jump(el, pos - copy);
-        }
-        paint();
-      });
+      frame = requestAnimationFrame(paint);
+      if (idle) clearTimeout(idle);
+      idle = setTimeout(wrap, 160);
     };
-    const onResize = () => paint();
     el.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
+    el.addEventListener('scrollend', wrap);
     return () => {
       cancelAnimationFrame(frame);
+      if (idle) clearTimeout(idle);
       el.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
+      el.removeEventListener('scrollend', wrap);
     };
   }, [desktop, jump, n, paint]);
-
-  // Desktop: a vertical mouse wheel flips sideways.
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el || !desktop) return;
-    const onWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-      e.preventDefault();
-      el.scrollBy({ left: e.deltaY, behavior: 'auto' });
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, [desktop]);
 
   /** Bring a slot to the centre. */
   const centerSlot = useCallback(
@@ -269,14 +284,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       const el = scrollerRef.current;
       if (!el) return;
       const slots = Array.from(el.querySelectorAll<HTMLElement>('.crate-slot'));
-      let from = targetRef.current && el.contains(targetRef.current) ? targetRef.current : null;
-      if (!from) {
-        const center = desktop ? el.scrollLeft + el.clientWidth / 2 : el.scrollTop + el.clientHeight / 2;
-        from = slots.reduce((best, s) => {
-          const mid = (x: HTMLElement) => (desktop ? x.offsetLeft + x.offsetWidth / 2 : x.offsetTop + x.offsetHeight / 2);
-          return Math.abs(mid(s) - center) < Math.abs(mid(best) - center) ? s : best;
-        }, slots[0]);
-      }
+      const from = targetRef.current && el.contains(targetRef.current) ? targetRef.current : nearestSlot(el);
       // Keep the move inside the middle copy: if we've drifted into a clone, hop to the same record in the
       // middle copy first (an invisible jump), then step from there.
       let idx = slots.indexOf(from);
@@ -290,11 +298,39 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       if (!next) return;
       targetRef.current = next;
       if (targetTimer.current) clearTimeout(targetTimer.current);
-      targetTimer.current = setTimeout(() => (targetRef.current = null), 700);
+      targetTimer.current = setTimeout(() => (targetRef.current = null), 600);
       centerSlot(next);
     },
-    [desktop, centerSlot, jump, n]
+    [desktop, centerSlot, jump, n, nearestSlot]
   );
+
+  // Desktop: the mouse wheel and trackpad flip one record at a time. Free scrolling fought the snapping
+  // (the crate would settle on one record, then the next), so movement is gathered up and turned into
+  // clean steps: a gentle scroll moves one record, a long flick moves several in a row.
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || !desktop) return;
+    let acc = 0;
+    let lastEvent = 0;
+    let lockedUntil = 0;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const now = performance.now();
+      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? el.clientWidth : 1;
+      const delta = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * unit;
+      if (now - lastEvent > 220) acc = 0; // a new gesture
+      lastEvent = now;
+      if (now < lockedUntil) return;
+      acc += delta;
+      if (Math.abs(acc) >= 40) {
+        step(acc > 0 ? 1 : -1);
+        acc = 0;
+        lockedUntil = now + 260;
+      }
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [desktop, step]);
 
   const { play } = usePlayer();
   const onSleeveClick = (e: React.MouseEvent<HTMLButtonElement>, r: Release) => {
@@ -360,6 +396,9 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         .crate-disc-label::after { content: ''; position: absolute; left: 50%; top: 50%; width: 8%; height: 8%; transform: translate(-50%,-50%); border-radius: 50%; background: #0B0A07; }
         @media (max-width: 767px) { .crate-disc { display: none; } }
         .crate .dsp-btn { height: var(--crate-btn); padding: 0 18px; }
+        /* The details keep one fixed height whatever the song, so the records never resize as you flip. */
+        .crate-details { height: clamp(150px, 27vh, 250px); }
+        @media (max-width: 767px) { .crate-details { height: clamp(180px, 31svh, 240px); } .crate .dsp-btn { padding: 0 14px; } }
         .crate-sleeve:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 6px; }
         @media (prefers-reduced-motion: reduce) { .crate-disc { transition: none; } }
       `}</style>
@@ -424,11 +463,8 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       </div>
 
       {/* The record in front */}
-      <div className="relative z-20 shrink-0 px-5 pt-[clamp(6px,1.4vh,16px)] pb-[clamp(12px,3vh,40px)]">
+      <div className="crate-details relative z-20 shrink-0 px-5 pb-[clamp(10px,2.4vh,32px)] flex flex-col justify-center overflow-hidden">
         {current && <Details release={current} index={active} total={n} />}
-        <p className="md:hidden [@media(max-height:720px)]:hidden m-0 mt-3 text-center eyebrow text-mist/70" aria-hidden="true">
-          Swipe to flip · Tap the record to play
-        </p>
       </div>
     </div>
   );
