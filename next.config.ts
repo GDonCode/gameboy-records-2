@@ -4,8 +4,9 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.
 const wooHost = process.env.WOOCOMMERCE_URL ? new URL(process.env.WOOCOMMERCE_URL).hostname : null;
 
 const nextConfig: NextConfig = {
-  // Dev only: lets phones on your Wi-Fi load dev assets. Use your PC's IPv4 from `ipconfig`.
-  allowedDevOrigins: ['192.168.39.122'],
+  // Dev only: lets the site work when opened by network address (your PC's IP, or a phone on the same Wi-Fi),
+  // whatever address the router hands out. Without it the browser can't load the dev scripts and nothing interactive runs.
+  allowedDevOrigins: ['192.168.*.*', '10.*.*.*'],
   poweredByHeader: false,
   images: {
     formats: ['image/avif', 'image/webp'],
