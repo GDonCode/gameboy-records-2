@@ -23,14 +23,14 @@ export default function WishlistButton({
       aria-label={saved ? `Remove ${productName} from wishlist` : `Add ${productName} to wishlist`}
       aria-pressed={saved}
       onClick={onToggle}
-      className="group/wishlist absolute top-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md cursor-pointer transition-transform active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#226B4F]"
+      className="group/wishlist absolute top-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md cursor-pointer transition-transform active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2C8663]"
     >
       <span className="relative block h-[22px] w-[22px]">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className={`${icon} ${saved ? 'opacity-0 scale-75' : 'opacity-100 scale-100 group-hover/wishlist:opacity-0 group-hover/wishlist:scale-75'}`}>
-          <path fill="#0B0A07" d={OUTLINE} />
+          <path fill="rgb(164, 42, 42)" d={OUTLINE} />
         </svg>
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className={`${icon} ${saved ? 'opacity-100 scale-100' : 'opacity-0 scale-75 group-hover/wishlist:opacity-100 group-hover/wishlist:scale-100'}`}>
-          <path fill="#0B0A07" d={FILLED} />
+          <path fill="rgb(164, 42, 42)" d={FILLED} />
         </svg>
       </span>
     </button>

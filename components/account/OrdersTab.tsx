@@ -22,7 +22,7 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
 };
 
 const STATUS_CLASS: Record<OrderStatus, string> = {
-  processing: 'bg-[#C9AD80]/15 text-[#C9AD80] border-[#C9AD80]/40',
+  processing: 'bg-[#E2BA0A]/15 text-[#E2BA0A] border-[#E2BA0A]/40',
   shipped: 'bg-[#5FBF97]/15 text-[#5FBF97] border-[#5FBF97]/40',
   delivered: 'bg-white/10 text-white/80 border-white/20',
   cancelled: 'bg-[#F0A39C]/10 text-[#F0A39C] border-[#F0A39C]/40',

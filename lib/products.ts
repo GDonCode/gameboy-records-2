@@ -85,7 +85,7 @@ export function colorSwatch(color: string): string {
     gray: '#9A9893',
     grey: '#9A9893',
     green: '#2C8663',
-    gold: '#A8895A',
+    gold: '#E2BA0A',
     brown: '#5B4632',
     navy: '#1E2A44',
   };

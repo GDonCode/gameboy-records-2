@@ -69,9 +69,7 @@ export default async function ProductPage({ params }: Props) {
               </li>
               <li aria-hidden="true">/</li>
               <li>
-                <Link href={`/shop?type=${product.category}`} className="hover:text-ink underline-offset-4 hover:underline">
-                  {product.categoryLabel}
-                </Link>
+                <span>{product.categoryLabel}</span>
               </li>
               <li aria-hidden="true">/</li>
               <li aria-current="page" className="text-ink truncate">

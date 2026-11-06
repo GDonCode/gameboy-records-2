@@ -1,6 +1,5 @@
 // components/shop/ProductCard.tsx
-// One piece in the shop: a large image, then name and price set quietly underneath.
-// Saving and quick-add sit over the image; the frame holds still while the photo zooms on hover.
+// The original shop card: white card, square photo, quick add with a size picker, wishlist heart.
 'use client';
 
 import { useState } from 'react';
@@ -10,6 +9,9 @@ import { MAX_CART_QUANTITY, formatPrice, type Product } from '@/lib/products';
 import type { ShopCart } from '@/lib/use-shop-cart';
 import { CartButton, CartStepper, SizePicker } from './CartControls';
 import WishlistButton from './WishlistButton';
+
+const SEMI = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
+const BODY = { fontFamily: "'Poppins', sans-serif" } as const;
 
 export default function ProductCard({
   product,
@@ -35,20 +37,20 @@ export default function ProductCard({
   const href = `/shop/${product.slug}`;
 
   return (
-    <article className="group relative flex flex-col">
-      <div className="zoom-media relative aspect-[4/5] w-full overflow-hidden bg-[#E2DED2]">
+    <article className="group relative flex flex-col overflow-hidden bg-white shadow-[0_4px_16px_rgba(22,67,42,0.18)] transition-shadow duration-300 hover:shadow-[0_8px_28px_rgba(22,67,42,0.28)]">
+      <div className="relative aspect-square w-full overflow-hidden bg-[#F6F6F6]">
         <Link href={href} tabIndex={-1} aria-hidden="true" className="absolute inset-0">
           <Image
             src={product.images[0]}
             alt=""
             fill
             priority={priority}
-            sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 50vw"
-            className="object-cover"
+            sizes="(min-width: 768px) 33vw, 50vw"
+            className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />
         </Link>
         {!product.inStock && (
-          <span className="absolute left-3 top-3 z-10 bg-ink px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-paper">
+          <span style={SEMI} className="absolute left-3 top-3 z-10 bg-[#1B3D30] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-white">
             Sold out
           </span>
         )}
@@ -72,17 +74,19 @@ export default function ProductCard({
         />
       </div>
 
-      <div className="flex items-start justify-between gap-3 pt-4">
+      <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-3.5 md:gap-3 md:px-4">
         <div className="min-w-0">
-          <p className="m-0 text-[0.65rem] uppercase leading-none tracking-[0.22em] text-stone">{product.categoryLabel}</p>
-          <h3 className="m-0 mt-2 text-[0.9rem] md:text-[0.95rem] font-medium leading-snug text-ink">
-            <Link href={href} className="line-clamp-2 hover:underline underline-offset-4">
+          <p style={BODY} className="text-[10px] uppercase leading-none tracking-[0.16em] text-[#1B3D30]/55">
+            {product.categoryLabel}
+          </p>
+          <h3 style={SEMI} className="mt-1.5 text-[14px] leading-snug text-[#1B3D30] sm:text-[15px] md:text-base">
+            <Link href={href} className="line-clamp-2 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2C8663]">
               {product.name}
             </Link>
           </h3>
-          <p className="m-0 mt-1 text-[0.85rem] text-stone">
+          <p style={BODY} className="mt-0.5 text-[12px] leading-tight text-[#2C8663] md:text-[13px]">
             {formatPrice(product.price, product.currency)}
-            {quantity > 0 && size && <span> · Size {size} in cart</span>}
+            {quantity > 0 && size && <span className="text-[#1B3D30]/55"> · Size {size} in cart</span>}
           </p>
         </div>
         {product.inStock && (

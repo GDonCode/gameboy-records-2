@@ -62,7 +62,7 @@ function DPad({ className }: { className: string }) {
       <g fill="#0F3326" fillOpacity={0.45} transform="translate(0 0.35)">
         {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
       </g>
-      <g fill="#A8895A">
+      <g fill="#E2BA0A">
         {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
       </g>
     </svg>
@@ -148,6 +148,7 @@ export default function Header() {
             className="flex items-center gap-1 bg-[#2C8663]/[0.1] border border-[#2C8663]/20 px-3 py-2"
           >
             {[
+              { href: '/about', label: 'ABOUT' },
               { href: '/shows', label: 'SHOWS' },
               { href: '/shop', label: 'SHOP' },
               { href: '/music', label: 'MUSIC' },
@@ -272,7 +273,7 @@ export default function Header() {
               </svg>
             </span>
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-[#A8895A] text-[#0B0A07] text-xs font-bold leading-none">
+              <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-[#E2BA0A] text-[#0B0A07] text-xs font-bold leading-none">
                 {cartCount}
               </span>
             )}
@@ -296,7 +297,7 @@ export default function Header() {
             )}
           </svg>
           {!menuOpen && cartCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-[#A8895A]" />
+            <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-[#E2BA0A]" />
           )}
         </button>
       </div>
@@ -311,6 +312,7 @@ export default function Header() {
           <ul className="flex flex-col py-2">
             {[
               { href: '/', label: 'HOME', viewBox: '0 0 640 640', d: 'M341.8 72.6C329.5 61.2 310.5 61.2 298.3 72.6L74.3 280.6C64.7 289.6 61.5 303.5 66.3 315.7C71.1 327.9 82.8 336 96 336L112 336L112 512C112 547.3 140.7 576 176 576L464 576C499.3 576 528 547.3 528 512L528 336L544 336C557.2 336 569 327.9 573.8 315.7C578.6 303.5 575.4 289.5 565.8 280.6L341.8 72.6zM304 384L336 384C362.5 384 384 405.5 384 432L384 528L256 528L256 432C256 405.5 277.5 384 304 384z' },
+              { href: '/about', label: 'ABOUT', viewBox: '0 0 448 512', d: 'M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z' },
               { href: '/shows', label: 'SHOWS', viewBox: '0 0 640 640', d: 'M224 64C241.7 64 256 78.3 256 96L256 128L384 128L384 96C384 78.3 398.3 64 416 64C433.7 64 448 78.3 448 96L448 128L480 128C515.3 128 544 156.7 544 192L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 192C96 156.7 124.7 128 160 128L192 128L192 96C192 78.3 206.3 64 224 64zM160 304L160 336C160 344.8 167.2 352 176 352L208 352C216.8 352 224 344.8 224 336L224 304C224 295.2 216.8 288 208 288L176 288C167.2 288 160 295.2 160 304zM288 304L288 336C288 344.8 295.2 352 304 352L336 352C344.8 352 352 344.8 352 336L352 304C352 295.2 344.8 288 336 288L304 288C295.2 288 288 295.2 288 304zM432 288C423.2 288 416 295.2 416 304L416 336C416 344.8 423.2 352 432 352L464 352C472.8 352 480 344.8 480 336L480 304C480 295.2 472.8 288 464 288L432 288zM160 432L160 464C160 472.8 167.2 480 176 480L208 480C216.8 480 224 472.8 224 464L224 432C224 423.2 216.8 416 208 416L176 416C167.2 416 160 423.2 160 432zM304 416C295.2 416 288 423.2 288 432L288 464C288 472.8 295.2 480 304 480L336 480C344.8 480 352 472.8 352 464L352 432C352 423.2 344.8 416 336 416L304 416zM416 432L416 464C416 472.8 423.2 480 432 480L464 480C472.8 480 480 472.8 480 464L480 432C480 423.2 472.8 416 464 416L432 416C423.2 416 416 423.2 416 432z' },
               { href: '/shop', label: 'SHOP', viewBox: '0 0 640 512', d: 'M211.8 0c7.8 0 14.3 5.7 16.7 13.2C240.8 51.9 277.1 80 320 80s79.2-28.1 91.5-66.8C413.9 5.7 420.4 0 428.2 0h12.6c22.5 0 44.2 7.9 61.5 22.3L628.5 127.4c6.6 5.5 10.7 13.5 11.4 22.1s-2.1 17.1-7.8 23.6l-56 64c-11.4 13.1-31.2 14.6-44.6 3.5L480 197.7V448c0 35.3-28.7 64-64 64H224c-35.3 0-64-28.7-64-64V197.7l-51.5 42.9c-13.3 11.1-33.1 9.6-44.6-3.5l-56-64c-5.7-6.5-8.5-15-7.8-23.6s4.8-16.6 11.4-22.1L137.7 22.3C155 7.9 176.7 0 199.2 0h12.6z' },
               { href: '/music', label: 'MUSIC', viewBox: '0 0 512 512', d: 'M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7v72V368c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V147L192 223.8V432c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V200 128c0-14.1 9.3-26.6 22.8-30.7l320-96c9.7-2.9 20.2-1.1 28.3 4.9z' },
@@ -390,7 +392,7 @@ export default function Header() {
               <span className="flex items-center gap-2">
                   CART
                   {cartCount > 0 && (
-                    <span className="min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-[#A8895A] text-[#0B0A07] text-xs font-bold leading-none">
+                    <span className="min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-[#E2BA0A] text-[#0B0A07] text-xs font-bold leading-none">
                       {cartCount}
                     </span>
                   )}

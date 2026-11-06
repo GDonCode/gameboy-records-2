@@ -1,5 +1,5 @@
 // components/shop/ProductGrid.tsx
-// The shop grid with live cart and saved-item state.
+// The shop grid (original Shop design): three columns from tablet up, two on phones.
 'use client';
 
 import ProductCard from '@/components/shop/ProductCard';
@@ -18,11 +18,12 @@ export default function ProductGrid({ products }: { products: Product[] }) {
       <p
         role="status"
         aria-live="polite"
-        className={status ? 'mb-6 border border-danger/40 bg-danger/10 px-4 py-3 text-[0.85rem] text-danger' : 'sr-only'}
+        style={{ fontFamily: "'Poppins', sans-serif" }}
+        className={status ? 'mb-4 rounded-[6px] border border-[#ff6b6b]/40 bg-[#ff6b6b]/10 px-3 py-2 text-[13px] text-[#ffb3b3]' : 'sr-only'}
       >
         {status ?? ''}
       </p>
-      <ul className="list-none p-0 m-0 grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-14 lg:grid-cols-3">
+      <ul className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 list-none p-0 m-0">
         {products.map((product, i) => (
           <li key={product.id}>
             <ProductCard

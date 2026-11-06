@@ -15,7 +15,7 @@ export default async function Image() {
   return new ImageResponse(
     (
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '72px 80px', background: '#0B0A07', fontFamily: 'Poppins' }}>
-        <div style={{ fontSize: 22, letterSpacing: 8, color: '#C9AD80', textTransform: 'uppercase', marginBottom: 28 }}>Gameboy Records · Founded by Alexx A-Game</div>
+        <div style={{ fontSize: 22, letterSpacing: 8, color: '#E2BA0A', textTransform: 'uppercase', marginBottom: 28 }}>Gameboy Records · Founded by Alexx A-Game</div>
         <div
           style={{
             fontSize: 104,

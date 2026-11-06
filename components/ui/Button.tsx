@@ -11,7 +11,8 @@ const BASE =
   'zoom-content relative inline-flex select-none items-center justify-center overflow-hidden whitespace-nowrap font-semibold uppercase tracking-[0.16em] transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer';
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'rounded-xs bg-green-deep text-paper hover:bg-green',
+  // Primary call to action: gold with ink text (white on this gold would be unreadable).
+  primary: 'rounded-xs bg-gold text-ink hover:bg-[#F0C928]',
   light: 'rounded-xs bg-paper text-ink hover:bg-bone',
   dark: 'rounded-xs bg-ink text-paper hover:bg-ink-3',
   outline: 'rounded-xs border border-paper/50 text-paper hover:border-paper hover:bg-paper/[0.06]',

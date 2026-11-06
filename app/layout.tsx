@@ -73,11 +73,6 @@ const website = {
   name: SITE_NAME,
   url: SITE_URL,
   publisher: { '@id': `${SITE_URL}/#label` },
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${SITE_URL}/shop?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

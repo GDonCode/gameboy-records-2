@@ -131,7 +131,7 @@ export default function ProductPurchase({ product, points, pointsName }: { produ
             </div>
 
             <div className="grid gap-3">
-              <Button variant="dark" size="lg" onClick={addToCart} disabled={busy} className="w-full">
+              <Button variant="primary" size="lg" onClick={addToCart} disabled={busy} className="w-full">
                 {busy ? 'Adding' : 'Add to cart'}
               </Button>
               <p role="status" aria-live="polite" className={`m-0 min-h-[1.5em] text-[0.9rem] ${message?.ok ? 'text-green-deep' : 'text-danger'}`}>

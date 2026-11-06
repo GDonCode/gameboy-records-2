@@ -6,9 +6,9 @@ import Icon from '@/components/icons';
 import Button from '@/components/ui/Button';
 
 const PIECES = [
-  { href: '/shop?type=t-shirt', name: 'The Tee', line: 'Heavyweight cotton, boxed fit.' },
-  { href: '/shop?type=sweatpants', name: 'The Sweatpants', line: 'Brushed fleece, tapered leg.' },
-  { href: '/shop?type=hoodie', name: 'The Hoodie', line: 'Dense loopback, dropped shoulder.' },
+  { href: '/shop', name: 'The Tee', line: 'Heavyweight cotton, boxed fit.' },
+  { href: '/shop', name: 'The Sweatpants', line: 'Brushed fleece, tapered leg.' },
+  { href: '/shop', name: 'The Hoodie', line: 'Dense loopback, dropped shoulder.' },
 ];
 
 export default function MerchFeature() {
@@ -26,7 +26,7 @@ export default function MerchFeature() {
             <p className="m-0 text-stone leading-relaxed">
               Made in small runs and not restocked once they’re gone. Every piece earns Club Points for members.
             </p>
-            <Button href="/shop" variant="dark" size="lg" className="self-start">
+            <Button href="/shop" variant="primary" size="lg" className="self-start">
               Shop all apparel
               <Icon name="arrow-right" className="w-3.5 h-3.5" />
             </Button>

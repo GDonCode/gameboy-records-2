@@ -249,7 +249,7 @@ export default function CartPage() {
         type="button"
         onClick={checkout}
         disabled={checkingOut || hasUnavailable || availableCount === 0}
-        className="zoom-content mt-5 w-full h-14 rounded-[2px] bg-[#0B0A07] text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F5F5F5] hover:bg-[#1F1C17] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+        className="zoom-content mt-5 w-full h-14 rounded-[2px] bg-[#E2BA0A] text-[13px] font-semibold uppercase tracking-[0.16em] text-[#0B0A07] hover:bg-[#F0C928] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
       >
         <span>{checkingOut ? 'Opening secure checkout' : 'Checkout'}</span>
       </button>

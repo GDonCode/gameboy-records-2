@@ -1,21 +1,18 @@
-// app/shop/page.tsx — Shop
+// app/shop/page.tsx — Shop (original Shop design, inside the new site frame; no search or filters)
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { auth } from '@/auth';
 import PageShell from '@/components/PageShell';
 import NeonHeading from '@/components/NeonHeading';
-import ShopFilters from '@/components/shop/ShopFilters';
 import ProductGrid from '@/components/shop/ProductGrid';
 import ClubPointsInfo from '@/components/shop/ClubPointsInfo';
 import JsonLd from '@/components/JsonLd';
 import { getCatalog } from '@/lib/catalog';
-import { applyShopQuery, facets, parseShopQuery } from '@/lib/shop-filters';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { ARTIST, CLUB_NAME, SITE_URL, OG_IMAGE } from '@/lib/site';
+import { ARTIST, OG_IMAGE, SITE_URL } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Shop',
-  description: `Limited apparel from Gameboy Records and ${ARTIST}. Tees, hoodies and sweatpants made in small runs. Members earn Club Points on every order.`,
+  description: `Limited apparel from ${ARTIST} and Gameboy Records. Tees and hoodies from the Rise Collection, made in small runs. Members earn Club Points on every order.`,
   alternates: { canonical: '/shop' },
   openGraph: { url: '/shop', title: 'Shop | Gameboy Records', images: [OG_IMAGE] },
 };
@@ -28,56 +25,37 @@ async function memberBalance(): Promise<{ signedIn: boolean; balance: number | n
   return { signedIn: true, balance: data?.points_balance ?? 0 };
 }
 
-export default async function ShopPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const query = parseShopQuery(await searchParams);
+export default async function ShopPage() {
   const [catalog, member] = await Promise.all([getCatalog(), memberBalance().catch(() => ({ signedIn: false, balance: null }))]);
-  const shown = applyShopQuery(catalog.products, query);
+  const { products } = catalog;
 
   const itemList = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Gameboy Records apparel',
-    itemListElement: catalog.products.map((p, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      url: `${SITE_URL}/shop/${p.slug}`,
-      name: p.name,
-    })),
+    name: 'Rise Collection',
+    itemListElement: products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}/shop/${p.slug}`, name: p.name })),
   };
 
   return (
     <PageShell>
       <JsonLd data={itemList} />
-      <section className="bg-ink pt-16 pb-14 md:pt-24 md:pb-20">
-        <div className="container-site">
-          <NeonHeading kicker="Gameboy Records" subtitle={`The Rise Collection · by ${ARTIST}`}>
-            The Shop
+      <section aria-label="Products" style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #1a2420 100%)' }}>
+        <div className="mx-auto w-full max-w-[1180px] px-4 pt-10 pb-16 md:px-8 md:pt-12 md:pb-20">
+          <NeonHeading align="left" subtitle={`by ${ARTIST}`} className="mb-7 md:mb-9">
+            &ldquo;Rise&rdquo; Collection
           </NeonHeading>
-          <p className="mx-auto mt-8 mb-0 max-w-[52ch] text-center text-mist leading-relaxed">
-            Small runs, made to last, not restocked once they’re gone. {CLUB_NAME} members hear about every drop first.
-          </p>
-        </div>
-      </section>
 
-      <section aria-label="Products" className="on-light bg-bone text-ink py-10 md:py-16">
-        <div className="container-site">
-          <ShopFilters query={query} options={facets(catalog.products)} resultCount={shown.length} />
-
-          <div className="mt-10 md:mt-14">
-            {catalog.error ? (
-              <p className="py-20 text-center text-stone">{catalog.error}</p>
-            ) : shown.length === 0 ? (
-              <div className="py-20 text-center">
-                <p className="m-0 text-[1.1rem]">Nothing in this cut right now.</p>
-                <p className="m-0 mt-2 text-stone">New pieces are announced to the {CLUB_NAME} first.</p>
-                <Link href="/shop" className="inline-block mt-6 text-[0.8rem] font-semibold uppercase tracking-[0.16em] underline underline-offset-[6px]">
-                  View the full collection
-                </Link>
-              </div>
-            ) : (
-              <ProductGrid products={shown} />
-            )}
-          </div>
+          {catalog.error ? (
+            <p style={{ fontFamily: "'Poppins', sans-serif" }} className="py-16 text-center text-[15px] text-[#e8f5ec]/80">
+              {catalog.error}
+            </p>
+          ) : products.length === 0 ? (
+            <p style={{ fontFamily: "'Poppins', sans-serif" }} className="py-16 text-center text-[15px] text-[#e8f5ec]/80">
+              The next drop is on its way. Playaz Club members hear first.
+            </p>
+          ) : (
+            <ProductGrid products={products} />
+          )}
         </div>
       </section>
 

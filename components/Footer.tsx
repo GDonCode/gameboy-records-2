@@ -17,6 +17,7 @@ const SOCIALS: { href: string; label: string; icon: IconName }[] = [
 ];
 
 const LINKS = [
+  { href: '/about', label: 'About' },
   { href: '/shop', label: 'Shop' },
   { href: '/shows', label: 'Shows' },
   { href: '/music', label: 'Music' },

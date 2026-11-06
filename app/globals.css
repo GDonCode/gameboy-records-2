@@ -2,7 +2,7 @@
 
 /* ─────────────────────────────────────────────────────────────────────────────
    GAMEBOY RECORDS — DESIGN SYSTEM
-   Palette:   green #2C8663 · gold #A8895A · paper #F5F5F5 · bone #EDEAE0 · ink #0B0A07
+   Palette:   green #2C8663 · gold #E2BA0A · paper #F5F5F5 · bone #EDEAE0 · ink #0B0A07
    Type:      Poppins (self-hosted woff2) with a system-font fallback
    Spacing:   Tailwind's 4px scale. Section rhythm: 64 / 96 / 128px
    Width:     1280px content max, 16px gutter on phones, 32px tablet, 48px desktop
@@ -28,9 +28,8 @@
   --color-green-deep: #226B4F;
   /* Same green, lifted: for small green text on ink. */
   --color-green-light: #5FBF97;
-  --color-gold: #A8895A;
-  /* Gold, lifted for small text on ink. */
-  --color-gold-light: #C9AD80;
+  --color-gold: #E2BA0A;
+  --color-gold-light: #E2BA0A; /* the gold already reads well on ink (11:1), so small text uses it as is */
   --color-paper: #F5F5F5;
   --color-bone: #EDEAE0;
   --color-ink: #0B0A07;
