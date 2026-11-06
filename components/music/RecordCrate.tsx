@@ -39,24 +39,24 @@ function Details({ release, index, total }: { release: Release; index: number; t
   const meta = [release.year, release.project ?? release.format, release.label].filter(Boolean).join(' · ');
 
   return (
-    <div className="flex flex-col items-center text-center gap-4" aria-live="polite">
-      <p className="m-0 eyebrow text-gold-light">
+    <div className="flex flex-col items-center text-center gap-[clamp(6px,1.4vh,14px)]" aria-live="polite">
+      <p className="m-0 eyebrow text-gold-light text-[clamp(0.6rem,1.4vh,0.72rem)]">
         <span className="sr-only">
           Record {index + 1} of {total}:{' '}
         </span>
         {meta}
       </p>
-      <h2 className="display m-0 text-[1.6rem] sm:text-[2.25rem] lg:text-[2.75rem] max-w-[22ch]">{release.title}</h2>
-      <p className="m-0 text-[0.8rem] md:text-[0.95rem] uppercase tracking-[0.22em]" style={{ color: '#4dff91', textShadow: '0 0 16px rgba(77,255,145,0.45)' }}>
+      <h2 className="display m-0 text-[clamp(1.3rem,4.4vh,2.75rem)] max-w-[22ch]">{release.title}</h2>
+      <p className="m-0 text-[clamp(0.68rem,1.7vh,0.95rem)] uppercase tracking-[0.22em]" style={{ color: '#4dff91', textShadow: '0 0 16px rgba(77,255,145,0.45)' }}>
         {release.credit}
       </p>
-      <ul className="list-none p-0 m-0 mt-1 flex flex-wrap items-center justify-center gap-2.5">
+      <ul className="list-none p-0 m-0 mt-[clamp(0px,0.6vh,6px)] flex flex-wrap items-center justify-center gap-2.5">
         {playId && (
           <li>
             <button
               type="button"
               onClick={() => play(playId, nameOf(release))}
-              className="zoom-content inline-flex items-center h-12 px-6 rounded-xs bg-gold text-ink text-[0.75rem] font-semibold uppercase tracking-[0.16em] cursor-pointer hover:bg-[#F0C928]"
+              className="zoom-content inline-flex items-center h-[var(--crate-btn)] px-6 rounded-xs bg-gold text-ink text-[0.75rem] font-semibold uppercase tracking-[0.16em] cursor-pointer hover:bg-[#F0C928]"
             >
               <span className="inline-flex items-center gap-2.5">
                 <Icon name="play" className="w-3 h-3" />
@@ -103,6 +103,8 @@ function Details({ release, index, total }: { release: Release; index: number; t
 export default function RecordCrate({ releases }: { releases: Release[] }) {
   const desktop = useIsDesktop();
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const crateRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
   // The record an arrow-key step is heading to (see step()).
@@ -131,7 +133,12 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         bestDist = ad;
         best = Number(slot.dataset.index);
       }
-      if (ad > 16) return; // far off screen
+      if (ad > 16) {
+        // Far off screen: no need to lay it out, just make sure it isn't marked as the front record.
+        const far = slot.querySelector<HTMLElement>('.crate-sleeve');
+        if (far && far.dataset.front === 'true') far.dataset.front = 'false';
+        return;
+      }
       const c = Math.max(-1, Math.min(1, d));
       const a = 1 - Math.min(ad, 1);
       const s = slot.querySelector<HTMLElement>('.crate-sleeve');
@@ -170,6 +177,26 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
     },
     [desktop]
   );
+
+  // Size the records to the space left once the details have taken theirs, so everything fits on one screen
+  // at any window size (short laptop screens and zoomed-in browsers included).
+  useLayoutEffect(() => {
+    const crate = crateRef.current;
+    const stage = stageRef.current;
+    if (!crate || !stage) return;
+    const fit = () => {
+      const h = stage.clientHeight;
+      const w = stage.clientWidth;
+      // The front record is lifted and brought forward, so it needs a little headroom.
+      const size = desktop ? Math.min(h * 0.84, w * 0.4, 480) : Math.min(h * 0.74, w * 0.82, 340);
+      crate.style.setProperty('--sleeve', `${Math.max(120, Math.floor(size))}px`);
+      paint();
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(stage);
+    return () => ro.disconnect();
+  }, [desktop, paint]);
 
   // Start on the first record of the middle copy.
   useLayoutEffect(() => {
@@ -298,9 +325,9 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
   const current = releases[active];
 
   return (
-    <div className="crate relative h-[calc(100svh-var(--header-h))] min-h-[560px] bg-ink overflow-hidden flex flex-col">
+    <div ref={crateRef} className="crate relative h-[calc(100svh-var(--header-h))] bg-ink overflow-hidden flex flex-col">
       <style>{`
-        .crate { --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 0.26); }
+        .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 0.26); }
         @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 0.3); } }
         .crate-scroller { perspective: 1200px; perspective-origin: 50% 45%; }
         .crate-scroller:focus-visible { outline: none; }
@@ -332,6 +359,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         .crate-disc-label { position: absolute; inset: 34%; border-radius: 50%; overflow: hidden; border: 2px solid #0B0A07; }
         .crate-disc-label::after { content: ''; position: absolute; left: 50%; top: 50%; width: 8%; height: 8%; transform: translate(-50%,-50%); border-radius: 50%; background: #0B0A07; }
         @media (max-width: 767px) { .crate-disc { display: none; } }
+        .crate .dsp-btn { height: var(--crate-btn); padding: 0 18px; }
         .crate-sleeve:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 6px; }
         @media (prefers-reduced-motion: reduce) { .crate-disc { transition: none; } }
       `}</style>
@@ -340,7 +368,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       <h1 className="sr-only">Alexx A-Game discography</h1>
 
       {/* The crate */}
-      <div className="relative flex-1 min-h-0">
+      <div ref={stageRef} className="relative flex-1 min-h-0">
         <div
           ref={scrollerRef}
           tabIndex={0}
@@ -396,9 +424,9 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       </div>
 
       {/* The record in front */}
-      <div className="relative z-20 shrink-0 px-5 pt-3 pb-6 md:pb-10">
+      <div className="relative z-20 shrink-0 px-5 pt-[clamp(6px,1.4vh,16px)] pb-[clamp(12px,3vh,40px)]">
         {current && <Details release={current} index={active} total={n} />}
-        <p className="md:hidden m-0 mt-4 text-center eyebrow text-mist/70" aria-hidden="true">
+        <p className="md:hidden [@media(max-height:720px)]:hidden m-0 mt-3 text-center eyebrow text-mist/70" aria-hidden="true">
           Swipe to flip · Tap the record to play
         </p>
       </div>
