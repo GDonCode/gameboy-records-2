@@ -50,7 +50,7 @@ function OrderCard({ order }: { order: Order }) {
       <ul className="flex flex-col divide-y divide-white/5">
         {order.items.map((item) => (
           <li key={`${item.product_id}-${item.size}`} className="flex items-center gap-4 px-5 py-3">
-            <Link href={`/shop/${item.slug}`} className="relative w-14 h-14 flex-shrink-0 rounded-[8px] overflow-hidden bg-[#E2DED2]">
+            <Link href={`/shop/${item.slug}`} className="relative w-14 h-14 flex-shrink-0 rounded-[8px] overflow-hidden bg-[#EAEAEA]">
               {item.image && <Image src={item.image} alt={item.name} fill className="object-cover" />}
             </Link>
             <div className="flex flex-col min-w-0 flex-1">

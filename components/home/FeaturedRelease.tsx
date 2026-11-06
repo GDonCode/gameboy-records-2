@@ -74,7 +74,6 @@ export default function FeaturedRelease({ release, index }: { release: Release; 
       />
 
       <div className="relative z-[3] container-site flex flex-col items-center justify-center gap-8 text-center py-24 min-h-[calc(100svh-var(--header-h))]">
-        <p className="eyebrow text-gold-light m-0">Featured release {index === 0 ? 'I' : 'II'}</p>
         <div className="flex flex-col items-center gap-3">
           <h2
             id={headingId}
@@ -99,9 +98,6 @@ export default function FeaturedRelease({ release, index }: { release: Release; 
             }}
           >
             {release.artist}
-          </p>
-          <p className="m-0 mt-2 max-w-[44ch] text-[0.95rem] text-paper/80" style={{ textShadow: '0 1px 12px rgba(0,0,0,0.8)' }}>
-            {release.note}
           </p>
         </div>
         <ListenOn title={release.title} links={release.links} onPlay={() => play(release.youtubeId, release.title)} />

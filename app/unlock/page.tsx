@@ -21,7 +21,7 @@ export default async function UnlockPage({ searchParams }: { searchParams: Promi
       style={{ background: 'linear-gradient(160deg, #0B0A07 0%, #0B0A07 60%, #0B0A07 100%)' }}
     >
       <NeonHeading kicker="Gameboy Records">Coming soon</NeonHeading>
-      <p className="mt-5 max-w-[380px] text-[15px] leading-relaxed text-[#EDEAE0]/75" style={{ fontFamily: "'Poppins', sans-serif" }}>
+      <p className="mt-5 max-w-[380px] text-[15px] leading-relaxed text-[#F5F5F5]/75" style={{ fontFamily: "'Poppins', sans-serif" }}>
         The new site is in development. Enter the preview password to continue.
       </p>
       <UnlockForm next={next} />

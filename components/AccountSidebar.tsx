@@ -108,7 +108,7 @@ export default function AccountSidebar({
   return (
     <aside
       aria-label="Account navigation"
-      className={`flex-shrink-0 w-full md:w-[300px] md:h-full md:overflow-y-auto bg-[#EDEAE0] on-light text-[#0B0A07] px-4 pt-8 pb-10 md:pt-8 md:border-r border-[#0B0A07]/10 ${className}`}
+      className={`flex-shrink-0 w-full md:w-[300px] md:h-full md:overflow-y-auto bg-[#F5F5F5] on-light text-[#0B0A07] px-4 pt-8 pb-10 md:pt-8 md:border-r border-[#0B0A07]/10 ${className}`}
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       {/* Account header */}

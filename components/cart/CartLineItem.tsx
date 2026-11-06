@@ -28,7 +28,7 @@ export default function CartLineItem({
 }) {
   const href = line.slug ? `/shop/${line.slug}` : null;
   const image = (
-    <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden border border-[#0B0A07]/10 bg-[#E2DED2] sm:h-28 sm:w-28">
+    <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden border border-[#0B0A07]/10 bg-[#EAEAEA] sm:h-28 sm:w-28">
       {line.image && (
         <Image src={line.image} alt="" fill sizes="112px" className={`object-cover ${line.available ? '' : 'grayscale opacity-60'}`} />
       )}

@@ -99,7 +99,7 @@ export default async function ProductPage({ params }: Props) {
               {related.map((r) => (
                 <li key={r.id} className={related.length === 3 ? 'last:hidden lg:last:block' : ''}>
                   <Link href={`/shop/${r.slug}`} className="zoom-media group block">
-                    <div className="relative aspect-[4/5] overflow-hidden bg-[#E2DED2]">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-[#EAEAEA]">
                       <Image src={r.images[0]} alt={r.name} fill sizes="(min-width: 1024px) 30vw, 50vw" className="object-cover" />
                     </div>
                     <p className="m-0 mt-4 text-[0.95rem]">{r.name}</p>

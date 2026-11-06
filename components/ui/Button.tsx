@@ -13,7 +13,7 @@ const BASE =
 const VARIANTS: Record<ButtonVariant, string> = {
   // Primary call to action: gold with ink text (white on this gold would be unreadable).
   primary: 'rounded-xs bg-gold text-ink hover:bg-[#F0C928]',
-  light: 'rounded-xs bg-paper text-ink hover:bg-bone',
+  light: 'rounded-xs bg-paper text-ink hover:bg-[#E6E6E6]',
   dark: 'rounded-xs bg-ink text-paper hover:bg-ink-3',
   outline: 'rounded-xs border border-paper/50 text-paper hover:border-paper hover:bg-paper/[0.06]',
   'outline-dark': 'rounded-xs border border-ink/60 text-ink hover:border-ink hover:bg-ink/[0.04]',

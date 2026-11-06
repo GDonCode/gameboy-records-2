@@ -13,8 +13,6 @@ export interface FeaturedRelease {
   video: string;
   /** Still image for the video while it loads. */
   poster: string;
-  /** One quiet line under the title. */
-  note: string;
   links: ListenLink[];
 }
 
@@ -25,12 +23,11 @@ export const FEATURED_RELEASES: [FeaturedRelease, FeaturedRelease] = [
     youtubeId: 'etLGFz3dtsM',
     video: `${MEDIA_BASE}/Rise Up Now (Guitar Cover).mp4`,
     poster: `${MEDIA_BASE}/RISE.JPEG`,
-    note: 'Stripped back to one guitar and one voice. The message stays the same.',
     links: [
       { service: 'youtube' },
-      { service: 'apple', href: 'https://music.apple.com/us/song/rise-up-now-guitar-version/6809729519' },
-      { service: 'spotify', href: 'https://open.spotify.com/track/3tcAFyDjx0YBBJ2Y6TvVVh' },
       { service: 'audiomack', href: SOCIAL.audiomack },
+      { service: 'spotify', href: 'https://open.spotify.com/track/3tcAFyDjx0YBBJ2Y6TvVVh' },
+      { service: 'apple', href: 'https://music.apple.com/us/song/rise-up-now-guitar-version/6809729519' },
       { service: 'soundcloud', href: SOCIAL.soundcloud },
     ],
   },
@@ -40,12 +37,11 @@ export const FEATURED_RELEASES: [FeaturedRelease, FeaturedRelease] = [
     youtubeId: 'BhKt3DVRRkw',
     video: `${MEDIA_BASE}/Standing.mp4`,
     poster: `${MEDIA_BASE}/IMG_8566.JPG`,
-    note: 'For anyone who was counted out and kept going anyway.',
     links: [
       { service: 'youtube' },
-      { service: 'apple', href: 'https://music.apple.com/us/album/still-a-rise-single/6808531561' },
-      { service: 'spotify', href: 'https://open.spotify.com/track/6x4zWKWNHfCzWDDMPJaG7N' },
       { service: 'audiomack', href: SOCIAL.audiomack },
+      { service: 'spotify', href: 'https://open.spotify.com/track/6x4zWKWNHfCzWDDMPJaG7N' },
+      { service: 'apple', href: 'https://music.apple.com/us/album/still-a-rise-single/6808531561' },
       { service: 'soundcloud', href: SOCIAL.soundcloud },
     ],
   },

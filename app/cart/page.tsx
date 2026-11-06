@@ -264,7 +264,7 @@ export default function CartPage() {
 
   return (
     <PageShell>
-      <div className="on-light flex-1 w-full bg-[#EDEAE0] text-[#0B0A07] px-4 pt-10 pb-16 sm:px-6 md:px-10 md:pt-14">
+      <div className="on-light flex-1 w-full bg-[#F5F5F5] text-[#0B0A07] px-4 pt-10 pb-16 sm:px-6 md:px-10 md:pt-14">
         <div className="mx-auto max-w-[1180px]">
           <div className="mb-6 flex items-baseline justify-between gap-4 md:mb-8">
             <h1 className="m-0 text-[28px] font-semibold uppercase leading-none tracking-[0.04em] text-[#0B0A07] md:text-[40px]">Your cart</h1>

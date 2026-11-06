@@ -150,7 +150,7 @@ export default function HomeTab({
             subtitle={`Member since ${memberSince}`}
           />
         </div>
-        <dl className="lg:w-[300px] flex flex-col gap-4 rounded-[10px] bg-[#EDEAE0] p-5">
+        <dl className="lg:w-[300px] flex flex-col gap-4 rounded-[10px] bg-[#F5F5F5] p-5">
           {stats.map((s) => (
             <div key={s.label} className="flex items-center justify-between gap-4" style={BODY}>
               <dt className="text-[0.85em] text-[#0B0A07]/70">{s.label}</dt>

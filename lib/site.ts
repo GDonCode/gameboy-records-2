@@ -34,10 +34,10 @@ export const SOCIAL = {
 
 /** Main navigation, in order. Karaoke and Trivia sit under "Vibes" on desktop. */
 export const NAV = [
-  { href: '/about', label: 'About' },
   { href: '/shows', label: 'Shows' },
   { href: '/shop', label: 'Shop' },
   { href: '/music', label: 'Music' },
+  { href: '/about', label: 'About' },
 ] as const;
 
 export const VIBES_NAV = [

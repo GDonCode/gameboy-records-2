@@ -62,7 +62,7 @@ export default function ProductPurchase({ product, points, pointsName }: { produ
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
       {/* Gallery */}
       <div className="lg:col-span-7">
-        <div className="zoom-media relative aspect-[4/5] overflow-hidden bg-[#E2DED2]">
+        <div className="zoom-media relative aspect-[4/5] overflow-hidden bg-[#EAEAEA]">
           <Image src={product.images[active]} alt={`${product.name}${product.images.length > 1 ? `, view ${active + 1}` : ''}`} fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
         </div>
         {product.images.length > 1 && (
@@ -74,7 +74,7 @@ export default function ProductPurchase({ product, points, pointsName }: { produ
                   onClick={() => setActive(i)}
                   aria-label={`Show view ${i + 1}`}
                   aria-pressed={i === active}
-                  className={`relative block w-full aspect-square overflow-hidden bg-[#E2DED2] cursor-pointer outline-offset-2 ${i === active ? 'ring-1 ring-ink' : 'opacity-70 hover:opacity-100'}`}
+                  className={`relative block w-full aspect-square overflow-hidden bg-[#EAEAEA] cursor-pointer outline-offset-2 ${i === active ? 'ring-1 ring-ink' : 'opacity-70 hover:opacity-100'}`}
                 >
                   <Image src={src} alt="" fill sizes="120px" className="object-cover" />
                 </button>

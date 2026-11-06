@@ -8,6 +8,9 @@ import NeonHeading from '@/components/NeonHeading';
 import Button from '@/components/ui/Button';
 import { ARTIST, MEDIA_BASE } from '@/lib/site';
 
+// A soft shadow under the hero text so it stays readable over bright frames of the film.
+const TEXT_SHADOW = { textShadow: '0 2px 12px rgba(11,10,7,0.75), 0 1px 3px rgba(11,10,7,0.6)' };
+
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -54,14 +57,14 @@ export default function Hero() {
       />
 
       <div className="container-site flex flex-col justify-center pt-12 pb-16 md:pt-16 md:pb-24">
-        <p className="eyebrow text-gold-light m-0 mb-6 animate-fade-up">Singer · Songwriter · Guitarist</p>
-        <NeonHeading as="h1" id="hero-title" size="xl" align="left" className="max-w-[16ch]">
+        <p className="eyebrow text-gold-light m-0 mb-6 animate-fade-up" style={TEXT_SHADOW}>Singer · Songwriter · Guitarist</p>
+        <NeonHeading as="h1" id="hero-title" size="xl" align="left" className="max-w-[16ch] [filter:drop-shadow(0_3px_14px_rgba(0,0,0,0.6))]">
           {ARTIST}
         </NeonHeading>
-        <p className="mt-5 mb-0 text-[1.1rem] md:text-[1.35rem] font-semibold uppercase tracking-[0.18em] text-paper animate-fade-up">
+        <p className="mt-5 mb-0 text-[1.1rem] md:text-[1.35rem] font-semibold uppercase tracking-[0.18em] text-paper animate-fade-up" style={TEXT_SHADOW}>
           Realest sound. Truest vision.
         </p>
-        <p className="mt-5 mb-0 max-w-[48ch] text-[1rem] md:text-[1.125rem] leading-relaxed text-paper/85 animate-fade-up">
+        <p className="mt-5 mb-0 max-w-[48ch] text-[1rem] md:text-[1.125rem] leading-relaxed text-paper/90 animate-fade-up" style={TEXT_SHADOW}>
           Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. The music, the merch and the shows
           come straight from him, through his own label, Gameboy Records.
         </p>
