@@ -13,7 +13,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Icon from '@/components/icons';
-import NeonHeading from '@/components/NeonHeading';
 import { usePlayer } from '@/components/player/PlayerProvider';
 import type { Release } from '@/lib/discography';
 import { spotifyTrackUrl } from '@/lib/spotify-catalog';
@@ -147,7 +146,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       s.style.transform = transform;
       s.style.zIndex = String(1000 - Math.round(ad * 10));
       s.style.setProperty('--a', a.toFixed(3));
-      s.style.setProperty('--shade', Math.min(ad * 0.14, 0.7).toFixed(3));
+      s.style.setProperty('--shade', Math.min(ad * 0.08, 0.4).toFixed(3));
       s.dataset.front = ad < 0.5 ? 'true' : 'false';
     });
     if (best !== activeRef.current) {
@@ -301,8 +300,8 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
   return (
     <div className="crate relative h-[calc(100svh-var(--header-h))] min-h-[560px] bg-ink overflow-hidden flex flex-col">
       <style>{`
-        .crate { --sleeve: clamp(170px, 30svh, 240px); --slot: calc(var(--sleeve) * 0.26); }
-        @media (min-width: 768px) { .crate { --sleeve: clamp(220px, 36vh, 340px); --slot: calc(var(--sleeve) * 0.3); } }
+        .crate { --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 0.26); }
+        @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 0.3); } }
         .crate-scroller { perspective: 1200px; perspective-origin: 50% 45%; }
         .crate-scroller:focus-visible { outline: none; }
         .crate-scroller:focus-visible .crate-sleeve[data-front='true'] .crate-cover { outline: 2px solid var(--color-gold); outline-offset: 4px; }
@@ -337,22 +336,8 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         @media (prefers-reduced-motion: reduce) { .crate-disc { transition: none; } }
       `}</style>
 
-      {/* Title and position */}
-      <div className="pointer-events-none relative z-20 flex items-start justify-between gap-4 px-5 pt-5 md:px-8 md:pt-7">
-        <NeonHeading as="h1" size="sm" align="left" kicker="Alexx A-Game">
-          Discography
-        </NeonHeading>
-        {current && (
-          <p className="m-0 text-right">
-            <span className="neon-heading neon-heading--sm block" aria-hidden="true" style={{ fontSize: '1.75rem', letterSpacing: '0.12em' }}>
-              {current.year}
-            </span>
-            <span className="eyebrow text-mist tabular-nums" aria-hidden="true">
-              {String(active + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}
-            </span>
-          </p>
-        )}
-      </div>
+      {/* Page title for screen readers and search engines; the records speak for themselves on screen. */}
+      <h1 className="sr-only">Alexx A-Game discography</h1>
 
       {/* The crate */}
       <div className="relative flex-1 min-h-0">
@@ -390,11 +375,6 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
               );
             })
           )}
-        </div>
-
-        {/* Crate front: the records stand inside it (desktop) */}
-        <div className="pointer-events-none hidden md:flex absolute z-[1500] inset-x-0 bottom-0 h-[22%] items-end justify-center pb-4" aria-hidden="true" style={{ background: 'linear-gradient(to bottom, rgba(11,10,7,0) 0%, rgba(11,10,7,0.92) 38%, #0B0A07 100%)' }}>
-          <span className="eyebrow text-mist/50">Gameboy Records · Crate 01 · 2014 — {releases[releases.length - 1]?.year}</span>
         </div>
 
         {/* Desktop arrows */}
