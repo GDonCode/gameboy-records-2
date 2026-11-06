@@ -87,7 +87,13 @@ function Newsletter() {
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="bg-ink text-paper border-t border-line-inv">
+    <footer className="paper-ink text-paper">
+      <div className="flex h-[6px]" aria-hidden="true">
+        <span className="flex-1 bg-ink" />
+        <span className="flex-1 bg-green" />
+        <span className="flex-1 bg-gold" />
+        <span className="flex-1 bg-paper" />
+      </div>
       <div className="container-site pt-16 pb-10 md:pt-24">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Label */}

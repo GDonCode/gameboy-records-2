@@ -4,7 +4,7 @@ import Link from 'next/link';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
 /** The site is dark-first: `primary`, `light`, `outline` and `text` sit on ink; `dark`, `outline-dark` and `text-dark` on paper/bone. */
-export type ButtonVariant = 'primary' | 'light' | 'dark' | 'outline' | 'outline-dark' | 'text' | 'text-dark';
+export type ButtonVariant = 'primary' | 'green' | 'light' | 'dark' | 'outline' | 'outline-dark' | 'text' | 'text-dark';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const BASE =
@@ -13,6 +13,8 @@ const BASE =
 const VARIANTS: Record<ButtonVariant, string> = {
   // Primary call to action: gold with ink text (white on this gold would be unreadable).
   primary: 'rounded-xs bg-gold text-ink hover:bg-[#F0C928]',
+  // Deep green with paper text (7:1), for the main action on paper.
+  green: 'rounded-xs bg-green-deep text-paper hover:bg-green',
   light: 'rounded-xs bg-paper text-ink hover:bg-[#E6E6E6]',
   dark: 'rounded-xs bg-ink text-paper hover:bg-ink-3',
   outline: 'rounded-xs border border-paper/50 text-paper hover:border-paper hover:bg-paper/[0.06]',

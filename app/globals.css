@@ -59,7 +59,7 @@
   color-scheme: light;
 }
 @media (min-width: 768px) {
-  :root { --header-h: 90px; }
+  :root { --header-h: 72px; }
 }
 
 html {
@@ -287,6 +287,68 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
   96.6% { opacity: 1; }
 }
 
+
+/* ── PAPER GRAIN + HARD-EDGE STYLE ─────────────────────────────────────────── */
+/* Printed-paper texture, generated in SVG so there's no image to load: fine speckle plus short fibres. */
+:root {
+  --grain-light: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='a'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .22 0 0 0 0 .2 0 0 0 0 .12 0 0 0 1.1 -.46'/></filter><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='.06 .9' numOctaves='2' stitchTiles='stitch' seed='4'/><feColorMatrix values='0 0 0 0 .3 0 0 0 0 .26 0 0 0 0 .15 0 0 0 .9 -.5'/></filter><rect width='100%' height='100%' filter='url(%23a)'/><rect width='100%' height='100%' filter='url(%23b)'/></svg>");
+  --grain-dark: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='a'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch' seed='9'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 -.4'/></filter><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='.05 .9' numOctaves='2' stitchTiles='stitch' seed='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .8 -.5'/></filter><rect width='100%' height='100%' filter='url(%23a)'/><rect width='100%' height='100%' filter='url(%23b)'/></svg>");
+}
+@utility paper {
+  background-color: var(--color-paper);
+  background-image: var(--grain-light);
+  background-size: 320px 320px;
+}
+@utility paper-deep {
+  background-color: #E9E8E2;
+  background-image: var(--grain-light);
+  background-size: 320px 320px;
+}
+@utility paper-gold {
+  background-color: var(--color-gold);
+  background-image: var(--grain-light);
+  background-size: 320px 320px;
+}
+@utility paper-green {
+  background-color: var(--color-green-deep);
+  background-image: var(--grain-dark);
+  background-size: 320px 320px;
+}
+@utility paper-ink {
+  background-color: var(--color-ink);
+  background-image: var(--grain-dark);
+  background-size: 320px 320px;
+}
+/* Offset "printed" shadow, used on buttons and framed pictures. */
+@utility hard {
+  box-shadow: 6px 6px 0 var(--color-ink);
+}
+.btn-hard {
+  border: 2.5px solid var(--color-ink);
+  box-shadow: 4px 4px 0 var(--color-ink);
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 300ms;
+}
+.btn-hard:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--color-ink); }
+.btn-hard:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--color-ink); }
+.btn-hard-inv { border-color: var(--color-paper); box-shadow: 4px 4px 0 var(--color-paper); }
+.btn-hard-inv:hover { box-shadow: 6px 6px 0 var(--color-paper); }
+.btn-hard-inv:active { box-shadow: 0 0 0 var(--color-paper); }
+
+/* Section title: the word sits over a huge outlined copy of itself. */
+.ghost-title { position: relative; display: grid; place-items: center; min-height: 7rem; overflow: hidden; text-align: center; }
+.ghost-title__ghost {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-weight: 700; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase;
+  font-size: clamp(3.4rem, 16vw, 10rem);
+  color: transparent; -webkit-text-stroke: 2px rgba(6, 127, 58, 0.3);
+  user-select: none; pointer-events: none;
+}
+.on-ink .ghost-title__ghost { -webkit-text-stroke-color: rgba(226, 186, 10, 0.32); }
+
+/* Scrolling ribbon. Stops for reduced motion. */
+.ribbon-track { display: flex; width: max-content; animation: ribbon 36s linear infinite; }
+@keyframes ribbon { to { transform: translateX(-50%); } }
+
 /* ── REDUCED MOTION ────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -296,6 +358,8 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
     transition-duration: 1ms !important;
   }
   .neon-heading, .neon-letter--flutter { animation: none !important; }
+  .ribbon-track { animation: none !important; }
+  .btn-hard { transition: none; }
   .zoom-content:hover > *, .zoom-content:focus-visible > *,
   .zoom-media:hover img, .zoom-media:hover video,
   .zoom-media:focus-within img, .zoom-media:focus-within video {

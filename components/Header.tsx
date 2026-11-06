@@ -2,407 +2,451 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronRight,
+  CircleHelp,
+  Disc3,
+  Info,
+  Menu,
+  Mic,
+  Shirt,
+  ShoppingCart,
+  User,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
 import { useCartCount } from '@/lib/cart-sync';
-import { LOGO_URL } from '@/lib/site';
+import { NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
-function Corners() {
+// ── Tokens ────────────────────────────────────────────────────────────────────
+// Ink #0B0A07 on cream is ~9:1; the active/hover green #05652E is ~5:1, so both pass WCAG AA.
+const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
+const FOCUS =
+  'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
+
+type NavItem = { href: string; label: string; icon: LucideIcon; blurb?: string };
+
+const PRIMARY_ICONS: Record<string, LucideIcon> = { '/shows': CalendarDays, '/shop': Shirt, '/music': Disc3, '/about': Info };
+const PRIMARY: NavItem[] = NAV.map((n) => ({ href: n.href, label: n.label, icon: PRIMARY_ICONS[n.href] ?? Info }));
+
+const VIBE_META: Record<string, { icon: LucideIcon; blurb: string }> = {
+  '/karaoke': { icon: Mic, blurb: 'Sing along to the catalogue' },
+  '/trivia': { icon: CircleHelp, blurb: 'How well do you know the label?' },
+};
+const VIBES: NavItem[] = VIBES_NAV.map((n) => ({ href: n.href, label: n.label, icon: VIBE_META[n.href].icon, blurb: VIBE_META[n.href].blurb }));
+
+function isActive(pathname: string, href: string) {
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+// ── Brand ─────────────────────────────────────────────────────────────────────
+// The logo is on a white ground, so it is multiplied into the paper and the grain shows through.
+function Brand() {
   return (
-    <>
-      <span className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px] border-[#067F3A] pointer-events-none z-50" />
-      <span className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px] border-[#067F3A] pointer-events-none z-50" />
-      <span className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px] border-[#067F3A] pointer-events-none z-50" />
-      <span className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#067F3A] pointer-events-none z-50" />
-    </>
+    <Link href="/" aria-label={`${SITE_NAME} — home`} className={`flex shrink-0 items-center rounded-xs ${FOCUS}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/brand/gameboy-records-logo.jpg" alt="" width={1600} height={325} className="h-[30px] w-auto mix-blend-multiply lg:h-[38px]" />
+    </Link>
   );
 }
 
-// Miniature Game Boy d-pad, centered on a corner of the desktop nav box.
-const DPAD_ARROWS = ['M12 3.3l2 2.7h-4z', 'M12 20.7l2-2.7h-4z', 'M3.3 12l2.7-2v4z', 'M20.7 12l-2.7-2v4z'];
-
-function DPad({ className }: { className: string }) {
-  // Unique gradient ids so the two instances don't collide.
-  const id = useId();
+// Four-tone strip along the bottom edge: the logo's black, green, yellow and white.
+function LcdStrip() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      className={`absolute w-6 h-6 pointer-events-none drop-shadow-[0_1.5px_1px_rgba(11,10,7,0.45)] ${className}`}
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[3px]" aria-hidden="true">
+      <span className="flex-1 bg-[#0B0A07]" />
+      <span className="flex-1 bg-[#067F3A]" />
+      <span className="flex-1 bg-[#E2BA0A]" />
+      <span className="flex-1 bg-[#F5F5F5] shadow-[inset_0_-1px_0_#0B0A07]" />
+    </div>
+  );
+}
+
+function CartBadge({ count, className = '' }: { count: number; className?: string }) {
+  if (count <= 0) return null;
+  return (
+    <span
+      className={`flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A3322A] px-1 text-[0.7rem] font-bold leading-none text-white ring-2 ring-[#F5F5F5] ${className}`}
       aria-hidden="true"
     >
-      <defs>
-        {/* Body: lit from the top-left */}
-        <linearGradient id={`${id}-body`} gradientUnits="userSpaceOnUse" x1="4" y1="2" x2="20" y2="22">
-          <stop offset="0" stopColor="#38B26A" />
-          <stop offset="0.45" stopColor="#067F3A" />
-          <stop offset="1" stopColor="#045A29" />
-        </linearGradient>
-        {/* Center pivot: concave dimple, shaded opposite to the body */}
-        <linearGradient id={`${id}-dimple`} gradientUnits="userSpaceOnUse" x1="12" y1="9.2" x2="12" y2="14.8">
-          <stop offset="0" stopColor="#044F24" />
-          <stop offset="1" stopColor="#34c56b" />
-        </linearGradient>
-        <linearGradient id={`${id}-shine`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity="0.35" />
-          <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <g fill="#062C16">
-        <rect x="7.6" y="0.6" width="8.8" height="22.8" rx="1.7" />
-        <rect x="0.6" y="7.6" width="22.8" height="8.8" rx="1.7" />
-      </g>
-      <g fill={`url(#${id}-body)`}>
-        <rect x="8.3" y="1.3" width="7.4" height="21.4" rx="1.1" />
-        <rect x="1.3" y="8.3" width="21.4" height="7.4" rx="1.1" />
-      </g>
-      <rect x="8.3" y="1.3" width="7.4" height="5" rx="1.1" fill={`url(#${id}-shine)`} />
-      <circle cx="12" cy="12" r="2.8" fill={`url(#${id}-dimple)`} />
-      {/* Arrows: solid white, with a dark offset copy underneath for an embossed look */}
-      <g fill="#062C16" fillOpacity={0.45} transform="translate(0 0.35)">
-        {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
-      </g>
-      <g fill="#E2BA0A">
-        {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
-      </g>
-    </svg>
+      {count > 99 ? '99+' : count}
+    </span>
   );
 }
 
-
+// ── Header ────────────────────────────────────────────────────────────────────
 export default function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const [hidden, setHidden] = useState(false);
   // Live cart total: updates instantly from the shop/cart pages, no refresh needed.
   const liveCartCount = useCartCount(session?.user?.id);
   const cartCount = session ? liveCartCount : 0;
-  const [menuOpen, setMenuOpen] = useState(false);
-  const lastScrollY = useRef(0);
+  const cartLabel = cartCount > 0 ? `Cart, ${cartCount} item${cartCount === 1 ? '' : 's'}` : 'Cart';
+  const accountHref = session ? '/account' : '/account/login';
+  const initial = session?.user?.name?.trim().charAt(0).toUpperCase() || null;
 
+  const [hidden, setHidden] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [vibesOpen, setVibesOpen] = useState(false);
+  const lastScrollY = useRef(0);
+  const vibesRef = useRef<HTMLLIElement>(null);
+  const vibesButtonRef = useRef<HTMLButtonElement>(null);
+  const vibesCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const vibesOpenedByHover = useRef(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Phones: slide the header away while scrolling down, bring it back on scroll up.
   useEffect(() => {
     lastScrollY.current = 0;
-
     function handleScroll(e: Event) {
       const target = e.target as HTMLElement | Document;
-      const currentY =
-        target instanceof Document
-          ? window.scrollY
-          : (target as HTMLElement).scrollTop;
-
-      const goingDown = currentY > lastScrollY.current;
-      const pastThreshold = currentY > 80;
-
-      setHidden(goingDown && pastThreshold);
+      const currentY = target instanceof Document ? window.scrollY : (target as HTMLElement).scrollTop;
+      setHidden(currentY > lastScrollY.current && currentY > 80);
       lastScrollY.current = currentY;
     }
-
-    // capture: true — required because scroll events on nested
-    // overflow-auto containers (the sidebar/main-scroll divs in page.tsx)
-    // do not bubble, but capturing listeners still see them.
+    // capture: true — scroll events on nested overflow-auto containers don't bubble,
+    // but capturing listeners still see them.
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     return () => window.removeEventListener('scroll', handleScroll, true);
   }, []);
 
-  // Close the mobile menu on Escape
+  // Escape closes whichever menu is open and hands focus back to its trigger.
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen && !vibesOpen) return;
     function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key !== 'Escape') return;
+      if (menuOpen) {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+      if (vibesOpen) {
+        setVibesOpen(false);
+        vibesButtonRef.current?.focus();
+      }
     }
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
+  }, [menuOpen, vibesOpen]);
+
+  // Click outside the VIBES menu closes it.
+  useEffect(() => {
+    if (!vibesOpen) return;
+    function handlePointer(e: PointerEvent) {
+      if (!vibesRef.current?.contains(e.target as Node)) setVibesOpen(false);
+    }
+    document.addEventListener('pointerdown', handlePointer);
+    return () => document.removeEventListener('pointerdown', handlePointer);
+  }, [vibesOpen]);
+
+  // Opening the phone menu moves focus into it.
+  useEffect(() => {
+    if (menuOpen) menuRef.current?.querySelector<HTMLElement>('a')?.focus();
   }, [menuOpen]);
 
-    return (
+  // Hover opens VIBES on pointer devices; a short delay lets the cursor cross the gap.
+  function openVibesOnHover(e: React.PointerEvent) {
+    if (e.pointerType !== 'mouse') return;
+    if (vibesCloseTimer.current) clearTimeout(vibesCloseTimer.current);
+    if (!vibesOpen) vibesOpenedByHover.current = true;
+    setVibesOpen(true);
+  }
+  function closeVibesOnLeave(e: React.PointerEvent) {
+    if (e.pointerType !== 'mouse') return;
+    vibesCloseTimer.current = setTimeout(() => {
+      vibesOpenedByHover.current = false;
+      setVibesOpen(false);
+    }, 150);
+  }
+  // A click right after hover-open would otherwise toggle the menu shut; keep it open instead.
+  function toggleVibes() {
+    if (vibesOpenedByHover.current) {
+      vibesOpenedByHover.current = false;
+      setVibesOpen(true);
+      return;
+    }
+    setVibesOpen((v) => !v);
+  }
+
+  const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
+
+  const linkBase = `relative inline-flex h-11 items-center rounded-md px-3 text-[0.9rem] tracking-[0.12em] transition-colors duration-200 lg:px-4 lg:text-[0.98rem]
+    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#067F3A] after:transition-transform after:duration-200 lg:after:inset-x-4
+    ${FOCUS}`;
+  const linkState = (active: boolean) =>
+    active ? 'text-[#05652E] after:scale-x-100' : 'text-[#0B0A07] after:scale-x-0 hover:text-[#05652E] hover:after:scale-x-100';
+
+  return (
     <>
-    {/* Tap-outside backdrop for the mobile menu */}
-    {menuOpen && (
-      <div
-        className="fixed inset-0 z-[35] lg:hidden"
-        onClick={() => setMenuOpen(false)}
-        aria-hidden="true"
-      />
-    )}
-    <header
-      className={`on-light sticky top-0 left-0 right-0 flex-shrink-0 bg-[#F5F5F5] text-[#0B0A07] z-40 transition-transform duration-300 ease-in-out lg:translate-y-0 ${
-        hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
-      }`}
-    >
-      <Corners />
-      <div className="flex items-end justify-between h-[60px] md:h-[90px] pl-3 pr-7 relative z-[1]">
-        {/* Logo */}
-        <Link href="/" className="flex items-center self-center">
-          <div className="flex items-center self-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={LOGO_URL} alt="Gameboy Records — home" className="h-[36px] md:h-[48px] w-auto block" />
-          </div>
-        </Link>
+      {/* Phone menu scrim */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-[35] bg-[#0B0A07]/55 backdrop-blur-[2px] lg:hidden motion-safe:animate-[gbr-fade_200ms_ease-out]"
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
-                {/* Nav — desktop only; mobile uses the hamburger menu below */}
-        {/* Unified pill nav container, styled after the Aurelia Dental header nav pattern */}
-        <nav aria-label="Main" className="hidden lg:flex relative items-center self-center md:ml-auto md:mr-8">
-          <DPad className="top-0 left-0 -translate-x-1/2 -translate-y-1/2 z-10" />
-          <DPad className="top-0 right-0 translate-x-1/2 -translate-y-1/2 z-10" />
-          <ul
-            className="flex items-center gap-1 bg-[#067F3A]/[0.1] border border-[#067F3A]/20 px-3 py-2"
-          >
-            {[
-              { href: '/shows', label: 'SHOWS' },
-              { href: '/shop', label: 'SHOP' },
-              { href: '/music', label: 'MUSIC' },
-              { href: '/about', label: 'ABOUT' },
-            ].map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
-                  className={`zoom-content inline-block px-5 py-2 rounded-md cursor-pointer transition-colors duration-200 ${
-                    pathname.startsWith(item.href)
-                      ? 'bg-[#067F3A] text-white font-bold'
-                      : 'text-[#0E3A20]'
-                  }`}
-                  style={{
-                    fontFamily: "'Poppins_semibold', monospace",
-                    fontSize: '1.21em',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  <span className="inline-block">{item.label}</span>
-                </Link>
-              </li>
-            ))}
+      <header
+        className={`on-light sticky top-0 z-40 flex-shrink-0 paper text-[#0B0A07] transition-transform duration-300 ease-in-out lg:translate-y-0 ${
+          hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
+        }`}
+      >
+        <div className="relative flex h-[60px] items-center gap-3 pb-[3px] pl-4 pr-3 md:h-[72px] lg:gap-2 lg:px-8">
+          <Brand />
 
-            {/* Games dropdown — hover-triggered via CSS group, no JS state needed */}
-            <li className="relative group">
-              <button
-                type="button"
-                aria-haspopup="true"
-                className={`zoom-content inline-block px-5 py-2 rounded-md cursor-pointer transition-colors duration-200 ${
-                  pathname === '/karaoke' || pathname === '/trivia'
-                    ? 'bg-[#067F3A] text-white font-bold'
-                    : 'text-[#0E3A20]'
-                }`}
-                style={{
-                  fontFamily: "'Poppins_semibold', monospace",
-                  fontSize: '1.21em',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                <span className="inline-flex items-center gap-1">
-                  VIBES
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    className="w-3 h-3 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
-                </span>
-              </button>
-
-              <ul
-                className="absolute left-0 top-full hidden group-hover:flex group-focus-within:flex flex-col min-w-[160px] bg-[#F5F5F5] border border-[#067F3A]/20 shadow-lg z-50"
-              >
-                {[
-                  { href: '/karaoke', label: 'KARAOKE' },
-                  { href: '/trivia', label: 'TRIVIA' },
-                ].map((item) => (
+          {/* ── Desktop nav ── */}
+          <nav aria-label="Main" className="ml-auto hidden lg:block">
+            <ul className="flex items-center gap-0.5 lg:gap-1">
+              {PRIMARY.map((item) => {
+                const active = isActive(pathname, item.href);
+                return (
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      aria-current={pathname === item.href ? 'page' : undefined}
-                      className={`group/item block px-5 py-2 whitespace-nowrap transition-all duration-200 ${
-                        pathname === item.href
-                          ? 'bg-[#067F3A] text-white font-bold'
-                          : 'bg-[#067F3A]/10 text-[#0E3A20]'
-                      }`}
-                      style={{
-                        fontFamily: "'Poppins_semibold', monospace",
-                        fontSize: '1.1em',
-                        letterSpacing: '0.1em',
-                      }}
+                      aria-current={active ? 'page' : undefined}
+                      className={`${linkBase} ${linkState(active)}`}
+                      style={SEMIBOLD}
                     >
-                      {/* Zoom the label, not the row, so it stays inside the dropdown */}
-                      <span
-                        className={`inline-block origin-left transition-transform duration-200 ${
-                          pathname === item.href ? '' : 'group-hover/item:scale-110'
-                        }`}
-                      >
-                        {item.label}
-                      </span>
+                      {item.label.toUpperCase()}
                     </Link>
                   </li>
-                ))}
-              </ul>
-            </li>
-          </ul>
-        </nav>
+                );
+              })}
 
-        {/* Account / Cart — desktop only placeholders, sized for future profile photo avatar */}
-        <div className="hidden lg:flex items-center self-center gap-3 flex-shrink-0">
-                    <Link
-            href={session ? '/account' : '/account/login'}
-            aria-label={session ? 'Your account' : 'Sign in or join the Playaz Club'}
-            className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white font-bold transition"
-          >
-            <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-120">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-6 h-6 flex-shrink-0 block" fill="currentColor">
-                {session ? (
-                  <path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z" />
-                ) : (
-                  <path d="M285.7 368C384.2 368 464 447.8 464 546.3C464 562.7 450.7 576 434.3 576L77.7 576C61.3 576 48 562.7 48 546.3C48 447.8 127.8 368 226.3 368L285.7 368zM528 144C541.3 144 552 154.7 552 168L552 216L600 216C613.3 216 624 226.7 624 240C624 253.3 613.3 264 600 264L552 264L552 312C552 325.3 541.3 336 528 336C514.7 336 504 325.3 504 312L504 264L456 264C442.7 264 432 253.3 432 240C432 226.7 442.7 216 456 216L504 216L504 168C504 154.7 514.7 144 528 144zM256 312C189.7 312 136 258.3 136 192C136 125.7 189.7 72 256 72C322.3 72 376 125.7 376 192C376 258.3 322.3 312 256 312z" />
-                )}
-              </svg>
-            </span>
-          </Link>
-
-          <Link
-            href="/cart"
-            aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart'}
-            className="group relative cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white font-bold transition"
-          >
-            <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-120">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-6 h-6 flex-shrink-0 block" fill="currentColor">
-                <path d="M24 80C10.7 80 0 90.7 0 104C0 117.3 10.7 128 24 128L69.5 128C79.6 128 88.4 134.8 91 144.6L143.9 344.9C154.6 385.4 191.3 413.7 233.2 413.7L465.8 413.7C507 413.7 543.2 386.4 554.5 346.8L601 184.6C609.6 154.7 587.2 124.8 556.1 124.8L142.9 124.8L137.6 105C127.5 66.7 92.8 40 53.2 40L24 40L24 80zM192 528C218.5 528 240 506.5 240 480C240 453.5 218.5 432 192 432C165.5 432 144 453.5 144 480C144 506.5 165.5 528 192 528zM496 528C522.5 528 544 506.5 544 480C544 453.5 522.5 432 496 432C469.5 432 448 453.5 448 480C448 506.5 469.5 528 496 528z" />
-              </svg>
-            </span>
-            {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-[#E2BA0A] text-[#0B0A07] text-xs font-bold leading-none">
-                {cartCount}
-              </span>
-            )}
-          </Link>
-        </div>
-
-        {/* Hamburger — mobile only */}
-        <button
-          type="button"
-          onClick={() => setMenuOpen((v) => !v)}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
-          className="lg:hidden relative inline-flex items-center justify-center self-center w-11 h-11 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-6 h-6 block" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
-            {menuOpen ? (
-              <path d="M6 6l12 12M18 6L6 18" />
-            ) : (
-              <path d="M4 7h16M4 12h16M4 17h16" />
-            )}
-          </svg>
-          {!menuOpen && cartCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-[#E2BA0A]" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile menu panel */}
-      {menuOpen && (
-        <nav
-          id="mobile-menu"
-          aria-label="Mobile"
-                    className="lg:hidden absolute top-full right-0 w-max min-w-[220px] bg-[#F5F5F5] border-t border-l border-b border-[#067F3A]/20 rounded-bl-[6px] shadow-lg"
-        >
-          <ul className="flex flex-col py-2">
-            {[
-              { href: '/', label: 'HOME', viewBox: '0 0 640 640', d: 'M341.8 72.6C329.5 61.2 310.5 61.2 298.3 72.6L74.3 280.6C64.7 289.6 61.5 303.5 66.3 315.7C71.1 327.9 82.8 336 96 336L112 336L112 512C112 547.3 140.7 576 176 576L464 576C499.3 576 528 547.3 528 512L528 336L544 336C557.2 336 569 327.9 573.8 315.7C578.6 303.5 575.4 289.5 565.8 280.6L341.8 72.6zM304 384L336 384C362.5 384 384 405.5 384 432L384 528L256 528L256 432C256 405.5 277.5 384 304 384z' },
-              { href: '/shows', label: 'SHOWS', viewBox: '0 0 640 640', d: 'M224 64C241.7 64 256 78.3 256 96L256 128L384 128L384 96C384 78.3 398.3 64 416 64C433.7 64 448 78.3 448 96L448 128L480 128C515.3 128 544 156.7 544 192L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 192C96 156.7 124.7 128 160 128L192 128L192 96C192 78.3 206.3 64 224 64zM160 304L160 336C160 344.8 167.2 352 176 352L208 352C216.8 352 224 344.8 224 336L224 304C224 295.2 216.8 288 208 288L176 288C167.2 288 160 295.2 160 304zM288 304L288 336C288 344.8 295.2 352 304 352L336 352C344.8 352 352 344.8 352 336L352 304C352 295.2 344.8 288 336 288L304 288C295.2 288 288 295.2 288 304zM432 288C423.2 288 416 295.2 416 304L416 336C416 344.8 423.2 352 432 352L464 352C472.8 352 480 344.8 480 336L480 304C480 295.2 472.8 288 464 288L432 288zM160 432L160 464C160 472.8 167.2 480 176 480L208 480C216.8 480 224 472.8 224 464L224 432C224 423.2 216.8 416 208 416L176 416C167.2 416 160 423.2 160 432zM304 416C295.2 416 288 423.2 288 432L288 464C288 472.8 295.2 480 304 480L336 480C344.8 480 352 472.8 352 464L352 432C352 423.2 344.8 416 336 416L304 416zM416 432L416 464C416 472.8 423.2 480 432 480L464 480C472.8 480 480 472.8 480 464L480 432C480 423.2 472.8 416 464 416L432 416C423.2 416 416 423.2 416 432z' },
-              { href: '/shop', label: 'SHOP', viewBox: '0 0 640 512', d: 'M211.8 0c7.8 0 14.3 5.7 16.7 13.2C240.8 51.9 277.1 80 320 80s79.2-28.1 91.5-66.8C413.9 5.7 420.4 0 428.2 0h12.6c22.5 0 44.2 7.9 61.5 22.3L628.5 127.4c6.6 5.5 10.7 13.5 11.4 22.1s-2.1 17.1-7.8 23.6l-56 64c-11.4 13.1-31.2 14.6-44.6 3.5L480 197.7V448c0 35.3-28.7 64-64 64H224c-35.3 0-64-28.7-64-64V197.7l-51.5 42.9c-13.3 11.1-33.1 9.6-44.6-3.5l-56-64c-5.7-6.5-8.5-15-7.8-23.6s4.8-16.6 11.4-22.1L137.7 22.3C155 7.9 176.7 0 199.2 0h12.6z' },
-              { href: '/music', label: 'MUSIC', viewBox: '0 0 512 512', d: 'M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7v72V368c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V147L192 223.8V432c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V200 128c0-14.1 9.3-26.6 22.8-30.7l320-96c9.7-2.9 20.2-1.1 28.3 4.9z' },
-              { href: '/about', label: 'ABOUT', viewBox: '0 0 448 512', d: 'M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z' },
-              { href: '/karaoke', label: 'KARAOKE', heading: 'VIBES', viewBox: '0 0 640 640', d: 'M320 64C267 64 224 107 224 160L224 288C224 341 267 384 320 384C373 384 416 341 416 288L416 160C416 107 373 64 320 64zM176 248C176 234.7 165.3 224 152 224C138.7 224 128 234.7 128 248L128 288C128 385.9 201.3 466.7 296 478.5L296 528L248 528C234.7 528 224 538.7 224 552C224 565.3 234.7 576 248 576L392 576C405.3 576 416 565.3 416 552C416 538.7 405.3 528 392 528L344 528L344 478.5C438.7 466.7 512 385.9 512 288L512 248C512 234.7 501.3 224 488 224C474.7 224 464 234.7 464 248L464 288C464 367.5 399.5 432 320 432C240.5 432 176 367.5 176 288L176 248z' },
-              { href: '/trivia', label: 'TRIVIA', viewBox: '0 0 24 24', d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z' },
-            ].map((item) => (
-              <li key={item.href}>
-                {item.heading && (
-                  <div
-                    className="mt-2 pt-3 pb-1 px-6 border-t border-[#067F3A]/20 text-[#067F3A]"
-                    style={{
-                      fontFamily: "'Poppins_semibold', monospace",
-                      fontSize: '0.75em',
-                      letterSpacing: '0.2em',
-                    }}
-                  >
-                    {item.heading}
-                  </div>
-                )}
-                <Link
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  aria-current={pathname === item.href ? 'page' : undefined}
-                                    className={`flex items-center gap-3 px-6 py-3 transition-colors duration-200 ${
-                    pathname === item.href
-                      ? 'bg-[#067F3A] text-white font-bold'
-                      : 'text-[#0E3A20] hover:bg-[#067F3A]/10'
-                  }`}
-                  style={{
-                    fontFamily: "'Poppins_semibold', monospace",
-                    fontSize: '1em',
-                    letterSpacing: '0.1em',
-                  }}
+              <li ref={vibesRef} className="relative" onPointerEnter={openVibesOnHover} onPointerLeave={closeVibesOnLeave}>
+                <button
+                  ref={vibesButtonRef}
+                  type="button"
+                  aria-expanded={vibesOpen}
+                  aria-controls="vibes-menu"
+                  onClick={toggleVibes}
+                  className={`${linkBase} ${linkState(vibesActive)} gap-1.5 ${vibesOpen ? 'text-[#05652E]' : ''}`}
+                  style={SEMIBOLD}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox={item.viewBox} className="w-5 h-5 flex-shrink-0 block" fill="currentColor" aria-hidden="true">
-                    <path d={item.d} />
-                  </svg>
-                <span>{item.label}</span>
-                </Link>
+                  VIBES
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
+                    strokeWidth={2.75}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                <div
+                  id="vibes-menu"
+                  hidden={!vibesOpen}
+                  className="absolute right-0 top-full z-50 pt-2 lg:left-1/2 lg:right-auto lg:-translate-x-1/2"
+                >
+                  <ul className="w-[300px] overflow-hidden rounded-xl border border-[#0B0A07]/10 bg-[#FFFFFF] p-1.5 shadow-[0_18px_40px_-12px_rgba(15,61,34,0.35)] motion-safe:animate-[gbr-drop_160ms_ease-out]">
+                    {VIBES.map((item) => {
+                      const active = isActive(pathname, item.href);
+                      const Icon = item.icon;
+                      return (
+                        <li key={item.href}>
+                          <Link
+                            href={item.href}
+                            aria-current={active ? 'page' : undefined}
+                            onClick={() => setVibesOpen(false)}
+                            className={`group flex items-center gap-3 rounded-lg p-2.5 transition-colors duration-150 ${FOCUS} ${
+                              active ? 'bg-[#067F3A]/12' : 'hover:bg-[#067F3A]/8'
+                            }`}
+                          >
+                            <span
+                              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                                active ? 'bg-[#067F3A] text-white' : 'bg-[#067F3A]/12 text-[#05652E] group-hover:bg-[#067F3A] group-hover:text-white'
+                              }`}
+                            >
+                              <Icon className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                            </span>
+                            <span className="min-w-0">
+                              <span className="block text-[0.9rem] tracking-[0.12em] text-[#0B0A07]" style={SEMIBOLD}>
+                                {item.label.toUpperCase()}
+                              </span>
+                              <span className="block text-[0.8rem] text-[#0B0A07]/70" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                                {item.blurb}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               </li>
-            ))}
-            <li className="mt-2 pt-2 border-t border-[#067F3A]/20">
+            </ul>
+          </nav>
+
+          {/* ── Desktop utilities ── */}
+          <div className="hidden items-center gap-2 lg:flex">
+            <span className="mx-2 h-7 w-px bg-[#0B0A07]/15 lg:mx-3" aria-hidden="true" />
+
+            {session ? (
               <Link
-                href={session ? '/account' : '/account/login'}
-                onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-3 px-6 py-3 text-[#0E3A20] hover:bg-[#067F3A]/10 transition-colors duration-200"
-                style={{
-                  fontFamily: "'Poppins_semibold', monospace",
-                  fontSize: '1em',
-                  letterSpacing: '0.1em',
-                }}
+                href={accountHref}
+                aria-label="Your account"
+                aria-current={isActive(pathname, '/account') ? 'page' : undefined}
+                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#0B0A07]/20 text-[#0B0A07] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/10 ${FOCUS}`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-5 h-5 flex-shrink-0 block" fill="currentColor" aria-hidden="true">
-                  {session ? (
-                    <path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z" />
-                  ) : (
-                    <path d="M285.7 368C384.2 368 464 447.8 464 546.3C464 562.7 450.7 576 434.3 576L77.7 576C61.3 576 48 562.7 48 546.3C48 447.8 127.8 368 226.3 368L285.7 368zM528 144C541.3 144 552 154.7 552 168L552 216L600 216C613.3 216 624 226.7 624 240C624 253.3 613.3 264 600 264L552 264L552 312C552 325.3 541.3 336 528 336C514.7 336 504 325.3 504 312L504 264L456 264C442.7 264 432 253.3 432 240C432 226.7 442.7 216 456 216L504 216L504 168C504 154.7 514.7 144 528 144zM256 312C189.7 312 136 258.3 136 192C136 125.7 189.7 72 256 72C322.3 72 376 125.7 376 192C376 258.3 322.3 312 256 312z" />
-                  )}
-                </svg>
-              <span>{session ? 'ACCOUNT' : 'SIGN IN'}</span>
+                {initial ? (
+                  <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
+                ) : (
+                  <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                )}
               </Link>
-            </li>
-            <li>
+            ) : (
               <Link
-                href="/cart"
-                onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-3 px-6 py-3 text-[#0E3A20] hover:bg-[#067F3A]/10 transition-colors duration-200"
-                style={{
-                  fontFamily: "'Poppins_semibold', monospace",
-                  fontSize: '1em',
-                  letterSpacing: '0.1em',
-                }}
+                href={accountHref}
+                aria-label="Sign in"
+                className={`flex h-11 items-center gap-2 rounded-full border-2 border-[#0B0A07]/20 px-3 text-[#0B0A07] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/10 lg:px-4 ${FOCUS}`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-5 h-5 flex-shrink-0 block" fill="currentColor" aria-hidden="true">
-                  <path d="M24 80C10.7 80 0 90.7 0 104C0 117.3 10.7 128 24 128L69.5 128C79.6 128 88.4 134.8 91 144.6L143.9 344.9C154.6 385.4 191.3 413.7 233.2 413.7L465.8 413.7C507 413.7 543.2 386.4 554.5 346.8L601 184.6C609.6 154.7 587.2 124.8 556.1 124.8L142.9 124.8L137.6 105C127.5 66.7 92.8 40 53.2 40L24 40L24 80zM192 528C218.5 528 240 506.5 240 480C240 453.5 218.5 432 192 432C165.5 432 144 453.5 144 480C144 506.5 165.5 528 192 528zM496 528C522.5 528 544 506.5 544 480C544 453.5 522.5 432 496 432C469.5 432 448 453.5 448 480C448 506.5 469.5 528 496 528z" />
-                </svg>
-              <span className="flex items-center gap-2">
-                  CART
-                  {cartCount > 0 && (
-                    <span className="min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-[#E2BA0A] text-[#0B0A07] text-xs font-bold leading-none">
-                      {cartCount}
-                    </span>
-                  )}
+                <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                <span className="hidden text-[0.85rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
+                  SIGN IN
                 </span>
               </Link>
-            </li>
-          </ul>
-        </nav>
-      )}
-    </header>
+            )}
+
+            <Link
+              href="/cart"
+              aria-label={cartLabel}
+              aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full bg-[#067F3A] text-white shadow-[0_3px_0_#044F24] transition-[transform,box-shadow,background-color] duration-100 hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none ${FOCUS}`}
+            >
+              <ShoppingCart className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+              <CartBadge count={cartCount} className="absolute -right-1.5 -top-1.5" />
+            </Link>
+          </div>
+
+          {/* ── Phone actions ── */}
+          <div className="ml-auto flex items-center gap-1 lg:hidden">
+            <Link
+              href="/cart"
+              aria-label={cartLabel}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full text-[#0B0A07] transition-colors hover:bg-[#067F3A]/10 ${FOCUS}`}
+            >
+              <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2.25} aria-hidden="true" />
+              <CartBadge count={cartCount} className="absolute right-0 top-0" />
+            </Link>
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${FOCUS} ${
+                menuOpen ? 'bg-[#0B0A07] text-white' : 'bg-[#067F3A] text-white'
+              }`}
+            >
+              {menuOpen ? (
+                <X className="h-[22px] w-[22px]" strokeWidth={2.5} aria-hidden="true" />
+              ) : (
+                <Menu className="h-[22px] w-[22px]" strokeWidth={2.5} aria-hidden="true" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <LcdStrip />
+
+        {/* ── Phone menu sheet ── */}
+        {menuOpen && (
+          <div
+            ref={menuRef}
+            id="mobile-menu"
+            className="absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl paper shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
+          >
+            <nav aria-label="Mobile" className="px-3 pb-4 pt-2">
+              <MobileGroup items={PRIMARY} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+
+              <p className="px-3 pb-1 pt-4 text-[0.7rem] tracking-[0.3em] text-[#05652E]" style={SEMIBOLD}>
+                VIBES
+              </p>
+              <MobileGroup items={VIBES} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+
+              <div className="mt-4 border-t border-[#0B0A07]/15 px-1 pt-4">
+                {session ? (
+                  <Link
+                    href={accountHref}
+                    onClick={() => setMenuOpen(false)}
+                    className={`flex items-center gap-3 rounded-xl bg-white/60 p-3 text-[#0B0A07] ${FOCUS}`}
+                  >
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#067F3A] text-white" aria-hidden="true">
+                      {initial ? <span style={SEMIBOLD}>{initial}</span> : <User className="h-5 w-5" strokeWidth={2.25} />}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[0.95rem] tracking-[0.1em]" style={SEMIBOLD}>YOUR ACCOUNT</span>
+                      {session.user?.name && (
+                        <span className="block truncate text-[0.8rem] text-[#0B0A07]/70" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                          {session.user.name}
+                        </span>
+                      )}
+                    </span>
+                    <ChevronRight className="h-5 w-5 text-[#0B0A07]/50" aria-hidden="true" />
+                  </Link>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Link
+                      href="/account/login"
+                      onClick={() => setMenuOpen(false)}
+                      className={`flex h-12 items-center justify-center rounded-full bg-[#067F3A] text-[0.95rem] tracking-[0.14em] text-white shadow-[0_3px_0_#044F24] active:translate-y-[3px] active:shadow-none ${FOCUS}`}
+                      style={SEMIBOLD}
+                    >
+                      SIGN IN
+                    </Link>
+                    <Link
+                      href="/account/login?mode=register"
+                      onClick={() => setMenuOpen(false)}
+                      className={`flex h-11 items-center justify-center rounded-full text-[0.9rem] text-[#0B0A07] underline-offset-4 hover:underline ${FOCUS}`}
+                      style={{ fontFamily: "'Poppins', sans-serif" }}
+                    >
+                      New here? Create an account
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </nav>
+          </div>
+        )}
+      </header>
+
+      <style>{`
+        @keyframes gbr-fade { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes gbr-drop { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: none } }
+      `}</style>
     </>
+  );
+}
+
+function MobileGroup({ items, pathname, onNavigate }: { items: NavItem[]; pathname: string; onNavigate: () => void }) {
+  return (
+    <ul className="flex flex-col gap-0.5">
+      {items.map((item) => {
+        const active = isActive(pathname, item.href);
+        const Icon = item.icon;
+        return (
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              onClick={onNavigate}
+              aria-current={active ? 'page' : undefined}
+              className={`flex min-h-[52px] items-center gap-3.5 rounded-xl px-3 text-[1rem] tracking-[0.12em] transition-colors ${FOCUS} ${
+                active ? 'bg-[#067F3A] text-white' : 'text-[#0B0A07] active:bg-[#067F3A]/12'
+              }`}
+              style={SEMIBOLD}
+            >
+              <Icon className={`h-5 w-5 shrink-0 ${active ? '' : 'text-[#05652E]'}`} strokeWidth={2.25} aria-hidden="true" />
+              <span className="flex-1">{item.label.toUpperCase()}</span>
+              {active && <span className="h-2 w-2 rounded-full bg-white" aria-hidden="true" />}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

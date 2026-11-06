@@ -3,7 +3,10 @@ import type { Metadata } from 'next';
 import PageShell from '@/components/PageShell';
 import Hero from '@/components/home/Hero';
 import MerchFeature from '@/components/home/MerchFeature';
-import FeaturedRelease from '@/components/home/FeaturedRelease';
+import Ribbon from '@/components/home/Ribbon';
+import ReleaseCards from '@/components/home/ReleaseCards';
+import SectionTitle from '@/components/home/SectionTitle';
+import ClubBand from '@/components/home/ClubBand';
 import ShowsFeature from '@/components/home/ShowsFeature';
 import JsonLd from '@/components/JsonLd';
 import { FEATURED_RELEASES } from '@/lib/releases';
@@ -30,10 +33,18 @@ export default function Home() {
     <PageShell>
       <JsonLd data={releasesJsonLd} />
       <Hero />
+      <Ribbon />
+      <section aria-labelledby="music-title" className="on-light paper text-ink section-y">
+        <div className="container-site max-w-[1100px]">
+          <SectionTitle ghost="Music" id="music-title">
+            Music
+          </SectionTitle>
+          <ReleaseCards releases={FEATURED_RELEASES} />
+        </div>
+      </section>
       <MerchFeature />
-      <FeaturedRelease release={FEATURED_RELEASES[0]} index={0} />
       <ShowsFeature />
-      <FeaturedRelease release={FEATURED_RELEASES[1]} index={1} />
+      <ClubBand />
     </PageShell>
   );
 }
