@@ -270,7 +270,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
         .acct-wrap {
           position: relative;
           flex-shrink: 0;
-          min-height: calc(100vh - 90px);
+          min-height: calc(100vh - 72px);
           display: flex;
           padding: 24px 16px;
           background: linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%);

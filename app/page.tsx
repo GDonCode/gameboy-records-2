@@ -1158,7 +1158,7 @@ export default function Home() {
           }
         }
                   /* ── MAIN HERO — desktop unchanged; mobile fills visible viewport below fixed 60px header ── */
-        .hero-main { min-height: calc(100vh - 90px); }
+        .hero-main { min-height: calc(100vh - 72px); }
         .hero-main-content { min-height: 100vh; }
         @media (max-width: 767px) {
           .hero-main,
