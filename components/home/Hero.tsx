@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/icons';
 import Button from '@/components/ui/Button';
-import { ARTIST, MEDIA_BASE, SITE_NAME } from '@/lib/site';
+import { ARTIST, LOGO_URL, MEDIA_BASE, SITE_NAME } from '@/lib/site';
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -56,11 +56,11 @@ export default function Hero() {
       />
 
       <div className="container-site py-10 md:py-16">
-        {/* The logo is on white, so it sits on a paper panel where it blends into the grain */}
+        {/* The logo sits on a paper panel over the film */}
         <div className="on-light paper text-ink w-full max-w-[600px] mx-auto md:mx-0 border-[3px] border-ink p-6 sm:p-8 md:p-10 text-center md:text-left shadow-[8px_8px_0_var(--color-gold)] animate-fade-up">
           <h1 id="hero-title" className="m-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/gameboy-records-logo.jpg" alt={SITE_NAME} width={1600} height={325} className="w-full h-auto mix-blend-multiply" />
+            <img src={LOGO_URL} alt={SITE_NAME} width={1022} height={168} className="w-full h-auto" />
           </h1>
           <p className="mt-4 mb-0 text-[0.66rem] sm:text-[0.8rem] font-semibold uppercase tracking-[0.26em] sm:tracking-[0.34em]">
             Independent label of {ARTIST}

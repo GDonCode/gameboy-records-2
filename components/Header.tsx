@@ -20,7 +20,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useCartCount } from '@/lib/cart-sync';
-import { NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
+import { LOGO_URL, NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
 // Ink #0B0A07 on cream is ~9:1; the active/hover green #05652E is ~5:1, so both pass WCAG AA.
@@ -45,12 +45,11 @@ function isActive(pathname: string, href: string) {
 }
 
 // ── Brand ─────────────────────────────────────────────────────────────────────
-// The logo is on a white ground, so it is multiplied into the paper and the grain shows through.
 function Brand() {
   return (
     <Link href="/" aria-label={`${SITE_NAME} — home`} className={`flex shrink-0 items-center rounded-xs ${FOCUS}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/brand/gameboy-records-logo.jpg" alt="" width={1600} height={325} className="h-[30px] w-auto mix-blend-multiply lg:h-[38px]" />
+      <img src={LOGO_URL} alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
     </Link>
   );
 }
