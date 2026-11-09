@@ -26,6 +26,7 @@ export default function ListenOn({
   links,
   onPlay,
   className = '',
+  compactOnPhone = false,
 }: {
   /** Release title, used in each button's accessible name. */
   title: string;
@@ -33,6 +34,8 @@ export default function ListenOn({
   /** When set, the YouTube button plays the video in the on-page player. */
   onPlay?: () => void;
   className?: string;
+  /** On phones, show only each service's logo on its colour. */
+  compactOnPhone?: boolean;
 }) {
   return (
     <ul className={`flex flex-wrap items-center justify-center gap-3 list-none p-0 m-0 ${className}`}>
@@ -41,14 +44,15 @@ export default function ListenOn({
         const inner = (
           <span>
             <Icon name={s.icon} className="w-5 h-5" />
-            {s.label}
+            <span className="dsp-label">{s.label}</span>
           </span>
         );
         const style = { backgroundColor: s.color };
+        const btn = `dsp-btn zoom-content${compactOnPhone ? ' dsp-compact' : ''}`;
         return (
           <li key={service}>
             {service === 'youtube' && onPlay ? (
-              <button type="button" onClick={onPlay} className="dsp-btn zoom-content" style={style} aria-label={`Play ${title} on YouTube`}>
+              <button type="button" onClick={onPlay} className={btn} style={style} aria-label={`Play ${title} on YouTube`}>
                 {inner}
               </button>
             ) : (
@@ -56,7 +60,7 @@ export default function ListenOn({
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="dsp-btn zoom-content"
+                className={btn}
                 style={style}
                 aria-label={`Listen to ${title} on ${s.label} (opens in a new tab)`}
               >

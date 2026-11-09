@@ -1,5 +1,5 @@
 // components/home/Hero.tsx
-// Home page hero: the studio film fills the screen, running up behind the transparent header,
+// Home page hero: the studio film fills the screen (on phones it runs up behind the header; on desktop it starts below it),
 // with the label's intro and the two calls to action set straight on it at the left.
 'use client';
 
@@ -37,7 +37,7 @@ export default function Hero() {
   }
 
   return (
-    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-center min-h-[100svh] mt-[calc(var(--header-h)*-1)] pt-(--header-h)">
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-center min-h-[100svh] mt-[calc(var(--header-h)*-1)] pt-(--header-h) lg:mt-0 lg:pt-0 lg:min-h-[calc(100svh-var(--header-h))]">
       {/* The film fills the whole hero */}
       <video
         ref={videoRef}
@@ -61,9 +61,9 @@ export default function Hero() {
       <div className="container-site py-12 md:py-20">
         <div className="max-w-[620px] text-left animate-fade-up">
           <h1 id="hero-title" className="m-0 text-paper font-bold uppercase leading-[0.95] tracking-[-0.01em] text-[2.6rem] sm:text-[3.4rem] lg:text-[4.4rem]" style={TEXT_SHADOW}>
-            Realest sound.
+            Realest sound<span className="text-green">.</span>
             <br />
-            Truest vision.
+            Truest vision<span className="text-gold">.</span>
           </h1>
           <p className="mt-6 mb-0 max-w-[48ch] text-[1rem] md:text-[1.125rem] leading-relaxed text-paper/90" style={TEXT_SHADOW}>
             Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. The music, the merch and the shows come

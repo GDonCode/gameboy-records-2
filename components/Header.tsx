@@ -90,19 +90,17 @@ export default function Header() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Phones: slide the header away while scrolling down, bring it back on scroll up.
+  // Phones: slide the header away while the page scrolls down, bring it back on scroll up. It always shows
+  // on load, and scrolling inside a panel (the Music crate, say) never hides it.
   useEffect(() => {
-    lastScrollY.current = 0;
-    function handleScroll(e: Event) {
-      const target = e.target as HTMLElement | Document;
-      const currentY = target instanceof Document ? window.scrollY : (target as HTMLElement).scrollTop;
+    lastScrollY.current = window.scrollY;
+    function handleScroll() {
+      const currentY = window.scrollY;
       setHidden(currentY > lastScrollY.current && currentY > 80);
       lastScrollY.current = currentY;
     }
-    // capture: true — scroll events on nested overflow-auto containers don't bubble,
-    // but capturing listeners still see them.
-    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
-    return () => window.removeEventListener('scroll', handleScroll, true);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Escape closes whichever menu is open and hands focus back to its trigger.
@@ -304,38 +302,28 @@ export default function Header() {
               href="/cart"
               aria-label={cartLabel}
               aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full bg-[#067F3A] text-white shadow-[0_3px_0_#044F24] transition-[transform,box-shadow,background-color] duration-100 hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none ${FOCUS}`}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full text-[#0B0A07] transition-colors duration-200 hover:bg-[#067F3A]/10 hover:text-[#067F3A] ${FOCUS}`}
             >
               <ShoppingCart className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
               <CartBadge count={cartCount} className="absolute -right-1.5 -top-1.5" />
             </Link>
           </div>
 
-          {/* ── Phone actions ── */}
-          <div className="ml-auto flex items-center gap-1 lg:hidden">
-            <Link
-              href="/cart"
-              aria-label={cartLabel}
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full text-[#0B0A07] transition-colors hover:bg-[#067F3A]/10 ${FOCUS}`}
-            >
-              <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2.25} aria-hidden="true" />
-              <CartBadge count={cartCount} className="absolute right-0 top-0" />
-            </Link>
+          {/* ── Phone actions: the menu button holds the cart and account too ── */}
+          <div className="ml-auto flex items-center lg:hidden">
             <button
               ref={menuButtonRef}
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-label={menuOpen ? 'Close menu' : cartCount > 0 ? `Open menu, ${cartCount} item${cartCount === 1 ? '' : 's'} in cart` : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${FOCUS} ${
-                menuOpen ? 'bg-[#0B0A07] text-white' : 'bg-[#067F3A] text-white'
-              }`}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full bg-transparent text-[#067F3A] transition-colors hover:text-[#05652E] ${FOCUS}`}
             >
               {menuOpen ? (
-                <X className="h-[22px] w-[22px]" strokeWidth={2.5} aria-hidden="true" />
+                <X className="h-[26px] w-[26px]" strokeWidth={2.75} aria-hidden="true" />
               ) : (
-                <Menu className="h-[22px] w-[22px]" strokeWidth={2.5} aria-hidden="true" />
+                <Menu className="h-[26px] w-[26px]" strokeWidth={2.75} aria-hidden="true" />
               )}
             </button>
           </div>
@@ -355,6 +343,24 @@ export default function Header() {
                 VIBES
               </p>
               <MobileGroup items={VIBES} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+
+              <ul className="mt-2 flex flex-col gap-0.5">
+                <li>
+                  <Link
+                    href="/cart"
+                    onClick={() => setMenuOpen(false)}
+                    aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
+                    className={`flex min-h-[52px] items-center gap-3.5 rounded-xl px-3 text-[1rem] tracking-[0.12em] transition-colors ${FOCUS} ${
+                      isActive(pathname, '/cart') ? 'bg-[#067F3A] text-white' : 'text-[#0B0A07] active:bg-[#067F3A]/12'
+                    }`}
+                    style={SEMIBOLD}
+                  >
+                    <ShoppingCart className={`h-5 w-5 shrink-0 ${isActive(pathname, '/cart') ? '' : 'text-[#05652E]'}`} strokeWidth={2.25} aria-hidden="true" />
+                    <span className="flex-1">{cartLabel.toUpperCase()}</span>
+                    <CartBadge count={cartCount} />
+                  </Link>
+                </li>
+              </ul>
 
               <div className="mt-4 border-t border-[#0B0A07]/15 px-1 pt-4">
                 {session ? (

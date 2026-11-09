@@ -215,6 +215,11 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
   box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.6);
 }
 .dsp-btn > span { display: inline-flex; align-items: center; gap: 10px; }
+/* Phones: just the service's logo on its colour (add `dsp-compact` to the button, `dsp-label` to the name). */
+@media (max-width: 767.98px) {
+  .dsp-compact { width: 52px; padding: 0; }
+  .dsp-compact .dsp-label { display: none; }
+}
 
 }
 

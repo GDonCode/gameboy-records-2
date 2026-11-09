@@ -52,7 +52,7 @@ function Details({ release, index, total }: { release: Release; index: number; t
       </p>
       <ul className="list-none p-0 m-0 mt-[clamp(0px,0.6vh,6px)] flex flex-wrap items-center justify-center gap-2.5">
         {playId && (
-          <li>
+          <li className="basis-full flex justify-center md:basis-auto">
             <button
               type="button"
               onClick={() => play(playId, nameOf(release))}
@@ -67,30 +67,30 @@ function Details({ release, index, total }: { release: Release; index: number; t
         )}
         {release.videoId && (
           <li>
-            <a href={`https://www.youtube.com/watch?v=${release.videoId}`} target="_blank" rel="noopener noreferrer" className="dsp-btn zoom-content" style={{ backgroundColor: '#FF0000' }} aria-label={`Watch ${release.title} on YouTube (opens in a new tab)`}>
+            <a href={`https://www.youtube.com/watch?v=${release.videoId}`} target="_blank" rel="noopener noreferrer" className="dsp-btn dsp-compact zoom-content" style={{ backgroundColor: '#FF0000' }} aria-label={`Watch ${release.title} on YouTube (opens in a new tab)`}>
               <span>
                 <Icon name="brand-youtube" className="w-5 h-5" />
-                YouTube
+                <span className="dsp-label">YouTube</span>
               </span>
             </a>
           </li>
         )}
         {release.spotifyTrackId && (
           <li>
-            <a href={spotifyTrackUrl(release.spotifyTrackId)} target="_blank" rel="noopener noreferrer" className="dsp-btn zoom-content" style={{ backgroundColor: '#1DB954' }} aria-label={`Listen to ${release.title} on Spotify (opens in a new tab)`}>
+            <a href={spotifyTrackUrl(release.spotifyTrackId)} target="_blank" rel="noopener noreferrer" className="dsp-btn dsp-compact zoom-content" style={{ backgroundColor: '#1DB954' }} aria-label={`Listen to ${release.title} on Spotify (opens in a new tab)`}>
               <span>
                 <Icon name="brand-spotify" className="w-5 h-5" />
-                Spotify
+                <span className="dsp-label">Spotify</span>
               </span>
             </a>
           </li>
         )}
         {release.appleUrl && (
           <li>
-            <a href={release.appleUrl} target="_blank" rel="noopener noreferrer" className="dsp-btn zoom-content" style={{ backgroundColor: '#FA243C' }} aria-label={`Listen to ${release.title} on Apple Music (opens in a new tab)`}>
+            <a href={release.appleUrl} target="_blank" rel="noopener noreferrer" className="dsp-btn dsp-compact zoom-content" style={{ backgroundColor: '#FA243C' }} aria-label={`Listen to ${release.title} on Apple Music (opens in a new tab)`}>
               <span>
                 <Icon name="brand-applemusic" className="w-5 h-5" />
-                Apple Music
+                <span className="dsp-label">Apple Music</span>
               </span>
             </a>
           </li>

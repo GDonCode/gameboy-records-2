@@ -93,16 +93,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Pull quote */}
-      <section aria-label="In his words" className="paper-green border-y-4 border-ink section-y">
-        <figure className="container-site m-0 text-center">
-          <blockquote className="m-0">
-            <p className="display m-0 mx-auto max-w-[18ch] text-[2.25rem] sm:text-[3.25rem] lg:text-[4.25rem] text-paper [text-shadow:4px_4px_0_var(--color-ink)]">Time fi every go getta rise up.</p>
-          </blockquote>
-          <figcaption className="mt-8 eyebrow text-gold">{ARTIST} · Rise Up Now (Guitar Version)</figcaption>
-        </figure>
-      </section>
-
       {/* 3 — Growth */}
       <section aria-labelledby="about-growth" className="paper-ink pt-20 pb-20 md:pt-28 md:pb-28">
         <div className="container-site grid gap-10 lg:grid-cols-12 lg:items-center">

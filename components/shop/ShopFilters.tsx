@@ -1,5 +1,5 @@
 // components/shop/ShopFilters.tsx
-// Filter sidebar for the Shop: Categories, Size and Colour, built from the products on sale.
+// Filter sidebar for the Shop: Categories and Size, built from the products on sale.
 // Several options in a group widen the match (any of them); different groups narrow it (all of them).
 'use client';
 
@@ -9,17 +9,15 @@ import type { Product } from '@/lib/products';
 export interface ShopFilterState {
   categories: string[];
   sizes: string[];
-  colors: string[];
 }
 
-export const NO_FILTERS: ShopFilterState = { categories: [], sizes: [], colors: [] };
+export const NO_FILTERS: ShopFilterState = { categories: [], sizes: [] };
 
 export function filterProducts(products: Product[], f: ShopFilterState): Product[] {
   return products.filter(
     (p) =>
       (f.categories.length === 0 || f.categories.includes(p.category)) &&
-      (f.sizes.length === 0 || p.sizes.some((s) => f.sizes.includes(s))) &&
-      (f.colors.length === 0 || (p.color !== null && f.colors.includes(p.color))),
+      (f.sizes.length === 0 || p.sizes.some((s) => f.sizes.includes(s))),
   );
 }
 
@@ -28,23 +26,19 @@ const sizeRank = (s: string) => {
   const i = SIZE_ORDER.indexOf(s.toUpperCase());
   return i === -1 ? SIZE_ORDER.length : i;
 };
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 type Option = { value: string; label: string };
 
-function optionsFor(products: Product[]): { categories: Option[]; sizes: Option[]; colors: Option[] } {
+function optionsFor(products: Product[]): { categories: Option[]; sizes: Option[] } {
   const categories = new Map<string, string>();
   const sizes = new Set<string>();
-  const colors = new Set<string>();
   for (const p of products) {
     categories.set(p.category, p.categoryLabel);
     p.sizes.forEach((s) => sizes.add(s));
-    if (p.color) colors.add(p.color);
   }
   return {
     categories: [...categories].map(([value, label]) => ({ value, label })),
     sizes: [...sizes].sort((a, b) => sizeRank(a) - sizeRank(b) || a.localeCompare(b)).map((s) => ({ value: s, label: s })),
-    colors: [...colors].sort().map((c) => ({ value: c, label: cap(c) })),
   };
 }
 
@@ -99,7 +93,7 @@ export default function ShopFilters({
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const opts = optionsFor(products);
-  const active = value.categories.length + value.sizes.length + value.colors.length;
+  const active = value.categories.length + value.sizes.length;
 
   const toggle = (key: keyof ShopFilterState) => (v: string) =>
     onChange({ ...value, [key]: value[key].includes(v) ? value[key].filter((x) => x !== v) : [...value[key], v] });
@@ -120,7 +114,6 @@ export default function ShopFilters({
       <div id={panelId} className={`${open ? 'block' : 'hidden'} mt-4 flex flex-col gap-6 lg:mt-0 lg:flex`}>
         <Group title="Categories" options={opts.categories} selected={value.categories} onToggle={toggle('categories')} />
         <Group title="Size" options={opts.sizes} selected={value.sizes} onToggle={toggle('sizes')} />
-        <Group title="Colour" options={opts.colors} selected={value.colors} onToggle={toggle('colors')} />
 
         <div className="flex items-center justify-between gap-3 text-[0.85rem] text-stone">
           <span role="status" aria-live="polite">
