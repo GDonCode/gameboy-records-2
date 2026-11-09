@@ -1,12 +1,15 @@
 // components/home/Hero.tsx
-// Home page hero: the logo on printed paper, the tagline, the two calls to action, and the
-// studio film in a framed, offset-shadow card.
+// Home page hero: the studio film fills the screen, running up behind the transparent header,
+// with the label's intro and the two calls to action set straight on it at the left.
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/icons';
 import Button from '@/components/ui/Button';
-import { ARTIST, LOGO_URL, MEDIA_BASE, SITE_NAME } from '@/lib/site';
+import { ARTIST, MEDIA_BASE } from '@/lib/site';
+
+// A soft shadow under the text so it stays readable over bright frames of the film.
+const TEXT_SHADOW = { textShadow: '0 2px 12px rgba(11,10,7,0.75), 0 1px 3px rgba(11,10,7,0.6)' };
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -34,7 +37,7 @@ export default function Hero() {
   }
 
   return (
-    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-center min-h-[calc(100svh-var(--header-h))]">
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-center min-h-[100svh] mt-[calc(var(--header-h)*-1)] pt-(--header-h)">
       {/* The film fills the whole hero */}
       <video
         ref={videoRef}
@@ -48,27 +51,28 @@ export default function Hero() {
         tabIndex={-1}
         className="absolute inset-0 -z-10 w-full h-full object-cover object-top -scale-x-100"
       />
-      {/* Darkens the film behind the panel and along the bottom edge */}
+      {/* Darkens the film under the header, behind the text on the left and along the bottom edge */}
       <div
         className="absolute inset-0 -z-10"
         aria-hidden="true"
-        style={{ background: 'linear-gradient(to bottom, rgba(11,10,7,0.35) 0%, rgba(11,10,7,0.15) 40%, rgba(11,10,7,0.7) 100%), linear-gradient(to right, rgba(11,10,7,0.55) 0%, rgba(11,10,7,0) 65%)' }}
+        style={{ background: 'linear-gradient(to bottom, rgba(11,10,7,0.6) 0%, rgba(11,10,7,0.1) 22%, rgba(11,10,7,0.15) 60%, rgba(11,10,7,0.75) 100%), linear-gradient(to right, rgba(11,10,7,0.7) 0%, rgba(11,10,7,0.35) 45%, rgba(11,10,7,0) 75%)' }}
       />
 
-      <div className="container-site py-10 md:py-16">
-        {/* The logo sits on a paper panel over the film */}
-        <div className="on-light paper text-ink w-full max-w-[600px] mx-auto md:mx-0 border-[3px] border-ink p-6 sm:p-8 md:p-10 text-center md:text-left shadow-[8px_8px_0_var(--color-gold)] animate-fade-up">
-          <h1 id="hero-title" className="m-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={LOGO_URL} alt={SITE_NAME} width={1022} height={168} className="w-full h-auto" />
-          </h1>
-          <p className="mt-4 mb-0 text-[0.66rem] sm:text-[0.8rem] font-semibold uppercase tracking-[0.26em] sm:tracking-[0.34em]">
+      <div className="container-site py-12 md:py-20">
+        <div className="max-w-[620px] text-left animate-fade-up">
+          <p className="eyebrow text-gold-light m-0 mb-5" style={TEXT_SHADOW}>
             Independent label of {ARTIST}
           </p>
-          <p className="mt-5 mb-0 text-[1rem] leading-relaxed text-stone">
-            Reggae and dancehall out of Jamaica. The music, the merch and the shows come straight from him, through his own label.
+          <h1 id="hero-title" className="m-0 text-paper font-bold uppercase leading-[0.95] tracking-[-0.01em] text-[2.6rem] sm:text-[3.4rem] lg:text-[4.4rem]" style={TEXT_SHADOW}>
+            Realest sound.
+            <br />
+            Truest vision.
+          </h1>
+          <p className="mt-6 mb-0 max-w-[48ch] text-[1rem] md:text-[1.125rem] leading-relaxed text-paper/90" style={TEXT_SHADOW}>
+            Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. The music, the merch and the shows come
+            straight from him, through his own label, Gameboy Records.
           </p>
-          <div className="mt-7 flex flex-col sm:flex-row gap-4 sm:justify-center md:justify-start">
+          <div className="mt-9 flex flex-col sm:flex-row gap-4">
             <Button href="/shop" variant="green" size="lg">
               Shop the collection
               <Icon name="arrow-right" className="w-3.5 h-3.5" />

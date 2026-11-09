@@ -23,10 +23,12 @@ import { useCartCount } from '@/lib/cart-sync';
 import { LOGO_URL, NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
-// Ink #0B0A07 on cream is ~9:1; the active/hover green #05652E is ~5:1, so both pass WCAG AA.
+// The header has no background of its own: it sits straight on the page (the hero film on Home).
+// Nav links are neon green with a dark text shadow so they hold up over bright frames of the film.
+const NEON_TEXT = { color: '#39FF14', textShadow: '0 1px 3px rgba(0,0,0,0.85), 0 0 10px rgba(57,255,20,0.35)' } as const;
 const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const FOCUS =
-  'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
+  'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0A07]';
 
 type NavItem = { href: string; label: string; icon: LucideIcon; blurb?: string };
 
@@ -48,21 +50,16 @@ function isActive(pathname: string, href: string) {
 function Brand() {
   return (
     <Link href="/" aria-label={`${SITE_NAME} — home`} className={`flex shrink-0 items-center rounded-xs ${FOCUS}`}>
+      {/* A thin light outline keeps the black RECORDS lettering readable on the dark film */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={LOGO_URL} alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
+      <img
+        src={LOGO_URL}
+        alt=""
+        width={1022}
+        height={168}
+        className="h-[30px] w-auto lg:h-[38px] [filter:drop-shadow(0_0_1px_#F5F5F5)_drop-shadow(0_0_1px_#F5F5F5)_drop-shadow(0_0_6px_rgba(245,245,245,0.45))]"
+      />
     </Link>
-  );
-}
-
-// Four-tone strip along the bottom edge: the logo's black, green, yellow and white.
-function LcdStrip() {
-  return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[3px]" aria-hidden="true">
-      <span className="flex-1 bg-[#0B0A07]" />
-      <span className="flex-1 bg-[#067F3A]" />
-      <span className="flex-1 bg-[#E2BA0A]" />
-      <span className="flex-1 bg-[#F5F5F5] shadow-[inset_0_-1px_0_#0B0A07]" />
-    </div>
   );
 }
 
@@ -70,7 +67,7 @@ function CartBadge({ count, className = '' }: { count: number; className?: strin
   if (count <= 0) return null;
   return (
     <span
-      className={`flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A3322A] px-1 text-[0.7rem] font-bold leading-none text-white ring-2 ring-[#F5F5F5] ${className}`}
+      className={`flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A3322A] px-1 text-[0.7rem] font-bold leading-none text-white ring-2 ring-[#0B0A07] ${className}`}
       aria-hidden="true"
     >
       {count > 99 ? '99+' : count}
@@ -90,6 +87,8 @@ export default function Header() {
   const initial = session?.user?.name?.trim().charAt(0).toUpperCase() || null;
 
   const [hidden, setHidden] = useState(false);
+  // Once the page scrolls, a dark glass backing keeps the links readable over light sections.
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [vibesOpen, setVibesOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -107,6 +106,7 @@ export default function Header() {
       const target = e.target as HTMLElement | Document;
       const currentY = target instanceof Document ? window.scrollY : (target as HTMLElement).scrollTop;
       setHidden(currentY > lastScrollY.current && currentY > 80);
+      if (target instanceof Document) setScrolled(currentY > 8);
       lastScrollY.current = currentY;
     }
     // capture: true — scroll events on nested overflow-auto containers don't bubble,
@@ -175,10 +175,10 @@ export default function Header() {
   const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
 
   const linkBase = `relative inline-flex h-11 items-center rounded-md px-3 text-[0.9rem] tracking-[0.12em] transition-colors duration-200 lg:px-4 lg:text-[0.98rem]
-    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#067F3A] after:transition-transform after:duration-200 lg:after:inset-x-4
+    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#39FF14] after:transition-transform after:duration-200 lg:after:inset-x-4
     ${FOCUS}`;
   const linkState = (active: boolean) =>
-    active ? 'text-[#05652E] after:scale-x-100' : 'text-[#0B0A07] after:scale-x-0 hover:text-[#05652E] hover:after:scale-x-100';
+    active ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100';
 
   return (
     <>
@@ -192,11 +192,11 @@ export default function Header() {
       )}
 
       <header
-        className={`on-light sticky top-0 z-40 flex-shrink-0 paper text-[#0B0A07] transition-transform duration-300 ease-in-out lg:translate-y-0 ${
+        className={`sticky top-0 z-40 flex-shrink-0 text-[#F5F5F5] transition-[transform,background-color] duration-300 ease-in-out lg:translate-y-0 ${
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
-        }`}
+        } ${scrolled ? 'bg-[#0B0A07]/80 backdrop-blur-md' : 'bg-transparent'}`}
       >
-        <div className="relative flex h-[60px] items-center gap-3 pb-[3px] pl-4 pr-3 md:h-[72px] lg:gap-2 lg:px-8">
+        <div className="relative flex h-[60px] items-center gap-3 pl-4 pr-3 md:h-[72px] lg:gap-2 lg:px-8">
           <Brand />
 
           {/* ── Desktop nav ── */}
@@ -210,7 +210,7 @@ export default function Header() {
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
                       className={`${linkBase} ${linkState(active)}`}
-                      style={SEMIBOLD}
+                      style={{ ...SEMIBOLD, ...NEON_TEXT }}
                     >
                       {item.label.toUpperCase()}
                     </Link>
@@ -225,8 +225,8 @@ export default function Header() {
                   aria-expanded={vibesOpen}
                   aria-controls="vibes-menu"
                   onClick={toggleVibes}
-                  className={`${linkBase} ${linkState(vibesActive)} gap-1.5 ${vibesOpen ? 'text-[#05652E]' : ''}`}
-                  style={SEMIBOLD}
+                  className={`${linkBase} ${linkState(vibesActive || vibesOpen)} gap-1.5`}
+                  style={{ ...SEMIBOLD, ...NEON_TEXT }}
                 >
                   VIBES
                   <ChevronDown
@@ -282,14 +282,14 @@ export default function Header() {
 
           {/* ── Desktop utilities ── */}
           <div className="hidden items-center gap-2 lg:flex">
-            <span className="mx-2 h-7 w-px bg-[#0B0A07]/15 lg:mx-3" aria-hidden="true" />
+            <span className="mx-2 h-7 w-px bg-[#F5F5F5]/30 lg:mx-3" aria-hidden="true" />
 
             {session ? (
               <Link
                 href={accountHref}
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
-                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#0B0A07]/20 text-[#0B0A07] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/10 ${FOCUS}`}
+                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#F5F5F5]/40 text-[#F5F5F5] transition-colors duration-200 hover:border-[#39FF14] hover:bg-[#39FF14]/10 ${FOCUS}`}
               >
                 {initial ? (
                   <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
@@ -301,7 +301,7 @@ export default function Header() {
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`flex h-11 items-center gap-2 rounded-full border-2 border-[#0B0A07]/20 px-3 text-[#0B0A07] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/10 lg:px-4 ${FOCUS}`}
+                className={`flex h-11 items-center gap-2 rounded-full border-2 border-[#F5F5F5]/40 px-3 text-[#F5F5F5] transition-colors duration-200 hover:border-[#39FF14] hover:bg-[#39FF14]/10 lg:px-4 ${FOCUS}`}
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
                 <span className="hidden text-[0.85rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
@@ -326,7 +326,7 @@ export default function Header() {
             <Link
               href="/cart"
               aria-label={cartLabel}
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full text-[#0B0A07] transition-colors hover:bg-[#067F3A]/10 ${FOCUS}`}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full text-[#F5F5F5] transition-colors hover:bg-[#F5F5F5]/10 ${FOCUS}`}
             >
               <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2.25} aria-hidden="true" />
               <CartBadge count={cartCount} className="absolute right-0 top-0" />
@@ -339,7 +339,7 @@ export default function Header() {
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
               className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${FOCUS} ${
-                menuOpen ? 'bg-[#0B0A07] text-white' : 'bg-[#067F3A] text-white'
+                menuOpen ? 'bg-[#F5F5F5] text-[#0B0A07]' : 'bg-[#067F3A] text-white'
               }`}
             >
               {menuOpen ? (
@@ -351,14 +351,12 @@ export default function Header() {
           </div>
         </div>
 
-        <LcdStrip />
-
         {/* ── Phone menu sheet ── */}
         {menuOpen && (
           <div
             ref={menuRef}
             id="mobile-menu"
-            className="absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl paper shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
+            className="on-light absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl paper text-[#0B0A07] shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
           >
             <nav aria-label="Mobile" className="px-3 pb-4 pt-2">
               <MobileGroup items={PRIMARY} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
