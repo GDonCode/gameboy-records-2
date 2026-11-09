@@ -82,10 +82,10 @@ export default function AccountAvatar({ displayName, initialAvatarUrl }: Account
       <div className="relative w-20 h-20 flex-shrink-0">
         {avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatarUrl} alt="" className="w-20 h-20 rounded-full object-cover border-2 border-[#38B26A]" />
+          <img src={avatarUrl} alt="" className="w-20 h-20 rounded-full object-cover border-2 border-[#067F3A]" />
         ) : (
           <span
-            className="flex w-20 h-20 items-center justify-center rounded-full border-2 border-[#38B26A] bg-[#0B0A07] text-white text-[1.8em]"
+            className="flex w-20 h-20 items-center justify-center rounded-full border-2 border-[#067F3A] bg-[#0B0A07] text-white text-[1.8em]"
             aria-hidden="true"
           >
             {initial}
@@ -99,8 +99,8 @@ export default function AccountAvatar({ displayName, initialAvatarUrl }: Account
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="text-white">Profile photo</p>
-        <p className="text-[0.8em] text-white/50">JPG, PNG, WebP or GIF, up to 5 MB.</p>
+        <p className="text-[#0B0A07]">Profile photo</p>
+        <p className="text-[0.8em] text-[#0B0A07]">JPG, PNG, WebP or GIF, up to 5 MB.</p>
         <div className="flex flex-wrap items-center gap-4">
           <input
             ref={inputRef}

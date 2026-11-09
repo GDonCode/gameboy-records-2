@@ -166,35 +166,14 @@
   accent-color: #05652E;
 }
 
-/* Seek-by-step buttons — mobile only (replace the scrubber) */
-.seekBtn {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  color: #05652E;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: opacity .15s;
-}
-.seekBtn svg { width: 22px; height: 22px; display: block; }
-.seekBtn:active { opacity: .6; }
-.seekBtn:focus-visible { outline: 2px solid #38B26A; outline-offset: 2px; border-radius: 4px; }
 
 @media (max-width: 767px) {
-  .seekBar,
-  .time { display: none; }
-  .seekBtn { display: flex; }
 
   /* Compact picker layout */
-  .pickerBar { --pb-y: 24px; --pb-x: 12px; gap: 10px; margin-top: 0; padding: var(--pb-y) var(--pb-x); }
+  .pickerBar { --pb-y: 16px; --pb-x: 12px; flex-wrap: wrap; row-gap: 4px; column-gap: 10px; margin-top: 0; padding: var(--pb-y) var(--pb-x); }
   .navArrowSm { width: 30px; }
   .navArrowSm:first-child { margin: calc(-1 * var(--pb-y)) 0 calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)); }
-  .navArrowSm:last-child { margin: calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)) calc(-1 * var(--pb-y)) 0; }
+  .navArrowSm:last-child { margin: calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)) 0 0; align-self: stretch; height: auto; min-height: 56px; }
   .navArrowSm svg { width: 16px; height: 16px; }
   .navArrowSm svg { width: 16px; height: 16px; }
 
@@ -211,10 +190,15 @@
   .pickerPhoto { display: none; }
   .pickerArtist { font-size: 0.7rem; letter-spacing: 0.04em; }
 
-  .pickerPlayback { flex: 0 0 auto; gap: 2px; }
-  .playBtn { width: 36px; height: 36px; font-size: 0.8rem; box-shadow: 0 3px 0 #044F24; }
-  .seekBtn { width: 28px; height: 28px; }
-  .seekBtn svg { width: 18px; height: 18px; }
+  /* Row 1: song title, play/pause, All songs. Row 2: the playback bar with both times. */
+  .pickerPlayback { display: contents; }
+  .pickerMeta { order: 1; }
+  .playBtn { order: 2; width: 36px; height: 36px; font-size: 0.8rem; box-shadow: 0 3px 0 #044F24; }
+  .navArrowSm:last-child { order: 3; }
+  .pickerBar::after { content: ''; order: 4; flex: 0 0 100%; height: 0; }
+  .pickerPlayback > .time { order: 5; min-width: 30px; font-size: 0.72rem; }
+  .pickerPlayback > .time:last-of-type { order: 7; text-align: right; }
+  .pickerPlayback > .seekBar { order: 6; flex: 1 1 0; }
 }
 
 /* ── LYRICS ── unboxed, directly on page background ──── */

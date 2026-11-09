@@ -418,7 +418,6 @@ const SONGS: Song[] = [
   }
 ];
 
-const SEEK_STEP = 10; // seconds skipped by the mobile «/» buttons
 const TAP_LATENCY = 0.45; // seconds subtracted from each sync tap to offset reaction lag
 const LINE_MAX_SECONDS = 6; // longest a single line's fill sweep may take (skip this line if already present)
 
@@ -565,15 +564,6 @@ export default function KaraokePage() {
     const audio = audioRef.current;
     if (!audio) return;
     const t = Number(e.target.value);
-    audio.currentTime = t;
-    setCurrentTime(t);
-  }
-
-  function skip(delta: number) {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const end = duration || audio.duration || 0;
-    const t = Math.min(Math.max(audio.currentTime + delta, 0), end);
     audio.currentTime = t;
     setCurrentTime(t);
   }
@@ -746,17 +736,6 @@ export default function KaraokePage() {
 
           <div className={styles.pickerPlayback}>
             <button
-              type="button"
-              className={styles.seekBtn}
-              aria-label={`Back ${SEEK_STEP} seconds`}
-              onClick={() => skip(-SEEK_STEP)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 5l-7 7 7 7M19 5l-7 7 7 7" />
-              </svg>
-            </button>
-
-            <button
               className={styles.playBtn}
               onClick={togglePlay}
               aria-label={isPlaying ? 'Pause' : 'Play'}
@@ -771,17 +750,6 @@ export default function KaraokePage() {
                   <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" />
                 </svg>
               )}
-            </button>
-
-            <button
-              type="button"
-              className={styles.seekBtn}
-              aria-label={`Forward ${SEEK_STEP} seconds`}
-              onClick={() => skip(SEEK_STEP)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M5 5l7 7-7 7M12 5l7 7-7 7" />
-              </svg>
             </button>
 
             <span className={styles.time}>{formatTime(currentTime)}</span>

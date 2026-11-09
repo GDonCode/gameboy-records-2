@@ -21,7 +21,9 @@ import {
   playTick,
   playTimeUp,
   playWrong,
+  isReaderMuted,
   setMuted,
+  setReaderMuted,
   speak,
   stopSpeaking,
   unlockAudio,
@@ -30,6 +32,25 @@ import {
 const FONT = "'Poppins', monospace";
 const FONT_BOLD = "'Poppins_semibold', monospace";
 const LETTERS = ['A', 'B', 'C', 'D'];
+
+/** Turns the question reader on or off. Sound effects are unaffected. */
+function ReaderToggle({ muted, onToggle }: { muted: boolean; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={muted}
+      className="inline-flex cursor-pointer items-center gap-2 border-2 border-white/30 bg-transparent px-3 py-1.5 text-xs tracking-[0.1em] text-white/80 hover:border-[#E2BA0A] hover:text-[#E2BA0A]"
+      style={{ fontFamily: FONT }}
+    >
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H3v6h3l5 4V5z" />
+        {muted ? <path d="m16 9 5 6m0-6-5 6" /> : <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12" />}
+      </svg>
+      {muted ? 'READER OFF' : 'READER ON'}
+    </button>
+  );
+}
 
 const TICK_FROM_SECONDS = 5; // audible tick each second once this many seconds remain
 const FEEDBACK_MS = 2200; // how long the right answer stays on screen
@@ -59,11 +80,9 @@ async function postJson<T>(url: string, body?: unknown): Promise<T> {
   return data as T;
 }
 
+/** The reader says the question only, never the answer choices. */
 function buildSpeech(q: PublicQuestion): string {
-  const base = q.speak ?? q.prompt;
-  const labelled = q.options.every((o) => o.label);
-  if (!labelled) return base;
-  return `${base}. ${q.options.map((o, i) => `${LETTERS[i]}. ${o.label}`).join('. ')}`;
+  return q.speak ?? q.prompt;
 }
 
 function CountdownRing({ msLeft }: { msLeft: number }) {
@@ -190,6 +209,7 @@ export default function TriviaGame() {
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [muted, setMutedState] = useState(false);
+  const [readerMuted, setReaderMutedState] = useState(() => isReaderMuted());
   const [boardKey, setBoardKey] = useState(0);
 
   const gameIdRef = useRef<string | null>(null);
@@ -365,6 +385,13 @@ export default function TriviaGame() {
     void loadNext();
   }, [loadNext]);
 
+  const toggleReader = useCallback(() => {
+    setReaderMutedState((m) => {
+      setReaderMuted(!m);
+      return !m;
+    });
+  }, []);
+
   const toggleMute = useCallback(() => {
     setMutedState((m) => {
       setMuted(!m);
@@ -404,20 +431,23 @@ export default function TriviaGame() {
     return (
       <div className={wrap}>
         <div className="w-full panel-ink p-5 text-center">
-          <p className="text-sm leading-relaxed text-white/80" style={{ fontFamily: FONT }}>
-            {ROUND_SIZES.length} rounds, {TOTAL_QUESTIONS} questions, 10 seconds each. Every question is read aloud,
-            and the clock starts the moment the reading does. Turn your sound on.
+          <p className="text-lg leading-relaxed text-white/90" style={{ fontFamily: FONT }}>
+            {ROUND_SIZES.length} rounds, {TOTAL_QUESTIONS} questions, 10 seconds each. Every question is read aloud
+            (not the answers), and the clock starts the moment the reading does. Turn your sound on, or mute the reader below.
           </p>
-          <ul className="mx-auto mt-3 max-w-[360px] list-none p-0 text-left text-xs leading-6 text-white/60" style={{ fontFamily: FONT }}>
+          <ul className="mx-auto mt-4 max-w-[420px] list-none p-0 text-left text-base leading-8 text-white/75" style={{ fontFamily: FONT }}>
             <li>Rounds 1 &amp; 2: six questions each</li>
             <li>Round 3: three visual questions</li>
             <li>Faster correct answers score more (up to {MAX_GAME_SCORE} total)</li>
           </ul>
+          <div className="mt-4 flex justify-center">
+            <ReaderToggle muted={readerMuted} onToggle={toggleReader} />
+          </div>
           <div className="mt-5">
-            {status === 'loading' && <span className="text-xs text-white/60">Loading…</span>}
+            {status === 'loading' && <span className="text-sm text-white/60">Loading…</span>}
             {status === 'unauthenticated' && (
               <div className="flex flex-col items-center gap-3">
-                <p className="text-xs text-white/70" style={{ fontFamily: FONT }}>Sign in to play and join the leaderboard.</p>
+                <p className="text-base text-white/80" style={{ fontFamily: FONT }}>Sign in to play and join the leaderboard.</p>
                 <Link href="/account/login" style={{ ...primaryButton, textDecoration: 'none' }}>SIGN IN</Link>
               </div>
             )}
@@ -515,14 +545,12 @@ export default function TriviaGame() {
         <div className="text-right" style={{ fontFamily: FONT }}>
           <div className="text-xs tracking-[0.2em] text-[#38B26A]">SCORE</div>
           <div className="text-xl text-[#FEFEFA]" style={{ fontFamily: FONT_BOLD }}>{score}</div>
-          <button
-            type="button"
-            onClick={toggleMute}
-            aria-pressed={muted}
-            className="text-xs text-white/60 underline"
-          >
-            {muted ? 'Sound off' : 'Sound on'}
-          </button>
+          <div className="mt-1 flex flex-col items-end gap-1.5">
+            <ReaderToggle muted={readerMuted} onToggle={toggleReader} />
+            <button type="button" onClick={toggleMute} aria-pressed={muted} className="cursor-pointer border-0 bg-transparent p-0 text-xs text-white/60 underline">
+              {muted ? 'All sound off' : 'All sound on'}
+            </button>
+          </div>
         </div>
       </div>
 
