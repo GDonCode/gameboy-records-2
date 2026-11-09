@@ -29,7 +29,8 @@ export async function getOrders(userId: string): Promise<Order[]> {
     .order('created_at', { ascending: false });
   if (error) {
     // The table arrives with the 20261104_orders migration; until then members simply have no orders.
-    if (error.code !== '42P01') console.error('Failed to load orders:', error.message);
+    // 42P01 is Postgres's "undefined table"; PGRST205 is PostgREST's "not in the schema cache".
+    if (error.code !== '42P01' && error.code !== 'PGRST205') console.error('Failed to load orders:', error.message);
     return [];
   }
   return (data ?? []).flatMap((row) => {

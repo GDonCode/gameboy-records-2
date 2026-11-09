@@ -327,3 +327,62 @@
   -webkit-background-clip: text;
   background-clip: text;
 }
+/* ── SONG CAROUSEL VIEW ───────────────────────────────── */
+.pickView {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0 32px;
+}
+@media (max-width: 767px) {
+  .pickView { width: calc(100% + 96px); padding-top: 24px; }
+}
+
+/* "All songs" button at the right end of the player bar */
+.songsBtn {
+  width: 88px;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+.songsBtn svg { width: 22px; height: 22px; }
+@media (max-width: 767px) {
+  .songsBtn { width: 62px; font-size: 0.52rem; }
+}
+
+/* Shown over the lyrics when a song has finished */
+.endCard {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: min(92%, 460px);
+  padding: 22px 24px;
+  text-align: center;
+  background: #F5F5F5;
+  color: #0B0A07;
+  border: 3px solid #0B0A07;
+  box-shadow: 6px 6px 0 #067F3A;
+}
+.endTitle { margin: 0; font-family: 'Poppins_semibold', 'Poppins', sans-serif; font-size: 1.2rem; }
+.endText { margin: 6px 0 16px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: #5C5A55; }
+.endActions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.endPrimary, .endSecondary {
+  height: 46px; padding: 0 20px; cursor: pointer;
+  font-family: 'Poppins_semibold', 'Poppins', sans-serif; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.endPrimary { background: #067F3A; color: #fff; border: 2px solid #067F3A; }
+.endPrimary:hover { background: #05652E; border-color: #05652E; }
+.endSecondary { background: transparent; color: #0B0A07; border: 2px solid #0B0A07; }
+.endSecondary:hover { border-color: #067F3A; color: #067F3A; }

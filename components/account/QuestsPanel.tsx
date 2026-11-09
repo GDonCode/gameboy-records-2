@@ -56,10 +56,10 @@ export default function QuestsPanel({
   return (
     <Panel className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h2 className="text-[1.3em] text-white" style={SEMI}>
+        <h2 className="text-[1.3em] text-[#0B0A07]" style={SEMI}>
           Quests
         </h2>
-        <p className="text-[0.9em] text-white/60" style={BODY}>
+        <p className="text-[0.9em] text-[#0B0A07]/70" style={BODY}>
           {available > 0
             ? `${available} pts up for grabs. Daily quests reset at midnight.`
             : 'All quests complete. Daily quests reset at midnight.'}
@@ -67,7 +67,7 @@ export default function QuestsPanel({
       </div>
 
       {error && (
-        <p className="text-[#F0A39C] text-[0.85em]" style={BODY}>
+        <p className="text-[#A3322A] text-[0.85em]" style={BODY}>
           {error}
         </p>
       )}
@@ -77,12 +77,12 @@ export default function QuestsPanel({
           <li
             key={q.id}
             className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 rounded-none border px-4 py-3 ${
-              q.done ? 'border-white/10 bg-white/[0.02] opacity-60' : 'border-[#067F3A]/40 bg-[#067F3A]/5'
+              q.done ? 'border-[#0B0A07]/15 bg-white/[0.02] opacity-60' : 'border-[#067F3A]/40 bg-[#067F3A]/5'
             }`}
           >
             <span
               className={`flex items-center justify-center w-9 h-9 flex-shrink-0 rounded-full border-2 text-[0.75em] ${
-                q.done ? 'bg-[#067F3A] border-[#38B26A] text-white' : 'border-white/20 text-white/50'
+                q.done ? 'bg-[#067F3A] border-[#067F3A] text-white' : 'border-[#0B0A07]/15 text-[#0B0A07]/60'
               }`}
               style={SEMI}
               aria-hidden="true"
@@ -91,18 +91,18 @@ export default function QuestsPanel({
             </span>
 
             <div className="flex-1 min-w-0">
-              <p className="text-white" style={SEMI}>
+              <p className="text-[#0B0A07]" style={SEMI}>
                 {q.title}
                 {q.cadence === 'daily' && (
-                  <span className="ml-2 text-[0.7em] tracking-[0.15em] text-[#38B26A]">DAILY</span>
+                  <span className="ml-2 text-[0.7em] tracking-[0.15em] text-[#05652E]">DAILY</span>
                 )}
               </p>
-              <p className="text-[0.85em] text-white/60" style={BODY}>
+              <p className="text-[0.85em] text-[#0B0A07]/70" style={BODY}>
                 {q.description}
               </p>
             </div>
 
-            <span className="text-[0.85em] text-[#38B26A]" style={SEMI}>
+            <span className="text-[0.85em] text-[#05652E]" style={SEMI}>
               {q.done ? (q.cadence === 'daily' ? 'DONE TODAY' : 'DONE') : `+${q.points} PTS`}
             </span>
 

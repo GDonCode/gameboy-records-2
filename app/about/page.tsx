@@ -117,7 +117,7 @@ export default function AboutPage() {
       </section>
 
       {/* 4 — Now */}
-      <section aria-labelledby="about-now" className="paper-ink relative isolate overflow-hidden border-t-4 border-paper">
+      <section aria-labelledby="about-now" className="paper-ink relative isolate overflow-hidden">
         <div className="grid lg:grid-cols-2">
           <Portrait n={4} alt={`${ARTIST} on stage, singing into a microphone with an electric guitar`} className="aspect-[4/5] lg:aspect-auto lg:min-h-[720px]" sizes="(min-width: 1024px) 50vw, 100vw" />
           <div className="flex items-center px-4 py-16 md:px-12 lg:px-16">

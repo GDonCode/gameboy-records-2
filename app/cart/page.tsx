@@ -267,7 +267,7 @@ export default function CartPage() {
     <PageShell>
       <div className="on-light flex-1 w-full paper text-[#0B0A07] px-4 pt-10 pb-16 sm:px-6 md:px-10 md:pt-14">
         <div className="mx-auto max-w-[1180px]">
-          <PageTitle ghost="Bag" subtitle={status === 'ready' ? `${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : undefined} className="mb-8 md:mb-12">
+          <PageTitle ghost="Shop" subtitle={status === 'ready' ? `${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : undefined} className="mb-8 md:mb-12">
             Your cart
           </PageTitle>
 

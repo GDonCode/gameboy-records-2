@@ -146,18 +146,19 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
         <PageTitle tone="dark" ghost="Live" className="w-full max-w-[900px]">
           Shows
         </PageTitle>
-        <p className="mt-5 max-w-[560px]" style={{ fontFamily: BODY, fontSize: '1.1em', color: '#e8f5ec', lineHeight: 1.6, opacity: 0.8 }}>
-          {shows.length > 0 ? 'Upcoming dates. Playaz Club members get first access to tickets.' : 'Tour dates are being booked. Be the first to know when we announce a show near you.'}
-        </p>
-
         {shows.length > 0 ? (
-          <ul className="w-full max-w-[860px] mt-14 flex flex-col gap-3 list-none p-0">
-            {shows.map((s) => (
-              <ShowRow key={`${s.date}-${s.city}`} show={s} />
-            ))}
-          </ul>
+          <>
+            <p className="mt-5 max-w-[560px]" style={{ fontFamily: BODY, fontSize: '1.1em', color: '#e8f5ec', lineHeight: 1.6, opacity: 0.8 }}>
+              Upcoming dates. Playaz Club members get first access to tickets.
+            </p>
+            <ul className="w-full max-w-[860px] mt-14 flex flex-col gap-3 list-none p-0">
+              {shows.map((s) => (
+                <ShowRow key={`${s.date}-${s.city}`} show={s} />
+              ))}
+            </ul>
+          </>
         ) : (
-          <div className="flex flex-wrap items-center justify-center gap-10 mt-14">
+          <div className="flex flex-wrap items-center justify-center gap-10 mt-10">
             <Badge viewBox="0 0 640 640" d={ICON_CALENDAR} label="DATE — TBA" />
             <Badge viewBox="0 0 384 512" d={ICON_PIN} label="VENUE — TBA" size="w-6 h-6" />
             <Badge viewBox="0 0 640 640" d={ICON_TICKET} label="TICKETS — TBA" />
@@ -165,12 +166,9 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
         )}
 
         {/* Email capture */}
-        <div className="w-full max-w-[480px] mt-16">
-          <h2 className="m-0" style={{ fontFamily: SEMI, fontSize: '1.3em', letterSpacing: '0.12em', color: '#fff' }}>
-            GET NOTIFIED
-          </h2>
-          <p className="mt-2 mb-5" style={{ fontFamily: BODY, fontSize: '0.95em', color: '#e8f5ec', opacity: 0.75, lineHeight: 1.5 }}>
-            Drop your email and we’ll let you know the second dates go live.
+        <div className="w-full max-w-[480px] mt-14">
+          <p className="mt-0 mb-5" style={{ fontFamily: BODY, fontSize: '1.05em', color: '#e8f5ec', opacity: 0.85, lineHeight: 1.6 }}>
+            {shows.length > 0 ? 'Be the first to know when we announce a show near you.' : 'Tour dates are being booked. Be the first to know when we announce a show near you.'}
           </p>
           <form onSubmit={handleNotify} className="flex flex-col sm:flex-row gap-2">
             <label htmlFor="shows-email" className="sr-only">

@@ -34,7 +34,7 @@ const formatDate = (iso: string) =>
 // ── HELP TOPICS ──────────────────────────────────────────────────────────────
 function HelpTopics({ onSelectTab }: { onSelectTab: (tab: AccountTab) => void }) {
   const go = (tab: AccountTab, label: string) => (
-    <button type="button" className="text-[#38B26A] hover:underline underline-offset-4 cursor-pointer" onClick={() => onSelectTab(tab)}>
+    <button type="button" className="text-[#05652E] hover:underline underline-offset-4 cursor-pointer" onClick={() => onSelectTab(tab)}>
       {label}
     </button>
   );
@@ -67,15 +67,15 @@ function HelpTopics({ onSelectTab }: { onSelectTab: (tab: AccountTab) => void })
 
   return (
     <Panel className="flex flex-col gap-2">
-      <h2 className="text-[1.15em] text-white" style={SEMI}>Quick answers</h2>
-      <div className="flex flex-col divide-y divide-white/10" style={BODY}>
+      <h2 className="text-[1.15em] text-[#0B0A07]" style={SEMI}>Quick answers</h2>
+      <div className="flex flex-col divide-y divide-[#0B0A07]/15" style={BODY}>
         {topics.map((t) => (
           <details key={t.q} className="group py-1">
-            <summary className="flex items-center justify-between gap-4 py-3 cursor-pointer list-none text-white hover:text-[#38B26A] [&::-webkit-details-marker]:hidden">
+            <summary className="flex items-center justify-between gap-4 py-3 cursor-pointer list-none text-[#0B0A07] hover:text-[#05652E] [&::-webkit-details-marker]:hidden">
               {t.q}
               <ChevronDown className="w-4 h-4 flex-shrink-0 transition-transform group-open:rotate-180" aria-hidden="true" />
             </summary>
-            <p className="pb-4 pr-8 text-[0.9em] leading-relaxed text-white/70">{t.a}</p>
+            <p className="pb-4 pr-8 text-[0.9em] leading-relaxed text-[#0B0A07]/75">{t.a}</p>
           </details>
         ))}
       </div>
@@ -155,7 +155,7 @@ function ContactForm({ email, onSent }: { email: string; onSent: (reference: str
         </div>
         {draft.topic === 'order' && (
           <div>
-            <label htmlFor="support-order" className={LABEL_CLASS}>Order number <span className="text-white/35">(optional)</span></label>
+            <label htmlFor="support-order" className={LABEL_CLASS}>Order number <span className="text-[#0B0A07]/45">(optional)</span></label>
             <input id="support-order" className={INPUT_CLASS} value={draft.order_number} onChange={set('order_number')} maxLength={ORDER_NUMBER_MAX} disabled={sending} aria-invalid={!!errors.order_number} aria-describedby={describedBy('order_number')} />
             {fieldError('order_number')}
           </div>
@@ -180,12 +180,12 @@ function ContactForm({ email, onSent }: { email: string; onSent: (reference: str
         />
         <div className="flex justify-between gap-4">
           {fieldError('message') || <span />}
-          <span id="support-message-count" className="mt-1 text-[0.75em] text-white/40 tabular-nums">
+          <span id="support-message-count" className="mt-1 text-[0.75em] text-[#0B0A07]/50 tabular-nums">
             {draft.message.length.toLocaleString('en-US')}/{MESSAGE_MAX.toLocaleString('en-US')}
           </span>
         </div>
       </div>
-      <p className="text-[0.8em] text-white/50">We’ll reply to <span className="text-white/80 break-all">{email}</span>.</p>
+      <p className="text-[0.8em] text-[#0B0A07]/60">We’ll reply to <span className="text-[#0B0A07]/80 break-all">{email}</span>.</p>
       {error && <p role="alert" className={ERROR_TEXT}>{error}</p>}
       <button type="submit" className={`${PRIMARY_BUTTON} self-start`} disabled={sending}>
         {sending ? 'SENDING…' : 'SEND MESSAGE'}
@@ -201,25 +201,25 @@ function RequestItem({ r, busy, onStatus }: { r: SupportRequest; busy: boolean; 
       <details className="group">
         <summary className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
           <span className="flex-1 min-w-[200px]">
-            <span className="block text-white" style={SEMI}>{r.subject}</span>
-            <span className="block text-[0.8em] text-white/50">
+            <span className="block text-[#0B0A07]" style={SEMI}>{r.subject}</span>
+            <span className="block text-[0.8em] text-[#0B0A07]/60">
               {r.reference} · {topicLabel(r.topic)} · {formatDate(r.created_at)}
             </span>
           </span>
           <span
             className={`px-2.5 py-1 rounded-full text-[0.65em] tracking-[0.15em] border ${
-              r.status === 'open' ? 'border-[#38B26A]/50 text-[#38B26A] bg-[#38B26A]/10' : 'border-white/15 text-white/60 bg-white/5'
+              r.status === 'open' ? 'border-[#067F3A]/50 text-[#05652E] bg-[#067F3A]/10' : 'border-[#0B0A07]/15 text-[#0B0A07]/70 bg-[#0B0A07]/5'
             }`}
             style={SEMI}
           >
             {r.status === 'open' ? 'OPEN' : 'RESOLVED'}
           </span>
-          <ChevronDown className="w-4 h-4 text-white/60 transition-transform group-open:rotate-180" aria-hidden="true" />
+          <ChevronDown className="w-4 h-4 text-[#0B0A07]/70 transition-transform group-open:rotate-180" aria-hidden="true" />
         </summary>
         <div className="flex flex-col gap-3 pb-4">
-          {r.order_number && <p className="text-[0.85em] text-white/60">Order number: <span className="text-white/85">{r.order_number}</span></p>}
-          <p className="whitespace-pre-wrap break-words text-[0.9em] text-white/75 border-l-2 border-[#067F3A]/60 pl-3">{r.message}</p>
-          <p className="text-[0.8em] text-white/50">
+          {r.order_number && <p className="text-[0.85em] text-[#0B0A07]/70">Order number: <span className="text-[#0B0A07]/85">{r.order_number}</span></p>}
+          <p className="whitespace-pre-wrap break-words text-[0.9em] text-[#0B0A07]/75 border-l-2 border-[#067F3A]/60 pl-3">{r.message}</p>
+          <p className="text-[0.8em] text-[#0B0A07]/60">
             {r.status === 'open'
               ? 'We’ll reply by email. To add details, reply to your confirmation email.'
               : `Marked resolved${r.resolved_at ? ` on ${formatDate(r.resolved_at)}` : ''}.`}
@@ -276,18 +276,18 @@ export default function SupportTab({
 
       <Panel className="flex flex-col gap-5">
         <div className="flex items-start gap-3">
-          <MessageCircleMore className="w-5 h-5 mt-1 flex-shrink-0 text-[#38B26A]" aria-hidden="true" />
+          <MessageCircleMore className="w-5 h-5 mt-1 flex-shrink-0 text-[#05652E]" aria-hidden="true" />
           <div style={BODY}>
-            <h2 className="text-[1.15em] text-white" style={SEMI}>Send us a message</h2>
-            <p className="text-[0.85em] text-white/55">
+            <h2 className="text-[1.15em] text-[#0B0A07]" style={SEMI}>Send us a message</h2>
+            <p className="text-[0.85em] text-[#0B0A07]/65">
               Prefer email? Write to{' '}
-              <a href={`mailto:${SUPPORT_EMAIL}`} className="text-[#38B26A] hover:underline underline-offset-4">{SUPPORT_EMAIL}</a>.
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="text-[#05652E] hover:underline underline-offset-4">{SUPPORT_EMAIL}</a>.
             </p>
           </div>
         </div>
         {sentRef && (
-          <div role="status" className="flex items-start gap-3 rounded-none border border-[#38B26A]/40 bg-[#067F3A]/10 p-4" style={BODY}>
-            <Mail className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#38B26A]" aria-hidden="true" />
+          <div role="status" className="flex items-start gap-3 rounded-none border border-[#067F3A]/40 bg-[#067F3A]/10 p-4" style={BODY}>
+            <Mail className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#05652E]" aria-hidden="true" />
             <p className={`${SUCCESS_TEXT} text-[0.9em]`}>
               Message sent. Your reference is <strong>{sentRef}</strong>, and a copy is on its way to {email}.
             </p>
@@ -297,12 +297,12 @@ export default function SupportTab({
       </Panel>
 
       <Panel className="flex flex-col gap-2">
-        <h2 className="text-[1.15em] text-white" style={SEMI}>Your requests</h2>
+        <h2 className="text-[1.15em] text-[#0B0A07]" style={SEMI}>Your requests</h2>
         {listError && <p role="alert" className={ERROR_TEXT} style={BODY}>{listError}</p>}
         {requests.length === 0 ? (
-          <p className="py-6 text-center text-[0.9em] text-white/50" style={BODY}>You haven’t sent us any messages yet.</p>
+          <p className="py-6 text-center text-[0.9em] text-[#0B0A07]/60" style={BODY}>You haven’t sent us any messages yet.</p>
         ) : (
-          <ul className="flex flex-col divide-y divide-white/10" style={BODY}>
+          <ul className="flex flex-col divide-y divide-[#0B0A07]/15" style={BODY}>
             {requests.map((r) => (
               <RequestItem key={r.id} r={r} busy={busyId !== null} onStatus={(s) => setStatus(r, s)} />
             ))}

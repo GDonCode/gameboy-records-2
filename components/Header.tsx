@@ -302,9 +302,9 @@ export default function Header() {
               href="/cart"
               aria-label={cartLabel}
               aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full text-[#0B0A07] transition-colors duration-200 hover:bg-[#067F3A]/10 hover:text-[#067F3A] ${FOCUS}`}
+              className={`relative flex h-12 w-12 items-center justify-center rounded-full text-[#0B0A07] transition-colors duration-200 hover:bg-[#067F3A]/10 hover:text-[#067F3A] ${FOCUS}`}
             >
-              <ShoppingCart className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+              <ShoppingCart className="h-[26px] w-[26px]" strokeWidth={2.25} aria-hidden="true" />
               <CartBadge count={cartCount} className="absolute -right-1.5 -top-1.5" />
             </Link>
           </div>
@@ -318,12 +318,12 @@ export default function Header() {
               aria-label={menuOpen ? 'Close menu' : cartCount > 0 ? `Open menu, ${cartCount} item${cartCount === 1 ? '' : 's'} in cart` : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full bg-transparent text-[#067F3A] transition-colors hover:text-[#05652E] ${FOCUS}`}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full bg-transparent text-[#067F3A] transition-colors hover:text-[#05652E] -mr-1 ${FOCUS}`}
             >
               {menuOpen ? (
-                <X className="h-[26px] w-[26px]" strokeWidth={2.75} aria-hidden="true" />
+                <X className="h-[32px] w-[32px]" strokeWidth={2.75} aria-hidden="true" />
               ) : (
-                <Menu className="h-[26px] w-[26px]" strokeWidth={2.75} aria-hidden="true" />
+                <Menu className="h-[32px] w-[32px]" strokeWidth={2.75} aria-hidden="true" />
               )}
             </button>
           </div>
@@ -344,25 +344,25 @@ export default function Header() {
               </p>
               <MobileGroup items={VIBES} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
 
-              <ul className="mt-2 flex flex-col gap-0.5">
-                <li>
-                  <Link
-                    href="/cart"
-                    onClick={() => setMenuOpen(false)}
-                    aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
-                    className={`flex min-h-[52px] items-center gap-3.5 rounded-xl px-3 text-[1rem] tracking-[0.12em] transition-colors ${FOCUS} ${
-                      isActive(pathname, '/cart') ? 'bg-[#067F3A] text-white' : 'text-[#0B0A07] active:bg-[#067F3A]/12'
-                    }`}
-                    style={SEMIBOLD}
-                  >
-                    <ShoppingCart className={`h-5 w-5 shrink-0 ${isActive(pathname, '/cart') ? '' : 'text-[#05652E]'}`} strokeWidth={2.25} aria-hidden="true" />
-                    <span className="flex-1">{cartLabel.toUpperCase()}</span>
-                    <CartBadge count={cartCount} />
-                  </Link>
-                </li>
-              </ul>
-
-              <div className="mt-4 border-t border-[#0B0A07]/15 px-1 pt-4">
+              <div className="mt-4 border-t-2 border-[#0B0A07]/15 pt-3">
+                <ul className="mb-3 flex flex-col gap-0.5">
+                  <li>
+                    <Link
+                      href="/cart"
+                      onClick={() => setMenuOpen(false)}
+                      aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
+                      className={`flex min-h-[52px] items-center gap-3.5 rounded-xl px-3 text-[1rem] tracking-[0.12em] transition-colors ${FOCUS} ${
+                        isActive(pathname, '/cart') ? 'bg-[#067F3A] text-white' : 'text-[#0B0A07] active:bg-[#067F3A]/12'
+                      }`}
+                      style={SEMIBOLD}
+                    >
+                      <ShoppingCart className={`h-5 w-5 shrink-0 ${isActive(pathname, '/cart') ? '' : 'text-[#05652E]'}`} strokeWidth={2.25} aria-hidden="true" />
+                      <span className="flex-1">{cartLabel.toUpperCase()}</span>
+                      <CartBadge count={cartCount} />
+                    </Link>
+                  </li>
+                </ul>
+                <div className="px-1">
                 {session ? (
                   <Link
                     href={accountHref}
@@ -402,6 +402,7 @@ export default function Header() {
                     </Link>
                   </div>
                 )}
+                </div>
               </div>
             </nav>
           </div>

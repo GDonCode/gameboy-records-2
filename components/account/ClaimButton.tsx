@@ -43,7 +43,7 @@ export default function ClaimButton({ level }: { level: number }) {
         {busy ? 'CLAIMING…' : 'CLAIM'}
       </button>
       {error && (
-        <span className="text-[#F0A39C] text-[0.65em]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <span className="text-[#A3322A] text-[0.65em]" style={{ fontFamily: "'Poppins', sans-serif" }}>
           {error}
         </span>
       )}

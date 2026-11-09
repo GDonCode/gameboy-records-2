@@ -81,13 +81,13 @@ function PasswordInput({
         <button
           type="button"
           onClick={() => setShown((s) => !s)}
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/50 hover:text-white cursor-pointer"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-[#0B0A07]/60 hover:text-[#0B0A07] cursor-pointer"
           aria-label={shown ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
         >
           {shown ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
       </div>
-      {hint && <p id={`${id}-hint`} className="mt-1 text-[0.75em] text-white/45">{hint}</p>}
+      {hint && <p id={`${id}-hint`} className="mt-1 text-[0.75em] text-[#0B0A07]/55">{hint}</p>}
     </div>
   );
 }
@@ -97,11 +97,11 @@ function MethodRow({ icon: Icon, title, children }: { icon: LucideIcon; title: s
   return (
     <li className="flex items-start gap-4 py-4">
       <span className="flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-full bg-[#067F3A]/15 border border-[#067F3A]/40">
-        <Icon className="w-[18px] h-[18px] text-[#38B26A]" />
+        <Icon className="w-[18px] h-[18px] text-[#05652E]" />
       </span>
       <div className="min-w-0">
-        <p className="text-white" style={SEMI}>{title}</p>
-        <div className="text-[0.85em] text-white/60">{children}</div>
+        <p className="text-[#0B0A07]" style={SEMI}>{title}</p>
+        <div className="text-[0.85em] text-[#0B0A07]/70">{children}</div>
       </div>
     </li>
   );
@@ -110,8 +110,8 @@ function MethodRow({ icon: Icon, title, children }: { icon: LucideIcon; title: s
 function SignInMethods({ email, security }: { email: string; security: SecurityInfo }) {
   return (
     <Panel className="flex flex-col gap-2">
-      <h2 className="text-[1.15em] text-white" style={SEMI}>Ways to sign in</h2>
-      <ul className="flex flex-col divide-y divide-white/10" style={BODY}>
+      <h2 className="text-[1.15em] text-[#0B0A07]" style={SEMI}>Ways to sign in</h2>
+      <ul className="flex flex-col divide-y divide-[#0B0A07]/15" style={BODY}>
         <MethodRow icon={KeyRound} title="Email and password">
           {security.hasPassword ? (
             <>
@@ -213,8 +213,8 @@ function PasswordPanel({ email, hasPassword }: { email: string; hasPassword: boo
     <Panel className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-[1.15em] text-white" style={SEMI}>{hasPassword ? 'Password' : 'Add a password'}</h2>
-          <p className="text-[0.85em] text-white/55" style={BODY}>
+          <h2 className="text-[1.15em] text-[#0B0A07]" style={SEMI}>{hasPassword ? 'Password' : 'Add a password'}</h2>
+          <p className="text-[0.85em] text-[#0B0A07]/65" style={BODY}>
             {hasPassword
               ? 'Changing your password signs you out on your other devices.'
               : 'You sign in with Google. Add a password to also sign in with your email.'}
@@ -237,7 +237,7 @@ function PasswordPanel({ email, hasPassword }: { email: string; hasPassword: boo
             <div className="flex flex-col gap-2">
               {codeSentTo ? (
                 <>
-                  <p className="text-[0.85em] text-white/70">We sent a 6-digit code to <span className="text-white break-all">{codeSentTo}</span>. It expires in 15 minutes.</p>
+                  <p className="text-[0.85em] text-[#0B0A07]/75">We sent a 6-digit code to <span className="text-[#0B0A07] break-all">{codeSentTo}</span>. It expires in 15 minutes.</p>
                   <label htmlFor="set-password-code" className={LABEL_CLASS}>Verification code</label>
                   <input
                     id="set-password-code"
@@ -255,7 +255,7 @@ function PasswordPanel({ email, hasPassword }: { email: string; hasPassword: boo
                 </>
               ) : (
                 <>
-                  <p className="text-[0.85em] text-white/70">First, we’ll email a code to <span className="text-white break-all">{email}</span> to confirm it’s you.</p>
+                  <p className="text-[0.85em] text-[#0B0A07]/75">First, we’ll email a code to <span className="text-[#0B0A07] break-all">{email}</span> to confirm it’s you.</p>
                   <button type="button" className={`${PRIMARY_BUTTON} self-start`} onClick={sendCode} disabled={disabled}>
                     {busy === 'code' ? 'SENDING…' : 'SEND CODE'}
                   </button>
@@ -337,8 +337,8 @@ function DevicesPanel({ hasPassword }: { hasPassword: boolean }) {
     <Panel className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-[1.15em] text-white" style={SEMI}>{hasPassword ? 'Sign out of other devices' : 'Sign out everywhere'}</h2>
-          <p className="text-[0.85em] text-white/55" style={BODY}>
+          <h2 className="text-[1.15em] text-[#0B0A07]" style={SEMI}>{hasPassword ? 'Sign out of other devices' : 'Sign out everywhere'}</h2>
+          <p className="text-[0.85em] text-[#0B0A07]/65" style={BODY}>
             {hasPassword
               ? 'Use this if you signed in on a shared or lost device. You’ll stay signed in here.'
               : 'Use this if you signed in on a shared or lost device. This signs out every device, this one included.'}
@@ -389,26 +389,26 @@ const EVENT_LABELS: Record<SecurityEventKind, { label: string; icon: LucideIcon;
 function ActivityPanel({ security }: { security: SecurityInfo }) {
   return (
     <Panel className="flex flex-col gap-2">
-      <h2 className="text-[1.15em] text-white" style={SEMI}>Recent security activity</h2>
-      <p className="text-[0.85em] text-white/55" style={BODY}>
+      <h2 className="text-[1.15em] text-[#0B0A07]" style={SEMI}>Recent security activity</h2>
+      <p className="text-[0.85em] text-[#0B0A07]/65" style={BODY}>
         If something here wasn’t you, change your password and sign out of other devices.
       </p>
       {security.events.length === 0 ? (
-        <p className="py-6 text-center text-[0.9em] text-white/50" style={BODY}>No activity yet.</p>
+        <p className="py-6 text-center text-[0.9em] text-[#0B0A07]/60" style={BODY}>No activity yet.</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-white/10 mt-2" style={BODY}>
+        <ul className="flex flex-col divide-y divide-[#0B0A07]/15 mt-2" style={BODY}>
           {security.events.map((ev) => {
             const meta = EVENT_LABELS[ev.kind] ?? { label: ev.kind, icon: ShieldCheck };
             const Icon = meta.icon;
             const device = describeDevice(ev.user_agent);
             return (
               <li key={ev.id} className="flex items-center gap-4 py-3">
-                <Icon className={`w-[18px] h-[18px] flex-shrink-0 ${meta.warn ? 'text-[#F0A39C]' : 'text-[#38B26A]'}`} aria-hidden="true" />
+                <Icon className={`w-[18px] h-[18px] flex-shrink-0 ${meta.warn ? 'text-[#A3322A]' : 'text-[#05652E]'}`} aria-hidden="true" />
                 <div className="flex-1 min-w-0">
-                  <p className={meta.warn ? 'text-[#F0A39C]' : 'text-white'}>{meta.label}</p>
-                  {device && <p className="text-[0.8em] text-white/50">{device}</p>}
+                  <p className={meta.warn ? 'text-[#A3322A]' : 'text-[#0B0A07]'}>{meta.label}</p>
+                  {device && <p className="text-[0.8em] text-[#0B0A07]/60">{device}</p>}
                 </div>
-                <time dateTime={ev.created_at} className="text-[0.8em] text-white/50 text-right">{formatDate(ev.created_at)}</time>
+                <time dateTime={ev.created_at} className="text-[0.8em] text-[#0B0A07]/60 text-right">{formatDate(ev.created_at)}</time>
               </li>
             );
           })}

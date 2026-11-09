@@ -49,8 +49,6 @@ const SUPPORT_ITEM: NavItem = {
 };
 
 interface AccountSidebarProps {
-  displayName: string;
-  avatarUrl: string | null;
   activeTab: AccountTab;
   onSelectTab: (tab: AccountTab) => void;
   signOutAction: () => Promise<void>;
@@ -80,15 +78,11 @@ function RowText({ label, subtitle }: { label: string; subtitle: string }) {
 }
 
 export default function AccountSidebar({
-  displayName,
-  avatarUrl,
   activeTab,
   onSelectTab,
   signOutAction,
   className = '',
 }: AccountSidebarProps) {
-  const firstName = displayName.split(' ')[0] || displayName;
-
   const renderItem = (item: NavItem) => {
     const active = item.tab === activeTab;
     return (
@@ -111,21 +105,6 @@ export default function AccountSidebar({
       className={`flex-shrink-0 w-full md:w-[300px] md:h-full md:overflow-y-auto paper on-light text-[#0B0A07] px-4 pt-8 pb-10 md:pt-8 md:border-r-4 border-[#0B0A07] ${className}`}
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
-      {/* Account header */}
-      <div className="flex items-center gap-3 px-3 pb-5 mb-2 border-b border-[#0B0A07]/15">
-        {avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-[#067F3A]" />
-        ) : (
-          <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#0B0A07] text-white">
-            {firstName.charAt(0).toUpperCase()}
-          </span>
-        )}
-        <span className="text-[#0B0A07] text-[1.05em]" style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}>
-          {firstName}&apos;s Playaz Club
-        </span>
-      </div>
-
       <nav className="flex flex-col">
         {NAV_GROUPS.map((group) => (
           <div key={group.heading} className="flex flex-col gap-1 py-3 border-b border-[#0B0A07]/15">

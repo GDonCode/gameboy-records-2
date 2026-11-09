@@ -4,7 +4,7 @@ import PageShell from '@/components/PageShell';
 import PageTitle from '@/components/PageTitle';
 import TriviaGame from '@/components/TriviaGame';
 import GameIconsBackground from '@/components/GameIconsBackground';
-import { ARTIST, CLUB_NAME, OG_IMAGE } from '@/lib/site';
+import { ARTIST, OG_IMAGE } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Tricky Tempo Trivia',
@@ -19,7 +19,7 @@ export default function TriviaPage() {
       <section className="paper-ink relative overflow-hidden flex-1 pt-12 pb-24 md:pt-20">
         <GameIconsBackground opacity={1.5} />
         <div className="relative z-[1] container-site flex flex-col items-center">
-          <PageTitle tone="dark" ghost="Play" kicker="Vibes" subtitle={`For the ${CLUB_NAME}`} className="mb-10 w-full">
+          <PageTitle tone="dark" ghost="Play" className="mb-10 w-full">
             Tricky Tempo Trivia
           </PageTitle>
           <TriviaGame />
