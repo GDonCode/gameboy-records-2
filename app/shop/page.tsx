@@ -1,4 +1,4 @@
-// app/shop/page.tsx — Shop (original Shop design, inside the new site frame; no search or filters)
+// app/shop/page.tsx — Shop (product grid with a filter sidebar, inside the site frame)
 import type { Metadata } from 'next';
 import { auth } from '@/auth';
 import PageShell from '@/components/PageShell';

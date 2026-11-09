@@ -20,15 +20,15 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useCartCount } from '@/lib/cart-sync';
-import { NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
+import { LOGO_URL, NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
-// The header has no background of its own: it sits straight on the page (the hero film on Home).
-// Nav links are the brand green, with a soft light halo so they hold up over the dark film.
-const NEON_TEXT = { color: '#067F3A', textShadow: '0 0 8px rgba(245,245,245,0.35)' } as const;
+// The header is frosted white glass over whatever is behind it (the hero film on Home): black nav links,
+// a brand-green Sign in button.
+const NEON_TEXT = { color: '#0B0A07' } as const;
 const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const FOCUS =
-  'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0A07]';
+  'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
 
 type NavItem = { href: string; label: string; icon: LucideIcon; blurb?: string };
 
@@ -51,7 +51,7 @@ function Brand() {
   return (
     <Link href="/" aria-label={`${SITE_NAME} — home`} className={`flex shrink-0 items-center rounded-xs ${FOCUS}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/brand/gameboy-records-logo-on-dark.png" alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
+      <img src={LOGO_URL} alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
     </Link>
   );
 }
@@ -60,7 +60,7 @@ function CartBadge({ count, className = '' }: { count: number; className?: strin
   if (count <= 0) return null;
   return (
     <span
-      className={`flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A3322A] px-1 text-[0.7rem] font-bold leading-none text-white ring-2 ring-[#0B0A07] ${className}`}
+      className={`flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A3322A] px-1 text-[0.7rem] font-bold leading-none text-white ring-2 ring-white ${className}`}
       aria-hidden="true"
     >
       {count > 99 ? '99+' : count}
@@ -80,8 +80,6 @@ export default function Header() {
   const initial = session?.user?.name?.trim().charAt(0).toUpperCase() || null;
 
   const [hidden, setHidden] = useState(false);
-  // Once the page scrolls, a dark glass backing keeps the links readable over light sections.
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [vibesOpen, setVibesOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -99,7 +97,6 @@ export default function Header() {
       const target = e.target as HTMLElement | Document;
       const currentY = target instanceof Document ? window.scrollY : (target as HTMLElement).scrollTop;
       setHidden(currentY > lastScrollY.current && currentY > 80);
-      if (target instanceof Document) setScrolled(currentY > 8);
       lastScrollY.current = currentY;
     }
     // capture: true — scroll events on nested overflow-auto containers don't bubble,
@@ -185,9 +182,9 @@ export default function Header() {
       )}
 
       <header
-        className={`sticky top-0 z-40 flex-shrink-0 text-[#F5F5F5] transition-[transform,background-color] duration-300 ease-in-out lg:translate-y-0 ${
+        className={`on-light sticky top-0 z-40 flex-shrink-0 bg-white/80 text-[#0B0A07] backdrop-blur-md transition-transform duration-300 ease-in-out lg:translate-y-0 ${
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
-        } ${scrolled ? 'bg-[#0B0A07]/80 backdrop-blur-md' : 'bg-transparent'}`}
+        }`}
       >
         <div className="relative flex h-[60px] items-center gap-3 pl-4 pr-3 md:h-[72px] lg:gap-2 lg:px-8">
           <Brand />
@@ -275,14 +272,14 @@ export default function Header() {
 
           {/* ── Desktop utilities ── */}
           <div className="hidden items-center gap-2 lg:flex">
-            <span className="mx-2 h-7 w-px bg-[#F5F5F5]/30 lg:mx-3" aria-hidden="true" />
+            <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />
 
             {session ? (
               <Link
                 href={accountHref}
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
-                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#F5F5F5]/40 text-[#F5F5F5] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/20 ${FOCUS}`}
+                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/10 ${FOCUS}`}
               >
                 {initial ? (
                   <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
@@ -294,7 +291,7 @@ export default function Header() {
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`flex h-11 items-center gap-2 rounded-full border-2 border-[#F5F5F5]/40 px-3 text-[#F5F5F5] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/20 lg:px-4 ${FOCUS}`}
+                className={`flex h-11 items-center gap-2 rounded-full bg-[#067F3A] px-3 text-white shadow-[0_3px_0_#044F24] transition-[transform,box-shadow,background-color] duration-100 hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none lg:px-4 ${FOCUS}`}
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
                 <span className="hidden text-[0.85rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
@@ -319,7 +316,7 @@ export default function Header() {
             <Link
               href="/cart"
               aria-label={cartLabel}
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full text-[#F5F5F5] transition-colors hover:bg-[#F5F5F5]/10 ${FOCUS}`}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full text-[#0B0A07] transition-colors hover:bg-[#067F3A]/10 ${FOCUS}`}
             >
               <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2.25} aria-hidden="true" />
               <CartBadge count={cartCount} className="absolute right-0 top-0" />
@@ -332,7 +329,7 @@ export default function Header() {
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
               className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${FOCUS} ${
-                menuOpen ? 'bg-[#F5F5F5] text-[#0B0A07]' : 'bg-[#067F3A] text-white'
+                menuOpen ? 'bg-[#0B0A07] text-white' : 'bg-[#067F3A] text-white'
               }`}
             >
               {menuOpen ? (

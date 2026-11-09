@@ -11,7 +11,7 @@ export default function Ribbon() {
             {WORDS.map((w) => (
               <li key={w} className="flex items-center gap-7 pr-7 py-3.5 text-[1rem] font-bold uppercase tracking-[0.24em] whitespace-nowrap">
                 {w}
-                <span className="inline-block w-3 h-3 border-2 border-paper bg-paper" />
+                <span className="inline-block w-2 h-2 bg-gold" />
               </li>
             ))}
           </ul>

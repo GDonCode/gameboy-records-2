@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/icons';
 import Button from '@/components/ui/Button';
-import { ARTIST, MEDIA_BASE } from '@/lib/site';
+import { MEDIA_BASE } from '@/lib/site';
 
 // A soft shadow under the text so it stays readable over bright frames of the film.
 const TEXT_SHADOW = { textShadow: '0 2px 12px rgba(11,10,7,0.75), 0 1px 3px rgba(11,10,7,0.6)' };
@@ -60,9 +60,6 @@ export default function Hero() {
 
       <div className="container-site py-12 md:py-20">
         <div className="max-w-[620px] text-left animate-fade-up">
-          <p className="eyebrow text-gold-light m-0 mb-5" style={TEXT_SHADOW}>
-            Independent label of {ARTIST}
-          </p>
           <h1 id="hero-title" className="m-0 text-paper font-bold uppercase leading-[0.95] tracking-[-0.01em] text-[2.6rem] sm:text-[3.4rem] lg:text-[4.4rem]" style={TEXT_SHADOW}>
             Realest sound.
             <br />
