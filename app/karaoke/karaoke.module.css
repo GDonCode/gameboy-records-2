@@ -169,36 +169,25 @@
 
 @media (max-width: 767px) {
 
-  /* Compact picker layout */
-  .pickerBar { --pb-y: 16px; --pb-x: 12px; flex-wrap: wrap; row-gap: 4px; column-gap: 10px; margin-top: 0; padding: var(--pb-y) var(--pb-x); }
+  /* Compact picker layout: a grid, so "All songs" can run the full height of the bar.
+     Row 1: song title and play/pause. Row 2: the playback bar with both times. */
+  .pickerBar { --pb-y: 16px; --pb-x: 12px; display: grid; grid-template-columns: auto 1fr auto auto; grid-template-rows: auto auto; column-gap: 10px; row-gap: 6px; align-items: center; margin-top: 0; padding: var(--pb-y) 0 var(--pb-y) var(--pb-x); }
+  .pickerPlayback { display: contents; }
+  .pickerMeta { grid-column: 1 / 3; grid-row: 1; min-width: 0; }
+  .playBtn { grid-column: 3; grid-row: 1; justify-self: end; width: 36px; height: 36px; font-size: 0.8rem; box-shadow: 0 3px 0 #044F24; }
+  .pickerPlayback > .time { grid-row: 2; min-width: 30px; font-size: 0.72rem; }
+  .pickerPlayback > .time:first-of-type { grid-column: 1; }
+  .pickerPlayback > .time:last-of-type { grid-column: 3; text-align: right; }
+  .pickerPlayback > .seekBar { grid-column: 2; grid-row: 2; width: 100%; }
   .navArrowSm { width: 30px; }
-  .navArrowSm:first-child { margin: calc(-1 * var(--pb-y)) 0 calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)); }
-  .navArrowSm:last-child { margin: calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)) 0 0; align-self: stretch; height: auto; min-height: 56px; }
-  .navArrowSm svg { width: 16px; height: 16px; }
+  .navArrowSm:last-child { grid-column: 4; grid-row: 1 / 3; align-self: stretch; width: 64px; margin: calc(-1 * var(--pb-y)) 0; font-size: 0.52rem; }
   .navArrowSm svg { width: 16px; height: 16px; }
 
-  .pickerPhoto { width: 44px; height: 44px; }
-
-  .pickerMeta { flex: 1 1 0; min-width: 0; flex-shrink: 1; }
-  .pickerTitle,
-  .pickerArtist {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
   .pickerTitle { font-size: clamp(0.72rem, 3.7vw, 0.95rem); letter-spacing: 0.02em; }
   .pickerPhoto { display: none; }
+  .pickerTitle,
+  .pickerArtist { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .pickerArtist { font-size: 0.7rem; letter-spacing: 0.04em; }
-
-  /* Row 1: song title, play/pause, All songs. Row 2: the playback bar with both times. */
-  .pickerPlayback { display: contents; }
-  .pickerMeta { order: 1; }
-  .playBtn { order: 2; width: 36px; height: 36px; font-size: 0.8rem; box-shadow: 0 3px 0 #044F24; }
-  .navArrowSm:last-child { order: 3; }
-  .pickerBar::after { content: ''; order: 4; flex: 0 0 100%; height: 0; }
-  .pickerPlayback > .time { order: 5; min-width: 30px; font-size: 0.72rem; }
-  .pickerPlayback > .time:last-of-type { order: 7; text-align: right; }
-  .pickerPlayback > .seekBar { order: 6; flex: 1 1 0; }
 }
 
 /* ── LYRICS ── unboxed, directly on page background ──── */

@@ -108,8 +108,10 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
   // The record an arrow-key step is heading to (see step()).
-  const targetRef = useRef<HTMLElement | null>(null);
-  const targetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Where the crate is heading (an index into all the slots, three copies of the list), and when it last
+  // was told to move. The loop's invisible jumps only ever happen once everything has come to rest.
+  const headingRef = useRef<number | null>(null);
+  const lastMoveRef = useRef(0);
   const n = releases.length;
 
   /** Lay out every sleeve from its distance to the centre of the crate. */
@@ -148,8 +150,13 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         const tx = c > 0 ? c * sleeve * 0.8 : c * sleeve * 0.56;
         transform = `translate(-50%, -50%) translateX(${tx.toFixed(1)}px) translateY(${(-a * sleeve * 0.04).toFixed(1)}px) translateZ(${(a * 90).toFixed(1)}px) rotateY(${(-c * 70).toFixed(2)}deg)`;
       } else {
-        transform = `translate(-50%, -50%) translateY(${(c * sleeve * 0.56).toFixed(1)}px) translateZ(${(a * 50).toFixed(1)}px) rotateX(${(-c * 52).toFixed(2)}deg)`;
+        // Phones: flat covers one slot apart (a slot is almost a full cover tall), the ones beside the front
+        // a little smaller and dimmer. Nothing tilts or overlaps, so covers never clip into each other.
+        const k = Math.min(ad, 1);
+        transform = `translate(-50%, -50%) scale(${(1 - 0.14 * k).toFixed(3)})`;
+        s.style.opacity = (1 - 0.5 * k).toFixed(3);
       }
+      if (desktop) s.style.opacity = '';
       s.style.transform = transform;
       s.style.zIndex = String(1000 - Math.round(ad * 10));
       s.style.setProperty('--a', a.toFixed(3));
@@ -165,13 +172,14 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
   /** Jump without animation (invisible, because the copies are identical). */
   const jump = useCallback(
     (el: HTMLElement, to: number) => {
-      const prevSnap = el.style.scrollSnapType;
       el.style.scrollBehavior = 'auto';
       el.style.scrollSnapType = 'none';
       if (desktop) el.scrollLeft = to;
       else el.scrollTop = to;
       requestAnimationFrame(() => {
-        el.style.scrollSnapType = prevSnap;
+        // Back to what the classes say. (Remembering the previous inline value could keep snapping off for good
+        // if two jumps landed in the same frame.)
+        el.style.scrollSnapType = '';
         el.style.scrollBehavior = '';
       });
     },
@@ -232,37 +240,54 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
     if (!first) return;
     const target = desktop ? first.offsetLeft - (el.clientWidth - first.offsetWidth) / 2 : first.offsetTop - (el.clientHeight - first.offsetHeight) / 2;
     jump(el, target);
+    headingRef.current = n;
     paint();
   }, [desktop, jump, n, paint]);
 
-  // Scroll: keep inside the middle copy and repaint.
+  // Scroll: repaint, and keep the crate inside the middle copy of the list. The invisible jump back to the
+  // middle copy only happens when nothing is moving (no scrolling for a moment, and no step requested for a
+  // moment), never while a record is still travelling to the front: jumping then cancels the animation and the
+  // crate lands on the wrong record.
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el || n === 0) return;
     let frame = 0;
     let idle: ReturnType<typeof setTimeout> | null = null;
-    // The loop's invisible jump only happens once scrolling has come to rest: jumping mid-swipe would
-    // interrupt the momentum and the snapping, which is what made the crate stutter.
-    const wrap = () => {
-      if (targetRef.current) return; // an arrow-key step is still travelling; it wraps itself
+    const settle = () => {
+      if (performance.now() - lastMoveRef.current < 450) {
+        idle = setTimeout(settle, 120);
+        return;
+      }
+      const slots = Array.from(el.querySelectorAll<HTMLElement>('.crate-slot'));
+      if (slots.length < 3 * n) return;
+      const center = desktop ? el.scrollLeft + el.clientWidth / 2 : el.scrollTop + el.clientHeight / 2;
+      const mid = (x: HTMLElement) => (desktop ? x.offsetLeft + x.offsetWidth / 2 : x.offsetTop + x.offsetHeight / 2);
+      let near = 0;
+      for (let i = 1; i < slots.length; i++) if (Math.abs(mid(slots[i]) - center) < Math.abs(mid(slots[near]) - center)) near = i;
+      headingRef.current = near;
+      const copy = desktop
+        ? slots[n].getBoundingClientRect().left - slots[0].getBoundingClientRect().left
+        : slots[n].getBoundingClientRect().top - slots[0].getBoundingClientRect().top;
       const pos = desktop ? el.scrollLeft : el.scrollTop;
-      const copy = (desktop ? el.scrollWidth : el.scrollHeight) / COPIES;
-      if (pos < copy * 0.5) jump(el, pos + copy);
-      else if (pos > copy * 1.5) jump(el, pos - copy);
+      if (near < n) {
+        jump(el, pos + copy);
+        headingRef.current = near + n;
+      } else if (near >= 2 * n) {
+        jump(el, pos - copy);
+        headingRef.current = near - n;
+      }
     };
     const onScroll = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(paint);
       if (idle) clearTimeout(idle);
-      idle = setTimeout(wrap, 160);
+      idle = setTimeout(settle, 200);
     };
     el.addEventListener('scroll', onScroll, { passive: true });
-    el.addEventListener('scrollend', wrap);
     return () => {
       cancelAnimationFrame(frame);
       if (idle) clearTimeout(idle);
       el.removeEventListener('scroll', onScroll);
-      el.removeEventListener('scrollend', wrap);
     };
   }, [desktop, jump, n, paint]);
 
@@ -272,36 +297,29 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       const el = scrollerRef.current;
       if (!el) return;
       const target = desktop ? slot.offsetLeft - (el.clientWidth - slot.offsetWidth) / 2 : slot.offsetTop - (el.clientHeight - slot.offsetHeight) / 2;
+      headingRef.current = Array.from(el.querySelectorAll<HTMLElement>('.crate-slot')).indexOf(slot);
+      lastMoveRef.current = performance.now();
       el.scrollTo({ [desktop ? 'left' : 'top']: target, behavior: 'smooth' });
     },
     [desktop]
   );
 
-  // Arrow keys and buttons move exactly one record, even when pressed quickly: each press steps from the
-  // record the previous press was heading to, not from wherever the scroll animation has got to.
+  // Arrow keys, buttons and the wheel move exactly one record, even when pressed quickly: each press steps from
+  // the record the previous press was heading to, not from wherever the scroll animation has got to.
   const step = useCallback(
     (dir: 1 | -1) => {
       const el = scrollerRef.current;
       if (!el) return;
       const slots = Array.from(el.querySelectorAll<HTMLElement>('.crate-slot'));
-      const from = targetRef.current && el.contains(targetRef.current) ? targetRef.current : nearestSlot(el);
-      // Keep the move inside the middle copy: if we've drifted into a clone, hop to the same record in the
-      // middle copy first (an invisible jump), then step from there.
-      let idx = slots.indexOf(from);
-      const shift = idx < n ? n : idx >= 2 * n ? -n : 0;
-      if (shift) {
-        const slotSize = desktop ? from.offsetWidth : from.offsetHeight;
-        jump(el, (desktop ? el.scrollLeft : el.scrollTop) + shift * slotSize);
-        idx += shift;
-      }
-      const next = slots[idx + dir];
-      if (!next) return;
-      targetRef.current = next;
-      if (targetTimer.current) clearTimeout(targetTimer.current);
-      targetTimer.current = setTimeout(() => (targetRef.current = null), 600);
-      centerSlot(next);
+      if (slots.length === 0) return;
+      let from = headingRef.current;
+      if (from === null || from < 0 || from >= slots.length) from = slots.indexOf(nearestSlot(el));
+      const to = Math.max(0, Math.min(slots.length - 1, from + dir));
+      headingRef.current = to;
+      lastMoveRef.current = performance.now();
+      centerSlot(slots[to]);
     },
-    [desktop, centerSlot, jump, n, nearestSlot]
+    [centerSlot, nearestSlot]
   );
 
   // Desktop: the mouse wheel and trackpad flip one record at a time. Free scrolling fought the snapping
@@ -363,12 +381,12 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
   return (
     <div ref={crateRef} className="crate relative h-[calc(100svh-var(--header-h))] bg-ink overflow-hidden flex flex-col">
       <style>{`
-        .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 0.26); }
+        .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 1); }
         @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 0.3); } }
         .crate-scroller { perspective: 1200px; perspective-origin: 50% 45%; }
         .crate-scroller:focus-visible { outline: none; }
         .crate-scroller:focus-visible .crate-sleeve[data-front='true'] .crate-cover { outline: 2px solid var(--color-gold); outline-offset: 4px; }
-        .crate-slot { position: relative; pointer-events: none; transform-style: preserve-3d; flex: 0 0 var(--slot); width: var(--slot); height: var(--slot); scroll-snap-align: center; }
+        .crate-slot { position: relative; pointer-events: none; transform-style: preserve-3d; flex: 0 0 var(--slot); width: var(--slot); height: var(--slot); scroll-snap-align: center; scroll-snap-stop: always; }
         @media (min-width: 768px) { .crate-slot { height: 100%; } }
         @media (max-width: 767px) { .crate-slot { width: 100%; } }
         .crate-sleeve {
@@ -398,7 +416,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         .crate .dsp-btn { height: var(--crate-btn); padding: 0 18px; }
         /* The details keep one fixed height whatever the song, so the records never resize as you flip. */
         .crate-details { height: clamp(150px, 27vh, 250px); }
-        @media (max-width: 767px) { .crate-details { height: clamp(180px, 31svh, 240px); } .crate .dsp-btn { padding: 0 14px; } }
+        @media (max-width: 767px) { .crate-details { height: clamp(214px, 35svh, 272px); padding-top: 30px; } .crate .dsp-btn { padding: 0 14px; } }
         .crate-sleeve:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 6px; }
         @media (prefers-reduced-motion: reduce) { .crate-disc { transition: none; } }
       `}</style>
@@ -407,7 +425,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       <h1 className="sr-only">Alexx A-Game discography</h1>
 
       {/* The crate */}
-      <div ref={stageRef} className="relative flex-1 min-h-0">
+      <div ref={stageRef} className="relative flex-1 min-h-0 mt-[clamp(12px,3.5vh,44px)] md:mt-[clamp(20px,5vh,56px)]">
         <div
           ref={scrollerRef}
           tabIndex={0}
