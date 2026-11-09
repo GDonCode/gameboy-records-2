@@ -17,6 +17,7 @@ export default function SongCarousel({ songs, initial = 0, onPick }: { songs: Pi
   const [active, setActive] = useState(initial);
   const n = songs.length;
   const swipeStart = useRef<number | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
   const move = (dir: 1 | -1) => setActive((a) => (a + dir + n) % n);
 
@@ -31,11 +32,34 @@ export default function SongCarousel({ songs, initial = 0, onPick }: { songs: Pi
     return () => window.removeEventListener('keydown', onKey);
   });
 
+  // Mouse wheel / trackpad: one song per flick, like the Music page's crate. Needs a non-passive listener so
+  // the page doesn't scroll as well.
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    let acc = 0;
+    let lock = 0;
+    function onWheel(e: WheelEvent) {
+      e.preventDefault();
+      const now = Date.now();
+      if (now < lock) return;
+      acc += Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (Math.abs(acc) >= 40) {
+        move(acc > 0 ? 1 : -1);
+        acc = 0;
+        lock = now + 320;
+      }
+    }
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  });
+
   const song = songs[active];
 
   return (
-    <div className="flex w-full flex-col items-center gap-6" style={{ ['--sleeve' as string]: 'min(62vw, 46vh, 360px)' }}>
+    <div className="flex w-full flex-col items-center gap-4" style={{ ['--sleeve' as string]: 'clamp(110px, min(62vw, (100dvh - 450px) / 1.12), 360px)' }}>
       <div
+        ref={stageRef}
         role="group"
         aria-roledescription="carousel"
         aria-label="Pick a song"
@@ -89,8 +113,8 @@ export default function SongCarousel({ songs, initial = 0, onPick }: { songs: Pi
         })}
       </div>
 
-      <div className="flex flex-col items-center gap-3 text-center" aria-live="polite">
-        <h2 className="display m-0 max-w-[22ch] text-[1.5rem] sm:text-[2.1rem]">{song.title}</h2>
+      <div className="flex w-full flex-col items-center gap-2 px-3 text-center" aria-live="polite">
+        <h2 className="display m-0 whitespace-nowrap text-[clamp(1.05rem,5vw,2.1rem)]">{song.title}</h2>
         <p className="m-0 text-[0.8rem] uppercase tracking-[0.22em]" style={{ color: '#4dff91', textShadow: '0 0 16px rgba(77,255,145,0.45)' }}>
           {song.artist}
         </p>

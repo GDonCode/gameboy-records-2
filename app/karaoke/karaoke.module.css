@@ -101,11 +101,11 @@
 }
 
 .pickerMeta {
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 150px;
 }
 .pickerEyebrow {
   font-family: 'Poppins', sans-serif;
@@ -119,6 +119,7 @@
   letter-spacing: 0.04em;
   color: #0B0A07;
   line-height: 1.15;
+  white-space: nowrap;
 }
 .pickerArtist {
   font-family: 'Poppins', monospace;
@@ -206,7 +207,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .pickerTitle { font-size: 0.95rem; }
+  .pickerTitle { font-size: clamp(0.72rem, 3.7vw, 0.95rem); letter-spacing: 0.02em; }
+  .pickerPhoto { display: none; }
   .pickerArtist { font-size: 0.7rem; letter-spacing: 0.04em; }
 
   .pickerPlayback { flex: 0 0 auto; gap: 2px; }
@@ -334,12 +336,12 @@
   width: 100%;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0 32px;
+  justify-content: center;
+  padding: 8px 0 12px;
 }
 @media (max-width: 767px) {
   .pickView { width: calc(100% + 96px); padding-top: 24px; }
@@ -368,15 +370,13 @@
   bottom: 28px;
   transform: translateX(-50%);
   width: min(92%, 460px);
-  padding: 22px 24px;
+  padding: 20px 24px;
   text-align: center;
   background: #F5F5F5;
   color: #0B0A07;
   border: 3px solid #0B0A07;
   box-shadow: 6px 6px 0 #067F3A;
 }
-.endTitle { margin: 0; font-family: 'Poppins_semibold', 'Poppins', sans-serif; font-size: 1.2rem; }
-.endText { margin: 6px 0 16px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: #5C5A55; }
 .endActions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .endPrimary, .endSecondary {
   height: 46px; padding: 0 20px; cursor: pointer;

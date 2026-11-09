@@ -280,12 +280,6 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
   border: 2px solid rgba(245, 245, 245, 0.22);
   box-shadow: 6px 6px 0 var(--color-green-deep);
 }
-.panel-light {
-  background: #fff;
-  color: var(--color-ink);
-  border: 2px solid #fff;
-  box-shadow: 6px 6px 0 var(--color-green-deep);
-}
 .panel-paper {
   background: #fff;
   border: 3px solid var(--color-ink);

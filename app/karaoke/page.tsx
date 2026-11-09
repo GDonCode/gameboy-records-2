@@ -695,13 +695,10 @@ export default function KaraokePage() {
   });
 
   function formatTime(t: number) {
-    if (!Number.isFinite(t)) return '0.0s';
-    // TEMP: raw seconds display for lyric-sync work.
-    // Revert to mm:ss once timestamps are finalized:
-    // const m = Math.floor(t / 60);
-    // const s = Math.floor(t % 60).toString().padStart(2, '0');
-    // return `${m}:${s}`;
-    return `${t.toFixed(1)}s`;
+    if (!Number.isFinite(t)) return '0:00';
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   }
 
   return (
@@ -713,7 +710,7 @@ export default function KaraokePage() {
 
         {view === 'pick' && (
           <div className={styles.pickView}>
-            <PageTitle tone="dark" ghost="Sing" className="mb-6 w-full">
+            <PageTitle tone="dark" ghost="Sing" className="mb-2 w-full">
               Karaoke
             </PageTitle>
             <SongCarousel
@@ -861,8 +858,6 @@ export default function KaraokePage() {
 
         {ended && !syncOn && (
           <div className={styles.endCard} role="dialog" aria-label="Song finished">
-            <p className={styles.endTitle}>That was {activeSong.title}</p>
-            <p className={styles.endText}>Sing it again, or pick something else.</p>
             <div className={styles.endActions}>
               <button type="button" className={styles.endPrimary} onClick={restartSong}>
                 Sing again

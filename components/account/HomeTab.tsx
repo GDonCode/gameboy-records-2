@@ -44,15 +44,15 @@ function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] 
             state === 'unlocked'
               ? 'bg-[#067F3A] border-[#067F3A] text-white'
               : state === 'next'
-                ? 'bg-[#F5F5F5] border-[#067F3A] text-[#05652E] shadow-[0_0_14px_rgba(56,178,106,0.6)]'
-                : 'bg-[#F5F5F5] border-[#0B0A07]/15 text-[#0B0A07]/50';
+                ? 'bg-[#15130F] border-[#38B26A] text-[#38B26A] shadow-[0_0_14px_rgba(56,178,106,0.6)]'
+                : 'bg-[#15130F] border-white/15 text-white/40';
 
           const cardClass =
             state === 'unlocked'
-              ? 'border-[#067F3A]/60 bg-[#067F3A]/10'
+              ? 'border-[#38B26A] bg-[#15130F]'
               : state === 'next'
-                ? 'border-[#067F3A] bg-[#067F3A]/5'
-                : 'border-[#0B0A07]/15 bg-white/[0.02] opacity-60';
+                ? 'border-[#38B26A] bg-[#15130F]'
+                : 'border-white/10 bg-[#15130F]';
 
           return (
             <div key={tier.level} className="relative z-10 flex-1 flex flex-col items-center">
@@ -69,31 +69,31 @@ function RewardPass({ points, claims }: { points: number; claims: RewardClaim[] 
               >
                 {state === 'next' && (
                   <span
-                    className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-[#067F3A] text-white text-[0.65em] tracking-[0.15em]"
+                    className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-[#38B26A] text-[#15130F] text-[0.65em] tracking-[0.15em]"
                     style={MONO}
                   >
                     NEXT
                   </span>
                 )}
-                <span className="relative flex items-center justify-center w-11 h-11 rounded-none bg-[#F5F5F5] border border-[#0B0A07]/15">
+                <span className="relative flex items-center justify-center w-11 h-11 rounded-none bg-[#15130F] border border-white/10">
                   <Icon
-                    className={`w-5 h-5 ${state === 'locked' ? 'text-[#0B0A07]/50' : 'text-[#05652E]'}`}
+                    className={`w-5 h-5 ${state === 'locked' ? 'text-white/40' : 'text-[#38B26A]'}`}
                     strokeWidth={2}
                   />
                   {state === 'locked' && (
-                    <Lock className="absolute -bottom-1.5 -right-1.5 w-4 h-4 p-0.5 rounded-full bg-[#F5F5F5] text-[#0B0A07]/70" />
+                    <Lock className="absolute -bottom-1.5 -right-1.5 w-4 h-4 p-0.5 rounded-full bg-[#15130F] text-white/60" />
                   )}
                 </span>
-                <span className="text-[0.8em] leading-tight text-[#0B0A07]" style={BODY}>
+                <span className="text-[0.8em] leading-tight text-white" style={BODY}>
                   {tier.name}
                 </span>
-                <span className="text-[0.75em] text-[#0B0A07]/60" style={MONO}>
+                <span className="text-[0.75em] text-white/50" style={MONO}>
                   {tier.points.toLocaleString('en-US')} PTS
                 </span>
                 {state === 'unlocked' &&
                   (claim ? (
                     <span
-                      className="px-2 py-0.5 rounded-full border border-[#067F3A]/60 text-[#05652E] text-[0.65em] tracking-[0.15em]"
+                      className="px-2 py-0.5 rounded-full border border-[#38B26A]/60 text-[#38B26A] text-[0.65em] tracking-[0.15em]"
                       style={MONO}
                     >
                       {claim.status === 'fulfilled' ? 'DELIVERED' : 'CLAIMED'}

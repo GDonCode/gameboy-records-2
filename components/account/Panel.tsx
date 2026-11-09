@@ -31,7 +31,7 @@ export function TabHeading({ eyebrow, title, subtitle, tone = 'dark' }: { eyebro
 
 export function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <section className={`panel-light p-6 md:p-8 ${className}`}>
+    <section className={`bg-white text-[#0B0A07] border-2 border-white shadow-[6px_6px_0_#05652E] p-6 md:p-8 ${className}`}>
       {children}
     </section>
   );
