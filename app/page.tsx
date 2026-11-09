@@ -34,6 +34,7 @@ export default function Home() {
       <JsonLd data={releasesJsonLd} />
       <Hero />
       <Ribbon />
+      <MerchFeature />
       <section aria-labelledby="music-title" className="on-light paper text-ink section-y">
         <div className="container-site max-w-[1100px]">
           <SectionTitle ghost="Music" id="music-title">
@@ -42,7 +43,6 @@ export default function Home() {
           <ReleaseCards releases={FEATURED_RELEASES} />
         </div>
       </section>
-      <MerchFeature />
       <ShowsFeature />
       <ClubBand />
     </PageShell>

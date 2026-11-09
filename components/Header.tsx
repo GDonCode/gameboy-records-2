@@ -20,12 +20,12 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useCartCount } from '@/lib/cart-sync';
-import { LOGO_URL, NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
+import { NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
 // The header has no background of its own: it sits straight on the page (the hero film on Home).
-// Nav links are neon green with a dark text shadow so they hold up over bright frames of the film.
-const NEON_TEXT = { color: '#39FF14', textShadow: '0 1px 3px rgba(0,0,0,0.85), 0 0 10px rgba(57,255,20,0.35)' } as const;
+// Nav links are the brand green, with a soft light halo so they hold up over the dark film.
+const NEON_TEXT = { color: '#067F3A', textShadow: '0 0 8px rgba(245,245,245,0.35)' } as const;
 const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const FOCUS =
   'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0A07]';
@@ -50,15 +50,8 @@ function isActive(pathname: string, href: string) {
 function Brand() {
   return (
     <Link href="/" aria-label={`${SITE_NAME} — home`} className={`flex shrink-0 items-center rounded-xs ${FOCUS}`}>
-      {/* A thin light outline keeps the black RECORDS lettering readable on the dark film */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={LOGO_URL}
-        alt=""
-        width={1022}
-        height={168}
-        className="h-[30px] w-auto lg:h-[38px] [filter:drop-shadow(0_0_1px_#F5F5F5)_drop-shadow(0_0_1px_#F5F5F5)_drop-shadow(0_0_6px_rgba(245,245,245,0.45))]"
-      />
+      <img src="/brand/gameboy-records-logo-on-dark.png" alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
     </Link>
   );
 }
@@ -175,7 +168,7 @@ export default function Header() {
   const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
 
   const linkBase = `relative inline-flex h-11 items-center rounded-md px-3 text-[0.9rem] tracking-[0.12em] transition-colors duration-200 lg:px-4 lg:text-[0.98rem]
-    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#39FF14] after:transition-transform after:duration-200 lg:after:inset-x-4
+    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#067F3A] after:transition-transform after:duration-200 lg:after:inset-x-4
     ${FOCUS}`;
   const linkState = (active: boolean) =>
     active ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100';
@@ -289,7 +282,7 @@ export default function Header() {
                 href={accountHref}
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
-                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#F5F5F5]/40 text-[#F5F5F5] transition-colors duration-200 hover:border-[#39FF14] hover:bg-[#39FF14]/10 ${FOCUS}`}
+                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#F5F5F5]/40 text-[#F5F5F5] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/20 ${FOCUS}`}
               >
                 {initial ? (
                   <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
@@ -301,7 +294,7 @@ export default function Header() {
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`flex h-11 items-center gap-2 rounded-full border-2 border-[#F5F5F5]/40 px-3 text-[#F5F5F5] transition-colors duration-200 hover:border-[#39FF14] hover:bg-[#39FF14]/10 lg:px-4 ${FOCUS}`}
+                className={`flex h-11 items-center gap-2 rounded-full border-2 border-[#F5F5F5]/40 px-3 text-[#F5F5F5] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/20 lg:px-4 ${FOCUS}`}
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
                 <span className="hidden text-[0.85rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
