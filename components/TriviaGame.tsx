@@ -21,7 +21,9 @@ import {
   playTick,
   playTimeUp,
   playWrong,
+  isReaderMuted,
   setMuted,
+  setReaderMuted,
   speak,
   stopSpeaking,
   unlockAudio,
@@ -30,6 +32,25 @@ import {
 const FONT = "'Poppins', monospace";
 const FONT_BOLD = "'Poppins_semibold', monospace";
 const LETTERS = ['A', 'B', 'C', 'D'];
+
+/** Turns the question reader on or off. Sound effects are unaffected. */
+function ReaderToggle({ muted, onToggle }: { muted: boolean; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={muted}
+      className="inline-flex cursor-pointer items-center gap-2 border-2 border-white/30 bg-transparent px-3 py-1.5 text-xs tracking-[0.1em] text-white/80 hover:border-[#E2BA0A] hover:text-[#E2BA0A]"
+      style={{ fontFamily: FONT }}
+    >
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H3v6h3l5 4V5z" />
+        {muted ? <path d="m16 9 5 6m0-6-5 6" /> : <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12" />}
+      </svg>
+      {muted ? 'READER OFF' : 'READER ON'}
+    </button>
+  );
+}
 
 const TICK_FROM_SECONDS = 5; // audible tick each second once this many seconds remain
 const FEEDBACK_MS = 2200; // how long the right answer stays on screen
@@ -59,11 +80,9 @@ async function postJson<T>(url: string, body?: unknown): Promise<T> {
   return data as T;
 }
 
+/** The reader says the question only, never the answer choices. */
 function buildSpeech(q: PublicQuestion): string {
-  const base = q.speak ?? q.prompt;
-  const labelled = q.options.every((o) => o.label);
-  if (!labelled) return base;
-  return `${base}. ${q.options.map((o, i) => `${LETTERS[i]}. ${o.label}`).join('. ')}`;
+  return q.speak ?? q.prompt;
 }
 
 function CountdownRing({ msLeft }: { msLeft: number }) {
@@ -75,13 +94,13 @@ function CountdownRing({ msLeft }: { msLeft: number }) {
   return (
     <div className="relative h-[84px] w-[84px] flex-shrink-0" role="timer" aria-label={`${seconds} seconds left`}>
       <svg viewBox="0 0 84 84" className="h-full w-full -rotate-90">
-        <circle cx="42" cy="42" r={radius} fill="none" stroke="rgba(77,255,145,0.15)" strokeWidth="6" />
+        <circle cx="42" cy="42" r={radius} fill="none" stroke="rgba(56,178,106,0.15)" strokeWidth="6" />
         <circle
           cx="42"
           cy="42"
           r={radius}
           fill="none"
-          stroke={urgent ? '#ff5a5a' : '#4dff91'}
+          stroke={urgent ? '#F0A39C' : '#38B26A'}
           strokeWidth="6"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -90,7 +109,7 @@ function CountdownRing({ msLeft }: { msLeft: number }) {
       </svg>
       <span
         className={`absolute inset-0 flex items-center justify-center text-3xl ${urgent ? 'animate-pulse' : ''}`}
-        style={{ fontFamily: FONT_BOLD, color: urgent ? '#ff5a5a' : '#4dff91' }}
+        style={{ fontFamily: FONT_BOLD, color: urgent ? '#F0A39C' : '#38B26A' }}
       >
         {seconds}
       </span>
@@ -121,9 +140,9 @@ function Leaderboard({ reloadKey }: { reloadKey: number }) {
   }, [reloadKey]);
 
   return (
-    <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-4">
+    <div className="w-full panel-ink p-4">
       <h2
-        className="mb-3 text-center text-sm tracking-[0.25em] text-[#4dff91]"
+        className="mb-3 text-center text-sm tracking-[0.25em] text-[#38B26A]"
         style={{ fontFamily: FONT_BOLD }}
       >
         LEADERBOARD
@@ -141,8 +160,8 @@ function Leaderboard({ reloadKey }: { reloadKey: number }) {
               className="flex items-center gap-3 px-3 py-1.5 text-sm"
               style={{
                 fontFamily: FONT,
-                color: e.isYou ? '#0c1510' : '#FEFEFA',
-                background: e.isYou ? '#4dff91' : 'transparent',
+                color: e.isYou ? '#15130F' : '#FEFEFA',
+                background: e.isYou ? '#38B26A' : 'transparent',
               }}
             >
               <span className="w-6 text-right opacity-70">{e.rank}</span>
@@ -167,9 +186,10 @@ const primaryButton: React.CSSProperties = {
   letterSpacing: '0.12em',
   color: '#fff',
   padding: '12px 32px',
-  borderRadius: '999px',
-  border: '1px solid #1a9e4a',
-  background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)',
+  borderRadius: 0,
+  border: '2.5px solid #F5F5F5',
+  boxShadow: '4px 4px 0 #F5F5F5',
+  background: '#067F3A',
   cursor: 'pointer',
 };
 
@@ -189,6 +209,7 @@ export default function TriviaGame() {
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [muted, setMutedState] = useState(false);
+  const [readerMuted, setReaderMutedState] = useState(() => isReaderMuted());
   const [boardKey, setBoardKey] = useState(0);
 
   const gameIdRef = useRef<string | null>(null);
@@ -364,6 +385,13 @@ export default function TriviaGame() {
     void loadNext();
   }, [loadNext]);
 
+  const toggleReader = useCallback(() => {
+    setReaderMutedState((m) => {
+      setReaderMuted(!m);
+      return !m;
+    });
+  }, []);
+
   const toggleMute = useCallback(() => {
     setMutedState((m) => {
       setMuted(!m);
@@ -402,21 +430,24 @@ export default function TriviaGame() {
     const signedIn = status === 'authenticated';
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-5 text-center">
-          <p className="text-sm leading-relaxed text-white/80" style={{ fontFamily: FONT }}>
-            {ROUND_SIZES.length} rounds, {TOTAL_QUESTIONS} questions, 10 seconds each. Every question is read aloud,
-            and the clock starts the moment the reading does. Turn your sound on.
+        <div className="w-full panel-ink p-5 text-center">
+          <p className="text-lg leading-relaxed text-white/90" style={{ fontFamily: FONT }}>
+            {ROUND_SIZES.length} rounds, {TOTAL_QUESTIONS} questions, 10 seconds each. Every question is read aloud
+            (not the answers), and the clock starts the moment the reading does. Turn your sound on, or mute the reader below.
           </p>
-          <ul className="mx-auto mt-3 max-w-[360px] list-none p-0 text-left text-xs leading-6 text-white/60" style={{ fontFamily: FONT }}>
+          <ul className="mx-auto mt-4 max-w-[420px] list-none p-0 text-left text-base leading-8 text-white/75" style={{ fontFamily: FONT }}>
             <li>Rounds 1 &amp; 2: six questions each</li>
             <li>Round 3: three visual questions</li>
             <li>Faster correct answers score more (up to {MAX_GAME_SCORE} total)</li>
           </ul>
+          <div className="mt-4 flex justify-center">
+            <ReaderToggle muted={readerMuted} onToggle={toggleReader} />
+          </div>
           <div className="mt-5">
-            {status === 'loading' && <span className="text-xs text-white/60">Loading…</span>}
+            {status === 'loading' && <span className="text-sm text-white/60">Loading…</span>}
             {status === 'unauthenticated' && (
               <div className="flex flex-col items-center gap-3">
-                <p className="text-xs text-white/70" style={{ fontFamily: FONT }}>Sign in to play and join the leaderboard.</p>
+                <p className="text-base text-white/80" style={{ fontFamily: FONT }}>Sign in to play and join the leaderboard.</p>
                 <Link href="/account/login" style={{ ...primaryButton, textDecoration: 'none' }}>SIGN IN</Link>
               </div>
             )}
@@ -440,8 +471,8 @@ export default function TriviaGame() {
   if (phase === 'roundIntro') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-8 text-center">
-          <h2 className="text-2xl tracking-[0.2em] text-[#4dff91]" style={{ fontFamily: FONT_BOLD }}>
+        <div className="w-full panel-ink p-8 text-center">
+          <h2 className="text-2xl tracking-[0.2em] text-[#38B26A]" style={{ fontFamily: FONT_BOLD }}>
             {ROUND_TITLES[upcomingRound]}
           </h2>
           <p className="mt-2 text-sm text-white/70" style={{ fontFamily: FONT }}>
@@ -461,7 +492,7 @@ export default function TriviaGame() {
   if (phase === 'error') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-red-500/40 bg-[#0c1510]/70 p-6 text-center">
+        <div className="w-full panel-ink p-6 text-center">
           <p className="text-sm text-white/80" style={{ fontFamily: FONT }}>{errorMsg}</p>
           <button
             type="button"
@@ -482,8 +513,8 @@ export default function TriviaGame() {
   if (phase === 'final') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-6 text-center">
-          <h2 className="text-sm tracking-[0.25em] text-[#4dff91]" style={{ fontFamily: FONT_BOLD }}>FINAL SCORE</h2>
+        <div className="w-full panel-ink p-6 text-center">
+          <h2 className="text-sm tracking-[0.25em] text-[#38B26A]" style={{ fontFamily: FONT_BOLD }}>FINAL SCORE</h2>
           <p className="mt-2 text-5xl text-[#FEFEFA]" style={{ fontFamily: FONT_BOLD }}>{score}</p>
           <p className="mt-1 text-sm text-white/70" style={{ fontFamily: FONT }}>
             {correctCount} of {TOTAL_QUESTIONS} correct
@@ -505,33 +536,31 @@ export default function TriviaGame() {
     <div className={wrap}>
       <div className="flex w-full items-center justify-between gap-3">
         <div style={{ fontFamily: FONT }}>
-          <div className="text-xs tracking-[0.2em] text-[#4dff91]">{ROUND_TITLES[info.round]}</div>
+          <div className="text-xs tracking-[0.2em] text-[#38B26A]">{ROUND_TITLES[info.round]}</div>
           <div className="text-xs text-white/60">
             Question {info.indexInRound + 1} of {info.roundSize}
           </div>
         </div>
         <CountdownRing msLeft={inFeedback ? 0 : msLeft} />
         <div className="text-right" style={{ fontFamily: FONT }}>
-          <div className="text-xs tracking-[0.2em] text-[#4dff91]">SCORE</div>
+          <div className="text-xs tracking-[0.2em] text-[#38B26A]">SCORE</div>
           <div className="text-xl text-[#FEFEFA]" style={{ fontFamily: FONT_BOLD }}>{score}</div>
-          <button
-            type="button"
-            onClick={toggleMute}
-            aria-pressed={muted}
-            className="text-xs text-white/60 underline"
-          >
-            {muted ? 'Sound off' : 'Sound on'}
-          </button>
+          <div className="mt-1 flex flex-col items-end gap-1.5">
+            <ReaderToggle muted={readerMuted} onToggle={toggleReader} />
+            <button type="button" onClick={toggleMute} aria-pressed={muted} className="cursor-pointer border-0 bg-transparent p-0 text-xs text-white/60 underline">
+              {muted ? 'All sound off' : 'All sound on'}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-5">
+      <div className="w-full panel-ink p-5">
         {question.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={question.image}
             alt="Music video screenshot"
-            className="mx-auto mb-4 w-full max-w-[420px] border border-[#1a9e4a]/40 object-cover"
+            className="mx-auto mb-4 w-full max-w-[420px] border border-[#067F3A]/40 object-cover"
             style={{ aspectRatio: '4 / 3' }}
           />
         )}
@@ -541,7 +570,7 @@ export default function TriviaGame() {
         {inFeedback && (
           <p
             className="mt-3 text-center text-sm"
-            style={{ fontFamily: FONT_BOLD, color: result.correct ? '#4dff91' : '#ff5a5a' }}
+            style={{ fontFamily: FONT_BOLD, color: result.correct ? '#38B26A' : '#F0A39C' }}
           >
             {result.timedOut || chosen.length === 0
               ? 'TIME’S UP'
@@ -558,23 +587,23 @@ export default function TriviaGame() {
           const correctPos = result ? result.correctChoice.indexOf(option.id) : -1;
           const chosenPos = chosen.indexOf(option.id);
 
-          let border = 'rgba(26,158,74,0.4)';
-          let background = 'rgba(12,21,16,0.8)';
+          let border = 'rgba(6,127,58,0.4)';
+          let background = 'rgba(21,19,15,0.8)';
           if (inFeedback) {
             if (isOrder) {
               const right = chosenPos !== -1 && chosenPos === correctPos;
-              border = right ? '#4dff91' : '#ff5a5a';
-              background = right ? 'rgba(77,255,145,0.15)' : 'rgba(255,90,90,0.12)';
+              border = right ? '#38B26A' : '#F0A39C';
+              background = right ? 'rgba(56,178,106,0.15)' : 'rgba(240,163,156,0.12)';
             } else if (correctPos !== -1) {
-              border = '#4dff91';
-              background = 'rgba(77,255,145,0.18)';
+              border = '#38B26A';
+              background = 'rgba(56,178,106,0.18)';
             } else if (chosenPos !== -1) {
-              border = '#ff5a5a';
-              background = 'rgba(255,90,90,0.12)';
+              border = '#F0A39C';
+              background = 'rgba(240,163,156,0.12)';
             }
           } else if (orderPos !== -1) {
-            border = '#4dff91';
-            background = 'rgba(77,255,145,0.1)';
+            border = '#38B26A';
+            background = 'rgba(56,178,106,0.1)';
           }
 
           const badge = inFeedback && isOrder ? correctPos : orderPos;
@@ -595,8 +624,8 @@ export default function TriviaGame() {
               }}
             >
               <span
-                className="flex h-7 w-7 flex-shrink-0 items-center justify-center text-xs text-[#0c1510]"
-                style={{ background: '#4dff91', fontFamily: FONT_BOLD }}
+                className="flex h-7 w-7 flex-shrink-0 items-center justify-center text-xs text-[#15130F]"
+                style={{ background: '#38B26A', fontFamily: FONT_BOLD }}
               >
                 {badge >= 0 ? badge + 1 : LETTERS[i]}
               </span>

@@ -6,15 +6,17 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { emitCartCount } from '@/lib/cart-sync';
 import { formatPrice } from '@/lib/products';
-import Header from '@/components/Header';
-import MobileBottomNav from '@/components/MobileBottomNav';
+import PageShell from '@/components/PageShell';
+import PageTitle from '@/components/PageTitle';
+import { CLUB_NAME } from '@/lib/site';
+import { pointsForOrder } from '@/lib/club';
 import CartLineItem from '@/components/cart/CartLineItem';
 import WishlistItem from '@/components/cart/WishlistItem';
 import { BODY, SEMI, type CartLine, type SavedItem } from '@/components/cart/types';
 
 type Notice = { kind: 'error' | 'info'; text: string; undo?: () => void };
 
-const SECTION_TITLE = 'text-[13px] uppercase tracking-[0.16em] text-[#16432a]';
+const SECTION_TITLE = 'text-[13px] uppercase tracking-[0.16em] text-[#0B0A07]';
 
 export default function CartPage() {
   const router = useRouter();
@@ -23,6 +25,7 @@ export default function CartPage() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [busy, setBusy] = useState<Set<string>>(new Set());
   const [notice, setNotice] = useState<Notice | null>(null);
+  const [checkingOut, setCheckingOut] = useState(false);
 
   const markBusy = (key: string, on: boolean) =>
     setBusy((prev) => {
@@ -197,72 +200,91 @@ export default function CartPage() {
   const availableCount = available.reduce((sum, l) => sum + l.quantity, 0);
   const hasUnavailable = lines.some((l) => !l.available);
 
+  // Checkout: the server creates the order in WooCommerce and returns its secure payment page.
+  async function checkout() {
+    setNotice(null);
+    setCheckingOut(true);
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST' });
+      if (res.status === 401) {
+        router.push('/account/login');
+        return;
+      }
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.url) {
+        setNotice({ kind: 'error', text: data?.error ?? 'Checkout didn’t start. Please try again.' });
+        setCheckingOut(false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      setNotice({ kind: 'error', text: 'You seem to be offline. Check your connection and try again.' });
+      setCheckingOut(false);
+    }
+  }
+
   const summary = lines.length > 0 && (
-    <aside aria-labelledby="summary-title" className="border border-[#1a9e4a]/20 bg-white p-5 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-0" style={BODY}>
+    <aside aria-labelledby="summary-title" className="panel-paper p-5 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(var(--header-h)+24px)]" style={BODY}>
       <h2 id="summary-title" style={SEMI} className={`${SECTION_TITLE} mb-4`}>Order summary</h2>
-      <dl className="flex flex-col gap-2.5 text-[14px] text-[#16432a]">
+      <dl className="flex flex-col gap-2.5 text-[14px] text-[#0B0A07]">
         <div className="flex justify-between">
           <dt>Subtotal ({availableCount} {availableCount === 1 ? 'item' : 'items'})</dt>
           <dd className="tabular-nums">{formatPrice(subtotal)}</dd>
         </div>
-        <div className="flex justify-between text-[#16432a]/60">
+        <div className="flex justify-between text-[#0B0A07]/60">
           <dt>Shipping</dt>
           <dd>Calculated at checkout</dd>
         </div>
-        <div className="mt-2 flex justify-between border-t border-[#16432a]/10 pt-3" style={SEMI}>
+        <div className="mt-2 flex justify-between border-t border-[#0B0A07]/10 pt-3" style={SEMI}>
           <dt>Estimated total</dt>
-          <dd className="tabular-nums text-[#1a9e4a]">{formatPrice(subtotal)}</dd>
+          <dd className="tabular-nums text-[#05652E]">{formatPrice(subtotal)}</dd>
         </div>
       </dl>
       {hasUnavailable && (
-        <p className="mt-4 text-[12px] text-[#a42a2a]">Remove items that are no longer available to check out.</p>
+        <p className="mt-4 text-[12px] text-[#A3322A]">Remove items that are no longer available to check out.</p>
       )}
+      <p className="mt-4 text-[13px] text-[#0B0A07]/70">
+        {CLUB_NAME} members earn <strong className="font-semibold text-[#0B0A07]">{pointsForOrder(subtotal).toLocaleString('en-US')} Club Points</strong> on this order.
+      </p>
       <button
         type="button"
-        disabled
-        style={SEMI}
-        className="mt-5 w-full bg-[#1a9e4a] py-3 text-[13px] tracking-[0.1em] text-white disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={checkout}
+        disabled={checkingOut || hasUnavailable || availableCount === 0}
+        className="btn-hard zoom-content mt-5 w-full h-14 rounded-[2px] bg-[#E2BA0A] text-[13px] font-semibold uppercase tracking-[0.16em] text-[#0B0A07] hover:bg-[#F0C928] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
       >
-        CHECKOUT
+        <span>{checkingOut ? 'Opening secure checkout' : 'Checkout'}</span>
       </button>
-      <p className="mt-2 text-center text-[12px] text-[#16432a]/60">
-        Checkout opens soon. Your cart is saved to your account until then.
+      <p className="mt-2 text-center text-[12px] text-[#0B0A07]/60">
+        You’ll pay on our secure checkout page. Shipping and tax are added there.
       </p>
-      <Link href="/shop" className="mt-4 block text-center text-[13px] text-[#1a9e4a] underline-offset-4 hover:underline">
+      <Link href="/shop" className="mt-4 block text-center text-[13px] text-[#05652E] underline-offset-4 hover:underline">
         Continue shopping
       </Link>
     </aside>
   );
 
   return (
-    <div className="flex flex-col h-dvh overflow-hidden">
-      <Header />
-      <MobileBottomNav />
-      <div className="mobile-home-pad flex-1 min-h-0 overflow-y-auto w-full bg-[#FEFEFA] px-4 pt-[84px] pb-12 sm:px-6 md:px-10 md:pt-10">
+    <PageShell>
+      <div className="on-light flex-1 w-full paper text-[#0B0A07] px-4 pt-10 pb-16 sm:px-6 md:px-10 md:pt-14">
         <div className="mx-auto max-w-[1180px]">
-          <div className="mb-6 flex items-baseline justify-between gap-4 md:mb-8">
-            <h1 style={SEMI} className="text-[26px] leading-none text-[#16432a] md:text-[32px]">Your cart</h1>
-            {status === 'ready' && (
-              <p style={BODY} className="text-[14px] text-[#16432a]/60">
-                {itemCount} {itemCount === 1 ? 'item' : 'items'}
-              </p>
-            )}
-          </div>
+          <PageTitle ghost="Shop" subtitle={status === 'ready' ? `${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : undefined} className="mb-8 md:mb-12">
+            Your cart
+          </PageTitle>
 
           <div aria-live="polite" style={BODY}>
             {notice && (
               <div
                 role={notice.kind === 'error' ? 'alert' : 'status'}
                 className={`mb-5 flex items-center justify-between gap-4 border px-4 py-3 text-[14px] ${
-                  notice.kind === 'error' ? 'border-[#a42a2a]/30 bg-[#a42a2a]/5 text-[#a42a2a]' : 'border-[#1a9e4a]/30 bg-[#1a9e4a]/5 text-[#16432a]'
+                  notice.kind === 'error' ? 'border-[#A3322A]/30 bg-[#A3322A]/5 text-[#A3322A]' : 'border-[#05652E]/30 bg-[#05652E]/5 text-[#0B0A07]'
                 }`}
               >
                 <span>{notice.text}</span>
                 <span className="flex items-center gap-4">
                   {notice.undo && (
-                    <button type="button" onClick={notice.undo} style={SEMI} className="text-[#1a9e4a] underline underline-offset-4 cursor-pointer">Undo</button>
+                    <button type="button" onClick={notice.undo} style={SEMI} className="text-[#05652E] underline underline-offset-4 cursor-pointer">Undo</button>
                   )}
-                  <button type="button" onClick={() => setNotice(null)} aria-label="Dismiss" className="text-[#16432a]/50 hover:text-[#16432a] cursor-pointer">✕</button>
+                  <button type="button" onClick={() => setNotice(null)} aria-label="Dismiss" className="text-[#0B0A07]/50 hover:text-[#0B0A07] cursor-pointer">✕</button>
                 </span>
               </div>
             )}
@@ -271,11 +293,11 @@ export default function CartPage() {
           {status === 'loading' && (
             <div className="flex flex-col gap-4" aria-busy="true" aria-label="Loading your cart">
               {[0, 1].map((i) => (
-                <div key={i} className="flex gap-4 border border-[#1a9e4a]/10 bg-white p-4">
-                  <div className="h-24 w-24 animate-pulse bg-[#16432a]/10" />
+                <div key={i} className="flex gap-4 border border-[#05652E]/10 bg-white p-4">
+                  <div className="h-24 w-24 animate-pulse bg-[#0B0A07]/10" />
                   <div className="flex flex-1 flex-col gap-2 pt-1">
-                    <div className="h-4 w-1/3 animate-pulse bg-[#16432a]/10" />
-                    <div className="h-3 w-1/5 animate-pulse bg-[#16432a]/10" />
+                    <div className="h-4 w-1/3 animate-pulse bg-[#0B0A07]/10" />
+                    <div className="h-3 w-1/5 animate-pulse bg-[#0B0A07]/10" />
                   </div>
                 </div>
               ))}
@@ -283,9 +305,9 @@ export default function CartPage() {
           )}
 
           {status === 'error' && (
-            <div style={BODY} className="border border-[#a42a2a]/25 bg-white px-5 py-8 text-center">
-              <p className="text-[15px] text-[#16432a]">We couldn’t load your cart.</p>
-              <button type="button" onClick={() => { setStatus('loading'); load(); }} style={SEMI} className="mt-4 bg-[#1a9e4a] px-5 py-2.5 text-[13px] tracking-[0.08em] text-white hover:bg-[#149262] cursor-pointer">
+            <div style={BODY} className="border border-[#A3322A]/25 bg-white px-5 py-8 text-center">
+              <p className="text-[15px] text-[#0B0A07]">We couldn’t load your cart.</p>
+              <button type="button" onClick={() => { setStatus('loading'); load(); }} style={SEMI} className="btn-hard mt-4 bg-[#05652E] px-5 py-2.5 text-[13px] tracking-[0.08em] text-white hover:bg-[#044F24] cursor-pointer">
                 TRY AGAIN
               </button>
             </div>
@@ -296,11 +318,11 @@ export default function CartPage() {
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
               <div className="lg:col-start-1 lg:row-start-1">
                 {lines.length === 0 ? (
-                  <div style={BODY} className="border border-dashed border-[#1a9e4a]/30 bg-white px-5 py-12 text-center">
-                    <p style={SEMI} className="text-[17px] text-[#16432a]">Your cart is empty</p>
-                    <p className="mt-1 text-[14px] text-[#16432a]/60">Tees and hoodies from the &ldquo;Rise&rdquo; collection are waiting.</p>
-                    <Link href="/shop" style={SEMI} className="mt-5 inline-block bg-[#1a9e4a] px-5 py-2.5 text-[13px] tracking-[0.08em] text-white hover:bg-[#149262]">
-                      SHOP MERCH
+                  <div style={BODY} className="border border-dashed border-[#05652E]/30 bg-white px-5 py-12 text-center">
+                    <p style={SEMI} className="text-[17px] text-[#0B0A07]">Your cart is empty</p>
+                    <p className="mt-1 text-[14px] text-[#0B0A07]/60">The Rise Collection is in the shop, in small runs.</p>
+                    <Link href="/shop" style={SEMI} className="btn-hard mt-5 inline-block bg-[#0B0A07] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F5F5F5] hover:bg-[#1F1C17]">
+                      Shop the collection
                     </Link>
                   </div>
                 ) : (
@@ -322,15 +344,15 @@ export default function CartPage() {
 
               {summary}
 
-              <section aria-labelledby="wishlist-title" className="border border-[#1a9e4a]/20 bg-white p-5 lg:col-start-1 lg:row-start-2">
+              <section aria-labelledby="wishlist-title" className="border border-[#05652E]/20 bg-white p-5 lg:col-start-1 lg:row-start-2">
                   <div className="mb-4 flex items-baseline justify-between">
                     <h2 id="wishlist-title" style={SEMI} className={SECTION_TITLE}>Wishlist</h2>
-                    {saved.length > 0 && <span style={BODY} className="text-[13px] text-[#16432a]/55">{saved.length} saved</span>}
+                    {saved.length > 0 && <span style={BODY} className="text-[13px] text-[#0B0A07]/55">{saved.length} saved</span>}
                   </div>
                   {saved.length === 0 ? (
-                    <p style={BODY} className="text-[14px] text-[#16432a]/60">
+                    <p style={BODY} className="text-[14px] text-[#0B0A07]/60">
                       Nothing saved yet. Tap the heart on any item in the{' '}
-                      <Link href="/shop" className="text-[#1a9e4a] underline underline-offset-4">shop</Link> to save it here.
+                      <Link href="/shop" className="text-[#05652E] underline underline-offset-4">shop</Link> to save it here.
                     </p>
                   ) : (
                     <ul className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 list-none p-0">
@@ -350,6 +372,6 @@ export default function CartPage() {
           )}
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

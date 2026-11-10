@@ -2,12 +2,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import AccountSidebar from '@/components/AccountSidebar';
+import AccountBottomNav from '@/components/account/AccountBottomNav';
 import HomeTab from '@/components/account/HomeTab';
 import OrdersTab from '@/components/account/OrdersTab';
 import SecurityTab from '@/components/account/SecurityTab';
-import PaymentsTab from '@/components/account/PaymentsTab';
 import SupportTab from '@/components/account/SupportTab';
 import PersonalInfoTab from '@/components/account/PersonalInfoTab';
 import {
@@ -16,7 +16,6 @@ import {
   type AccountUser,
   type Address,
   type SecurityInfo,
-  type PaymentsInfo,
   type SupportRequest,
   type Order,
   type QuestStatus,
@@ -28,7 +27,6 @@ interface AccountClientProps {
   orders: Order[];
   addresses: Address[];
   security: SecurityInfo;
-  payments: PaymentsInfo;
   supportRequests: SupportRequest[];
   quests: QuestStatus[];
   claims: RewardClaim[];
@@ -36,10 +34,8 @@ interface AccountClientProps {
   signOutAction: () => Promise<void>;
 }
 
-export default function AccountClient({ user, orders, addresses, security, payments, supportRequests, quests, claims, initialTab, signOutAction }: AccountClientProps) {
+export default function AccountClient({ user, orders, addresses, security, supportRequests, quests, claims, initialTab, signOutAction }: AccountClientProps) {
   const [tab, setTab] = useState<AccountTab>(initialTab ?? 'home');
-  // Mobile only: show the menu first unless the URL already points at a tab.
-  const [mobileView, setMobileView] = useState<'menu' | 'content'>(initialTab ? 'content' : 'menu');
   const mainRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +46,6 @@ export default function AccountClient({ user, orders, addresses, security, payme
     function handlePopState() {
       const param = new URLSearchParams(window.location.search).get('tab');
       setTab(isAccountTab(param) ? param : 'home');
-      setMobileView(param ? 'content' : 'menu');
     }
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -58,15 +53,8 @@ export default function AccountClient({ user, orders, addresses, security, payme
 
   function selectTab(next: AccountTab) {
     setTab(next);
-    setMobileView('content');
     window.history.pushState(null, '', `${window.location.pathname}?tab=${next}`);
     mainRef.current?.scrollTo({ top: 0 });
-    scrollRef.current?.scrollTo({ top: 0 });
-  }
-
-  function backToMenu() {
-    setMobileView('menu');
-    window.history.pushState(null, '', window.location.pathname);
     scrollRef.current?.scrollTo({ top: 0 });
   }
 
@@ -80,48 +68,35 @@ export default function AccountClient({ user, orders, addresses, security, payme
         return <OrdersTab orders={orders} />;
       case 'security':
         return <SecurityTab email={user.email} security={security} />;
-      case 'payments':
-        return <PaymentsTab payments={payments} />;
       case 'support':
         return <SupportTab email={user.email} initialRequests={supportRequests} onSelectTab={selectTab} />;
     }
   }
 
   return (
-    <div
-      ref={scrollRef}
-            className="mobile-home-pad flex-1 min-h-0 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden"
-      style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%)' }}
-    >
-      <AccountSidebar
-        displayName={user.display_name}
-        avatarUrl={user.avatar_url}
-        activeTab={tab}
-        onSelectTab={selectTab}
-        signOutAction={signOutAction}
-        className={mobileView === 'content' ? 'hidden md:block' : 'block'}
-      />
+    <div className="flex-1 min-h-0 flex flex-col">
+      <div ref={scrollRef} className="paper-ink flex-1 min-h-0 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
+        <AccountSidebar activeTab={tab} onSelectTab={selectTab} signOutAction={signOutAction} className="hidden md:block" />
 
-      <main
-        ref={mainRef}
-        className={`flex-1 md:min-h-0 md:overflow-y-auto px-5 md:px-10 pt-20 md:pb-16 md:pt-10 ${
-          mobileView === 'menu' ? 'hidden md:block' : 'block'
-        }`}
-      >
-        <div className="max-w-[960px] mx-auto flex flex-col gap-6">
-          <button
-            type="button"
-            onClick={backToMenu}
-            className="md:hidden inline-flex items-center gap-2 self-start text-[0.85em] tracking-[0.1em] text-[#4dff91]"
-            style={{ fontFamily: "'Poppins', sans-serif" }}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            ACCOUNT MENU
-          </button>
+        <main id="main" ref={mainRef} className="flex-1 md:min-h-0 md:overflow-y-auto px-5 md:px-10 pt-8 pb-12 md:pt-10 md:pb-16">
+          <div className="max-w-[960px] mx-auto flex flex-col gap-6">
+            {/* Phones: the sidebar's Log out lives here, since the sections are in the bottom bar. */}
+            <form action={signOutAction} className="md:hidden self-end -mb-2">
+              <button
+                type="submit"
+                className="inline-flex items-center gap-2 border-0 bg-transparent p-0 text-[0.85em] tracking-[0.1em] text-[#38B26A] cursor-pointer"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
+                <LogOut className="w-4 h-4" aria-hidden="true" />
+                LOG OUT
+              </button>
+            </form>
 
-          {renderTab()}
-        </div>
-      </main>
+            {renderTab()}
+          </div>
+        </main>
+      </div>
+      <AccountBottomNav activeTab={tab} onSelectTab={selectTab} />
     </div>
   );
 }

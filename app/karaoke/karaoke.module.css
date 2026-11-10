@@ -1,8 +1,11 @@
 .page {
-  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%);
+  background-color: #0B0A07;
+  background-image: var(--grain-dark);
+  background-size: 320px 320px;
 }
 
 .main {
@@ -18,7 +21,7 @@
 
 
 @media (max-width: 767px) {
-  .main { padding-top: 60px; /* clears the fixed 60px mobile header (h-[60px] in Header.tsx) */ padding-bottom: var(--home-btn-space);
+  .main { padding-top: 0; padding-bottom: 16px;
           padding-left: 48px; padding-right: 48px; }
 }
 
@@ -32,8 +35,8 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  background: #EDEAE0;
-  border: 4px solid #1a9e4a;
+  background: #F5F5F5;
+  border: 4px solid #067F3A;
   border-top: 0;
   border-bottom: 0;
   border-radius: 4px;
@@ -57,7 +60,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1a9e4a;
+  background: #067F3A;
   color: #fff;
   border: none;
   border-radius: 0;
@@ -69,8 +72,8 @@
 .navArrowSm:first-child { margin: -14px 0 -14px -22px; }
 .navArrowSm:last-child { margin: -14px -22px -14px 0; }
 .navArrowSm svg { width: 18px; height: 18px; display: block; }
-.navArrowSm:hover { background: #34b56f; }
-.navArrowSm:active { background: #2a9d5f; }
+.navArrowSm:hover { background: #067F3A; }
+.navArrowSm:active { background: #05652E; }
 .navArrowSm:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 
 .pickerPhoto {
@@ -79,7 +82,7 @@
   height: 60px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #149262;
+  border: 2px solid #05652E;
 }
 .pickerPhoto img {
   width: 100%;
@@ -93,34 +96,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #149262;
-  color: #fef8f3;
+  background: #05652E;
+  color: #F5F5F5;
 }
 
 .pickerMeta {
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 150px;
 }
 .pickerEyebrow {
   font-family: 'Poppins', sans-serif;
   font-size: 0.6rem;
   letter-spacing: 0.32em;
-  color: #149262;
+  color: #05652E;
 }
 .pickerTitle {
   font-family: 'Poppins', sans-serif;
   font-size: 1.15rem;
   letter-spacing: 0.04em;
-  color: #16432a;
+  color: #0B0A07;
   line-height: 1.15;
+  white-space: nowrap;
 }
 .pickerArtist {
   font-family: 'Poppins', monospace;
   font-size: 0.8rem;
-  color: #3d5c4a;
+  color: #5C5A55;
   letter-spacing: 0.06em;
 }
 
@@ -138,20 +142,20 @@
   height: 40px;
   border-radius: 50%;
   border: none;
-  background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
+  background: linear-gradient(175deg, #067F3A 0%, #05652E 100%);
   color: #fff;
   font-size: 0.9rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 0 #0d5c29;
+  box-shadow: 0 4px 0 #044F24;
 }
 
 .time {
   font-family: 'Poppins', monospace;
   font-size: 0.78rem;
-  color: #3d5c4a;
+  color: #5C5A55;
   min-width: 36px;
   flex-shrink: 0;
 }
@@ -159,57 +163,31 @@
 .seekBar {
   flex: 1;
   min-width: 0;
-  accent-color: #149262;
+  accent-color: #05652E;
 }
 
-/* Seek-by-step buttons — mobile only (replace the scrubber) */
-.seekBtn {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  color: #149262;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: opacity .15s;
-}
-.seekBtn svg { width: 22px; height: 22px; display: block; }
-.seekBtn:active { opacity: .6; }
-.seekBtn:focus-visible { outline: 2px solid #3dc97e; outline-offset: 2px; border-radius: 4px; }
 
 @media (max-width: 767px) {
-  .seekBar,
-  .time { display: none; }
-  .seekBtn { display: flex; }
 
-  /* Compact picker layout */
-  .pickerBar { --pb-y: 24px; --pb-x: 12px; gap: 10px; margin-top: 0; padding: var(--pb-y) var(--pb-x); }
+  /* Compact picker layout: a grid, so "All songs" can run the full height of the bar.
+     Row 1: song title and play/pause. Row 2: the playback bar with both times. */
+  .pickerBar { --pb-y: 16px; --pb-x: 12px; display: grid; grid-template-columns: auto 1fr auto auto; grid-template-rows: auto auto; column-gap: 10px; row-gap: 6px; align-items: center; margin-top: 0; padding: var(--pb-y) 0 var(--pb-y) var(--pb-x); }
+  .pickerPlayback { display: contents; }
+  .pickerMeta { grid-column: 1 / 3; grid-row: 1; min-width: 0; }
+  .playBtn { grid-column: 3; grid-row: 1; justify-self: end; width: 36px; height: 36px; font-size: 0.8rem; box-shadow: 0 3px 0 #044F24; }
+  .pickerPlayback > .time { grid-row: 2; min-width: 30px; font-size: 0.72rem; }
+  .pickerPlayback > .time:first-of-type { grid-column: 1; }
+  .pickerPlayback > .time:last-of-type { grid-column: 3; text-align: right; }
+  .pickerPlayback > .seekBar { grid-column: 2; grid-row: 2; width: 100%; }
   .navArrowSm { width: 30px; }
-  .navArrowSm:first-child { margin: calc(-1 * var(--pb-y)) 0 calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)); }
-  .navArrowSm:last-child { margin: calc(-1 * var(--pb-y)) calc(-1 * var(--pb-x)) calc(-1 * var(--pb-y)) 0; }
-  .navArrowSm svg { width: 16px; height: 16px; }
+  .navArrowSm:last-child { grid-column: 4; grid-row: 1 / 3; align-self: stretch; width: 64px; margin: calc(-1 * var(--pb-y)) 0; font-size: 0.52rem; }
   .navArrowSm svg { width: 16px; height: 16px; }
 
-  .pickerPhoto { width: 44px; height: 44px; }
-
-  .pickerMeta { flex: 1 1 0; min-width: 0; flex-shrink: 1; }
+  .pickerTitle { font-size: clamp(0.72rem, 3.7vw, 0.95rem); letter-spacing: 0.02em; }
+  .pickerPhoto { display: none; }
   .pickerTitle,
-  .pickerArtist {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .pickerTitle { font-size: 0.95rem; }
+  .pickerArtist { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .pickerArtist { font-size: 0.7rem; letter-spacing: 0.04em; }
-
-  .pickerPlayback { flex: 0 0 auto; gap: 2px; }
-  .playBtn { width: 36px; height: 36px; font-size: 0.8rem; box-shadow: 0 3px 0 #0d5c29; }
-  .seekBtn { width: 28px; height: 28px; }
-  .seekBtn svg { width: 18px; height: 18px; }
 }
 
 /* ── LYRICS ── unboxed, directly on page background ──── */
@@ -230,7 +208,7 @@
   padding-top: 12px;
   padding-bottom: 40px;
   scrollbar-width: thin;
-  scrollbar-color: #3dc97e transparent;
+  scrollbar-color: #38B26A transparent;
 }
 
 @media (max-width: 767px) {
@@ -260,14 +238,14 @@
 }
 
 .activeLine {
-  color: #4dff91;
+  color: #38B26A;
   transform: scale(1.18);      /* visual size only — wrapping stays locked at 1.3rem */
-  filter: drop-shadow(0 0 10px rgba(77, 255, 145, 0.35));
+  filter: drop-shadow(0 0 10px rgba(56,178,106, 0.35));
 }
 
 /* ── SYNC RECORDER (dev tool, only shown with ?sync in the URL) ── */
 .syncTarget {
-  outline: 1px dashed rgba(77, 255, 145, 0.6);
+  outline: 1px dashed rgba(56,178,106, 0.6);
   outline-offset: 6px;
   cursor: pointer;
 }
@@ -281,30 +259,30 @@
   flex-direction: column;
   gap: 8px;
   padding: 10px;
-  background: rgba(16, 22, 15, 0.92);
-  border: 2px solid #1a9e4a;
+  background: rgba(11, 10, 7, 0.92);
+  border: 2px solid #067F3A;
   border-radius: 4px;
   font-family: 'Poppins', monospace;
   font-size: 0.75rem;
-  color: #fef8f3;
+  color: #F5F5F5;
 }
 .syncInfo { line-height: 1.5; }
-.syncInfo strong { color: #4dff91; }
+.syncInfo strong { color: #38B26A; }
 .syncRow { display: flex; gap: 6px; }
 .syncBtn {
   flex: 1;
   padding: 6px 8px;
-  background: #1a9e4a;
+  background: #067F3A;
   color: #fff;
   border: none;
   border-radius: 3px;
   font: inherit;
   cursor: pointer;
 }
-.syncBtn:active { background: #2a9d5f; }
+.syncBtn:active { background: #05652E; }
 .syncTap {
   padding: 18px 8px;
-  background: #4dff91;
+  background: #38B26A;
   color: #10160f;
   border: none;
   border-radius: 4px;
@@ -314,13 +292,70 @@
   cursor: pointer;
   touch-action: manipulation;
 }
-.syncTap:active { background: #34b56f; }
+.syncTap:active { background: #067F3A; }
 
 /* Word-by-word fill — --p is set per word by page.tsx */
 .activeLine .word {
   color: transparent;
   -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(90deg, #4dff91 var(--p, 0%), rgba(255, 255, 255, 0.9) var(--p, 0%));
+  background-image: linear-gradient(90deg, #38B26A var(--p, 0%), rgba(255, 255, 255, 0.9) var(--p, 0%));
   -webkit-background-clip: text;
   background-clip: text;
 }
+/* ── SONG CAROUSEL VIEW ───────────────────────────────── */
+.pickView {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 12px;
+}
+@media (max-width: 767px) {
+  .pickView { width: calc(100% + 96px); padding-top: 24px; }
+}
+
+/* "All songs" button at the right end of the player bar */
+.songsBtn {
+  width: 88px;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+.songsBtn svg { width: 22px; height: 22px; }
+@media (max-width: 767px) {
+  .songsBtn { width: 62px; font-size: 0.52rem; }
+}
+
+/* Shown over the lyrics when a song has finished */
+.endCard {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: min(92%, 460px);
+  padding: 20px 24px;
+  text-align: center;
+  background: #F5F5F5;
+  color: #0B0A07;
+  border: 3px solid #0B0A07;
+  box-shadow: 6px 6px 0 #067F3A;
+}
+.endActions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.endPrimary, .endSecondary {
+  height: 46px; padding: 0 20px; cursor: pointer;
+  font-family: 'Poppins_semibold', 'Poppins', sans-serif; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.endPrimary { background: #067F3A; color: #fff; border: 2px solid #067F3A; }
+.endPrimary:hover { background: #05652E; border-color: #05652E; }
+.endSecondary { background: transparent; color: #0B0A07; border: 2px solid #0B0A07; }
+.endSecondary:hover { border-color: #067F3A; color: #067F3A; }

@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import GameIconsBackground from '@/components/GameIconsBackground';
 
 declare global {
   interface Window {
@@ -270,10 +269,12 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
         .acct-wrap {
           position: relative;
           flex-shrink: 0;
-          min-height: calc(100vh - 90px);
+          min-height: calc(100svh - var(--header-h) - 160px);
           display: flex;
           padding: 24px 16px;
-          background: linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%);
+          background-color: #0B0A07;
+          background-image: var(--grain-dark);
+          background-size: 320px 320px;
         }
         .acct-inner {
           position: relative;
@@ -292,8 +293,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           width: 100%;
           max-width: 380px;
           padding: 4px;
-          background: #FEFEFA;
-          border: 1px solid rgba(26,158,74,0.3);
+          background: #F5F5F5;
+          border: 1px solid rgba(6,127,58,0.3);
           border-radius: 999px;
         }
         .acct-toggle-thumb {
@@ -303,8 +304,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           left: 4px;
           width: calc(50% - 4px);
           border-radius: 999px;
-          background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
-          box-shadow: 0 0 12px rgba(77,255,145,0.25);
+          background: linear-gradient(175deg, #067F3A 0%, #05652E 100%);
+          box-shadow: 0 0 12px rgba(56,178,106,0.25);
           transition: transform 0.25s ease;
         }
         .acct-toggle-thumb[data-mode="register"] { transform: translateX(100%); }
@@ -318,7 +319,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           font-family: 'Poppins_semibold', monospace;
           font-size: 0.75em;
           letter-spacing: 0.14em;
-          color: #3c5e4c;
+          color: #5C5A55;
           transition: color 0.2s ease;
         }
         .acct-toggle-btn[aria-selected="true"] { color: #fff; }
@@ -326,8 +327,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           position: relative;
           width: 100%;
           max-width: 380px;
-          background: #FEFEFA;
-          border: 1px solid rgba(26,158,74,0.2);
+          background: #F5F5F5;
+          border: 1px solid rgba(6,127,58,0.2);
           border-radius: 10px;
           box-shadow: 0 14px 28px rgba(0,0,0,0.45), 0 10px 10px rgba(0,0,0,0.35);
           overflow: hidden;
@@ -340,21 +341,21 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           justify-content: center;
           height: 100%;
           padding: 40px 32px;
-          background: #FEFEFA;
+          background: #F5F5F5;
           text-align: center;
         }
         .acct-title {
           font-family: 'Poppins_semibold', monospace;
           font-size: 1.6em;
           letter-spacing: 0.1em;
-          color: #16432a;
+          color: #0B0A07;
           text-align: center;
           margin-bottom: 28px;
         }
         .acct-input {
           background: #fff;
-          border: 1px solid rgba(22,67,42,0.2);
-          color: #16432a;
+          border: 1px solid rgba(11,10,7,0.2);
+          color: #0B0A07;
           font-family: 'Poppins', monospace;
           font-size: 0.9em;
           padding: 10px 14px;
@@ -363,7 +364,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           outline: none;
           margin-bottom: 14px;
         }
-        .acct-input::placeholder { color: rgba(22,67,42,0.4); }
+        .acct-input::placeholder { color: rgba(11,10,7,0.4); }
         .acct-field {
           width: 100%;
           margin-bottom: 14px;
@@ -386,14 +387,14 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           background: none;
           border: 0;
           cursor: pointer;
-          color: rgba(22,67,42,0.55);
+          color: rgba(11,10,7,0.55);
         }
-        .acct-pw-toggle:hover { color: #1a9e4a; }
-        .acct-pw-toggle:focus-visible { outline: 2px solid #1a9e4a; outline-offset: 1px; }
-        .acct-input.is-invalid { border-color: #c0392b; }
+        .acct-pw-toggle:hover { color: #067F3A; }
+        .acct-pw-toggle:focus-visible { outline: 2px solid #067F3A; outline-offset: 1px; }
+        .acct-input.is-invalid { border-color: #A3322A; }
         .acct-input.is-invalid:focus {
-          border-color: #c0392b;
-          box-shadow: 0 0 0 1px #c0392b, 0 0 12px rgba(192,57,43,0.15);
+          border-color: #A3322A;
+          box-shadow: 0 0 0 1px #A3322A, 0 0 12px rgba(163,50,42,0.15);
         }
         .acct-field-error,
         .acct-field-hint {
@@ -401,11 +402,11 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           font-size: 0.75em;
           margin-top: 6px;
         }
-        .acct-field-error { color: #c0392b; }
-        .acct-field-hint { color: rgba(22,67,42,0.55); }
+        .acct-field-error { color: #A3322A; }
+        .acct-field-hint { color: rgba(11,10,7,0.55); }
         .acct-input:focus {
-          border-color: #1a9e4a;
-          box-shadow: 0 0 0 1px #1a9e4a, 0 0 12px rgba(26,158,74,0.15);
+          border-color: #067F3A;
+          box-shadow: 0 0 0 1px #067F3A, 0 0 12px rgba(6,127,58,0.15);
         }
         .acct-submit,
         .acct-ghost {
@@ -421,20 +422,20 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
         .acct-submit {
           width: 100%;
           margin-top: 16px;
-          background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
-          border: 1px solid #1a9e4a;
-          border-bottom-color: #0d5c29;
+          background: linear-gradient(175deg, #067F3A 0%, #05652E 100%);
+          border: 1px solid #067F3A;
+          border-bottom-color: #044F24;
         }
         .acct-ghost {
           background: transparent;
-          border: 1px solid #FEFEFA;
-          color: #FEFEFA;
+          border: 1px solid #F5F5F5;
+          color: #F5F5F5;
         }
         .acct-submit:active,
         .acct-ghost:active { transform: scale(0.95); }
         .acct-submit:focus-visible,
         .acct-ghost:focus-visible {
-          outline: 2px solid #4dff91;
+          outline: 2px solid #38B26A;
           outline-offset: 3px;
         }
         .acct-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -453,24 +454,24 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           margin-bottom: 14px;
           text-align: center;
         }
-        .acct-error { color: #c0392b; }
-        .acct-notice { color: #1a9e4a; }
+        .acct-error { color: #A3322A; }
+        .acct-notice { color: #067F3A; }
                 .acct-divider {
           display: flex;
           align-items: center;
           gap: 12px;
           width: 100%;
           margin: 18px 0 14px;
-          font-family: 'Arvo', monospace;
+          font-family: 'Poppins', sans-serif;
           font-size: 0.78em;
-          color: rgba(22,67,42,0.45);
+          color: #5C5A55;
         }
         .acct-divider::before,
         .acct-divider::after {
           content: '';
           flex: 1;
           height: 1px;
-          background: rgba(22,67,42,0.15);
+          background: rgba(11,10,7,0.15);
         }
         .acct-google {
           display: flex;
@@ -527,8 +528,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
             left: -100%;
             width: 200%;
             height: 100%;
-            background: linear-gradient(to right, #178f42, #22b85a);
-            color: #FEFEFA;
+            background: linear-gradient(to right, #05652E, #067F3A);
+            color: #F5F5F5;
             transform: translateX(0);
             transition: transform 0.6s ease-in-out;
           }
@@ -555,7 +556,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
             font-family: 'Poppins_semibold', monospace;
             font-size: 1.6em;
             letter-spacing: 0.1em;
-            color: #FEFEFA;
+            color: #F5F5F5;
           }
           .acct-overlay-text {
             font-family: 'Poppins', monospace;
@@ -580,11 +581,10 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
       `}</style>
 
       <div className="acct-wrap">
-        <GameIconsBackground density={0.6} />
         <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={startGoogleOneTap} />
 
         <div className="acct-inner">
-          <div className="acct-toggle" role="tablist" aria-label="Account">
+          <div className="acct-toggle" role="tablist" aria-label="Sign in or join">
             <span className="acct-toggle-thumb" data-mode={mode} aria-hidden="true" />
             <button
               type="button"
@@ -604,7 +604,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
               className="acct-toggle-btn"
               onClick={() => setMode('register')}
             >
-              <span className="acct-btn-label">CREATE ACCOUNT</span>
+              <span className="acct-btn-label">JOIN THE CLUB</span>
             </button>
           </div>
 
@@ -615,7 +615,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
               inert={mode !== 'register'}
             >
               <form className="acct-form" onSubmit={handleRegister} noValidate>
-                <div className="acct-title">CREATE ACCOUNT</div>
+                <div className="acct-title">JOIN THE PLAYAZ CLUB</div>
 
                 {registerError && <div className="acct-error" role="alert">{registerError}</div>}
 
@@ -682,7 +682,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                   {renderFieldError('registerConfirmPassword')}
                 </div>
                 <button type="submit" disabled={isRegistering} className="acct-submit">
-                  <span className="acct-btn-label">{isRegistering ? 'CREATING…' : 'CREATE ACCOUNT'}</span>
+                  <span className="acct-btn-label">{isRegistering ? 'JOINING…' : 'JOIN THE CLUB'}</span>
                 </button>
 
                 <div className="acct-divider">or</div>
@@ -744,16 +744,16 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
               <div className="acct-overlay">
                 <div className="acct-overlay-panel acct-overlay-left">
                   <div className="acct-overlay-title">WELCOME BACK</div>
-                  <p className="acct-overlay-text">Sign in to see your orders and points.</p>
+                  <p className="acct-overlay-text">Sign in to see your orders and Club Points.</p>
                   <button type="button" className="acct-ghost" onClick={() => setMode('signin')}>
                     <span className="acct-btn-label">SIGN IN</span>
                   </button>
                 </div>
                 <div className="acct-overlay-panel acct-overlay-right">
                   <div className="acct-overlay-title">NEW HERE?</div>
-                  <p className="acct-overlay-text">Create an account to track orders and collect points.</p>
+                  <p className="acct-overlay-text">Join the Playaz Club to track orders and collect Club Points.</p>
                   <button type="button" className="acct-ghost" onClick={() => setMode('register')}>
-                    <span className="acct-btn-label">CREATE ACCOUNT</span>
+                    <span className="acct-btn-label">JOIN THE CLUB</span>
                   </button>
                 </div>
               </div>

@@ -5,7 +5,6 @@ export const ACCOUNT_TABS = [
   'orders',
   'personal',
   'security',
-  'payments',
   'support',
 ] as const;
 
@@ -112,23 +111,7 @@ export interface RewardClaim {
   status: 'claimed' | 'fulfilled';
 }
 
-export interface PaymentMethod {
-  id: string;
-  provider: string;
-  type: 'card' | 'paypal';
-  brand: string | null;
-  last4: string | null;
-  exp_month: number | null;
-  exp_year: number | null;
-  label: string | null;
-  is_default: boolean;
-}
 
-export interface PaymentsInfo {
-  /** The processor set in PAYMENTS_PROVIDER, or null when adding methods isn't available yet. */
-  provider: string | null;
-  methods: PaymentMethod[];
-}
 
 export interface SupportRequest {
   id: string;

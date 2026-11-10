@@ -1,11 +1,27 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
+
+const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname : 'ggkhbhwqjlsmushwkgwn.supabase.co';
+const wooHost = process.env.WOOCOMMERCE_URL ? new URL(process.env.WOOCOMMERCE_URL).hostname : null;
 
 const nextConfig: NextConfig = {
-  // Dev only: lets phones on your Wi-Fi load dev assets. Use your PC's IPv4 from `ipconfig`.
-  allowedDevOrigins: ['192.168.39.122'],
+  // Dev only: lets the site work when opened by network address (your PC's IP, or a phone on the same Wi-Fi),
+  // whatever address the router hands out. Without it the browser can't load the dev scripts and nothing interactive runs.
+  allowedDevOrigins: ['192.168.*.*', '10.*.*.*'],
+  poweredByHeader: false,
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      { protocol: 'https', hostname: supabaseHost, pathname: '/storage/v1/object/public/**' },
+      { protocol: 'https', hostname: 'i.ytimg.com' },
+      { protocol: 'https', hostname: 'i.scdn.co' },
+      // WooCommerce product photos (Tapstitch syncs its mockups into the store's media library).
+      ...(wooHost ? [{ protocol: 'https' as const, hostname: wooHost }] : []),
+      { protocol: 'https', hostname: '*.wp.com' },
+    ],
+  },
+  async redirects() {
+    return [{ source: '/discography', destination: '/music', permanent: true }];
+  },
 };
 
-
-
 export default nextConfig;
-

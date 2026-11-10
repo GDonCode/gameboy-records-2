@@ -1,41 +1,30 @@
-// app/trivia/page.tsx
+// app/trivia/page.tsx — Trivia
 import type { Metadata } from 'next';
-import Header from '@/components/Header';
-import MobileBottomNav from '@/components/MobileBottomNav';
-import GameIconsBackground from '@/components/GameIconsBackground';
+import PageShell from '@/components/PageShell';
+import PageTitle from '@/components/PageTitle';
 import TriviaGame from '@/components/TriviaGame';
+import GameIconsBackground from '@/components/GameIconsBackground';
+import { ARTIST, OG_IMAGE } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Tricky Tempo Trivia',
+  description: `How well do you know ${ARTIST}? Three rounds, fifteen questions, ten seconds each. Top the leaderboard and earn Club Points.`,
+  alternates: { canonical: '/trivia' },
+  openGraph: { url: '/trivia', title: 'Tricky Tempo Trivia | Gameboy Records', images: [OG_IMAGE] },
 };
 
 export default function TriviaPage() {
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <Header />
-      <MobileBottomNav />
-      <div
-        className="relative flex-1 min-h-0 overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%)' }}
-      >
+    <PageShell>
+      <section className="paper-ink relative overflow-hidden flex-1 pt-12 pb-24 md:pt-20">
         <GameIconsBackground opacity={1.5} />
-        <div className="mobile-home-pad absolute inset-0 z-[1] flex flex-col items-center overflow-y-auto pt-[60px] md:pt-0 py-8">
-          <div className="my-auto flex w-full flex-col items-center py-8">
-            <h1
-              className="mb-6 text-center"
-              style={{
-                fontFamily: "'Poppins', monospace",
-                fontSize: '1.4em',
-                letterSpacing: '0.2em',
-                color: '#4dff91',
-              }}
-            >
-              TRICKY TEMPO TRIVIA
-            </h1>
-            <TriviaGame />
-          </div>
+        <div className="relative z-[1] container-site flex flex-col items-center">
+          <PageTitle tone="dark" ghost="Play" className="mb-10 w-full">
+            Tricky Tempo Trivia
+          </PageTitle>
+          <TriviaGame />
         </div>
-      </div>
-    </div>
+      </section>
+    </PageShell>
   );
 }

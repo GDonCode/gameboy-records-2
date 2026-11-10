@@ -4,6 +4,8 @@
 
 let ctx: AudioContext | null = null;
 let muted = false;
+// The reader (speech) can be muted on its own, leaving the tick and answer sounds on.
+let readerMuted = false;
 
 /** Call from a tap/click handler. Browsers keep audio locked until the first user gesture. */
 export function unlockAudio(): void {
@@ -14,6 +16,15 @@ export function unlockAudio(): void {
     ctx = new Ctor();
   }
   if (ctx.state === 'suspended') void ctx.resume();
+}
+
+export function setReaderMuted(value: boolean): void {
+  readerMuted = value;
+  if (value) stopSpeaking();
+}
+
+export function isReaderMuted(): boolean {
+  return readerMuted;
 }
 
 export function setMuted(value: boolean): void {
@@ -59,7 +70,7 @@ export function playTimeUp(): void {
 }
 
 export function speak(text: string): void {
-  if (muted || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  if (muted || readerMuted || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'en-US';

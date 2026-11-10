@@ -3,7 +3,8 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header';
 import GameIconsBackground from '@/components/GameIconsBackground';
-import MobileBottomNav from '@/components/MobileBottomNav';
+import PageTitle from '@/components/PageTitle';
+import SongCarousel from '@/components/karaoke/SongCarousel';
 import styles from './karaoke.module.css';
 
 interface LyricLine {
@@ -417,9 +418,6 @@ const SONGS: Song[] = [
   }
 ];
 
-type Direction = 'next' | 'prev';
-
-const SEEK_STEP = 10; // seconds skipped by the mobile «/» buttons
 const TAP_LATENCY = 0.45; // seconds subtracted from each sync tap to offset reaction lag
 const LINE_MAX_SECONDS = 6; // longest a single line's fill sweep may take (skip this line if already present)
 
@@ -466,12 +464,17 @@ export default function KaraokePage() {
   const [syncLine, setSyncLine] = useState(0);
   const [syncTaps, setSyncTaps] = useState<Record<number, number[]>>({});
   const [syncCopied, setSyncCopied] = useState(false);
+  // 'pick' = the song carousel; 'sing' = the player and lyrics for the chosen song.
+  const [view, setView] = useState<'pick' | 'sing'>('pick');
+  const [ended, setEnded] = useState(false);
+  const autoplayRef = useRef(false);
 
   const activeSong = SONGS[activeSongIndex];
 
   // Reset playback state whenever the song changes
   useEffect(() => {
     setIsPlaying(false);
+    setEnded(false);
     setCurrentTime(0);
     setDuration(0);
     setActiveIndex(-1);
@@ -548,7 +551,7 @@ export default function KaraokePage() {
     };
     paint();
     return () => cancelAnimationFrame(raf);
-  }, [activeIndex, activeSong, duration, isPlaying, currentTime, syncTaps, syncOn]);
+  }, [activeIndex, activeSong, duration, isPlaying, currentTime, syncTaps, syncOn, view]);
 
   function togglePlay() {
     const audio = audioRef.current;
@@ -565,20 +568,37 @@ export default function KaraokePage() {
     setCurrentTime(t);
   }
 
-  function skip(delta: number) {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const end = duration || audio.duration || 0;
-    const t = Math.min(Math.max(audio.currentTime + delta, 0), end);
-    audio.currentTime = t;
-    setCurrentTime(t);
+  /** Choose a song from the carousel and start it from the top. */
+  function pickSong(i: number) {
+    setView('sing');
+    setEnded(false);
+    if (i === activeSongIndex) {
+      const audio = audioRef.current;
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      }
+      setCurrentTime(0);
+    } else {
+      autoplayRef.current = true; // the song-change effect reloads the audio; it plays once it is ready
+      setActiveSongIndex(i);
+    }
   }
 
-  function goToSong(dir: Direction) {
-    setActiveSongIndex((prev) => {
-      const len = SONGS.length;
-      return dir === 'next' ? (prev + 1) % len : (prev - 1 + len) % len;
-    });
+  /** Back to the carousel. The song is paused, not lost: its sleeve is still the one in front. */
+  function backToSongs() {
+    audioRef.current?.pause();
+    setView('pick');
+  }
+
+  /** After a song has finished: sing it again from the top. */
+  function restartSong() {
+    const audio = audioRef.current;
+    setEnded(false);
+    if (!audio) return;
+    audio.currentTime = 0;
+    setCurrentTime(0);
+    audio.play().catch(() => {});
   }
 
   // ── Word-sync recorder (dev tool: open the page with ?sync in the URL) ──
@@ -665,36 +685,36 @@ export default function KaraokePage() {
   });
 
   function formatTime(t: number) {
-    if (!Number.isFinite(t)) return '0.0s';
-    // TEMP: raw seconds display for lyric-sync work.
-    // Revert to mm:ss once timestamps are finalized:
-    // const m = Math.floor(t / 60);
-    // const s = Math.floor(t % 60).toString().padStart(2, '0');
-    // return `${m}:${s}`;
-    return `${t.toFixed(1)}s`;
+    if (!Number.isFinite(t)) return '0:00';
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   }
 
   return (
     <div className={styles.page}>
       <Header />
-      <MobileBottomNav />
 
-      <main className={styles.main}>
+      <main id="main" className={styles.main}>
         <GameIconsBackground />
 
+        {view === 'pick' && (
+          <div className={styles.pickView}>
+            <PageTitle tone="dark" ghost="Sing" className="mb-2 w-full">
+              Karaoke
+            </PageTitle>
+            <SongCarousel
+              songs={SONGS.map(({ id, title, artist, photoSrc }) => ({ id, title, artist, photoSrc }))}
+              initial={activeSongIndex}
+              onPick={pickSong}
+            />
+          </div>
+        )}
+
+        {view === 'sing' && (
+          <>
         {/* ── SONG PICKER BAR ───────────────────────────────────── */}
         <div className={styles.pickerBar}>
-          <button
-            type="button"
-            className={styles.navArrowSm}
-            aria-label="Previous song"
-            onClick={() => goToSong('prev')}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M15 5l-7 7 7 7" />
-            </svg>
-          </button>
-
           <div className={styles.pickerPhoto}>
             {activeSong.photoSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -716,17 +736,6 @@ export default function KaraokePage() {
 
           <div className={styles.pickerPlayback}>
             <button
-              type="button"
-              className={styles.seekBtn}
-              aria-label={`Back ${SEEK_STEP} seconds`}
-              onClick={() => skip(-SEEK_STEP)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 5l-7 7 7 7M19 5l-7 7 7 7" />
-              </svg>
-            </button>
-
-            <button
               className={styles.playBtn}
               onClick={togglePlay}
               aria-label={isPlaying ? 'Pause' : 'Play'}
@@ -743,21 +752,11 @@ export default function KaraokePage() {
               )}
             </button>
 
-            <button
-              type="button"
-              className={styles.seekBtn}
-              aria-label={`Forward ${SEEK_STEP} seconds`}
-              onClick={() => skip(SEEK_STEP)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M5 5l7 7-7 7M12 5l7 7-7 7" />
-              </svg>
-            </button>
-
             <span className={styles.time}>{formatTime(currentTime)}</span>
             <input
               type="range"
               className={styles.seekBar}
+              aria-label={`Seek within ${activeSong.title}`}
               min={0}
               max={duration || 0}
               step={0.1}
@@ -767,20 +766,16 @@ export default function KaraokePage() {
             <span className={styles.time}>{formatTime(duration)}</span>
           </div>
 
-          <button
-            type="button"
-            className={styles.navArrowSm}
-            aria-label="Next song"
-            onClick={() => goToSong('next')}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M9 5l7 7-7 7" />
+          <button type="button" className={`${styles.navArrowSm} ${styles.songsBtn}`} onClick={backToSongs} aria-label="Back to all songs">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h10" />
             </svg>
+            <span>ALL SONGS</span>
           </button>
         </div>
 
         {/* ── LYRICS ── directly on page background, no container ── */}
-        <div className={styles.lyricsArea}>
+        <div className={styles.lyricsArea} tabIndex={0} role="region" aria-label={`Lyrics: ${activeSong.title}`}>
           {activeSong.lyrics.map((line, i) => (
             <div
               key={i}
@@ -829,14 +824,41 @@ export default function KaraokePage() {
           </div>
         )}
 
+        {ended && !syncOn && (
+          <div className={styles.endCard} role="dialog" aria-label="Song finished">
+            <div className={styles.endActions}>
+              <button type="button" className={styles.endPrimary} onClick={restartSong}>
+                Sing again
+              </button>
+              <button type="button" className={styles.endSecondary} onClick={backToSongs}>
+                Choose another song
+              </button>
+            </div>
+          </div>
+        )}
+          </>
+        )}
+
         <audio
           ref={audioRef}
           src={activeSong.audioSrc}
-          onPlay={() => setIsPlaying(true)}
+          onPlay={() => {
+            setIsPlaying(true);
+            setEnded(false);
+          }}
           onPause={() => setIsPlaying(false)}
           onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
           onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-          onEnded={() => setIsPlaying(false)}
+          onEnded={() => {
+            setIsPlaying(false);
+            setEnded(true);
+          }}
+          onLoadedData={(e) => {
+            if (autoplayRef.current) {
+              autoplayRef.current = false;
+              e.currentTarget.play().catch(() => {});
+            }
+          }}
         />
       </main>
     </div>

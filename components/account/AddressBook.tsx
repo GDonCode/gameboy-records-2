@@ -49,8 +49,8 @@ function toDraft(a: Address): Draft {
 function AddressLines({ a }: { a: Address }) {
   const cityLine = [a.city, a.region, a.postal_code].filter(Boolean).join(', ');
   return (
-    <address className="not-italic text-[0.9em] leading-relaxed text-white/75">
-      <span className="text-white" style={SEMI}>{a.full_name}</span>
+    <address className="not-italic text-[0.9em] leading-relaxed text-[#0B0A07]/75">
+      <span className="text-[#0B0A07]" style={SEMI}>{a.full_name}</span>
       <br />
       {a.line1}
       {a.line2 && (<><br />{a.line2}</>)}
@@ -80,7 +80,7 @@ function Field({
     <div>
       <label htmlFor={id} className={LABEL_CLASS}>
         {label}
-        {optional && <span className="text-white/35"> (optional)</span>}
+        {optional && <span className="text-[#0B0A07]/45"> (optional)</span>}
       </label>
       {children}
       {error && <p id={`${id}-error`} className={`${ERROR_TEXT} mt-1`}>{error}</p>}
@@ -148,7 +148,7 @@ function AddressForm({
   );
 
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-[10px] border border-[#1a9e4a]/40 bg-[#1a9e4a]/5 p-5" style={BODY}>
+    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-none border border-[#067F3A]/40 bg-[#067F3A]/5 p-5" style={BODY}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="sm:col-span-2">
           <Field id="addr-country_code" label="Country" error={errors.country_code}>
@@ -184,8 +184,8 @@ function AddressForm({
       </div>
 
       {canSetDefault && (
-        <label className="flex items-center gap-2 text-[0.85em] text-white/80 cursor-pointer">
-          <input type="checkbox" checked={makeDefault} onChange={(e) => setMakeDefault(e.target.checked)} disabled={busy} className="accent-[#1a9e4a] w-4 h-4" />
+        <label className="flex items-center gap-2 text-[0.85em] text-[#0B0A07]/80 cursor-pointer">
+          <input type="checkbox" checked={makeDefault} onChange={(e) => setMakeDefault(e.target.checked)} disabled={busy} className="accent-[#067F3A] w-4 h-4" />
           Use as my default shipping address
         </label>
       )}
@@ -268,8 +268,8 @@ export default function AddressBook({ initialAddresses }: { initialAddresses: Ad
     <div className="flex flex-col gap-5" style={BODY}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-[1.15em] text-white" style={SEMI}>Shipping addresses</h2>
-          <p className="text-[0.85em] text-white/55">
+          <h2 className="text-[1.15em] text-[#0B0A07]" style={SEMI}>Shipping addresses</h2>
+          <p className="text-[0.85em] text-[#0B0A07]/65">
             Your default address is used at checkout. You can save up to {MAX_ADDRESSES}.
           </p>
         </div>
@@ -296,11 +296,11 @@ export default function AddressBook({ initialAddresses }: { initialAddresses: Ad
       )}
 
       {mode.kind === 'list' && addresses.length === 0 && (
-        <div className="flex flex-col items-center text-center gap-4 rounded-[10px] border border-dashed border-white/15 py-10 px-4">
-          <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#1a9e4a]/15 border border-[#1a9e4a]/40">
-            <MapPin className="w-5 h-5 text-[#4dff91]" strokeWidth={2} />
+        <div className="flex flex-col items-center text-center gap-4 rounded-none border border-dashed border-[#0B0A07]/15 py-10 px-4">
+          <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#067F3A]/15 border border-[#067F3A]/40">
+            <MapPin className="w-5 h-5 text-[#05652E]" strokeWidth={2} />
           </span>
-          <p className="text-[0.95em] text-white/70">No saved addresses yet. Add one for faster checkout.</p>
+          <p className="text-[0.95em] text-[#0B0A07]/75">No saved addresses yet. Add one for faster checkout.</p>
           <button type="button" className={PRIMARY_BUTTON} onClick={() => open({ kind: 'add' })}>
             <Plus className="w-4 h-4" /> ADD ADDRESS
           </button>
@@ -325,14 +325,14 @@ export default function AddressBook({ initialAddresses }: { initialAddresses: Ad
             ) : (
               <li
                 key={a.id}
-                className={`flex flex-col gap-4 rounded-[10px] border p-5 ${
-                  a.is_default ? 'border-[#4dff91]/60 bg-[#1a9e4a]/10' : 'border-white/10 bg-white/[0.02]'
+                className={`flex flex-col gap-4 rounded-none border p-5 ${
+                  a.is_default ? 'border-[#067F3A]/60 bg-[#067F3A]/10' : 'border-[#0B0A07]/15 bg-white/[0.02]'
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <AddressLines a={a} />
                   {a.is_default && (
-                    <span className="flex-shrink-0 px-2.5 py-1 rounded-full text-[0.65em] tracking-[0.15em] text-[#0c1510] bg-[#4dff91]" style={SEMI}>
+                    <span className="flex-shrink-0 px-2.5 py-1 rounded-full text-[0.65em] tracking-[0.15em] text-white bg-[#067F3A]" style={SEMI}>
                       DEFAULT
                     </span>
                   )}

@@ -21,8 +21,8 @@ import type { AccountUser } from './types';
 function Row({ label, children, action }: { label: string; children: ReactNode; action?: ReactNode }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-6 py-4">
-      <dt className="sm:w-[160px] sm:pt-0.5 flex-shrink-0 text-[0.85em] text-white/50">{label}</dt>
-      <dd className="flex-1 min-w-0 text-white">{children}</dd>
+      <dt className="sm:w-[160px] sm:pt-0.5 flex-shrink-0 text-[0.85em] text-[#0B0A07]/60">{label}</dt>
+      <dd className="flex-1 min-w-0 text-[#0B0A07]">{children}</dd>
       {action && <div className="sm:pt-0.5">{action}</div>}
     </div>
   );
@@ -213,7 +213,7 @@ function EmailRow({ initialEmail, hasPassword, onSaved }: { initialEmail: string
         }
       >
         <span className="break-all">{email}</span>
-        {!hasPassword && <p className="mt-1 text-[0.8em] text-white/50">Managed by your Google sign-in.</p>}
+        {!hasPassword && <p className="mt-1 text-[0.8em] text-[#0B0A07]/60">Managed by your Google sign-in.</p>}
         {notice && <p role="status" className={`${SUCCESS_TEXT} mt-1`}>{notice}</p>}
       </Row>
     );
@@ -223,8 +223,8 @@ function EmailRow({ initialEmail, hasPassword, onSaved }: { initialEmail: string
     return (
       <Row label="Email">
         <form onSubmit={requestCode} className="flex flex-col gap-3 max-w-[420px]" noValidate>
-          <p className="text-[0.85em] text-white/60">
-            Current: <span className="text-white break-all">{email}</span>
+          <p className="text-[0.85em] text-[#0B0A07]/70">
+            Current: <span className="text-[#0B0A07] break-all">{email}</span>
           </p>
           <div>
             <label htmlFor="new-email" className={LABEL_CLASS}>New email</label>
@@ -264,7 +264,7 @@ function EmailRow({ initialEmail, hasPassword, onSaved }: { initialEmail: string
   return (
     <Row label="Email">
       <form onSubmit={verify} className="flex flex-col gap-3 max-w-[420px]" noValidate>
-        {notice && <p role="status" className="text-[0.85em] text-white/70">{notice} It expires in 15 minutes.</p>}
+        {notice && <p role="status" className="text-[0.85em] text-[#0B0A07]/75">{notice} It expires in 15 minutes.</p>}
         <div>
           <label htmlFor="email-code" className={LABEL_CLASS}>Verification code</label>
           <input
@@ -304,11 +304,11 @@ export default function ProfileDetails({ user, memberSince }: { user: AccountUse
   }
 
   return (
-    <dl className="flex flex-col divide-y divide-white/10" style={BODY}>
+    <dl className="flex flex-col divide-y divide-[#0B0A07]/15" style={BODY}>
       <NameRow initialName={user.display_name} onSaved={refreshAfterSave} />
       <EmailRow initialEmail={user.email} hasPassword={user.has_password} onSaved={refreshAfterSave} />
       <Row label="Member since">{memberSince}</Row>
-      <Row label="Points">{(user.points_balance ?? 0).toLocaleString('en-US')}</Row>
+      <Row label="Club Points">{(user.points_balance ?? 0).toLocaleString('en-US')}</Row>
     </dl>
   );
 }
