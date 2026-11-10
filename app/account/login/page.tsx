@@ -1,27 +1,38 @@
-// app/account/login/page.tsx — Sign in / Join the Playaz Club
-import type { Metadata } from 'next';
-import PageShell from '@/components/PageShell';
-import NeonHeading from '@/components/NeonHeading';
+// app/account/login/page.tsx
+import Header from '@/components/Header';
+import MobileBottomNav from '@/components/MobileBottomNav';
 import AuthForm from '@/components/AuthForm';
-import { CLUB_NAME } from '@/lib/site';
+import Footer from '@/components/Footer';
 
-export const metadata: Metadata = {
-  title: `Sign in or join the ${CLUB_NAME}`,
-  description: `Sign in to your ${CLUB_NAME} membership, or join to collect Club Points on orders, tickets and quests.`,
-  alternates: { canonical: '/account/login' },
-  robots: { index: false, follow: true },
-};
-
-export default async function AccountLoginPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
+export default async function AccountLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ mode?: string }>;
+}) {
   const { mode } = await searchParams;
+
   return (
-    <PageShell>
-      <div className="bg-ink pt-14 md:pt-20">
-        <NeonHeading kicker="Members" subtitle="Club Points · Early access · Rewards">
-          {CLUB_NAME}
-        </NeonHeading>
+    <>
+      <style>{`
+        .no-scrollbar { scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      <div className="flex flex-col h-screen overflow-hidden">
+        <Header />
+        <MobileBottomNav />
+
+        <div className="flex flex-1 overflow-hidden">
+          <div className="relative flex-1 overflow-hidden bg-[#1a2b1e]">
+            <div className="absolute inset-0 flex overflow-hidden">
+              <div className="no-scrollbar flex-1 min-h-0 overflow-y-auto flex flex-col pt-[60px] md:pt-0">
+                <AuthForm initialMode={mode === 'register' ? 'register' : 'signin'} />
+                <Footer />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <AuthForm initialMode={mode === 'register' ? 'register' : 'signin'} />
-    </PageShell>
+    </>
   );
 }

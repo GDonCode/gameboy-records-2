@@ -35,8 +35,6 @@ export function useCartCount(refreshKey?: unknown): number {
     };
     const onChange = (e: Event) => setCount((e as CustomEvent<number>).detail);
 
-    // No signed-in member (refreshKey is their id): nothing to count.
-    if (refreshKey === undefined || refreshKey === null) return;
     refresh();
     window.addEventListener(CART_EVENT, onChange);
     window.addEventListener('pageshow', refresh); // back/forward cache
@@ -49,5 +47,5 @@ export function useCartCount(refreshKey?: unknown): number {
     };
   }, [refreshKey]); // refetch when the signed-in user changes
 
-  return refreshKey === undefined || refreshKey === null ? 0 : count;
+  return count;
 }

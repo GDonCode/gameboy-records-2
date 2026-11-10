@@ -1,40 +1,17 @@
-// components/Footer.tsx
-// Site footer: the label line, contact details, navigation, socials and the newsletter sign-up.
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
-import Icon, { type IconName } from '@/components/icons';
-import Button from '@/components/ui/Button';
-import { CLUB_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, LOGO_URL, SITE_NAME, SOCIAL } from '@/lib/site';
 
-const SOCIALS: { href: string; label: string; icon: IconName }[] = [
-  { href: SOCIAL.instagram, label: 'Instagram', icon: 'brand-instagram' },
-  { href: SOCIAL.tiktok, label: 'TikTok', icon: 'brand-tiktok' },
-  { href: SOCIAL.youtube, label: 'YouTube', icon: 'brand-youtube' },
-  { href: SOCIAL.spotify, label: 'Spotify', icon: 'brand-spotify' },
-  { href: SOCIAL.appleMusic, label: 'Apple Music', icon: 'brand-applemusic' },
-];
-
-const LINKS = [
-  { href: '/shop', label: 'Shop' },
-  { href: '/shows', label: 'Shows' },
-  { href: '/music', label: 'Music' },
-  { href: '/about', label: 'About' },
-  { href: '/karaoke', label: 'Karaoke' },
-  { href: '/trivia', label: 'Trivia' },
-  { href: '/account', label: CLUB_NAME },
-];
-
-function Newsletter() {
+export default function Footer() {
   const [email, setEmail] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
-  async function subscribe(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setBusy(true);
-    setStatus(null);
+    setIsSubmitting(true);
+    setStatus({ type: null, message: '' });
+
     try {
       const res = await fetch('/api/newsletter', {
         method: 'POST',
@@ -42,124 +19,157 @@ function Newsletter() {
         body: JSON.stringify({ email }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'That didn’t go through. Please try again.');
-      setStatus({ ok: true, message: data.message === 'You’re already subscribed!' ? 'You’re already on the list.' : 'You’re on the list.' });
+
+      if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+
+      setStatus({ type: 'success', message: data.message || 'You’re subscribed!' });
       setEmail('');
     } catch (err) {
-      setStatus({ ok: false, message: err instanceof Error ? err.message : 'That didn’t go through. Please try again.' });
+      setStatus({ type: 'error', message: err instanceof Error ? err.message : 'Something went wrong. Please try again.' });
     } finally {
-      setBusy(false);
+      setIsSubmitting(false);
     }
-  }
+  };
 
+// ... existing code below ...
   return (
-    <div className="flex flex-col">
-      <h2 className="eyebrow text-gold-light m-0">Join the newsletter</h2>
-      <p className="mt-4 mb-6 text-[0.95rem] leading-relaxed text-mist max-w-[40ch]">
-        Releases, drops and show dates, sent sparingly. First word goes to the list.
-      </p>
-      <form onSubmit={subscribe} className="flex flex-col sm:flex-row gap-2" noValidate={false}>
-        <label htmlFor="newsletter-email" className="sr-only">
-          Email address
-        </label>
-        <input
-          id="newsletter-email"
-          type="email"
-          name="email"
-          autoComplete="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="field sm:flex-1 min-w-0"
-        />
-        <Button type="submit" variant="light" disabled={busy}>
-          {busy ? 'Sending' : 'Subscribe'}
-        </Button>
-      </form>
-      <p role="status" aria-live="polite" className={`mt-3 text-[0.85rem] min-h-[1.4em] ${status?.ok ? 'text-green-light' : 'text-danger-light'}`}>
-        {status?.message ?? ''}
-      </p>
-    </div>
-  );
-}
-
-export default function Footer() {
-  const year = new Date().getFullYear();
-  return (
-    <footer className="bg-ink text-paper border-t border-line-inv">
-      <div className="container-site pt-16 pb-10 md:pt-24">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
-          {/* Label */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            <Link href="/" aria-label={`${SITE_NAME} — home`} className="inline-block self-start">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={LOGO_URL} alt={SITE_NAME} width={1022} height={168} loading="lazy" className="h-9 w-auto brightness-0 invert" />
-            </Link>
-            <p className="m-0 text-[0.95rem] leading-relaxed text-mist max-w-[36ch]">
-              An independent label. Founded by Alexx A-Game. Owned outright.
-            </p>
-            <dl className="m-0 grid gap-3 text-[0.9rem]">
-              <div>
-                <dt className="eyebrow text-mist/70 mb-1">Enquiries</dt>
-                <dd className="m-0">
-                  <a href={`mailto:${CONTACT_EMAIL}`} className="text-paper underline decoration-paper/30 underline-offset-4 hover:decoration-paper">
-                    {CONTACT_EMAIL}
-                  </a>
-                </dd>
-              </div>
-              <div>
-                <dt className="eyebrow text-mist/70 mb-1">Instagram</dt>
-                <dd className="m-0">
-                  <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" className="text-paper underline decoration-paper/30 underline-offset-4 hover:decoration-paper">
-                    {INSTAGRAM_HANDLE}
-                  </a>
-                </dd>
-              </div>
-            </dl>
-          </div>
-
-          {/* Navigation */}
-          <nav aria-label="Footer" className="lg:col-span-3 lg:col-start-6">
-            <h2 className="eyebrow text-gold-light m-0 mb-5">Explore</h2>
-            <ul className="list-none p-0 m-0 grid grid-cols-2 lg:grid-cols-1 gap-y-3 gap-x-8">
-              {LINKS.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="zoom-content inline-block text-[0.95rem] text-paper/85 hover:text-paper">
-                    <span className="inline-block origin-left">{l.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Newsletter */}
-          <div className="lg:col-span-4 lg:col-start-9">
-            <Newsletter />
-          </div>
+              <footer className="mobile-home-pad relative z-[2] flex flex-col md:flex-row flex-shrink-0 w-full min-h-[160px] bg-[#EDEAE0] border-t border-[rgba(186, 132, 132, 0.25)]">
+      <style>{`
+        .footer-email-input {
+          flex: 1;
+          min-width: 0;
+          height: 44px;
+          line-height: 28px;
+          padding: 0 1rem;
+          padding-left: 2.5rem;
+          border: 2px solid transparent;
+          border-radius: 8px;
+          outline: none;
+          background-color: #fff;
+          color: #0d0c22;
+          transition: .3s ease;
+        }
+        .footer-email-input::placeholder { color: rgba(22,67,42,0.4); }
+        .footer-subscribe-btn {
+          font-family: 'Poppins_semibold', monospace;
+          font-size: 0.9em;
+          letter-spacing: 0.18em;
+          color: #fff;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+          display: inline-flex;
+          align-items: center;
+          padding: 0 22px;
+          height: 44px;
+          background: linear-gradient(175deg, #22b85a 0%, #178f42 100%);
+          cursor: pointer;
+          transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.08s ease;
+          user-select: none;
+        }
+        .footer-subscribe-btn:hover:not(:disabled) {
+          transform: translateY(-2px);
+          background: linear-gradient(175deg, #2bd06a 0%, #1aa64c 100%);
+          border-color: #4dff91;
+        }
+        .footer-subscribe-btn:active:not(:disabled) {
+          transform: translateY(4px);
+          box-shadow: inset 0 2px 6px rgba(0,0,0,0.25);
+        }
+                .footer-subscribe-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+                .footer-social-link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          padding: 8px;
+          border-radius: 50%;
+          background: #fff;
+          border: 1px solid rgba(26,158,74,0.2);
+          box-shadow: 0 3px 0 rgba(13,92,41,0.15), 0 4px 10px rgba(0,0,0,0.08);
+          transition: transform 0.07s ease, box-shadow 0.07s ease;
+          user-select: none;
+        }
+        .footer-social-link img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+        }
+        .footer-social-link:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 0 rgba(13,92,41,0.15), 0 6px 14px rgba(0,0,0,0.12);
+        }
+      `}</style>
+      {/* Left half — social links */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-8">
+        <h3 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '1.75em', letterSpacing: '0.15em', color: '#16432a', lineHeight: 1 }}>
+          FOLLOW US
+        </h3>
+        <p className="mt-3 mb-6" style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#3c5e4c', lineHeight: 1.6 }}>
+          New drops, shows and behind-the-scenes — follow along.
+        </p>
+                <div className="flex flex-wrap items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://www.instagram.com/gameboyrecordsofficial/" aria-label="Instagram" className="footer-social-link"><img src="/instagram.png" alt="Instagram" /></a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://www.tiktok.com/@alexxagame" aria-label="TikTok" className="footer-social-link"><img src="/tik-tok.png" alt="TikTok" /></a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://www.youtube.com/@LifeOfGameBoy" aria-label="YouTube" className="footer-social-link"><img src="/youtube.png" alt="YouTube" /></a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://open.spotify.com/artist/3BemerMhrSFpqDcAsqkdvh" aria-label="Spotify" className="footer-social-link"><img src="/spotify.png" alt="Spotify" /></a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <a href="https://music.apple.com/us/artist/alexx-a-game/1093080428" aria-label="Apple Music" className="footer-social-link"><img src="/apple-music.png" alt="Apple Music" /></a>
         </div>
+      </div>
 
-        <div className="mt-16 pt-8 border-t border-line-inv flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
-          <p className="m-0 text-[0.8rem] text-mist">
-            © {year} {SITE_NAME}. All rights reserved.
+      {/* Divider — my-6 keeps it clear of the top and bottom edges */}
+      <div className="mx-6 h-px md:mx-0 md:my-6 md:h-auto md:w-px bg-[#181818]/10" aria-hidden="true" />
+
+      {/* Right half — newsletter signup */}
+      <div className="flex-1 flex items-center justify-start md:justify-center px-6 py-8">
+        <div className="w-full max-w-[420px] flex flex-col">
+          <h3 style={{ fontFamily: "'Poppins_semibold', monospace", fontSize: '1.75em', letterSpacing: '0.15em', color: '#16432a', lineHeight: 1 }}>
+            JOIN THE NEWSLETTER
+          </h3>
+          <p className="mt-3" style={{ fontFamily: "'Poppins', monospace", fontSize: '1em', color: '#3c5e4c', lineHeight: 1.6 }}>
+            New drops, shows and behind-the-scenes, straight to your inbox.
           </p>
-          <ul className="list-none p-0 m-0 flex items-center gap-2">
-            {SOCIALS.map((s) => (
-              <li key={s.label}>
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${s.label} (opens in a new tab)`}
-                  className="zoom-content inline-flex items-center justify-center w-11 h-11 rounded-xs border border-line-inv text-paper hover:border-paper/40"
-                >
-                  <span>
-                    <Icon name={s.icon} className="w-[18px] h-[18px]" />
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
+          <form onSubmit={handleSubscribe} className="flex gap-2 mt-6">
+            <div className="relative flex-1 min-w-0">
+              {/* Font Awesome envelope icon (v7.3.1), CC BY 4.0 */}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 640 640"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+              >
+                <path
+                  fill="#16432a"
+                  d="M125.4 128C91.5 128 64 155.5 64 189.4C64 190.3 64 191.1 64.1 192L64 192L64 448C64 483.3 92.7 512 128 512L512 512C547.3 512 576 483.3 576 448L576 192L575.9 192C575.9 191.1 576 190.3 576 189.4C576 155.5 548.5 128 514.6 128L125.4 128zM528 256.3L528 448C528 456.8 520.8 464 512 464L128 464C119.2 464 112 456.8 112 448L112 256.3L266.8 373.7C298.2 397.6 341.7 397.6 373.2 373.7L528 256.3zM112 189.4C112 182 118 176 125.4 176L514.6 176C522 176 528 182 528 189.4C528 193.6 526 197.6 522.7 200.1L344.2 335.5C329.9 346.3 310.1 346.3 295.8 335.5L117.3 200.1C114 197.6 112 193.6 112 189.4z"
+                />
+              </svg>
+              <input
+                type="email"
+                name="email"
+                placeholder="Your email"
+                aria-label="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="footer-email-input w-full"
+              />
+            </div>
+            <button type="submit" disabled={isSubmitting} className="footer-subscribe-btn">
+              {isSubmitting ? 'SENDING…' : 'SUBSCRIBE'}
+            </button>
+          </form>
+          {status.type && (
+            <p
+              role="status"
+              style={{ fontFamily: "'Poppins', monospace", fontSize: '0.8em', color: status.type === 'success' ? '#1a9e4a' : '#c0392b' }}
+            >
+              {status.message}
+            </p>
+          )}
         </div>
       </div>
     </footer>

@@ -6,22 +6,18 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 
 export function useWishlist() {
   const router = useRouter();
   const [saved, setSaved] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
-  const { status } = useSession();
 
-  // Signed-out visitors have no saved items; don't ask the server.
   useEffect(() => {
-    if (status !== 'authenticated') return;
     fetch('/api/wishlist')
       .then((res) => (res.ok ? res.json() : { items: [] }))
       .then((data) => setSaved(new Set((data.items || []).map((item: { product_id: string }) => item.product_id))))
       .catch(() => setSaved(new Set()));
-  }, [status]);
+  }, []);
 
   const flip = (productId: string, on: boolean) =>
     setSaved((prev) => {

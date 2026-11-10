@@ -1,5 +1,4 @@
 // components/shop/ProductCard.tsx
-// The original shop card: white card, square photo, quick add with a size picker, wishlist heart.
 'use client';
 
 import { useState } from 'react';
@@ -10,6 +9,7 @@ import type { ShopCart } from '@/lib/use-shop-cart';
 import { CartButton, CartStepper, SizePicker } from './CartControls';
 import WishlistButton from './WishlistButton';
 
+const CATEGORY_LABEL: Record<Product['category'], string> = { 't-shirt': 'T-Shirt', hoodie: 'Hoodie' };
 const SEMI = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const BODY = { fontFamily: "'Poppins', sans-serif" } as const;
 
@@ -45,15 +45,10 @@ export default function ProductCard({
             alt=""
             fill
             priority={priority}
-            sizes="(min-width: 768px) 33vw, 50vw"
+            sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 28vw, 50vw"
             className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />
         </Link>
-        {!product.inStock && (
-          <span style={SEMI} className="absolute left-3 top-3 z-10 bg-[#0E3A20] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-white">
-            Sold out
-          </span>
-        )}
         <WishlistButton productName={product.name} saved={saved} onToggle={onToggleSaved} />
         <CartStepper
           productName={`${product.name}, size ${size ?? ''}`}
@@ -76,27 +71,25 @@ export default function ProductCard({
 
       <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-3.5 md:gap-3 md:px-4">
         <div className="min-w-0">
-          <p style={BODY} className="text-[10px] uppercase leading-none tracking-[0.16em] text-[#0E3A20]/55">
-            {product.categoryLabel}
+          <p style={BODY} className="text-[10px] uppercase leading-none tracking-[0.16em] text-[#16432a]/55">
+            {CATEGORY_LABEL[product.category]}
           </p>
-          <h3 style={SEMI} className="mt-1.5 text-[14px] leading-snug text-[#0E3A20] sm:text-[15px] md:text-base">
-            <Link href={href} className="line-clamp-2 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#067F3A]">
+          <h3 style={SEMI} className="mt-1.5 text-[14px] leading-snug text-[#16432a] sm:text-[15px] md:text-base">
+            <Link href={href} className="line-clamp-2 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1a9e4a]">
               {product.name}
             </Link>
           </h3>
-          <p style={BODY} className="mt-0.5 text-[12px] leading-tight text-[#067F3A] md:text-[13px]">
-            {formatPrice(product.price, product.currency)}
-            {quantity > 0 && size && <span className="text-[#0E3A20]/55"> · Size {size} in cart</span>}
+          <p style={BODY} className="mt-0.5 text-[12px] leading-tight text-[#1a9e4a] md:text-[13px]">
+            {formatPrice(product.price)}
+            {quantity > 0 && size && <span className="text-[#16432a]/55"> · Size {size} in cart</span>}
           </p>
         </div>
-        {product.inStock && (
-          <CartButton
-            productName={product.name}
-            quantity={quantity}
-            onAdd={() => setPickerOpen(true)}
-            onRemove={() => size && cart.remove(product.id, size)}
-          />
-        )}
+        <CartButton
+          productName={product.name}
+          quantity={quantity}
+          onAdd={() => setPickerOpen(true)}
+          onRemove={() => size && cart.remove(product.id, size)}
+        />
       </div>
     </article>
   );

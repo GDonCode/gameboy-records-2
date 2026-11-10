@@ -45,8 +45,7 @@ const MEMBER_ROUTE = /^\/(account|cart|feed|artists|dashboard)(\/|$)/;
 async function gate(req: NextRequest): Promise<NextResponse | null> {
   const password = gatePassword();
   const { pathname, search } = req.nextUrl;
-  // Webhooks come from WooCommerce's servers and are verified by signature instead.
-  if (!password || pathname === '/unlock' || pathname === '/api/unlock' || pathname.startsWith('/api/webhooks/')) return null;
+  if (!password || pathname === '/unlock' || pathname === '/api/unlock') return null;
   if (await hasAccess(req.cookies.get(GATE_COOKIE)?.value, password)) return null;
 
   // API calls get a plain 401 instead of being redirected to an HTML page.

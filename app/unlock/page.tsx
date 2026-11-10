@@ -18,10 +18,10 @@ export default async function UnlockPage({ searchParams }: { searchParams: Promi
   return (
     <main
       className="flex min-h-dvh flex-col items-center justify-center px-6 py-16 text-center"
-      style={{ background: 'linear-gradient(160deg, #0B0A07 0%, #0B0A07 60%, #0B0A07 100%)' }}
+      style={{ background: 'linear-gradient(160deg, #1c2e20 0%, #181f1a 60%, #10160f 100%)' }}
     >
       <NeonHeading kicker="Gameboy Records">Coming soon</NeonHeading>
-      <p className="mt-5 max-w-[380px] text-[15px] leading-relaxed text-[#F5F5F5]/75" style={{ fontFamily: "'Poppins', sans-serif" }}>
+      <p className="mt-5 max-w-[380px] text-[15px] leading-relaxed text-[#e8f5ec]/75" style={{ fontFamily: "'Poppins', sans-serif" }}>
         The new site is in development. Enter the preview password to continue.
       </p>
       <UnlockForm next={next} />

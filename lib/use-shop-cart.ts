@@ -9,7 +9,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { emitCartCount } from '@/lib/cart-sync';
-import { useSession } from 'next-auth/react';
 
 interface CartRow {
   id: string;
@@ -84,14 +83,11 @@ export function useShopCart(maxQuantity: number): ShopCart {
     }
   };
 
-  const { status } = useSession();
   useEffect(() => {
-    // Signed-out visitors have no cart; adding sends them to sign in.
-    if (status !== 'authenticated') return;
     syncFromServer();
-    // Load the cart once signed in; later updates come from the actions below.
+    // Load the cart once on mount; later updates come from the actions below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, []);
 
   const fail = async (key: string, message = 'Couldn’t update your cart. Please try again.') => {
     setError(message);

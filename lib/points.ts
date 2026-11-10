@@ -3,9 +3,8 @@
 // which writes a ledger row and updates users.points_balance atomically and idempotently.
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { SIGNUP_BONUS_POINTS } from '@/lib/club';
 
-export const SIGNUP_BONUS = SIGNUP_BONUS_POINTS;
+export const SIGNUP_BONUS = 40;
 
 /**
  * Awards points once per (userId, reason, refId). Calling it again with the same

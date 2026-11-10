@@ -75,13 +75,13 @@ function CountdownRing({ msLeft }: { msLeft: number }) {
   return (
     <div className="relative h-[84px] w-[84px] flex-shrink-0" role="timer" aria-label={`${seconds} seconds left`}>
       <svg viewBox="0 0 84 84" className="h-full w-full -rotate-90">
-        <circle cx="42" cy="42" r={radius} fill="none" stroke="rgba(56,178,106,0.15)" strokeWidth="6" />
+        <circle cx="42" cy="42" r={radius} fill="none" stroke="rgba(77,255,145,0.15)" strokeWidth="6" />
         <circle
           cx="42"
           cy="42"
           r={radius}
           fill="none"
-          stroke={urgent ? '#F0A39C' : '#38B26A'}
+          stroke={urgent ? '#ff5a5a' : '#4dff91'}
           strokeWidth="6"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -90,7 +90,7 @@ function CountdownRing({ msLeft }: { msLeft: number }) {
       </svg>
       <span
         className={`absolute inset-0 flex items-center justify-center text-3xl ${urgent ? 'animate-pulse' : ''}`}
-        style={{ fontFamily: FONT_BOLD, color: urgent ? '#F0A39C' : '#38B26A' }}
+        style={{ fontFamily: FONT_BOLD, color: urgent ? '#ff5a5a' : '#4dff91' }}
       >
         {seconds}
       </span>
@@ -121,9 +121,9 @@ function Leaderboard({ reloadKey }: { reloadKey: number }) {
   }, [reloadKey]);
 
   return (
-    <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-4">
+    <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-4">
       <h2
-        className="mb-3 text-center text-sm tracking-[0.25em] text-[#38B26A]"
+        className="mb-3 text-center text-sm tracking-[0.25em] text-[#4dff91]"
         style={{ fontFamily: FONT_BOLD }}
       >
         LEADERBOARD
@@ -141,8 +141,8 @@ function Leaderboard({ reloadKey }: { reloadKey: number }) {
               className="flex items-center gap-3 px-3 py-1.5 text-sm"
               style={{
                 fontFamily: FONT,
-                color: e.isYou ? '#15130F' : '#FEFEFA',
-                background: e.isYou ? '#38B26A' : 'transparent',
+                color: e.isYou ? '#0c1510' : '#FEFEFA',
+                background: e.isYou ? '#4dff91' : 'transparent',
               }}
             >
               <span className="w-6 text-right opacity-70">{e.rank}</span>
@@ -168,8 +168,8 @@ const primaryButton: React.CSSProperties = {
   color: '#fff',
   padding: '12px 32px',
   borderRadius: '999px',
-  border: '1px solid #067F3A',
-  background: 'linear-gradient(175deg, #067F3A 0%, #05652E 100%)',
+  border: '1px solid #1a9e4a',
+  background: 'linear-gradient(175deg, #22b85a 0%, #178f42 100%)',
   cursor: 'pointer',
 };
 
@@ -402,7 +402,7 @@ export default function TriviaGame() {
     const signedIn = status === 'authenticated';
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-5 text-center">
+        <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-5 text-center">
           <p className="text-sm leading-relaxed text-white/80" style={{ fontFamily: FONT }}>
             {ROUND_SIZES.length} rounds, {TOTAL_QUESTIONS} questions, 10 seconds each. Every question is read aloud,
             and the clock starts the moment the reading does. Turn your sound on.
@@ -440,8 +440,8 @@ export default function TriviaGame() {
   if (phase === 'roundIntro') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-8 text-center">
-          <h2 className="text-2xl tracking-[0.2em] text-[#38B26A]" style={{ fontFamily: FONT_BOLD }}>
+        <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-8 text-center">
+          <h2 className="text-2xl tracking-[0.2em] text-[#4dff91]" style={{ fontFamily: FONT_BOLD }}>
             {ROUND_TITLES[upcomingRound]}
           </h2>
           <p className="mt-2 text-sm text-white/70" style={{ fontFamily: FONT }}>
@@ -461,7 +461,7 @@ export default function TriviaGame() {
   if (phase === 'error') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-red-500/40 bg-[#15130F]/70 p-6 text-center">
+        <div className="w-full border border-red-500/40 bg-[#0c1510]/70 p-6 text-center">
           <p className="text-sm text-white/80" style={{ fontFamily: FONT }}>{errorMsg}</p>
           <button
             type="button"
@@ -482,8 +482,8 @@ export default function TriviaGame() {
   if (phase === 'final') {
     return (
       <div className={wrap}>
-        <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-6 text-center">
-          <h2 className="text-sm tracking-[0.25em] text-[#38B26A]" style={{ fontFamily: FONT_BOLD }}>FINAL SCORE</h2>
+        <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-6 text-center">
+          <h2 className="text-sm tracking-[0.25em] text-[#4dff91]" style={{ fontFamily: FONT_BOLD }}>FINAL SCORE</h2>
           <p className="mt-2 text-5xl text-[#FEFEFA]" style={{ fontFamily: FONT_BOLD }}>{score}</p>
           <p className="mt-1 text-sm text-white/70" style={{ fontFamily: FONT }}>
             {correctCount} of {TOTAL_QUESTIONS} correct
@@ -505,14 +505,14 @@ export default function TriviaGame() {
     <div className={wrap}>
       <div className="flex w-full items-center justify-between gap-3">
         <div style={{ fontFamily: FONT }}>
-          <div className="text-xs tracking-[0.2em] text-[#38B26A]">{ROUND_TITLES[info.round]}</div>
+          <div className="text-xs tracking-[0.2em] text-[#4dff91]">{ROUND_TITLES[info.round]}</div>
           <div className="text-xs text-white/60">
             Question {info.indexInRound + 1} of {info.roundSize}
           </div>
         </div>
         <CountdownRing msLeft={inFeedback ? 0 : msLeft} />
         <div className="text-right" style={{ fontFamily: FONT }}>
-          <div className="text-xs tracking-[0.2em] text-[#38B26A]">SCORE</div>
+          <div className="text-xs tracking-[0.2em] text-[#4dff91]">SCORE</div>
           <div className="text-xl text-[#FEFEFA]" style={{ fontFamily: FONT_BOLD }}>{score}</div>
           <button
             type="button"
@@ -525,13 +525,13 @@ export default function TriviaGame() {
         </div>
       </div>
 
-      <div className="w-full border border-[#067F3A]/30 bg-[#15130F]/70 p-5">
+      <div className="w-full border border-[#1a9e4a]/30 bg-[#0c1510]/70 p-5">
         {question.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={question.image}
             alt="Music video screenshot"
-            className="mx-auto mb-4 w-full max-w-[420px] border border-[#067F3A]/40 object-cover"
+            className="mx-auto mb-4 w-full max-w-[420px] border border-[#1a9e4a]/40 object-cover"
             style={{ aspectRatio: '4 / 3' }}
           />
         )}
@@ -541,7 +541,7 @@ export default function TriviaGame() {
         {inFeedback && (
           <p
             className="mt-3 text-center text-sm"
-            style={{ fontFamily: FONT_BOLD, color: result.correct ? '#38B26A' : '#F0A39C' }}
+            style={{ fontFamily: FONT_BOLD, color: result.correct ? '#4dff91' : '#ff5a5a' }}
           >
             {result.timedOut || chosen.length === 0
               ? 'TIME’S UP'
@@ -558,23 +558,23 @@ export default function TriviaGame() {
           const correctPos = result ? result.correctChoice.indexOf(option.id) : -1;
           const chosenPos = chosen.indexOf(option.id);
 
-          let border = 'rgba(6,127,58,0.4)';
-          let background = 'rgba(21,19,15,0.8)';
+          let border = 'rgba(26,158,74,0.4)';
+          let background = 'rgba(12,21,16,0.8)';
           if (inFeedback) {
             if (isOrder) {
               const right = chosenPos !== -1 && chosenPos === correctPos;
-              border = right ? '#38B26A' : '#F0A39C';
-              background = right ? 'rgba(56,178,106,0.15)' : 'rgba(240,163,156,0.12)';
+              border = right ? '#4dff91' : '#ff5a5a';
+              background = right ? 'rgba(77,255,145,0.15)' : 'rgba(255,90,90,0.12)';
             } else if (correctPos !== -1) {
-              border = '#38B26A';
-              background = 'rgba(56,178,106,0.18)';
+              border = '#4dff91';
+              background = 'rgba(77,255,145,0.18)';
             } else if (chosenPos !== -1) {
-              border = '#F0A39C';
-              background = 'rgba(240,163,156,0.12)';
+              border = '#ff5a5a';
+              background = 'rgba(255,90,90,0.12)';
             }
           } else if (orderPos !== -1) {
-            border = '#38B26A';
-            background = 'rgba(56,178,106,0.1)';
+            border = '#4dff91';
+            background = 'rgba(77,255,145,0.1)';
           }
 
           const badge = inFeedback && isOrder ? correctPos : orderPos;
@@ -595,8 +595,8 @@ export default function TriviaGame() {
               }}
             >
               <span
-                className="flex h-7 w-7 flex-shrink-0 items-center justify-center text-xs text-[#15130F]"
-                style={{ background: '#38B26A', fontFamily: FONT_BOLD }}
+                className="flex h-7 w-7 flex-shrink-0 items-center justify-center text-xs text-[#0c1510]"
+                style={{ background: '#4dff91', fontFamily: FONT_BOLD }}
               >
                 {badge >= 0 ? badge + 1 : LETTERS[i]}
               </span>

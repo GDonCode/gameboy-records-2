@@ -68,8 +68,8 @@ export function CartButton({
   const fillCls =
     state === 'removed' ? 'bg-[#a42a2a] border-[#a42a2a]'
     : state === 'added'
-      ? `bg-[#067F3A] border-[#067F3A] ${armed ? 'hover:bg-[#a42a2a] hover:border-[#a42a2a] focus-visible:bg-[#a42a2a] focus-visible:border-[#a42a2a]' : ''}`
-      : 'bg-white border-[#067F3A] border-[0.09rem] hover:bg-[#e8f5ec]';
+      ? `bg-[#1a9e4a] border-[#1a9e4a] ${armed ? 'hover:bg-[#a42a2a] hover:border-[#a42a2a] focus-visible:bg-[#a42a2a] focus-visible:border-[#a42a2a]' : ''}`
+      : 'bg-white border-[#1a9e4a] border-[0.09rem] hover:bg-[#e8f5ec]';
 
   // neutral: visible only in the neutral state
   const neutralCls = `${iconBase} ${state === 'neutral' ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-45'}`;
@@ -103,12 +103,12 @@ export function CartButton({
       onClick={handleClick}
       onMouseLeave={() => setArmed(true)}
       onBlur={() => setArmed(true)}
-      className={`group/cart relative h-10 w-10 md:h-11 md:w-11 shrink-0 rounded-full border-2 ${fillCls} shadow-md cursor-pointer transition-all duration-300 ease-out active:scale-90 disabled:cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#067F3A] ${pop && state === 'added' ? 'animate-[cart-pop_350ms_ease-out]' : ''}`}
+      className={`group/cart relative h-10 w-10 md:h-11 md:w-11 shrink-0 rounded-full border-2 ${fillCls} shadow-md cursor-pointer transition-all duration-300 ease-out active:scale-90 disabled:cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1a9e4a] ${pop && state === 'added' ? 'animate-[cart-pop_350ms_ease-out]' : ''}`}
     >
       <span aria-live="polite" className="sr-only">{label}</span>
       {/* neutral: cart with plus */}
       <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className={neutralCls}>
-        <path fill="#067F3A" d="M0 72C0 58.7 10.7 48 24 48L69.3 48C96.4 48 119.6 67.4 124.4 94L124.8 96L537.5 96C557.5 96 572.6 114.2 568.9 133.9L537.8 299.8C532.1 330.1 505.7 352 474.9 352L171.3 352L176.4 380.3C178.5 391.7 188.4 400 200 400L456 400C469.3 400 480 410.7 480 424C480 437.3 469.3 448 456 448L200.1 448C165.3 448 135.5 423.1 129.3 388.9L77.2 102.6C76.5 98.8 73.2 96 69.3 96L24 96C10.7 96 0 85.3 0 72zM160 528C160 501.5 181.5 480 208 480C234.5 480 256 501.5 256 528C256 554.5 234.5 576 208 576C181.5 576 160 554.5 160 528zM384 528C384 501.5 405.5 480 432 480C458.5 480 480 501.5 480 528C480 554.5 458.5 576 432 576C405.5 576 384 554.5 384 528zM336 142.4C322.7 142.4 312 153.1 312 166.4L312 200L278.4 200C265.1 200 254.4 210.7 254.4 224C254.4 237.3 265.1 248 278.4 248L312 248L312 281.6C312 294.9 322.7 305.6 336 305.6C349.3 305.6 360 294.9 360 281.6L360 248L393.6 248C406.9 248 417.6 237.3 417.6 224C417.6 210.7 406.9 200 393.6 200L360 200L360 166.4C360 153.1 349.3 142.4 336 142.4z" />
+        <path fill="#1a9e4a" d="M0 72C0 58.7 10.7 48 24 48L69.3 48C96.4 48 119.6 67.4 124.4 94L124.8 96L537.5 96C557.5 96 572.6 114.2 568.9 133.9L537.8 299.8C532.1 330.1 505.7 352 474.9 352L171.3 352L176.4 380.3C178.5 391.7 188.4 400 200 400L456 400C469.3 400 480 410.7 480 424C480 437.3 469.3 448 456 448L200.1 448C165.3 448 135.5 423.1 129.3 388.9L77.2 102.6C76.5 98.8 73.2 96 69.3 96L24 96C10.7 96 0 85.3 0 72zM160 528C160 501.5 181.5 480 208 480C234.5 480 256 501.5 256 528C256 554.5 234.5 576 208 576C181.5 576 160 554.5 160 528zM384 528C384 501.5 405.5 480 432 480C458.5 480 480 501.5 480 528C480 554.5 458.5 576 432 576C405.5 576 384 554.5 384 528zM336 142.4C322.7 142.4 312 153.1 312 166.4L312 200L278.4 200C265.1 200 254.4 210.7 254.4 224C254.4 237.3 265.1 248 278.4 248L312 248L312 281.6C312 294.9 322.7 305.6 336 305.6C349.3 305.6 360 294.9 360 281.6L360 248L393.6 248C406.9 248 417.6 237.3 417.6 224C417.6 210.7 406.9 200 393.6 200L360 200L360 166.4C360 153.1 349.3 142.4 336 142.4z" />
       </svg>
       {/* added: check */}
       <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className={addedCls}>
@@ -144,7 +144,7 @@ export function CartStepper({
   const stop = (e: MouseEvent) => { e.preventDefault(); e.stopPropagation(); };
 
   const stepBtn =
-    'flex h-9 w-9 items-center justify-center rounded-full text-[#067F3A] cursor-pointer transition-colors duration-150 hover:bg-[#e8f5ec] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#067F3A]';
+    'flex h-9 w-9 items-center justify-center rounded-full text-[#1a9e4a] cursor-pointer transition-colors duration-150 hover:bg-[#e8f5ec] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1a9e4a]';
 
   return (
     <div
@@ -152,7 +152,7 @@ export function CartStepper({
       aria-label={`${productName} quantity`}
       aria-hidden={!open}
       onClick={stop}
-      className={`absolute bottom-3 right-3 z-10 flex h-11 items-center rounded-full border-[0.09rem] border-[#067F3A] bg-white/95 px-1 shadow-md transition-all duration-300 ease-out ${open ? 'visible opacity-100 translate-y-0' : 'invisible opacity-0 translate-y-2'}`}
+      className={`absolute bottom-3 right-3 z-10 flex h-11 items-center rounded-full border-[0.09rem] border-[#1a9e4a] bg-white/95 px-1 shadow-md transition-all duration-300 ease-out ${open ? 'visible opacity-100 translate-y-0' : 'invisible opacity-0 translate-y-2'}`}
     >
       <button
         type="button"
@@ -166,7 +166,7 @@ export function CartStepper({
           <path d="M5 12h14" />
         </svg>
       </button>
-      <span aria-live="polite" style={{ fontFamily: "'Poppins', monospace" }} className="min-w-6 px-1 text-center text-[15px] font-semibold tabular-nums text-[#0E3A20]">
+      <span aria-live="polite" style={{ fontFamily: "'Poppins', monospace" }} className="min-w-6 px-1 text-center text-[15px] font-semibold tabular-nums text-[#16432a]">
         {shown}
       </span>
       <button
@@ -217,12 +217,12 @@ export function SizePicker({
       aria-label={`Choose a size for ${productName}`}
       aria-hidden={!open}
       onClick={stop}
-      className={`absolute inset-x-2 bottom-2 z-20 rounded-[10px] border border-[#067F3A]/40 bg-white/95 p-3 shadow-lg backdrop-blur transition-all duration-200 ease-out ${
+      className={`absolute inset-x-2 bottom-2 z-20 rounded-[10px] border border-[#1a9e4a]/40 bg-white/95 p-3 shadow-lg backdrop-blur transition-all duration-200 ease-out ${
         open ? 'visible opacity-100 translate-y-0' : 'invisible opacity-0 translate-y-2'
       }`}
     >
       <div className="mb-2 flex items-center justify-between">
-        <span style={{ fontFamily: "'Poppins_semibold', sans-serif" }} className="text-[11px] uppercase tracking-[0.16em] text-[#0E3A20]">
+        <span style={{ fontFamily: "'Poppins_semibold', sans-serif" }} className="text-[11px] uppercase tracking-[0.16em] text-[#16432a]">
           Choose a size
         </span>
         <button
@@ -230,7 +230,7 @@ export function SizePicker({
           onClick={onClose}
           tabIndex={open ? 0 : -1}
           aria-label="Close size picker"
-          className="flex h-7 w-7 items-center justify-center rounded-full text-[#0E3A20]/60 hover:bg-[#0E3A20]/5 hover:text-[#0E3A20] cursor-pointer"
+          className="flex h-7 w-7 items-center justify-center rounded-full text-[#16432a]/60 hover:bg-[#16432a]/5 hover:text-[#16432a] cursor-pointer"
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="h-3.5 w-3.5">
             <path d="M6 6l12 12M18 6L6 18" />
@@ -247,7 +247,7 @@ export function SizePicker({
             onClick={() => onPick(size)}
             aria-label={`Add size ${size} to cart`}
             style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
-            className="h-9 rounded-[6px] border border-[#067F3A]/40 text-[13px] text-[#0E3A20] transition-colors hover:border-[#067F3A] hover:bg-[#067F3A] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#067F3A] cursor-pointer"
+            className="h-9 rounded-[6px] border border-[#1a9e4a]/40 text-[13px] text-[#16432a] transition-colors hover:border-[#1a9e4a] hover:bg-[#1a9e4a] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1a9e4a] cursor-pointer"
           >
             {size}
           </button>

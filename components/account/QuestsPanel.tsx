@@ -13,7 +13,7 @@ const BODY = { fontFamily: "'Poppins', sans-serif" };
 const SEMI = { fontFamily: "'Poppins_semibold', sans-serif" };
 
 const BUTTON_CLASS =
-  'px-4 py-2 rounded-[6px] bg-[#067F3A] text-white text-[0.8em] tracking-[0.1em] hover:bg-[#05652E] transition-colors disabled:opacity-60 cursor-pointer';
+  'px-4 py-2 rounded-[6px] bg-[#1a9e4a] text-white text-[0.8em] tracking-[0.1em] hover:bg-[#149262] transition-colors disabled:opacity-60 cursor-pointer';
 
 export default function QuestsPanel({
   quests,
@@ -67,7 +67,7 @@ export default function QuestsPanel({
       </div>
 
       {error && (
-        <p className="text-[#F0A39C] text-[0.85em]" style={BODY}>
+        <p className="text-[#ff6b6b] text-[0.85em]" style={BODY}>
           {error}
         </p>
       )}
@@ -77,12 +77,12 @@ export default function QuestsPanel({
           <li
             key={q.id}
             className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 rounded-[10px] border px-4 py-3 ${
-              q.done ? 'border-white/10 bg-white/[0.02] opacity-60' : 'border-[#067F3A]/40 bg-[#067F3A]/5'
+              q.done ? 'border-white/10 bg-white/[0.02] opacity-60' : 'border-[#1a9e4a]/40 bg-[#1a9e4a]/5'
             }`}
           >
             <span
               className={`flex items-center justify-center w-9 h-9 flex-shrink-0 rounded-full border-2 text-[0.75em] ${
-                q.done ? 'bg-[#067F3A] border-[#38B26A] text-white' : 'border-white/20 text-white/50'
+                q.done ? 'bg-[#1a9e4a] border-[#4dff91] text-white' : 'border-white/20 text-white/50'
               }`}
               style={SEMI}
               aria-hidden="true"
@@ -94,7 +94,7 @@ export default function QuestsPanel({
               <p className="text-white" style={SEMI}>
                 {q.title}
                 {q.cadence === 'daily' && (
-                  <span className="ml-2 text-[0.7em] tracking-[0.15em] text-[#38B26A]">DAILY</span>
+                  <span className="ml-2 text-[0.7em] tracking-[0.15em] text-[#4dff91]">DAILY</span>
                 )}
               </p>
               <p className="text-[0.85em] text-white/60" style={BODY}>
@@ -102,7 +102,7 @@ export default function QuestsPanel({
               </p>
             </div>
 
-            <span className="text-[0.85em] text-[#38B26A]" style={SEMI}>
+            <span className="text-[0.85em] text-[#4dff91]" style={SEMI}>
               {q.done ? (q.cadence === 'daily' ? 'DONE TODAY' : 'DONE') : `+${q.points} PTS`}
             </span>
 
@@ -127,7 +127,7 @@ export default function QuestsPanel({
                     aria-label={`Listen on ${p.label}`}
                     title={p.label}
                     onClick={() => recordSongStream(p.id).then((ok) => ok && router.refresh())}
-                    className="flex items-center justify-center w-10 h-10 rounded-[6px] bg-[#067F3A] hover:bg-[#05652E] transition-colors"
+                    className="flex items-center justify-center w-10 h-10 rounded-[6px] bg-[#1a9e4a] hover:bg-[#149262] transition-colors"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.icon} alt="" className="w-5 h-5 object-contain" />

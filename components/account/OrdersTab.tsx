@@ -22,10 +22,10 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
 };
 
 const STATUS_CLASS: Record<OrderStatus, string> = {
-  processing: 'bg-[#E2BA0A]/15 text-[#E2BA0A] border-[#E2BA0A]/40',
-  shipped: 'bg-[#38B26A]/15 text-[#38B26A] border-[#38B26A]/40',
+  processing: 'bg-[#f5c542]/15 text-[#f5c542] border-[#f5c542]/40',
+  shipped: 'bg-[#4dff91]/15 text-[#4dff91] border-[#4dff91]/40',
   delivered: 'bg-white/10 text-white/80 border-white/20',
-  cancelled: 'bg-[#F0A39C]/10 text-[#F0A39C] border-[#F0A39C]/40',
+  cancelled: 'bg-[#ff6b6b]/10 text-[#ff6b6b] border-[#ff6b6b]/40',
   returned: 'bg-white/10 text-white/80 border-white/20',
 };
 
@@ -34,8 +34,8 @@ function OrderCard({ order }: { order: Order }) {
   const itemCount = order.items.reduce((n, i) => n + i.quantity, 0);
 
   return (
-    <article className="bg-[#15130F] border border-[rgba(6,127,58,0.3)] rounded-[12px] overflow-hidden" style={BODY}>
-      <header className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-[rgba(6,127,58,0.2)]">
+    <article className="bg-[#0f1a12] border border-[rgba(26,158,74,0.3)] rounded-[12px] overflow-hidden" style={BODY}>
+      <header className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-[rgba(26,158,74,0.2)]">
         <div className="flex flex-col">
           <span className="text-white" style={MONO}>Order #{order.number}</span>
           <span className="text-[0.8em] text-white/60">
@@ -50,21 +50,21 @@ function OrderCard({ order }: { order: Order }) {
       <ul className="flex flex-col divide-y divide-white/5">
         {order.items.map((item) => (
           <li key={`${item.product_id}-${item.size}`} className="flex items-center gap-4 px-5 py-3">
-            <Link href={`/shop/${item.slug}`} className="relative w-14 h-14 flex-shrink-0 rounded-[8px] overflow-hidden bg-[#EAEAEA]">
+            <Link href={`/shop/${item.slug}`} className="relative w-14 h-14 flex-shrink-0 rounded-[8px] overflow-hidden bg-[#F6F6F4]">
               {item.image && <Image src={item.image} alt={item.name} fill className="object-cover" />}
             </Link>
             <div className="flex flex-col min-w-0 flex-1">
               <Link href={`/shop/${item.slug}`} className="text-white truncate hover:underline">{item.name}</Link>
               <span className="text-[0.8em] text-white/60">Size {item.size} · Qty {item.quantity}</span>
             </div>
-            <span className="text-[#38B26A] text-[0.9em]">${(item.price * item.quantity).toFixed(2)}</span>
+            <span className="text-[#4dff91] text-[0.9em]">${(item.price * item.quantity).toFixed(2)}</span>
           </li>
         ))}
       </ul>
 
       {order.tracking_url && order.status === 'shipped' && (
-        <footer className="px-5 py-3 border-t border-[rgba(6,127,58,0.2)]">
-          <a href={order.tracking_url} target="_blank" rel="noopener noreferrer" className="text-[0.85em] text-[#38B26A] hover:underline">
+        <footer className="px-5 py-3 border-t border-[rgba(26,158,74,0.2)]">
+          <a href={order.tracking_url} target="_blank" rel="noopener noreferrer" className="text-[0.85em] text-[#4dff91] hover:underline">
             Track package →
           </a>
         </footer>
@@ -100,7 +100,7 @@ export default function OrdersTab({ orders }: { orders: Order[] }) {
               aria-selected={active}
               onClick={() => setView(v.value)}
               className={`flex items-center gap-2 px-4 py-2 rounded-[8px] text-[0.85em] tracking-[0.08em] uppercase cursor-pointer transition-colors ${
-                active ? 'bg-[#067F3A] text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                active ? 'bg-[#1a9e4a] text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
               }`}
               style={MONO}
             >
@@ -115,11 +115,11 @@ export default function OrdersTab({ orders }: { orders: Order[] }) {
 
       {shown.length === 0 ? (
         <Panel className="flex flex-col items-center text-center gap-4 py-14">
-          <span className="flex items-center justify-center w-16 h-16 rounded-full bg-[#067F3A]/15 border border-[#067F3A]/40">
+          <span className="flex items-center justify-center w-16 h-16 rounded-full bg-[#1a9e4a]/15 border border-[#1a9e4a]/40">
             {view === 'current' ? (
-              <Package className="w-7 h-7 text-[#38B26A]" strokeWidth={2} />
+              <Package className="w-7 h-7 text-[#4dff91]" strokeWidth={2} />
             ) : (
-              <Archive className="w-7 h-7 text-[#38B26A]" strokeWidth={2} />
+              <Archive className="w-7 h-7 text-[#4dff91]" strokeWidth={2} />
             )}
           </span>
           <p className="max-w-[360px] text-[0.95em] text-white/70" style={BODY}>
@@ -130,7 +130,7 @@ export default function OrdersTab({ orders }: { orders: Order[] }) {
           {view === 'current' && (
             <Link
               href="/shop"
-              className="px-5 py-2.5 rounded-[6px] bg-[#067F3A] text-white text-[0.85em] tracking-[0.1em] hover:bg-[#05652E] transition-colors"
+              className="px-5 py-2.5 rounded-[6px] bg-[#1a9e4a] text-white text-[0.85em] tracking-[0.1em] hover:bg-[#149262] transition-colors"
               style={BODY}
             >
               BROWSE THE SHOP

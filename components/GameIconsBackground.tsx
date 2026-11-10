@@ -15,7 +15,7 @@ interface GameIconsBackgroundProps {
   className?: string;
   /** true = position:fixed (covers viewport). false = position:absolute (fills nearest position:relative ancestor). Default: false. */
   fixed?: boolean;
-  /** Icon stroke color. Default: brand green (#067F3A). */
+  /** Icon stroke color. Default: brand green. */
   color?: string;
   /** Multiplier for icon count per layer. Default: 1. */
   density?: number;
@@ -180,7 +180,7 @@ function buildIcons(width: number, height: number, layerCount: number, density: 
 export default function GameIconsBackground({
   className,
   fixed = false,
-  color = '#067F3A',
+  color = '#1a9e4a',
   density = 1,
   layerCount = 3,
   opacity = 1,

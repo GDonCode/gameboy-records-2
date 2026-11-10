@@ -5,15 +5,13 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useCartCount } from '@/lib/cart-sync';
-import { LOGO_URL } from '@/lib/site';
-
 function Corners() {
   return (
     <>
-      <span className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px] border-[#067F3A] pointer-events-none z-50" />
-      <span className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px] border-[#067F3A] pointer-events-none z-50" />
-      <span className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px] border-[#067F3A] pointer-events-none z-50" />
-      <span className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#067F3A] pointer-events-none z-50" />
+      <span className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px] border-[#1a9e4a] pointer-events-none z-50" />
+      <span className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px] border-[#1a9e4a] pointer-events-none z-50" />
+      <span className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px] border-[#1a9e4a] pointer-events-none z-50" />
+      <span className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#1a9e4a] pointer-events-none z-50" />
     </>
   );
 }
@@ -28,19 +26,19 @@ function DPad({ className }: { className: string }) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className={`absolute w-6 h-6 pointer-events-none drop-shadow-[0_1.5px_1px_rgba(11,10,7,0.45)] ${className}`}
+      className={`absolute w-6 h-6 pointer-events-none drop-shadow-[0_1.5px_1px_rgba(14,40,24,0.45)] ${className}`}
       aria-hidden="true"
     >
       <defs>
         {/* Body: lit from the top-left */}
         <linearGradient id={`${id}-body`} gradientUnits="userSpaceOnUse" x1="4" y1="2" x2="20" y2="22">
-          <stop offset="0" stopColor="#38B26A" />
-          <stop offset="0.45" stopColor="#067F3A" />
-          <stop offset="1" stopColor="#045A29" />
+          <stop offset="0" stopColor="#3fcf74" />
+          <stop offset="0.45" stopColor="#1fa851" />
+          <stop offset="1" stopColor="#127535" />
         </linearGradient>
         {/* Center pivot: concave dimple, shaded opposite to the body */}
         <linearGradient id={`${id}-dimple`} gradientUnits="userSpaceOnUse" x1="12" y1="9.2" x2="12" y2="14.8">
-          <stop offset="0" stopColor="#044F24" />
+          <stop offset="0" stopColor="#0f6a30" />
           <stop offset="1" stopColor="#34c56b" />
         </linearGradient>
         <linearGradient id={`${id}-shine`} x1="0" y1="0" x2="0" y2="1">
@@ -48,7 +46,7 @@ function DPad({ className }: { className: string }) {
           <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <g fill="#062C16">
+      <g fill="#0c3a1f">
         <rect x="7.6" y="0.6" width="8.8" height="22.8" rx="1.7" />
         <rect x="0.6" y="7.6" width="22.8" height="8.8" rx="1.7" />
       </g>
@@ -59,16 +57,17 @@ function DPad({ className }: { className: string }) {
       <rect x="8.3" y="1.3" width="7.4" height="5" rx="1.1" fill={`url(#${id}-shine)`} />
       <circle cx="12" cy="12" r="2.8" fill={`url(#${id}-dimple)`} />
       {/* Arrows: solid white, with a dark offset copy underneath for an embossed look */}
-      <g fill="#062C16" fillOpacity={0.45} transform="translate(0 0.35)">
+      <g fill="#0c3a1f" fillOpacity={0.45} transform="translate(0 0.35)">
         {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
       </g>
-      <g fill="#E2BA0A">
+      <g fill="#fff">
         {DPAD_ARROWS.map((d) => <path key={d} d={d} />)}
       </g>
     </svg>
   );
 }
 
+const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
 
 export default function Header() {
   const pathname = usePathname();
@@ -119,13 +118,13 @@ export default function Header() {
     {/* Tap-outside backdrop for the mobile menu */}
     {menuOpen && (
       <div
-        className="fixed inset-0 z-[35] lg:hidden"
+        className="fixed inset-0 z-[35] md:hidden"
         onClick={() => setMenuOpen(false)}
         aria-hidden="true"
       />
     )}
     <header
-      className={`on-light sticky top-0 left-0 right-0 flex-shrink-0 bg-[#F5F5F5] text-[#0B0A07] z-40 transition-transform duration-300 ease-in-out lg:translate-y-0 ${
+      className={`fixed top-0 left-0 right-0 md:relative md:sticky md:top-0 flex-shrink-0 bg-[#EDEAE0] z-40 transition-transform duration-300 ease-in-out md:translate-y-0 ${
         hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
       }`}
     >
@@ -135,32 +134,30 @@ export default function Header() {
         <Link href="/" className="flex items-center self-center">
           <div className="flex items-center self-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={LOGO_URL} alt="Gameboy Records — home" className="h-[36px] md:h-[48px] w-auto block" />
+            <img src={`${MEDIA_BASE}/gameboy-logo-removebg-preview.png`} alt="Gameboy Records" className="h-[36px] md:h-[48px] w-auto block" />
           </div>
         </Link>
 
                 {/* Nav — desktop only; mobile uses the hamburger menu below */}
         {/* Unified pill nav container, styled after the Aurelia Dental header nav pattern */}
-        <nav aria-label="Main" className="hidden lg:flex relative items-center self-center md:ml-auto md:mr-8">
+        <nav className="hidden md:flex relative items-center self-center md:ml-auto md:mr-8">
           <DPad className="top-0 left-0 -translate-x-1/2 -translate-y-1/2 z-10" />
           <DPad className="top-0 right-0 translate-x-1/2 -translate-y-1/2 z-10" />
           <ul
-            className="flex items-center gap-1 bg-[#067F3A]/[0.1] border border-[#067F3A]/20 px-3 py-2"
+            className="flex items-center gap-1 bg-[#1a9e4a]/[0.1] border border-[#1a9e4a]/20 px-3 py-2"
           >
             {[
               { href: '/shows', label: 'SHOWS' },
               { href: '/shop', label: 'SHOP' },
-              { href: '/music', label: 'MUSIC' },
-              { href: '/about', label: 'ABOUT' },
+              { href: '/discography', label: 'DISCOGRAPHY' },
             ].map((item) => (
               <li key={item.href}>
-                <Link
+                <a 
                   href={item.href}
-                  aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
-                  className={`zoom-content inline-block px-5 py-2 rounded-md cursor-pointer transition-colors duration-200 ${
-                    pathname.startsWith(item.href)
-                      ? 'bg-[#067F3A] text-white font-bold'
-                      : 'text-[#0E3A20]'
+                  className={`inline-block px-5 py-2 rounded-md cursor-pointer transition-all duration-200 ${
+                    pathname === item.href
+                      ? 'bg-[#1a9e4a] text-white font-bold'
+                      : 'text-[#16432a] hover:scale-110'
                   }`}
                   style={{
                     fontFamily: "'Poppins_semibold', monospace",
@@ -168,8 +165,8 @@ export default function Header() {
                     letterSpacing: '0.05em',
                   }}
                 >
-                  <span className="inline-block">{item.label}</span>
-                </Link>
+                  {item.label}
+                </a>
               </li>
             ))}
 
@@ -177,11 +174,10 @@ export default function Header() {
             <li className="relative group">
               <button
                 type="button"
-                aria-haspopup="true"
-                className={`zoom-content inline-block px-5 py-2 rounded-md cursor-pointer transition-colors duration-200 ${
+                className={`inline-block px-5 py-2 rounded-md cursor-pointer transition-all duration-200 ${
                   pathname === '/karaoke' || pathname === '/trivia'
-                    ? 'bg-[#067F3A] text-white font-bold'
-                    : 'text-[#0E3A20]'
+                    ? 'bg-[#1a9e4a] text-white font-bold'
+                    : 'text-[#16432a] hover:scale-110'
                 }`}
                 style={{
                   fontFamily: "'Poppins_semibold', monospace",
@@ -207,20 +203,19 @@ export default function Header() {
               </button>
 
               <ul
-                className="absolute left-0 top-full hidden group-hover:flex group-focus-within:flex flex-col min-w-[160px] bg-[#F5F5F5] border border-[#067F3A]/20 shadow-lg z-50"
+                className="absolute left-0 top-full hidden group-hover:flex flex-col min-w-[160px] bg-[#fef8f3] border border-[#1a9e4a]/20 shadow-lg z-50"
               >
                 {[
                   { href: '/karaoke', label: 'KARAOKE' },
                   { href: '/trivia', label: 'TRIVIA' },
                 ].map((item) => (
                   <li key={item.href}>
-                    <Link
+                    <a
                       href={item.href}
-                      aria-current={pathname === item.href ? 'page' : undefined}
                       className={`group/item block px-5 py-2 whitespace-nowrap transition-all duration-200 ${
                         pathname === item.href
-                          ? 'bg-[#067F3A] text-white font-bold'
-                          : 'bg-[#067F3A]/10 text-[#0E3A20]'
+                          ? 'bg-[#1a9e4a] text-white font-bold'
+                          : 'bg-[#1a9e4a]/10 text-[#16432a]'
                       }`}
                       style={{
                         fontFamily: "'Poppins_semibold', monospace",
@@ -236,7 +231,7 @@ export default function Header() {
                       >
                         {item.label}
                       </span>
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -245,11 +240,11 @@ export default function Header() {
         </nav>
 
         {/* Account / Cart — desktop only placeholders, sized for future profile photo avatar */}
-        <div className="hidden lg:flex items-center self-center gap-3 flex-shrink-0">
+        <div className="hidden md:flex items-center self-center gap-3 flex-shrink-0">
                     <Link
             href={session ? '/account' : '/account/login'}
-            aria-label={session ? 'Your account' : 'Sign in or join the Playaz Club'}
-            className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white font-bold transition"
+            aria-label="Account"
+            className="group cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white font-bold transition"
           >
             <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-120">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-6 h-6 flex-shrink-0 block" fill="currentColor">
@@ -264,8 +259,8 @@ export default function Header() {
 
           <Link
             href="/cart"
-            aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart'}
-            className="group relative cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white font-bold transition"
+            aria-label="Cart"
+            className="group relative cursor-pointer inline-flex items-center h-11 px-5 gap-2 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white font-bold transition"
           >
             <span className="inline-flex items-center gap-2 transition-transform duration-200 group-hover:scale-120">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" className="w-6 h-6 flex-shrink-0 block" fill="currentColor">
@@ -273,7 +268,7 @@ export default function Header() {
               </svg>
             </span>
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-[#E2BA0A] text-[#0B0A07] text-xs font-bold leading-none">
+              <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold leading-none">
                 {cartCount}
               </span>
             )}
@@ -287,7 +282,7 @@ export default function Header() {
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
-          className="lg:hidden relative inline-flex items-center justify-center self-center w-11 h-11 rounded-[6px] flex-shrink-0 bg-[#067F3A] text-white"
+          className="md:hidden relative inline-flex items-center justify-center self-center w-11 h-11 rounded-[6px] flex-shrink-0 bg-[#1a9e4a] text-white"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-6 h-6 block" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
             {menuOpen ? (
@@ -297,7 +292,7 @@ export default function Header() {
             )}
           </svg>
           {!menuOpen && cartCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-[#E2BA0A]" />
+            <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-red-600" />
           )}
         </button>
       </div>
@@ -307,22 +302,21 @@ export default function Header() {
         <nav
           id="mobile-menu"
           aria-label="Mobile"
-                    className="lg:hidden absolute top-full right-0 w-max min-w-[220px] bg-[#F5F5F5] border-t border-l border-b border-[#067F3A]/20 rounded-bl-[6px] shadow-lg"
+                    className="md:hidden absolute top-full right-0 w-max min-w-[220px] bg-[#EDEAE0] border-t border-l border-b border-[#1a9e4a]/20 rounded-bl-[6px] shadow-lg"
         >
           <ul className="flex flex-col py-2">
             {[
               { href: '/', label: 'HOME', viewBox: '0 0 640 640', d: 'M341.8 72.6C329.5 61.2 310.5 61.2 298.3 72.6L74.3 280.6C64.7 289.6 61.5 303.5 66.3 315.7C71.1 327.9 82.8 336 96 336L112 336L112 512C112 547.3 140.7 576 176 576L464 576C499.3 576 528 547.3 528 512L528 336L544 336C557.2 336 569 327.9 573.8 315.7C578.6 303.5 575.4 289.5 565.8 280.6L341.8 72.6zM304 384L336 384C362.5 384 384 405.5 384 432L384 528L256 528L256 432C256 405.5 277.5 384 304 384z' },
               { href: '/shows', label: 'SHOWS', viewBox: '0 0 640 640', d: 'M224 64C241.7 64 256 78.3 256 96L256 128L384 128L384 96C384 78.3 398.3 64 416 64C433.7 64 448 78.3 448 96L448 128L480 128C515.3 128 544 156.7 544 192L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 192C96 156.7 124.7 128 160 128L192 128L192 96C192 78.3 206.3 64 224 64zM160 304L160 336C160 344.8 167.2 352 176 352L208 352C216.8 352 224 344.8 224 336L224 304C224 295.2 216.8 288 208 288L176 288C167.2 288 160 295.2 160 304zM288 304L288 336C288 344.8 295.2 352 304 352L336 352C344.8 352 352 344.8 352 336L352 304C352 295.2 344.8 288 336 288L304 288C295.2 288 288 295.2 288 304zM432 288C423.2 288 416 295.2 416 304L416 336C416 344.8 423.2 352 432 352L464 352C472.8 352 480 344.8 480 336L480 304C480 295.2 472.8 288 464 288L432 288zM160 432L160 464C160 472.8 167.2 480 176 480L208 480C216.8 480 224 472.8 224 464L224 432C224 423.2 216.8 416 208 416L176 416C167.2 416 160 423.2 160 432zM304 416C295.2 416 288 423.2 288 432L288 464C288 472.8 295.2 480 304 480L336 480C344.8 480 352 472.8 352 464L352 432C352 423.2 344.8 416 336 416L304 416zM416 432L416 464C416 472.8 423.2 480 432 480L464 480C472.8 480 480 472.8 480 464L480 432C480 423.2 472.8 416 464 416L432 416C423.2 416 416 423.2 416 432z' },
               { href: '/shop', label: 'SHOP', viewBox: '0 0 640 512', d: 'M211.8 0c7.8 0 14.3 5.7 16.7 13.2C240.8 51.9 277.1 80 320 80s79.2-28.1 91.5-66.8C413.9 5.7 420.4 0 428.2 0h12.6c22.5 0 44.2 7.9 61.5 22.3L628.5 127.4c6.6 5.5 10.7 13.5 11.4 22.1s-2.1 17.1-7.8 23.6l-56 64c-11.4 13.1-31.2 14.6-44.6 3.5L480 197.7V448c0 35.3-28.7 64-64 64H224c-35.3 0-64-28.7-64-64V197.7l-51.5 42.9c-13.3 11.1-33.1 9.6-44.6-3.5l-56-64c-5.7-6.5-8.5-15-7.8-23.6s4.8-16.6 11.4-22.1L137.7 22.3C155 7.9 176.7 0 199.2 0h12.6z' },
-              { href: '/music', label: 'MUSIC', viewBox: '0 0 512 512', d: 'M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7v72V368c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V147L192 223.8V432c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V200 128c0-14.1 9.3-26.6 22.8-30.7l320-96c9.7-2.9 20.2-1.1 28.3 4.9z' },
-              { href: '/about', label: 'ABOUT', viewBox: '0 0 448 512', d: 'M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z' },
+              { href: '/discography', label: 'DISCOGRAPHY', viewBox: '0 0 24 24', d: 'M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20zM12 9a3 3 0 1 1 0 6 3 3 0 1 1 0-6z' },
               { href: '/karaoke', label: 'KARAOKE', heading: 'VIBES', viewBox: '0 0 640 640', d: 'M320 64C267 64 224 107 224 160L224 288C224 341 267 384 320 384C373 384 416 341 416 288L416 160C416 107 373 64 320 64zM176 248C176 234.7 165.3 224 152 224C138.7 224 128 234.7 128 248L128 288C128 385.9 201.3 466.7 296 478.5L296 528L248 528C234.7 528 224 538.7 224 552C224 565.3 234.7 576 248 576L392 576C405.3 576 416 565.3 416 552C416 538.7 405.3 528 392 528L344 528L344 478.5C438.7 466.7 512 385.9 512 288L512 248C512 234.7 501.3 224 488 224C474.7 224 464 234.7 464 248L464 288C464 367.5 399.5 432 320 432C240.5 432 176 367.5 176 288L176 248z' },
               { href: '/trivia', label: 'TRIVIA', viewBox: '0 0 24 24', d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z' },
             ].map((item) => (
               <li key={item.href}>
                 {item.heading && (
                   <div
-                    className="mt-2 pt-3 pb-1 px-6 border-t border-[#067F3A]/20 text-[#067F3A]"
+                    className="mt-2 pt-3 pb-1 px-6 border-t border-[#1a9e4a]/20 text-[#1a9e4a]"
                     style={{
                       fontFamily: "'Poppins_semibold', monospace",
                       fontSize: '0.75em',
@@ -332,14 +326,13 @@ export default function Header() {
                     {item.heading}
                   </div>
                 )}
-                <Link
+                <a
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  aria-current={pathname === item.href ? 'page' : undefined}
                                     className={`flex items-center gap-3 px-6 py-3 transition-colors duration-200 ${
                     pathname === item.href
-                      ? 'bg-[#067F3A] text-white font-bold'
-                      : 'text-[#0E3A20] hover:bg-[#067F3A]/10'
+                      ? 'bg-[#1a9e4a] text-white font-bold'
+                      : 'text-[#16432a] hover:bg-[#1a9e4a]/10'
                   }`}
                   style={{
                     fontFamily: "'Poppins_semibold', monospace",
@@ -351,14 +344,14 @@ export default function Header() {
                     <path d={item.d} />
                   </svg>
                 <span>{item.label}</span>
-                </Link>
+                </a>
               </li>
             ))}
-            <li className="mt-2 pt-2 border-t border-[#067F3A]/20">
+            <li className="mt-2 pt-2 border-t border-[#1a9e4a]/20">
               <Link
                 href={session ? '/account' : '/account/login'}
                 onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-3 px-6 py-3 text-[#0E3A20] hover:bg-[#067F3A]/10 transition-colors duration-200"
+                                className="flex items-center gap-3 px-6 py-3 text-[#16432a] hover:bg-[#1a9e4a]/10 transition-colors duration-200"
                 style={{
                   fontFamily: "'Poppins_semibold', monospace",
                   fontSize: '1em',
@@ -379,7 +372,7 @@ export default function Header() {
               <Link
                 href="/cart"
                 onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-3 px-6 py-3 text-[#0E3A20] hover:bg-[#067F3A]/10 transition-colors duration-200"
+                                className="flex items-center gap-3 px-6 py-3 text-[#16432a] hover:bg-[#1a9e4a]/10 transition-colors duration-200"
                 style={{
                   fontFamily: "'Poppins_semibold', monospace",
                   fontSize: '1em',
@@ -392,7 +385,7 @@ export default function Header() {
               <span className="flex items-center gap-2">
                   CART
                   {cartCount > 0 && (
-                    <span className="min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-[#E2BA0A] text-[#0B0A07] text-xs font-bold leading-none">
+                    <span className="min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold leading-none">
                       {cartCount}
                     </span>
                   )}
