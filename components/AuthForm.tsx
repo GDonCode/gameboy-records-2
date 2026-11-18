@@ -419,7 +419,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           transition: transform 80ms ease-in;
         }
         .acct-submit { width: 100%; margin-top: 16px; }
-        .acct-ghost { --glass-tint: rgba(47,255,255,0.1); --glass-shade: rgba(8,77,126,0.2); }
+        .acct-ghost { --glass-tint: rgba(112,176,196,0.22); --glass-shade: rgba(8,77,126,0.25); }
         .acct-submit:active,
         .acct-ghost:active { transform: scale(0.95); }
         .acct-submit:focus-visible,

@@ -278,16 +278,19 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
    Cyan-on-transparent only reads on dark surfaces, so inside `.on-light` (or with `.glass-btn--solid`)
    the same recipe is built on a deep-blue tint. `.glass-btn--quiet` is the lighter outline weight. */
 .glass-btn {
-  --glass-tint: rgba(47, 255, 255, 0.24);
+  --glass-tint: rgba(112, 176, 196, 0.9);
   --glass-shade: rgba(8, 77, 126, 0.42);
   --glass-glow: rgba(151, 200, 255, 0.44);
-  --glass-text: #f4f0ff;
+  --glass-text: #fff;
   position: relative;
   isolation: isolate;
   border: none;
   border-radius: 0.5rem;
   background-color: transparent;
   color: var(--glass-text);
+  text-shadow: 0 1px 2px rgba(3, 30, 52, 0.4);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   transition: background-color 0.3s ease-in, color 0.3s;
 }
 .glass-btn::before,
@@ -314,7 +317,7 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
 }
 .glass-btn:hover:not(:disabled) { background-color: var(--glass-tint); }
 .glass-btn:active:not(:disabled) { transform: scale(0.97); }
-.glass-btn--quiet { --glass-tint: rgba(47, 255, 255, 0.1); --glass-shade: rgba(8, 77, 126, 0.2); }
+.glass-btn--quiet { --glass-tint: rgba(112, 176, 196, 0.22); --glass-shade: rgba(8, 77, 126, 0.25); }
 .on-light .glass-btn,
 .glass-btn--solid {
   --glass-tint: rgba(12, 92, 142, 0.94);
@@ -327,6 +330,7 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
   --glass-shade: rgba(3, 34, 60, 0.1);
   --glass-glow: rgba(12, 92, 142, 0.25);
   --glass-text: var(--color-ink);
+  text-shadow: none;
 }
 .on-light .glass-btn--quiet::after { background: rgba(12, 92, 142, 0.45); }
 
