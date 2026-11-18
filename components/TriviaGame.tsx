@@ -184,12 +184,7 @@ const primaryButton: React.CSSProperties = {
   fontFamily: FONT,
   fontSize: '0.9em',
   letterSpacing: '0.12em',
-  color: '#fff',
   padding: '12px 32px',
-  borderRadius: 0,
-  border: '2.5px solid #F5F5F5',
-  boxShadow: '4px 4px 0 #F5F5F5',
-  background: '#067F3A',
   cursor: 'pointer',
 };
 
@@ -448,7 +443,7 @@ export default function TriviaGame() {
             {status === 'unauthenticated' && (
               <div className="flex flex-col items-center gap-3">
                 <p className="text-base text-white/80" style={{ fontFamily: FONT }}>Sign in to play and join the leaderboard.</p>
-                <Link href="/account/login" style={{ ...primaryButton, textDecoration: 'none' }}>SIGN IN</Link>
+                <Link href="/account/login" className="glass-btn" style={{ ...primaryButton, textDecoration: 'none' }}>SIGN IN</Link>
               </div>
             )}
             {signedIn && (
@@ -456,6 +451,7 @@ export default function TriviaGame() {
                 type="button"
                 onClick={startGame}
                 disabled={phase === 'starting'}
+                className="glass-btn"
                 style={{ ...primaryButton, opacity: phase === 'starting' ? 0.6 : 1, cursor: phase === 'starting' ? 'not-allowed' : 'pointer' }}
               >
                 {phase === 'starting' ? 'LOADING…' : 'START GAME'}
@@ -481,7 +477,7 @@ export default function TriviaGame() {
           {upcomingRound > 0 && (
             <p className="mt-2 text-sm text-white/70" style={{ fontFamily: FONT }}>Score so far: {score}</p>
           )}
-          <button type="button" onClick={startRound} className="mt-6" style={primaryButton}>
+          <button type="button" onClick={startRound} className="glass-btn mt-6" style={primaryButton}>
             {upcomingRound === 0 ? 'GO' : 'START ROUND'}
           </button>
         </div>
@@ -496,7 +492,7 @@ export default function TriviaGame() {
           <p className="text-sm text-white/80" style={{ fontFamily: FONT }}>{errorMsg}</p>
           <button
             type="button"
-            className="mt-4"
+            className="glass-btn mt-4"
             style={primaryButton}
             onClick={() => {
               stopSpeaking();
@@ -519,7 +515,7 @@ export default function TriviaGame() {
           <p className="mt-1 text-sm text-white/70" style={{ fontFamily: FONT }}>
             {correctCount} of {TOTAL_QUESTIONS} correct
           </p>
-          <button type="button" onClick={startGame} className="mt-5" style={primaryButton}>PLAY AGAIN</button>
+          <button type="button" onClick={startGame} className="glass-btn mt-5" style={primaryButton}>PLAY AGAIN</button>
         </div>
         <Leaderboard reloadKey={boardKey} />
       </div>

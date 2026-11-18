@@ -250,7 +250,7 @@ export default function CartPage() {
         type="button"
         onClick={checkout}
         disabled={checkingOut || hasUnavailable || availableCount === 0}
-        className="btn-hard zoom-content mt-5 w-full h-14 rounded-[2px] bg-[#E2BA0A] text-[13px] font-semibold uppercase tracking-[0.16em] text-[#0B0A07] hover:bg-[#F0C928] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+        className="glass-btn zoom-content mt-5 w-full h-14 text-[13px] font-semibold uppercase tracking-[0.16em] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
       >
         <span>{checkingOut ? 'Opening secure checkout' : 'Checkout'}</span>
       </button>
@@ -307,7 +307,7 @@ export default function CartPage() {
           {status === 'error' && (
             <div style={BODY} className="border border-[#A3322A]/25 bg-white px-5 py-8 text-center">
               <p className="text-[15px] text-[#0B0A07]">We couldn’t load your cart.</p>
-              <button type="button" onClick={() => { setStatus('loading'); load(); }} style={SEMI} className="btn-hard mt-4 bg-[#05652E] px-5 py-2.5 text-[13px] tracking-[0.08em] text-white hover:bg-[#044F24] cursor-pointer">
+              <button type="button" onClick={() => { setStatus('loading'); load(); }} style={SEMI} className="glass-btn mt-4 px-5 py-2.5 text-[13px] tracking-[0.08em] cursor-pointer">
                 TRY AGAIN
               </button>
             </div>
@@ -321,7 +321,7 @@ export default function CartPage() {
                   <div style={BODY} className="border border-dashed border-[#05652E]/30 bg-white px-5 py-12 text-center">
                     <p style={SEMI} className="text-[17px] text-[#0B0A07]">Your cart is empty</p>
                     <p className="mt-1 text-[14px] text-[#0B0A07]/60">The Rise Collection is in the shop, in small runs.</p>
-                    <Link href="/shop" style={SEMI} className="btn-hard mt-5 inline-block bg-[#0B0A07] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F5F5F5] hover:bg-[#1F1C17]">
+                    <Link href="/shop" style={SEMI} className="glass-btn mt-5 inline-block px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.16em]">
                       Shop the collection
                     </Link>
                   </div>

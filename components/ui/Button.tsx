@@ -1,5 +1,5 @@
 // components/ui/Button.tsx
-// The one button/link style for the site. The box never moves; the label inside zooms on hover and focus.
+// The one button/link style for the site: glass buttons; the label inside zooms on hover and focus.
 import Link from 'next/link';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
@@ -11,14 +11,14 @@ const BASE =
   'zoom-content relative inline-flex select-none items-center justify-center overflow-hidden whitespace-nowrap font-semibold uppercase tracking-[0.16em] transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer';
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  // Primary call to action: gold with ink text (white on this gold would be unreadable).
-  primary: 'rounded-xs bg-gold text-ink hover:bg-[#F0C928]',
-  // Deep green with paper text (7:1), for the main action on paper.
-  green: 'rounded-xs bg-green-deep text-paper hover:bg-green',
-  light: 'rounded-xs bg-paper text-ink hover:bg-[#E6E6E6]',
-  dark: 'rounded-xs bg-ink text-paper hover:bg-ink-3',
-  outline: 'rounded-xs border border-paper/50 text-paper hover:border-paper hover:bg-paper/[0.06]',
-  'outline-dark': 'rounded-xs border border-ink/60 text-ink hover:border-ink hover:bg-ink/[0.04]',
+  // All solid and outlined buttons share the glass style (see `.glass-btn` in globals.css); it switches to a
+  // deep-blue tint on paper by itself. Outlines are the lighter "quiet" weight.
+  primary: 'glass-btn',
+  green: 'glass-btn',
+  light: 'glass-btn',
+  dark: 'glass-btn',
+  outline: 'glass-btn glass-btn--quiet',
+  'outline-dark': 'glass-btn glass-btn--quiet',
   text: 'text-paper underline decoration-paper/40 underline-offset-[6px] hover:decoration-paper',
   'text-dark': 'text-ink underline decoration-ink/30 underline-offset-[6px] hover:decoration-ink',
 };
@@ -31,8 +31,7 @@ const SIZES: Record<ButtonSize, string> = {
 
 export function buttonClass(variant: ButtonVariant = 'primary', size: ButtonSize = 'md', extra = '') {
   const isText = variant === 'text' || variant === 'text-dark';
-  // Solid buttons get the site's hard offset edge (ink on paper, paper on ink, via --edge).
-  return `${BASE} ${VARIANTS[variant]} ${isText ? 'h-auto px-0 text-[0.75rem]' : `btn-hard ${SIZES[size]}`} ${extra}`.trim();
+  return `${BASE} ${VARIANTS[variant]} ${isText ? 'h-auto px-0 text-[0.75rem]' : SIZES[size]} ${extra}`.trim();
 }
 
 interface CommonProps {

@@ -274,6 +274,62 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
 .btn-hard:hover:not(:disabled) { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--edge); }
 .btn-hard:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--edge); }
 
+/* Glass button (Uiverse "TaniaDou"): translucent cyan fill, inset glow, 1px gradient rim.
+   Cyan-on-transparent only reads on dark surfaces, so inside `.on-light` (or with `.glass-btn--solid`)
+   the same recipe is built on a deep-blue tint. `.glass-btn--quiet` is the lighter outline weight. */
+.glass-btn {
+  --glass-tint: rgba(47, 255, 255, 0.24);
+  --glass-shade: rgba(8, 77, 126, 0.42);
+  --glass-glow: rgba(151, 200, 255, 0.44);
+  --glass-text: #f4f0ff;
+  position: relative;
+  isolation: isolate;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  color: var(--glass-text);
+  transition: background-color 0.3s ease-in, color 0.3s;
+}
+.glass-btn::before,
+.glass-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+}
+.glass-btn::before {
+  background: linear-gradient(180deg, rgba(8, 77, 126, 0) 0%, var(--glass-shade) 100%), var(--glass-tint);
+  box-shadow: inset 0 0 12px var(--glass-glow);
+}
+/* The rim: a 1px gradient ring cut out with a mask. */
+.glass-btn::after {
+  padding: 1px;
+  background: linear-gradient(180deg, rgba(184, 238, 255, 0.24) 0%, rgba(184, 238, 255, 0) 100%),
+    linear-gradient(0deg, rgba(184, 238, 255, 0.32), rgba(184, 238, 255, 0.32));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box exclude, linear-gradient(#fff 0 0);
+}
+.glass-btn:hover:not(:disabled) { background-color: var(--glass-tint); }
+.glass-btn:active:not(:disabled) { transform: scale(0.97); }
+.glass-btn--quiet { --glass-tint: rgba(47, 255, 255, 0.1); --glass-shade: rgba(8, 77, 126, 0.2); }
+.on-light .glass-btn,
+.glass-btn--solid {
+  --glass-tint: rgba(12, 92, 142, 0.94);
+  --glass-shade: rgba(3, 34, 60, 0.6);
+  --glass-glow: rgba(184, 238, 255, 0.4);
+}
+.on-light .glass-btn--quiet,
+.glass-btn--solid.glass-btn--quiet {
+  --glass-tint: rgba(12, 92, 142, 0.08);
+  --glass-shade: rgba(3, 34, 60, 0.1);
+  --glass-glow: rgba(12, 92, 142, 0.25);
+  --glass-text: var(--color-ink);
+}
+.on-light .glass-btn--quiet::after { background: rgba(12, 92, 142, 0.45); }
+
 /* Framed panels. Ink panels on ink surfaces, white panels on paper. */
 .panel-ink {
   background: var(--color-ink-2);
@@ -311,7 +367,8 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
   }
   .neon-heading, .neon-letter--flutter { animation: none !important; }
   .ribbon-track { animation: none !important; }
-  .btn-hard { transition: none; }
+  .btn-hard, .glass-btn { transition: none; }
+  .glass-btn:active:not(:disabled) { transform: none; }
   .zoom-content:hover > *, .zoom-content:focus-visible > *,
   .zoom-media:hover img, .zoom-media:hover video,
   .zoom-media:focus-within img, .zoom-media:focus-within video {

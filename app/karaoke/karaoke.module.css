@@ -355,7 +355,4 @@
   height: 46px; padding: 0 20px; cursor: pointer;
   font-family: 'Poppins_semibold', 'Poppins', sans-serif; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
 }
-.endPrimary { background: #067F3A; color: #fff; border: 2px solid #067F3A; }
-.endPrimary:hover { background: #05652E; border-color: #05652E; }
-.endSecondary { background: transparent; color: #0B0A07; border: 2px solid #0B0A07; }
-.endSecondary:hover { border-color: #067F3A; color: #067F3A; }
+.endPrimary, .endSecondary { border: none; border-radius: 0.5rem; }

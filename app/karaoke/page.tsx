@@ -827,10 +827,10 @@ export default function KaraokePage() {
         {ended && !syncOn && (
           <div className={styles.endCard} role="dialog" aria-label="Song finished">
             <div className={styles.endActions}>
-              <button type="button" className={styles.endPrimary} onClick={restartSong}>
+              <button type="button" className={`${styles.endPrimary} glass-btn glass-btn--solid`} onClick={restartSong}>
                 Sing again
               </button>
-              <button type="button" className={styles.endSecondary} onClick={backToSongs}>
+              <button type="button" className={`${styles.endSecondary} glass-btn glass-btn--solid glass-btn--quiet`} onClick={backToSongs}>
                 Choose another song
               </button>
             </div>

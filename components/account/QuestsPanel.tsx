@@ -13,7 +13,7 @@ const BODY = { fontFamily: "'Poppins', sans-serif" };
 const SEMI = { fontFamily: "'Poppins_semibold', sans-serif" };
 
 const BUTTON_CLASS =
-  'px-4 py-2 rounded-none bg-[#067F3A] text-white text-[0.8em] tracking-[0.1em] hover:bg-[#05652E] transition-colors disabled:opacity-60 cursor-pointer';
+  'glass-btn px-4 py-2 text-[0.8em] tracking-[0.1em] disabled:opacity-60 cursor-pointer';
 
 export default function QuestsPanel({
   quests,
