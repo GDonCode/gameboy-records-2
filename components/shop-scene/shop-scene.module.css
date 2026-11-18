@@ -1,0 +1,251 @@
+/* components/shop-scene/shop-scene.module.css
+   The stage is a 16:9 box scaled to COVER the viewport. Everything inside is positioned in percent,
+   and sized with cqw (1% of the stage width), so the whole room scales as one picture. */
+
+/* Registered so the spotlight and Alexx's gaze glide between containers instead of snapping. */
+@property --hx { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
+@property --hy { syntax: '<percentage>'; inherits: true; initial-value: 40%; }
+@property --look { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+.root {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  width: 100%;
+  height: 100svh;
+  min-height: 480px;
+  background: #060807;
+  cursor: default;
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100vw, calc(100svh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  transform: translate(-50%, -50%);
+  container-type: inline-size;
+  transition: --hx 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), --hy 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), --look 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ── Parallax layers: each shifts by --d px at the pointer's edge ─────────────────────────── */
+.layer {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px, 0) * var(--d, 0) * 1px), calc(var(--py, 0) * var(--d, 0) * 0.6px), 0) scale(1.035);
+  will-change: transform;
+  pointer-events: none;
+}
+.wall { --d: 3; z-index: 1; }
+.shelves { --d: 8; z-index: 2; }
+.lamps { --d: 9; z-index: 3; }
+.alexx { --d: 9; z-index: 4; }
+.counter { --d: 13; z-index: 5; }
+.slots { --d: 11; z-index: 6; }
+
+.art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* ── Neon, Alexx, lamps: idle life ────────────────────────────────────────────────────────── */
+.neon { filter: drop-shadow(0 0 0.35cqw #E2BA0A) drop-shadow(0 0 1.4cqw rgba(226, 186, 10, 0.7)); }
+.neonFlicker { animation: flicker 7s steps(1, end) infinite; filter: drop-shadow(0 0 0.8cqw #38B26A); }
+@keyframes flicker {
+  0%, 18%, 22%, 62%, 64%, 100% { opacity: 1; }
+  20%, 63% { opacity: 0.25; }
+  21% { opacity: 0.8; }
+}
+
+.breathe { animation: breathe 4.2s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: translateY(-3px); } }
+
+.head {
+  transform-box: view-box;
+  transform-origin: 800px 380px;
+  transform: translateX(calc(var(--look) * 8px)) rotate(calc(var(--look) * 5deg));
+}
+.pupils { transform: translateX(calc(var(--look) * 4px)); }
+.lid {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: scaleY(0);
+  animation: blink 5.5s infinite;
+}
+@keyframes blink { 0%, 93%, 100% { transform: scaleY(0); } 95.5% { transform: scaleY(1); } }
+
+.flip { transform-box: fill-box; transform-origin: 50% 50%; animation: flipcart 6s ease-in-out infinite; }
+@keyframes flipcart { 0%, 55% { transform: scaleX(1); } 70%, 85% { transform: scaleX(-1); } 100% { transform: scaleX(1); } }
+
+.sway { animation: sway 8s ease-in-out infinite; }
+@keyframes sway { 50% { transform: rotate(0.6deg); } }
+
+/* ── Spotlight vignette: dims and softly blurs the rest of the shop around the hovered spot ── */
+.blur,
+.dim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.35s ease;
+}
+.dim {
+  background: radial-gradient(circle 30cqw at var(--hx) var(--hy), rgba(4, 6, 8, 0) 0%, rgba(4, 6, 8, 0.28) 45%, rgba(4, 6, 8, 0.88) 100%);
+}
+.blur {
+  backdrop-filter: blur(3px) saturate(0.8);
+  -webkit-backdrop-filter: blur(3px) saturate(0.8);
+  -webkit-mask-image: radial-gradient(circle 26cqw at var(--hx) var(--hy), transparent 0%, transparent 55%, #000 100%);
+  mask-image: radial-gradient(circle 26cqw at var(--hx) var(--hy), transparent 0%, transparent 55%, #000 100%);
+}
+.stage[data-active] .dim,
+.stage[data-active] .blur { opacity: 1; }
+
+/* ── Containers ───────────────────────────────────────────────────────────────────────────── */
+.slot {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 1;
+  pointer-events: none;
+}
+.slot[data-open='true'] { z-index: 3; }
+
+.hot {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--aspect);
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: 50% 100%;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+  filter: drop-shadow(0 0.5cqw 0.6cqw rgba(0, 0, 0, 0.45));
+  -webkit-tap-highlight-color: transparent;
+}
+.slot[data-open='true'] .hot {
+  transform: translateY(-0.4cqw) scale(1.07);
+  filter: drop-shadow(0 0.5cqw 0.8cqw rgba(0, 0, 0, 0.6)) drop-shadow(0 0 1.6cqw rgba(226, 186, 10, 0.35));
+}
+.hot:focus-visible { outline: 0.3cqw solid #E2BA0A; outline-offset: 0.6cqw; border-radius: 0.5cqw; }
+
+.boxSvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; display: block; }
+
+/* lid swings up over its back edge */
+.lid3d {
+  transform-box: view-box;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.slot[data-open='true'] .lid3d { transform: scaleY(-0.55); }
+
+/* items: tucked in the box when closed, fanned up in a staggered arc when open */
+.items { position: absolute; left: 0; right: 0; top: var(--itop, 22%); height: 0; pointer-events: none; }
+.item {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 5.6cqw;
+  height: 5.6cqw;
+  margin: -2.8cqw 0 0 -2.8cqw;
+  opacity: 0;
+  transform: translate(0, 3cqw) scale(0.35) rotate(0deg);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 45ms), opacity 0.18s ease calc(var(--i) * 45ms);
+  filter: drop-shadow(0 0.35cqw 0.45cqw rgba(0, 0, 0, 0.55));
+  pointer-events: none;
+}
+.slot[data-open='true'] .item {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(calc((var(--i) - 2) * 4.2cqw), calc(var(--rise) * -1cqw + (var(--i) - 2) * (var(--i) - 2) * 0.55cqw)) rotate(calc((var(--i) - 2) * 9deg)) scale(1);
+}
+.itemSvg { display: block; width: 100%; height: 100%; }
+
+/* label */
+.tag {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + (var(--rise) + 3.6) * 1cqw);
+  transform: translate(-50%, 1.4cqw) skewX(-6deg);
+  opacity: 0;
+  white-space: nowrap;
+  text-align: center;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.12s, opacity 0.2s ease 0.12s;
+}
+.slot[data-open='true'] .tag { opacity: 1; transform: translate(-50%, 0) skewX(-6deg); }
+.tag b {
+  display: block;
+  font-size: 2.8cqw;
+  line-height: 1;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #E2BA0A;
+  -webkit-text-stroke: 0.2cqw #0B0A07;
+  paint-order: stroke fill;
+  text-shadow: 0.3cqw 0.3cqw 0 #0B0A07, 0 0 1.8cqw rgba(226, 186, 10, 0.55);
+}
+.tag i {
+  display: block;
+  margin-top: 0.6cqw;
+  font-style: normal;
+  font-size: 1.05cqw;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #F5F5F5;
+  text-shadow: 0 0.1cqw 0.6cqw #000;
+}
+
+/* ── Foreground: vignette frame, scanlines, dust ──────────────────────────────────────────── */
+.fx { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+.frame { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, transparent 52%, rgba(0, 0, 0, 0.72) 100%); }
+.scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+.dust { position: absolute; inset: 0; overflow: hidden; }
+.dust span {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffe9a0;
+  filter: blur(0.5px);
+  animation: drift linear infinite;
+}
+@keyframes drift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(2.5cqw, -3cqw); }
+  100% { transform: translate(-1cqw, -6cqw); }
+}
+
+/* ── HUD (outside the stage, so it never scales or crops) ─────────────────────────────────── */
+.hud { position: absolute; z-index: 20; }
+.hint {
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: rgba(11, 10, 7, 0.7);
+  border: 1px solid rgba(245, 245, 245, 0.18);
+  color: #B9B6AE;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.root[data-engaged='true'] .hint { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .layer { transform: scale(1.035); }
+  .neonFlicker, .breathe, .lid, .flip, .sway, .dust span { animation: none; }
+  .hot, .lid3d, .tag { transition: none; }
+  .slot[data-open='true'] .hot { transform: none; }
+  .item { transform: none; transition: opacity 0.2s ease; }
+  .slot[data-open='true'] .item { transform: translate(calc((var(--i) - 2) * 5cqw), calc(var(--rise) * -1cqw)); }
+  .tag, .slot[data-open='true'] .tag { transform: translate(-50%, 0); transition: opacity 0.2s ease; }
+}
