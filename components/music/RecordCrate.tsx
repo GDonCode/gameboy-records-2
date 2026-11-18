@@ -141,14 +141,16 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         if (far && far.dataset.front === 'true') far.dataset.front = 'false';
         return;
       }
-      const c = Math.max(-1, Math.min(1, d));
-      const a = 1 - Math.min(ad, 1);
+            const a = 1 - Math.min(ad, 1);
       const s = slot.querySelector<HTMLElement>('.crate-sleeve');
       if (!s) return;
       let transform: string;
       if (desktop) {
-        const tx = c > 0 ? c * sleeve * 0.8 : c * sleeve * 0.56;
-        transform = `translate(-50%, -50%) translateX(${tx.toFixed(1)}px) translateY(${(-a * sleeve * 0.04).toFixed(1)}px) translateZ(${(a * 90).toFixed(1)}px) rotateY(${(-c * 70).toFixed(2)}deg)`;
+        // A curved gallery: every cover faces forward in an evenly spaced row, and the ones further out
+        // swing round to face the middle and recede, like the inside of a drum.
+        const turn = Math.max(-38, Math.min(38, -d * 17));
+        const back = Math.min(ad, 3) * sleeve * 0.16;
+        transform = `translate(-50%, -50%) translateY(${(-a * sleeve * 0.03).toFixed(1)}px) translateZ(${(a * 60 - back).toFixed(1)}px) rotateY(${turn.toFixed(2)}deg)`;
       } else {
         // Phones: flat covers one slot apart (a slot is almost a full cover tall), the ones beside the front
         // a little smaller and dimmer. Nothing tilts or overlaps, so covers never clip into each other.
@@ -160,7 +162,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       s.style.transform = transform;
       s.style.zIndex = String(1000 - Math.round(ad * 10));
       s.style.setProperty('--a', a.toFixed(3));
-      s.style.setProperty('--shade', Math.min(ad * 0.08, 0.4).toFixed(3));
+      s.style.setProperty('--shade', Math.min(ad * 0.2, 0.7).toFixed(3));
       s.dataset.front = ad < 0.5 ? 'true' : 'false';
     });
     if (best !== activeRef.current) {
@@ -215,7 +217,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       const h = stage.clientHeight;
       const w = stage.clientWidth;
       // The front record is lifted and brought forward, so it needs a little headroom.
-      const size = desktop ? Math.min(h * 0.84, w * 0.4, 480) : Math.min(h * 0.74, w * 0.82, 340);
+      const size = desktop ? Math.min(h * 0.84, w * 0.215, 480) : Math.min(h * 0.74, w * 0.82, 340);
       const value = `${Math.max(120, Math.floor(size))}px`;
       if (value === last) return;
       last = value;
@@ -382,8 +384,9 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
     <div ref={crateRef} className="crate relative h-[calc(100svh-var(--header-h))] bg-ink overflow-hidden flex flex-col">
       <style>{`
         .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 1); }
-        @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 0.3); } }
-        .crate-scroller { perspective: 1200px; perspective-origin: 50% 45%; }
+        @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 1.16); } }
+        .crate-scroller { perspective: 1400px; perspective-origin: 50% 45%; }
+        @media (min-width: 768px) { .crate-scroller { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); } }
         .crate-scroller:focus-visible { outline: none; }
         .crate-scroller:focus-visible .crate-sleeve[data-front='true'] .crate-cover { outline: 2px solid var(--color-gold); outline-offset: 4px; }
         .crate-slot { position: relative; pointer-events: none; transform-style: preserve-3d; flex: 0 0 var(--slot); width: var(--slot); height: var(--slot); scroll-snap-align: center; scroll-snap-stop: always; }
@@ -407,7 +410,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
           background: radial-gradient(circle at 50% 50%, #1b1a17 0 15%, transparent 15.5%),
             repeating-radial-gradient(circle at 50% 50%, #0d0c0a 0 2px, #17160f 2px 3px);
           box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 18px 40px -16px rgba(0,0,0,0.9);
-          transform: translateX(calc(var(--a, 0) * 46%)) rotate(calc(var(--a, 0) * 120deg));
+          transform: translateX(calc(var(--a, 0) * 30%)) rotate(calc(var(--a, 0) * 120deg));
           transition: transform 500ms var(--ease-quiet);
         }
         .crate-disc-label { position: absolute; inset: 34%; border-radius: 50%; overflow: hidden; border: 2px solid #0B0A07; }
