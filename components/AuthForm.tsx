@@ -419,7 +419,6 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           transition: transform 80ms ease-in;
         }
         .acct-submit { width: 100%; margin-top: 16px; }
-        .acct-ghost { --glass-tint: rgba(112,176,196,0.22); --glass-shade: rgba(8,77,126,0.25); }
         .acct-submit:active,
         .acct-ghost:active { transform: scale(0.95); }
         .acct-submit:focus-visible,
@@ -670,7 +669,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                   </div>
                   {renderFieldError('registerConfirmPassword')}
                 </div>
-                <button type="submit" disabled={isRegistering} className="acct-submit glass-btn">
+                <button type="submit" disabled={isRegistering} className="acct-submit glass-btn glass-btn--green">
                   <span className="acct-btn-label">{isRegistering ? 'JOINING…' : 'JOIN THE CLUB'}</span>
                 </button>
 
@@ -720,7 +719,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                   </div>
                   {renderFieldError('signInPassword')}
                 </div>
-                <button type="submit" disabled={isSigningIn} className="acct-submit acct-submit-fit glass-btn">
+                <button type="submit" disabled={isSigningIn} className="acct-submit acct-submit-fit glass-btn glass-btn--green">
                   <span className="acct-btn-label">{isSigningIn ? 'SIGNING IN…' : 'SIGN IN'}</span>
                 </button>
 
@@ -734,14 +733,14 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                 <div className="acct-overlay-panel acct-overlay-left">
                   <div className="acct-overlay-title">WELCOME BACK</div>
                   <p className="acct-overlay-text">Sign in to see your orders and Club Points.</p>
-                  <button type="button" className="acct-ghost glass-btn" onClick={() => setMode('signin')}>
+                  <button type="button" className="acct-ghost glass-btn glass-btn--quiet" onClick={() => setMode('signin')}>
                     <span className="acct-btn-label">SIGN IN</span>
                   </button>
                 </div>
                 <div className="acct-overlay-panel acct-overlay-right">
                   <div className="acct-overlay-title">NEW HERE?</div>
                   <p className="acct-overlay-text">Join the Playaz Club to track orders and collect Club Points.</p>
-                  <button type="button" className="acct-ghost glass-btn" onClick={() => setMode('register')}>
+                  <button type="button" className="acct-ghost glass-btn glass-btn--quiet" onClick={() => setMode('register')}>
                     <span className="acct-btn-label">JOIN THE CLUB</span>
                   </button>
                 </div>

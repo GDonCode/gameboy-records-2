@@ -11,14 +11,13 @@ const BASE =
   'zoom-content relative inline-flex select-none items-center justify-center overflow-hidden whitespace-nowrap font-semibold uppercase tracking-[0.16em] transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer';
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  // All solid and outlined buttons share the glass style (see `.glass-btn` in globals.css); it switches to a
-  // deep-blue tint on paper by itself. Outlines are the lighter "quiet" weight.
+  // The glass style (see `.glass-btn` in globals.css) in the brand colours; outlines are the quiet weight.
   primary: 'glass-btn',
-  green: 'glass-btn',
-  light: 'glass-btn',
-  dark: 'glass-btn',
+  green: 'glass-btn glass-btn--green',
+  light: 'glass-btn glass-btn--paper',
+  dark: 'glass-btn glass-btn--ink',
   outline: 'glass-btn glass-btn--quiet',
-  'outline-dark': 'glass-btn glass-btn--quiet',
+  'outline-dark': 'glass-btn glass-btn--quiet-dark',
   text: 'text-paper underline decoration-paper/40 underline-offset-[6px] hover:decoration-paper',
   'text-dark': 'text-ink underline decoration-ink/30 underline-offset-[6px] hover:decoration-ink',
 };

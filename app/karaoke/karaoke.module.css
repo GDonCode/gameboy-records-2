@@ -355,4 +355,4 @@
   height: 46px; padding: 0 20px; cursor: pointer;
   font-family: 'Poppins_semibold', 'Poppins', sans-serif; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
 }
-.endPrimary, .endSecondary { border: none; border-radius: 0.5rem; }
+.endPrimary, .endSecondary { border: none; border-radius: 0; }
