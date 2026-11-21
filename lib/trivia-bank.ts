@@ -33,17 +33,17 @@ function textQ(
   return { id, kind, mode: 'single', prompt, speak, options, answer: ['a'] };
 }
 
-const VIDEO_TITLES = ['Rise Up Now (Guitar Version)', 'Still A Rise', 'More Life', 'Go Harda'];
+const VIDEO_TITLES = ['Go Harda', 'Double', 'Hurt Inside', 'More Life', 'A-Game Everyday'];
 
-/** "Which music video is this screenshot from?" using a YouTube auto-captured frame (1, 2 or 3). */
-function videoQ(id: string, youtubeId: string, frame: 1 | 2 | 3, correctTitle: string): BankQuestion {
+/** "Which music video is this screenshot from?" using a still saved in public/trivia. */
+function videoQ(id: string, file: string, correctTitle: string): BankQuestion {
   const options: TriviaOption[] = VIDEO_TITLES.map((label, i) => ({ id: `o${i}`, label }));
   return {
     id,
     kind: 'video',
     mode: 'single',
     prompt: 'Which music video is this screenshot from?',
-    image: `https://img.youtube.com/vi/${youtubeId}/${frame}.jpg`,
+    image: `/trivia/${file}.jpg`,
     options,
     answer: [`o${VIDEO_TITLES.indexOf(correctTitle)}`],
   };
@@ -147,15 +147,14 @@ const ORDER_QUESTIONS: BankQuestion[] = [
 ];
 
 // ── Music-video screenshots ──────────────────────────────────────────────────
-// Frames come from YouTube's auto-captured thumbnails (120×90, blurry when enlarged).
-// For sharper questions, upload real screenshots to the Supabase `media` bucket under
-// trivia/ and point `image` at `${MEDIA_BASE}/trivia/<file>.jpg`.
+// Stills live in public/trivia/.
 
 const VIDEO_QUESTIONS: BankQuestion[] = [
-  videoQ('vi-1', 'etLGFz3dtsM', 1, 'Rise Up Now (Guitar Version)'),
-  videoQ('vi-2', 'BhKt3DVRRkw', 2, 'Still A Rise'),
-  videoQ('vi-3', 'etLGFz3dtsM', 3, 'Rise Up Now (Guitar Version)'),
-  videoQ('vi-4', 'BhKt3DVRRkw', 1, 'Still A Rise'),
+  videoQ('vi-1', 'go-harda', 'Go Harda'),
+  videoQ('vi-2', 'double', 'Double'),
+  videoQ('vi-3', 'hurt-inside', 'Hurt Inside'),
+  videoQ('vi-4', 'more-life', 'More Life'),
+  videoQ('vi-5', 'a-game-everyday', 'A-Game Everyday'),
 ];
 
 // ── Match the song to its cover ──────────────────────────────────────────────

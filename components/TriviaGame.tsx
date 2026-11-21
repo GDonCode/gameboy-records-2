@@ -556,8 +556,8 @@ export default function TriviaGame() {
           <img
             src={question.image}
             alt="Music video screenshot"
-            className="mx-auto mb-4 w-full max-w-[420px] border border-[#067F3A]/40 object-cover"
-            style={{ aspectRatio: '4 / 3' }}
+            className="mx-auto mb-4 w-full max-w-[520px] border border-[#067F3A]/40 object-cover"
+            style={{ aspectRatio: '16 / 9' }}
           />
         )}
         <p className="text-center text-base leading-snug text-[#FEFEFA]" style={{ fontFamily: FONT_BOLD }}>
