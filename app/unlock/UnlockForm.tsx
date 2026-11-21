@@ -56,7 +56,7 @@ export default function UnlockForm({ next }: { next: string }) {
         type="submit"
         disabled={busy}
         style={{ fontFamily: "'Poppins_semibold', sans-serif" }}
-        className="btn-hard h-12 w-full bg-gold text-[13px] tracking-[0.18em] text-ink hover:bg-[#F0C928] disabled:opacity-60 cursor-pointer"
+        className="glass-btn h-12 w-full text-[13px] tracking-[0.18em] disabled:opacity-60 cursor-pointer"
       >
         {busy ? 'CHECKING…' : 'ENTER'}
       </button>

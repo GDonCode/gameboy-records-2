@@ -51,7 +51,7 @@ function ShowRow({ show }: { show: Show }) {
         </a>
       </span>
       {show.ticketUrl && (show.status === 'on-sale' || show.status === 'members-presale') ? (
-        <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer" className="shows-notify-btn btn-hard zoom-content justify-center" aria-label={`${label}: ${show.city} (opens in a new tab)`}>
+        <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer" className="shows-notify-btn glass-btn zoom-content justify-center" aria-label={`${label}: ${show.city} (opens in a new tab)`}>
           <span>{label}</span>
         </a>
       ) : (
@@ -120,22 +120,19 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
         .shows-email-input:focus {
           border-color: #E2BA0A;
         }
-        /* Primary call to action, in the gold: the original raised button shape. */
+        /* Primary call to action: glass button. */
         .shows-notify-btn {
           font-family: 'Poppins_semibold', sans-serif;
           font-size: 0.9em;
           letter-spacing: 0.18em;
-          color: #0B0A07;
           display: inline-flex;
           align-items: center;
           padding: 0 22px;
           height: 48px;
-          background: #E2BA0A;
           cursor: pointer;
           user-select: none;
           white-space: nowrap;
         }
-        .shows-notify-btn:hover:not(:disabled) { background: #F0C928; }
         .shows-notify-btn:disabled { opacity: 0.5; cursor: not-allowed; }
       `}</style>
 
@@ -184,7 +181,7 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
               required
               className="shows-email-input"
             />
-            <button type="submit" disabled={isSubmitting} className="shows-notify-btn btn-hard zoom-content justify-center">
+            <button type="submit" disabled={isSubmitting} className="shows-notify-btn glass-btn zoom-content justify-center">
               <span>{isSubmitting ? 'SENDING…' : 'NOTIFY ME'}</span>
             </button>
           </form>

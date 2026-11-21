@@ -413,24 +413,12 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
           font-family: 'Poppins_semibold', monospace;
           font-size: 0.85em;
           letter-spacing: 0.16em;
-          color: #fff;
           height: 48px;
           padding: 0 45px;
           cursor: pointer;
           transition: transform 80ms ease-in;
         }
-        .acct-submit {
-          width: 100%;
-          margin-top: 16px;
-          background: linear-gradient(175deg, #067F3A 0%, #05652E 100%);
-          border: 1px solid #067F3A;
-          border-bottom-color: #044F24;
-        }
-        .acct-ghost {
-          background: transparent;
-          border: 1px solid #F5F5F5;
-          color: #F5F5F5;
-        }
+        .acct-submit { width: 100%; margin-top: 16px; }
         .acct-submit:active,
         .acct-ghost:active { transform: scale(0.95); }
         .acct-submit:focus-visible,
@@ -681,7 +669,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                   </div>
                   {renderFieldError('registerConfirmPassword')}
                 </div>
-                <button type="submit" disabled={isRegistering} className="acct-submit">
+                <button type="submit" disabled={isRegistering} className="acct-submit glass-btn glass-btn--green">
                   <span className="acct-btn-label">{isRegistering ? 'JOINING…' : 'JOIN THE CLUB'}</span>
                 </button>
 
@@ -731,7 +719,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                   </div>
                   {renderFieldError('signInPassword')}
                 </div>
-                <button type="submit" disabled={isSigningIn} className="acct-submit acct-submit-fit">
+                <button type="submit" disabled={isSigningIn} className="acct-submit acct-submit-fit glass-btn glass-btn--green">
                   <span className="acct-btn-label">{isSigningIn ? 'SIGNING IN…' : 'SIGN IN'}</span>
                 </button>
 
@@ -745,14 +733,14 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: Mod
                 <div className="acct-overlay-panel acct-overlay-left">
                   <div className="acct-overlay-title">WELCOME BACK</div>
                   <p className="acct-overlay-text">Sign in to see your orders and Club Points.</p>
-                  <button type="button" className="acct-ghost" onClick={() => setMode('signin')}>
+                  <button type="button" className="acct-ghost glass-btn glass-btn--quiet" onClick={() => setMode('signin')}>
                     <span className="acct-btn-label">SIGN IN</span>
                   </button>
                 </div>
                 <div className="acct-overlay-panel acct-overlay-right">
                   <div className="acct-overlay-title">NEW HERE?</div>
                   <p className="acct-overlay-text">Join the Playaz Club to track orders and collect Club Points.</p>
-                  <button type="button" className="acct-ghost" onClick={() => setMode('register')}>
+                  <button type="button" className="acct-ghost glass-btn glass-btn--quiet" onClick={() => setMode('register')}>
                     <span className="acct-btn-label">JOIN THE CLUB</span>
                   </button>
                 </div>
