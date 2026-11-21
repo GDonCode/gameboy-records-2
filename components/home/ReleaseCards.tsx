@@ -17,7 +17,7 @@ export default function ReleaseCards({ releases }: { releases: readonly Featured
     <ul className="list-none p-0 m-0 grid gap-12 md:grid-cols-2 md:gap-10 lg:gap-16">
       {releases.map((r) => (
         <li key={r.youtubeId} className="flex flex-col gap-6">
-          <div className="relative aspect-[4/5] overflow-hidden bg-ink border-[3px] border-ink hard">
+          <div className="relative aspect-[4/5] overflow-hidden bg-ink hard">
             <Image src={r.poster} alt={`${r.title}, cover still`} fill sizes="(min-width: 768px) 45vw, 100vw" className="object-cover" />
           </div>
           <div>

@@ -64,10 +64,10 @@ export default function Hero() {
             Realest sound<span className="text-green">.</span>
             <br />
             Truest vision<span className="text-gold">.</span>
+            <span className="mt-3 block text-[0.9rem] sm:text-[1rem] lg:text-[1.15rem] font-semibold tracking-[0.22em] text-gold">by ALEXX A-GAME</span>
           </h1>
           <p className="mt-6 mb-0 max-w-[48ch] text-[1rem] md:text-[1.125rem] leading-relaxed text-paper/90" style={TEXT_SHADOW}>
-            Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. The music, the merch and the shows come
-            straight from him, through his own label, Gameboy Records.
+            Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. Authentic Music, curated live experiences and clean, quality merch from the mind of A-GAME
           </p>
           <div className="mt-9 flex flex-col sm:flex-row gap-4">
             <Button href="/shop" variant="green" size="lg">

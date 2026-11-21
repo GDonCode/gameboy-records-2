@@ -51,7 +51,7 @@ export default function AboutPage() {
       {/* Title */}
       <section className="paper-ink pt-14 pb-12 md:pt-20 md:pb-16">
         <div className="container-site">
-          <PageTitle tone="dark" ghost="About" kicker="Singer · Songwriter · Guitarist" subtitle={`Founder of ${SITE_NAME}`}>
+          <PageTitle tone="dark" ghost="About" kicker="Singer · Songwriter · Producer">
             {ARTIST}
           </PageTitle>
         </div>

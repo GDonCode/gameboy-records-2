@@ -17,7 +17,7 @@ export default async function AccountLoginPage({ searchParams }: { searchParams:
   return (
     <PageShell>
       <div className="paper-ink pt-12 md:pt-16">
-        <PageTitle tone="dark" ghost="Join" kicker="Members" subtitle="Club Points · Early access · Rewards">
+        <PageTitle tone="dark" ghost="Join" kicker="Members Only">
           {CLUB_NAME}
         </PageTitle>
       </div>

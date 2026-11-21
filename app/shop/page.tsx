@@ -41,7 +41,7 @@ export default async function ShopPage() {
       <JsonLd data={itemList} />
       <section aria-label="Products" className="on-light paper text-ink">
         <div className="mx-auto w-full max-w-[1180px] px-4 pt-12 pb-16 md:px-8 md:pt-16 md:pb-24">
-          <PageTitle ghost="Shop" subtitle={`by ${ARTIST}`} className="mb-10 md:mb-14">
+          <PageTitle ghost="Shop" className="mb-10 md:mb-14">
             Rise Collection
           </PageTitle>
 

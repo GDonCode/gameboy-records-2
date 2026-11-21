@@ -100,7 +100,6 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
           height: 64px;
           border-radius: 50%;
           background: #067F3A;
-          border: 3px solid #F5F5F5;
           box-shadow: 4px 4px 0 #E2BA0A;
         }
         .shows-email-input {
