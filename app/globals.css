@@ -280,9 +280,9 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
 .glass-btn {
   --glass-tint: rgba(226, 186, 10, 0.92);
   --glass-shade: rgba(110, 72, 0, 0.38);
-  --glass-glow: rgba(255, 232, 130, 0.22);
-  --glass-rim-hi: rgba(255, 244, 190, 0.18);
-  --glass-rim: rgba(255, 244, 190, 0.20);
+  --glass-glow: rgba(255, 232, 130, 0.55);
+  --glass-rim-hi: rgba(255, 244, 190, 0.45);
+  --glass-rim: rgba(255, 244, 190, 0.5);
   --glass-text: var(--color-ink);
   position: relative;
   isolation: isolate;
@@ -292,7 +292,7 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
   color: var(--glass-text);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  transition: background-color 0.15s ease-out, color 0.15s ease-out, transform 0.15s ease-out;
+  transition: background-color 0.3s ease-in, color 0.3s;
 }
 .glass-btn::before,
 .glass-btn::after {
@@ -305,7 +305,7 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
 }
 .glass-btn::before {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, var(--glass-shade) 100%), var(--glass-tint);
-  box-shadow: inset 0 0 5px var(--glass-glow);
+  box-shadow: inset 0 0 12px var(--glass-glow);
 }
 /* The rim: a 1px gradient ring cut out with a mask. */
 .glass-btn::after {
@@ -321,31 +321,31 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
 .glass-btn--green {
   --glass-tint: rgba(6, 127, 58, 0.94);
   --glass-shade: rgba(2, 40, 18, 0.45);
-  --glass-glow: rgba(120, 230, 160, 0.16);
-  --glass-rim-hi: rgba(160, 240, 190, 0.18);
-  --glass-rim: rgba(160, 240, 190, 0.18);
+  --glass-glow: rgba(120, 230, 160, 0.4);
+  --glass-rim-hi: rgba(160, 240, 190, 0.45);
+  --glass-rim: rgba(160, 240, 190, 0.45);
   --glass-text: #fff;
 }
 .glass-btn--ink {
   --glass-tint: rgba(11, 10, 7, 0.95);
   --glass-shade: rgba(0, 0, 0, 0.5);
-  --glass-glow: rgba(245, 245, 245, 0.07);
-  --glass-rim-hi: rgba(245, 245, 245, 0.12);
-  --glass-rim: rgba(245, 245, 245, 0.12);
+  --glass-glow: rgba(245, 245, 245, 0.18);
+  --glass-rim-hi: rgba(245, 245, 245, 0.3);
+  --glass-rim: rgba(245, 245, 245, 0.3);
   --glass-text: var(--color-paper);
 }
 .glass-btn--paper {
   --glass-tint: rgba(245, 245, 245, 0.94);
   --glass-shade: rgba(0, 0, 0, 0.14);
-  --glass-glow: rgba(255, 255, 255, 0.28);
-  --glass-rim-hi: rgba(255, 255, 255, 0.28);
-  --glass-rim: rgba(255, 255, 255, 0.28);
+  --glass-glow: rgba(255, 255, 255, 0.7);
+  --glass-rim-hi: rgba(255, 255, 255, 0.7);
+  --glass-rim: rgba(255, 255, 255, 0.7);
   --glass-text: var(--color-ink);
 }
 .glass-btn--quiet {
   --glass-tint: rgba(245, 245, 245, 0.06);
   --glass-shade: rgba(0, 0, 0, 0.12);
-  --glass-glow: rgba(245, 245, 245, 0.05);
+  --glass-glow: rgba(245, 245, 245, 0.12);
   --glass-rim-hi: rgba(245, 245, 245, 0.6);
   --glass-rim: rgba(245, 245, 245, 0.5);
   --glass-text: var(--color-paper);
@@ -353,7 +353,7 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
 .glass-btn--quiet-dark {
   --glass-tint: rgba(11, 10, 7, 0.04);
   --glass-shade: rgba(0, 0, 0, 0.05);
-  --glass-glow: rgba(11, 10, 7, 0.02);
+  --glass-glow: rgba(11, 10, 7, 0.06);
   --glass-rim-hi: rgba(11, 10, 7, 0.65);
   --glass-rim: rgba(11, 10, 7, 0.6);
   --glass-text: var(--color-ink);

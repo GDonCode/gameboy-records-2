@@ -8,7 +8,7 @@ export type ButtonVariant = 'primary' | 'green' | 'light' | 'dark' | 'outline' |
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const BASE =
-  'zoom-content relative inline-flex select-none items-center justify-center overflow-hidden whitespace-nowrap font-semibold uppercase tracking-[0.16em] transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer';
+  'zoom-content relative inline-flex select-none items-center justify-center overflow-hidden whitespace-nowrap font-semibold uppercase tracking-[0.16em] transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer';
 
 const VARIANTS: Record<ButtonVariant, string> = {
   // The glass style (see `.glass-btn` in globals.css) in the brand colours; outlines are the quiet weight.
