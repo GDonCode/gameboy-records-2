@@ -1,6 +1,6 @@
 // components/home/Hero.tsx
 // Home page hero: the studio film fills the screen (on phones it runs up behind the header; on desktop it starts below it),
-// with the label's intro and the two calls to action set straight on it at the left.
+// with the label's intro and the two calls to action centred along the bottom, clear of the subject in the middle of the frame.
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -37,39 +37,38 @@ export default function Hero() {
   }
 
   return (
-    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-center min-h-[100svh] mt-[calc(var(--header-h)*-1)] pt-(--header-h) lg:mt-0 lg:pt-0 lg:min-h-[calc(100svh-var(--header-h))]">
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-end min-h-[100svh] mt-[calc(var(--header-h)*-1)] pt-(--header-h) lg:mt-0 lg:pt-0 lg:min-h-[calc(100svh-var(--header-h))]">
       {/* The film fills the whole hero */}
       <video
         ref={videoRef}
-        src={`${MEDIA_BASE}/web-hero.mp4`}
-        poster={`${MEDIA_BASE}/IMG_7478-Retouched.jpg`}
+        src={`${MEDIA_BASE}/HeroMashupV1.mp4`}
         muted
         loop
         playsInline
         preload="metadata"
         aria-hidden="true"
         tabIndex={-1}
-        className="absolute inset-0 -z-10 w-full h-full object-cover object-top -scale-x-100"
+        className="absolute inset-0 -z-10 w-full h-full object-cover object-center"
       />
-      {/* Darkens the film under the header, behind the text on the left and along the bottom edge */}
+      {/* Darkens the film under the header and builds up toward the bottom edge, behind the text */}
       <div
         className="absolute inset-0 -z-10"
         aria-hidden="true"
-        style={{ background: 'linear-gradient(to bottom, rgba(11,10,7,0.6) 0%, rgba(11,10,7,0.1) 22%, rgba(11,10,7,0.15) 60%, rgba(11,10,7,0.75) 100%), linear-gradient(to right, rgba(11,10,7,0.7) 0%, rgba(11,10,7,0.35) 45%, rgba(11,10,7,0) 75%)' }}
+        style={{ background: 'linear-gradient(to bottom, rgba(11,10,7,0.6) 0%, rgba(11,10,7,0) 22%, rgba(11,10,7,0) 50%, rgba(11,10,7,0.55) 72%, rgba(11,10,7,0.85) 100%)' }}
       />
 
-      <div className="container-site py-12 md:py-20">
-        <div className="max-w-[620px] text-left animate-fade-up">
-          <h1 id="hero-title" className="m-0 text-paper font-bold uppercase leading-[0.95] tracking-[-0.01em] text-[2.6rem] sm:text-[3.4rem] lg:text-[4.4rem]" style={TEXT_SHADOW}>
+      <div className="container-site pt-[40svh] pb-12 md:pb-16">
+        <div className="mx-auto max-w-[760px] text-center animate-fade-up">
+          <h1 id="hero-title" className="m-0 text-paper font-bold uppercase leading-[0.95] tracking-[-0.01em] text-[1.9rem] sm:text-[2.4rem] lg:text-[3rem]" style={TEXT_SHADOW}>
             Realest sound<span className="text-green">.</span>
             <br />
             Truest vision<span className="text-gold">.</span>
-            <span className="mt-3 block text-[0.9rem] sm:text-[1rem] lg:text-[1.15rem] font-semibold tracking-[0.22em] text-gold">by ALEXX A-GAME</span>
+            <span className="mt-2 block text-[0.75rem] sm:text-[0.85rem] lg:text-[0.95rem] font-semibold tracking-[0.22em] text-gold">by ALEXX A-GAME</span>
           </h1>
-          <p className="mt-6 mb-0 max-w-[48ch] text-[1rem] md:text-[1.125rem] leading-relaxed text-paper/90" style={TEXT_SHADOW}>
+          <p className="mx-auto mt-4 mb-0 max-w-[52ch] text-[0.9rem] md:text-[1rem] leading-relaxed text-paper/90" style={TEXT_SHADOW}>
             Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. Authentic Music, curated live experiences and clean, quality merch from the mind of A-GAME
           </p>
-          <div className="mt-9 flex flex-col sm:flex-row gap-4">
+          <div className="mt-6 flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-4">
             <Button href="/shop" variant="green" size="lg">
               Shop the collection
               <Icon name="arrow-right" className="w-3.5 h-3.5" />
