@@ -55,7 +55,7 @@ function Brand({ glass }: { glass: boolean }) {
     <Link
       href="/"
       aria-label={`${SITE_NAME} — home`}
-      className={`flex shrink-0 items-center ${glass ? 'drop-shadow-[0_6px_14px_rgba(0,0,0,0.55)]' : 'rounded-xs'} ${FOCUS}`}
+      className={`flex shrink-0 ${glass ? 'self-start items-start' : 'items-center'} ${glass ? 'drop-shadow-[0_6px_14px_rgba(0,0,0,0.55)]' : 'rounded-xs'} ${FOCUS}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -199,12 +199,12 @@ export default function Header() {
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
-        <div className="relative flex h-[60px] items-center gap-3 pl-4 pr-3 md:h-[72px] lg:gap-2 lg:px-8">
+        <div className={`relative flex h-[60px] gap-3 pl-4 md:h-[72px] lg:gap-2 lg:px-8 ${overlay ? 'items-start pr-4' : 'items-center pr-3'}`}>
           <Brand glass={overlay} />
 
           {/* ── Desktop nav ── */}
-          <nav aria-label="Main" className="ml-auto hidden lg:block">
-            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `px-2 ${GLASS}` : ''}`}>
+          <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-full' : ''}`}>
+            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `h-full px-2 ${GLASS}` : ''}`}>
               {PRIMARY.map((item) => {
                 const active = isActive(pathname, item.href);
                 return (
@@ -284,16 +284,16 @@ export default function Header() {
           </nav>
 
           {/* ── Desktop utilities ── */}
-          <div className="hidden items-center gap-2 lg:flex">
-            <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />
+          <div className={`hidden lg:flex ${overlay ? `h-full items-stretch ${GLASS}` : 'items-center gap-2'}`}>
+            {!overlay && <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />}
 
             {session ? (
               <Link
                 href={accountHref}
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
-                className={`flex h-11 w-11 items-center justify-center transition-colors duration-200 ${
-                  overlay ? `${GLASS} text-[#0B0A07] hover:bg-white hover:text-[#067F3A]` : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
+                className={`flex items-center justify-center transition-colors duration-200 ${
+                  overlay ? 'w-16 text-[#0B0A07] hover:bg-white/70 hover:text-[#067F3A]' : 'h-11 w-11'} ${overlay ? '' : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
                 } ${FOCUS}`}
               >
                 {initial ? (
@@ -306,7 +306,9 @@ export default function Header() {
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`flex h-11 items-center gap-2 rounded-full bg-[#067F3A] px-3 text-white shadow-[0_3px_0_#044F24] transition-[transform,box-shadow,background-color] duration-100 hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none lg:px-4 ${FOCUS}`}
+                className={`flex items-center gap-2 bg-[#067F3A] px-3 text-white transition-[transform,box-shadow,background-color] duration-100 hover:bg-[#05652E] lg:px-5 ${
+                  overlay ? '' : 'h-11 rounded-full shadow-[0_3px_0_#044F24] active:translate-y-[3px] active:shadow-none'
+                } ${FOCUS}`}
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
                 <span className="hidden text-[0.85rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
@@ -319,8 +321,8 @@ export default function Header() {
               href="/cart"
               aria-label={cartLabel}
               aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
-              className={`relative flex h-12 w-12 items-center justify-center transition-colors duration-200 ${
-                overlay ? `${GLASS} text-[#0B0A07] hover:bg-white hover:text-[#067F3A]` : 'rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
+              className={`relative flex items-center justify-center transition-colors duration-200 ${
+                overlay ? 'w-16 text-[#0B0A07] hover:bg-white/70 hover:text-[#067F3A]' : 'h-12 w-12 rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
               } ${FOCUS}`}
             >
               <ShoppingCart className="h-[26px] w-[26px]" strokeWidth={2.25} aria-hidden="true" />
@@ -329,7 +331,7 @@ export default function Header() {
           </div>
 
           {/* ── Phone actions: the menu button holds the cart and account too ── */}
-          <div className="ml-auto flex items-center lg:hidden">
+          <div className={`ml-auto flex lg:hidden ${overlay ? 'h-full items-stretch' : 'items-center'}`}>
             <button
               ref={menuButtonRef}
               type="button"
@@ -337,8 +339,8 @@ export default function Header() {
               aria-label={menuOpen ? 'Close menu' : cartCount > 0 ? `Open menu, ${cartCount} item${cartCount === 1 ? '' : 's'} in cart` : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className={`relative flex h-11 w-11 items-center justify-center transition-colors ${
-                overlay ? `${GLASS} text-[#067F3A] hover:text-[#05652E]` : 'rounded-full bg-transparent text-[#067F3A] hover:text-[#05652E] -mr-1'
+              className={`relative flex items-center justify-center transition-colors ${
+                overlay ? `w-14 ${GLASS} text-[#067F3A] hover:text-[#05652E]` : 'h-11 w-11 rounded-full bg-transparent text-[#067F3A] hover:text-[#05652E] -mr-1'
               } ${FOCUS}`}
             >
               {menuOpen ? (

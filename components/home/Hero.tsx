@@ -48,7 +48,7 @@ export default function Hero() {
         preload="metadata"
         aria-hidden="true"
         tabIndex={-1}
-        className="absolute inset-0 -z-10 w-full h-full object-cover object-center"
+        className="absolute inset-0 -z-10 w-full h-full object-cover object-top"
       />
       {/* Darkens the film under the header and builds up toward the bottom edge, behind the text */}
       <div
