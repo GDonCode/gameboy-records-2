@@ -50,12 +50,12 @@ function isActive(pathname: string, href: string) {
 }
 
 // ── Scrapbook lettering ───────────────────────────────────────────────────────
-// Each letter is cut from brand-yellow (#EDD56C) crumpled paper (the yellow is multiplied into the paper texture) and set a little off-kilter,
-// with a dark cut edge and soft shadow so it reads over any frame of the film. No backing panel.
+// Each letter is cut from brand-green crumpled paper (the green is multiplied into the paper texture) and set a little off-kilter,
+// with a white cut edge (so green holds up on dark frames) and a soft shadow so it reads over any frame of the film. No backing panel.
 const TILT = [-4, 3, -2, 4, -3, 2, -5, 3, -2, 4];
 const LIFT = [0, 1, -1, 1, 0, -1, 1, 0, -1, 1];
 const CUTOUT_SHADOW =
-  'drop-shadow(0 0 0.75px rgba(11,10,7,1)) drop-shadow(1px 1px 0 rgba(11,10,7,0.85)) drop-shadow(0 3px 5px rgba(0,0,0,0.5))';
+  'drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 3px 5px rgba(0,0,0,0.55))';
 
 function PaperWord({ text, children }: { text: string; children?: React.ReactNode }) {
   return (
@@ -74,7 +74,7 @@ function PaperWord({ text, children }: { text: string; children?: React.ReactNod
                 fontFamily: "'Poppins', sans-serif",
                 fontWeight: 700,
                 color: 'transparent',
-                backgroundColor: '#EDD56C',
+                backgroundColor: '#067F3A',
                 backgroundBlendMode: 'multiply',
                 backgroundImage: "url('/brand/paper-texture.webp')",
                 backgroundSize: '260px auto',
@@ -281,7 +281,7 @@ export default function Header() {
                 >
                   <PaperWord text="VIBES">
                     <ChevronDown
-                      className={`h-4 w-4 text-[#EDD56C] transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
+                      className={`h-4 w-4 text-[#067F3A] transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
                       strokeWidth={3}
                       aria-hidden="true"
                     />
@@ -333,7 +333,7 @@ export default function Header() {
           </nav>
 
           {/* ── Desktop utilities ── */}
-          <div className={`hidden lg:flex ${overlay ? `h-12 items-stretch bg-[#067F3A] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]` : 'items-center gap-2'}`}>
+          <div className={`hidden lg:flex ${overlay ? `h-12 items-stretch bg-[#EDD56C] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]` : 'items-center gap-2'}`}>
             {!overlay && <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />}
 
             {session ? (
@@ -342,7 +342,7 @@ export default function Header() {
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
                 className={`flex items-center justify-center transition-colors duration-200 ${
-                  overlay ? 'w-16 text-white hover:bg-white/10' : 'h-11 w-11'} ${overlay ? '' : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
+                  overlay ? 'w-16 text-[#067F3A] hover:bg-black/5' : 'h-11 w-11'} ${overlay ? '' : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
                 } ${FOCUS}`}
               >
                 {initial ? (
@@ -355,8 +355,8 @@ export default function Header() {
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`group/word flex items-center gap-2 px-3 text-white transition-[transform,box-shadow,background-color] duration-100 lg:px-5 ${
-                  overlay ? 'hover:bg-white/10' : 'h-11 rounded-full bg-[#067F3A] shadow-[0_3px_0_#044F24] hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none'
+                className={`group/word flex items-center gap-2 px-3 text-[#067F3A] transition-[transform,box-shadow,background-color] duration-100 lg:px-5 ${
+                  overlay ? 'hover:bg-black/5' : 'h-11 rounded-full bg-[#067F3A] text-white shadow-[0_3px_0_#044F24] hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none'
                 } ${FOCUS}`}
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
@@ -366,14 +366,14 @@ export default function Header() {
               </Link>
             )}
 
-            {overlay && <span className="my-auto h-6 w-px bg-white" aria-hidden="true" />}
+            {overlay && <span className="my-auto h-6 w-px bg-[#067F3A]" aria-hidden="true" />}
 
             <Link
               href="/cart"
               aria-label={cartLabel}
               aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
               className={`relative flex items-center justify-center transition-colors duration-200 ${
-                overlay ? 'w-16 text-white hover:bg-white/10' : 'h-12 w-12 rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
+                overlay ? 'w-16 text-[#067F3A] hover:bg-black/5' : 'h-12 w-12 rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
               } ${FOCUS}`}
             >
               <ShoppingCart className="h-[26px] w-[26px]" strokeWidth={2.25} aria-hidden="true" />

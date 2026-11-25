@@ -69,7 +69,7 @@ export default function Hero() {
             Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. Authentic Music, curated live experiences and clean, quality merch from the mind of A-GAME
           </p>
           <div className="mt-6 flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-4">
-            <Button href="/shop" variant="green" size="lg">
+            <Button href="/shop" variant="primary" size="lg" className="[--glass-tint:rgba(237,213,108,0.95)] [--glass-glow:rgba(255,248,200,0.6)]">
               Shop the collection
               <Icon name="arrow-right" className="w-3.5 h-3.5" />
             </Button>
