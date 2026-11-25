@@ -56,7 +56,7 @@ function Brand({ glass }: { glass: boolean }) {
     <Link
       href="/"
       aria-label={`${SITE_NAME} — home`}
-      className={`flex shrink-0 items-center ${glass ? `h-11 rounded-full px-4 lg:h-12 lg:px-5 ${GLASS}` : 'rounded-xs'} ${FOCUS}`}
+      className={`flex shrink-0 items-center ${glass ? `h-11 px-4 lg:h-12 lg:px-5 ${GLASS}` : 'rounded-xs'} ${FOCUS}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={LOGO_URL} alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
@@ -201,7 +201,7 @@ export default function Header() {
 
           {/* ── Desktop nav ── */}
           <nav aria-label="Main" className="ml-auto hidden lg:block">
-            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `rounded-full px-2 ${GLASS}` : ''}`}>
+            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `px-2 ${GLASS}` : ''}`}>
               {PRIMARY.map((item) => {
                 const active = isActive(pathname, item.href);
                 return (
@@ -289,8 +289,8 @@ export default function Header() {
                 href={accountHref}
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
-                className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200 ${
-                  overlay ? `${GLASS} text-white hover:border-white/60` : 'border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
+                className={`flex h-11 w-11 items-center justify-center transition-colors duration-200 ${
+                  overlay ? `${GLASS} text-white hover:border-white/60` : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
                 } ${FOCUS}`}
               >
                 {initial ? (
@@ -316,8 +316,8 @@ export default function Header() {
               href="/cart"
               aria-label={cartLabel}
               aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
-              className={`relative flex h-12 w-12 items-center justify-center rounded-full transition-colors duration-200 ${
-                overlay ? `${GLASS} text-white hover:border-white/60` : 'text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
+              className={`relative flex h-12 w-12 items-center justify-center transition-colors duration-200 ${
+                overlay ? `${GLASS} text-white hover:border-white/60` : 'rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
               } ${FOCUS}`}
             >
               <ShoppingCart className="h-[26px] w-[26px]" strokeWidth={2.25} aria-hidden="true" />
@@ -334,8 +334,8 @@ export default function Header() {
               aria-label={menuOpen ? 'Close menu' : cartCount > 0 ? `Open menu, ${cartCount} item${cartCount === 1 ? '' : 's'} in cart` : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
-                overlay ? `${GLASS} text-white` : 'bg-transparent text-[#067F3A] hover:text-[#05652E] -mr-1'
+              className={`relative flex h-11 w-11 items-center justify-center transition-colors ${
+                overlay ? `${GLASS} text-white` : 'rounded-full bg-transparent text-[#067F3A] hover:text-[#05652E] -mr-1'
               } ${FOCUS}`}
             >
               {menuOpen ? (
