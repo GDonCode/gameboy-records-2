@@ -201,7 +201,7 @@ export default function Header() {
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
-        <div className={`relative flex h-[60px] gap-3 pl-4 md:h-[72px] lg:gap-2 lg:px-8 ${overlay ? 'items-start pr-4' : 'items-center pr-3'}`}>
+        <div className={`relative flex h-[60px] gap-3 md:h-[72px] lg:gap-2 lg:px-8 ${overlay ? 'items-start' : 'items-center pl-4 pr-3'}`}>
           <Brand glass={overlay} />
 
           {/* ── Desktop nav ── */}
@@ -361,7 +361,7 @@ export default function Header() {
           <div
             ref={menuRef}
             id="mobile-menu"
-            className="on-light absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl paper text-[#0B0A07] shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
+            className="on-light absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl bg-white bg-[url('/brand/paper-texture.webp')] bg-cover bg-center text-[#0B0A07] shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
           >
             <nav aria-label="Mobile" className="px-3 pb-4 pt-2">
               <MobileGroup items={PRIMARY} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
