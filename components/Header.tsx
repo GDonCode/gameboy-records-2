@@ -205,8 +205,8 @@ export default function Header() {
           <Brand glass={overlay} />
 
           {/* ── Desktop nav ── */}
-          <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-14' : ''}`}>
-            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `h-14 px-2 ${SOLID_WHITE}` : ''}`}>
+          <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-12' : ''}`}>
+            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `h-12 px-2 ${SOLID_WHITE}` : ''}`}>
               {PRIMARY.map((item) => {
                 const active = isActive(pathname, item.href);
                 return (
@@ -286,7 +286,7 @@ export default function Header() {
           </nav>
 
           {/* ── Desktop utilities ── */}
-          <div className={`hidden lg:flex ${overlay ? `h-14 items-stretch ${GLASS}` : 'items-center gap-2'}`}>
+          <div className={`hidden lg:flex ${overlay ? `h-12 items-stretch bg-[#067F3A] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]` : 'items-center gap-2'}`}>
             {!overlay && <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />}
 
             {session ? (
@@ -295,7 +295,7 @@ export default function Header() {
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
                 className={`flex items-center justify-center transition-colors duration-200 ${
-                  overlay ? 'w-16 text-[#0B0A07] hover:bg-white/70 hover:text-[#067F3A]' : 'h-11 w-11'} ${overlay ? '' : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
+                  overlay ? 'w-16 text-white hover:bg-white/10' : 'h-11 w-11'} ${overlay ? '' : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
                 } ${FOCUS}`}
               >
                 {initial ? (
@@ -308,8 +308,8 @@ export default function Header() {
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`flex items-center gap-2 bg-[#067F3A] px-3 text-white transition-[transform,box-shadow,background-color] duration-100 hover:bg-[#05652E] lg:px-5 ${
-                  overlay ? '' : 'h-11 rounded-full shadow-[0_3px_0_#044F24] active:translate-y-[3px] active:shadow-none'
+                className={`flex items-center gap-2 px-3 text-white transition-[transform,box-shadow,background-color] duration-100 lg:px-5 ${
+                  overlay ? 'hover:bg-white/10' : 'h-11 rounded-full bg-[#067F3A] shadow-[0_3px_0_#044F24] hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none'
                 } ${FOCUS}`}
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
@@ -319,12 +319,14 @@ export default function Header() {
               </Link>
             )}
 
+            {overlay && <span className="my-auto h-6 w-px bg-white" aria-hidden="true" />}
+
             <Link
               href="/cart"
               aria-label={cartLabel}
               aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
               className={`relative flex items-center justify-center transition-colors duration-200 ${
-                overlay ? 'w-16 text-[#0B0A07] hover:bg-white/70 hover:text-[#067F3A]' : 'h-12 w-12 rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
+                overlay ? 'w-16 text-white hover:bg-white/10' : 'h-12 w-12 rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
               } ${FOCUS}`}
             >
               <ShoppingCart className="h-[26px] w-[26px]" strokeWidth={2.25} aria-hidden="true" />
@@ -333,7 +335,7 @@ export default function Header() {
           </div>
 
           {/* ── Phone actions: the menu button holds the cart and account too ── */}
-          <div className={`ml-auto flex lg:hidden ${overlay ? 'h-14 items-stretch' : 'items-center'}`}>
+          <div className={`ml-auto flex lg:hidden ${overlay ? 'h-12 items-stretch' : 'items-center'}`}>
             <button
               ref={menuButtonRef}
               type="button"
