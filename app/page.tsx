@@ -37,8 +37,8 @@ export default function Home() {
       <MerchFeature />
       <section aria-labelledby="music-title" className="on-light paper text-ink section-y">
         <div className="container-site max-w-[1100px]">
-          <SectionTitle ghost="Music" id="music-title">
-            Music
+          <SectionTitle ghost="Releases" id="music-title">
+            NEW | RELEASES
           </SectionTitle>
           <ReleaseCards releases={FEATURED_RELEASES} />
         </div>

@@ -19,8 +19,13 @@ export default function MerchFeature() {
           {pieces.map((p) => (
             <li key={p.id}>
               <Link href={`/shop/${p.slug}`} className="zoom-media group flex flex-col gap-3 h-full">
-                <div className="relative aspect-square bg-white border-[3px] border-ink group-hover:shadow-[6px_6px_0_var(--color-green-deep)] transition-shadow duration-200">
+                {/* A recessed well: no border, the edges are shaded as if the tile were cut into the page */}
+                <div className="relative aspect-square bg-white">
                   <Image src={p.images[0]} alt={p.name} fill sizes="(min-width: 1024px) 24vw, 48vw" className="object-contain p-2 md:p-4" />
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 shadow-[inset_4px_4px_10px_rgba(11,10,7,0.35),inset_-3px_-3px_8px_rgba(255,255,255,0.7)] transition-shadow duration-200 group-hover:shadow-[inset_6px_6px_14px_rgba(11,10,7,0.45),inset_-3px_-3px_8px_rgba(255,255,255,0.7)]"
+                  />
                 </div>
                 <h3 className="m-0 mt-2 text-[0.85rem] md:text-[1rem] font-semibold uppercase tracking-[0.12em]">{p.name}</h3>
               </Link>
@@ -29,7 +34,7 @@ export default function MerchFeature() {
         </ul>
 
         <div className="mt-12 flex justify-center">
-          <Button href="/shop" variant="light" size="lg" >
+          <Button href="/shop" variant="green" size="lg">
             Shop all apparel
             <Icon name="arrow-right" className="w-3.5 h-3.5" />
           </Button>
