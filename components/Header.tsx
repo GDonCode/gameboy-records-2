@@ -55,7 +55,7 @@ function isActive(pathname: string, href: string) {
 const TILT = [-4, 3, -2, 4, -3, 2, -5, 3, -2, 4];
 const LIFT = [0, 1, -1, 1, 0, -1, 1, 0, -1, 1];
 const CUTOUT_SHADOW =
-  'drop-shadow(0 0 0.5px rgba(11,10,7,0.95)) drop-shadow(1px 1px 0 rgba(11,10,7,0.8)) drop-shadow(0 3px 5px rgba(0,0,0,0.5))';
+  'drop-shadow(0 0 0.75px rgba(11,10,7,1)) drop-shadow(1px 1px 0 rgba(11,10,7,0.85)) drop-shadow(0 3px 5px rgba(0,0,0,0.5))';
 
 function PaperWord({ text, children }: { text: string; children?: React.ReactNode }) {
   return (
@@ -67,8 +67,10 @@ function PaperWord({ text, children }: { text: string; children?: React.ReactNod
           ) : (
             <span
               key={i}
-              className="inline-block font-bold"
+              className="inline-block"
               style={{
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 700,
                 color: 'transparent',
                 backgroundImage: "url('/brand/paper-texture.webp')",
                 backgroundSize: '260px auto',
@@ -218,7 +220,7 @@ export default function Header() {
 
   const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
 
-  const linkBase = `relative inline-flex h-11 items-center rounded-md px-3 text-[0.9rem] tracking-[0.12em] transition-colors duration-200 lg:px-4 lg:text-[0.98rem]
+  const linkBase = `relative inline-flex h-11 items-center rounded-md px-3 text-[1.05rem] tracking-[0.1em] transition-colors duration-200 lg:px-4 lg:text-[1.3rem]
     after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#067F3A] after:transition-transform after:duration-200 lg:after:inset-x-4
     ${FOCUS}`;
   const linkState = (active: boolean) =>
@@ -355,7 +357,7 @@ export default function Header() {
                 } ${FOCUS}`}
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
-                <span className="hidden text-[0.9rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
+                <span className="hidden text-[1.1rem] tracking-[0.1em] lg:inline" style={SEMIBOLD}>
                   <PaperWord text="SIGN IN" />
                 </span>
               </Link>
