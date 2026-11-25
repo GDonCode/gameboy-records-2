@@ -50,7 +50,7 @@ function isActive(pathname: string, href: string) {
 }
 
 // ── Scrapbook lettering ───────────────────────────────────────────────────────
-// Each letter is cut from brand-yellow crumpled paper (the gold is multiplied into the paper texture) and set a little off-kilter,
+// Each letter is cut from brand-yellow (#EDD56C) crumpled paper (the yellow is multiplied into the paper texture) and set a little off-kilter,
 // with a dark cut edge and soft shadow so it reads over any frame of the film. No backing panel.
 const TILT = [-4, 3, -2, 4, -3, 2, -5, 3, -2, 4];
 const LIFT = [0, 1, -1, 1, 0, -1, 1, 0, -1, 1];
@@ -74,7 +74,7 @@ function PaperWord({ text, children }: { text: string; children?: React.ReactNod
                 fontFamily: "'Poppins', sans-serif",
                 fontWeight: 700,
                 color: 'transparent',
-                backgroundColor: 'var(--color-gold)',
+                backgroundColor: '#EDD56C',
                 backgroundBlendMode: 'multiply',
                 backgroundImage: "url('/brand/paper-texture.webp')",
                 backgroundSize: '260px auto',
@@ -281,7 +281,7 @@ export default function Header() {
                 >
                   <PaperWord text="VIBES">
                     <ChevronDown
-                      className={`h-4 w-4 text-[var(--color-gold)] transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
+                      className={`h-4 w-4 text-[#EDD56C] transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
                       strokeWidth={3}
                       aria-hidden="true"
                     />
