@@ -6,7 +6,7 @@ export default function Ribbon() {
   return (
     <div aria-hidden="true" className="bg-ink text-gold overflow-hidden border-y-[3px] border-ink">
       <div className="ribbon-track">
-        {[0, 1].map((copy) => (
+        {Array.from({ length: 8 }, (_, copy) => (
           <ul key={copy} className="flex shrink-0 list-none p-0 m-0">
             {WORDS.map((w) => (
               <li key={w} className="flex items-center gap-7 pr-7 py-3.5 text-[1rem] font-bold uppercase tracking-[0.24em] whitespace-nowrap">
