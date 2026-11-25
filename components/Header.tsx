@@ -29,8 +29,6 @@ import { LOGO_URL, NAV, PAPER_LOGO_URL, SITE_NAME, VIBES_NAV } from '@/lib/site'
 // The same style is used on every page; only Home floats it over the page.
 const NEON_TEXT = { color: '#0B0A07' } as const;
 const GLASS = 'bg-white/80 backdrop-blur-md shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]';
-// The nav links panel is opaque crumpled paper (the same stock as the logo's frame), so the words stay crisp over any scene.
-const SOLID_WHITE = "bg-white bg-[url('/brand/paper-texture.webp')] bg-cover bg-center shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]";
 const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const FOCUS =
   'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
@@ -49,6 +47,47 @@ const VIBES: NavItem[] = VIBES_NAV.map((n) => ({ href: n.href, label: n.label, i
 function isActive(pathname: string, href: string) {
   if (href === '/') return pathname === '/';
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+// ── Scrapbook lettering ───────────────────────────────────────────────────────
+// Each letter is cut from the crumpled-paper stock (the texture is the letter's fill) and set a little off-kilter,
+// with a dark cut edge and soft shadow so it reads over any frame of the film. No backing panel.
+const TILT = [-4, 3, -2, 4, -3, 2, -5, 3, -2, 4];
+const LIFT = [0, 1, -1, 1, 0, -1, 1, 0, -1, 1];
+const CUTOUT_SHADOW =
+  'drop-shadow(0 0 0.5px rgba(11,10,7,0.95)) drop-shadow(1px 1px 0 rgba(11,10,7,0.8)) drop-shadow(0 3px 5px rgba(0,0,0,0.5))';
+
+function PaperWord({ text, children }: { text: string; children?: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5" style={{ filter: CUTOUT_SHADOW }}>
+      <span aria-hidden="true">
+        {Array.from(text).map((ch, i) =>
+          ch === ' ' ? (
+            <span key={i} className="inline-block w-[0.5em]" />
+          ) : (
+            <span
+              key={i}
+              className="inline-block font-bold"
+              style={{
+                color: 'transparent',
+                backgroundImage: "url('/brand/paper-texture.webp')",
+                backgroundSize: '260px auto',
+                backgroundPosition: `${(i * 53) % 200}px ${(i * 31) % 120}px`,
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                transform: `translateY(${LIFT[i % LIFT.length]}px) rotate(${TILT[i % TILT.length]}deg)`,
+                padding: '0 0.04em',
+              }}
+            >
+              {ch}
+            </span>
+          ),
+        )}
+      </span>
+      <span className="sr-only">{text}</span>
+      {children}
+    </span>
+  );
 }
 
 // ── Brand ─────────────────────────────────────────────────────────────────────
@@ -208,7 +247,7 @@ export default function Header() {
 
           {/* ── Desktop nav ── */}
           <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-12' : ''}`}>
-            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `h-12 px-2 ${SOLID_WHITE}` : ''}`}>
+            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? 'h-12 px-2' : ''}`}>
               {PRIMARY.map((item) => {
                 const active = isActive(pathname, item.href);
                 return (
@@ -219,7 +258,7 @@ export default function Header() {
                       className={`${linkBase} ${linkState(active)}`}
                       style={{ ...SEMIBOLD, ...NEON_TEXT }}
                     >
-                      {item.label.toUpperCase()}
+                      <PaperWord text={item.label.toUpperCase()} />
                     </Link>
                   </li>
                 );
@@ -235,12 +274,13 @@ export default function Header() {
                   className={`${linkBase} ${linkState(vibesActive || vibesOpen)} gap-1.5`}
                   style={{ ...SEMIBOLD, ...NEON_TEXT }}
                 >
-                  VIBES
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
-                    strokeWidth={2.75}
-                    aria-hidden="true"
-                  />
+                  <PaperWord text="VIBES">
+                    <ChevronDown
+                      className={`h-4 w-4 text-[#F5F5F5] transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
+                      strokeWidth={3}
+                      aria-hidden="true"
+                    />
+                  </PaperWord>
                 </button>
 
                 <div
@@ -315,8 +355,8 @@ export default function Header() {
                 } ${FOCUS}`}
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
-                <span className="hidden text-[0.85rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
-                  SIGN IN
+                <span className="hidden text-[0.9rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
+                  <PaperWord text="SIGN IN" />
                 </span>
               </Link>
             )}
