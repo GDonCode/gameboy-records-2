@@ -37,7 +37,7 @@ export default function Hero() {
   }
 
   return (
-    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-end min-h-[100svh] mt-[calc(var(--header-h)*-1)] pt-(--header-h)">
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-end min-h-[calc(100svh+var(--header-h))] mt-[calc(var(--header-h)*-1)] pt-(--header-h)">
       {/* The film fills the whole hero */}
       <video
         ref={videoRef}

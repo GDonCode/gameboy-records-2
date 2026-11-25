@@ -29,6 +29,8 @@ import { LOGO_URL, NAV, PAPER_LOGO_URL, SITE_NAME, VIBES_NAV } from '@/lib/site'
 // Every other page keeps the full-width frosted white bar.
 const NEON_TEXT = { color: '#0B0A07' } as const;
 const GLASS = 'bg-white/80 backdrop-blur-md shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]';
+// The nav links panel is nearly opaque so the words stay crisp over any scene.
+const SOLID_WHITE = 'bg-white/95 backdrop-blur-sm shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]';
 const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const FOCUS =
   'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
@@ -203,8 +205,8 @@ export default function Header() {
           <Brand glass={overlay} />
 
           {/* ── Desktop nav ── */}
-          <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-full' : ''}`}>
-            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `h-full px-2 ${GLASS}` : ''}`}>
+          <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-14' : ''}`}>
+            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `h-14 px-2 ${SOLID_WHITE}` : ''}`}>
               {PRIMARY.map((item) => {
                 const active = isActive(pathname, item.href);
                 return (
@@ -284,7 +286,7 @@ export default function Header() {
           </nav>
 
           {/* ── Desktop utilities ── */}
-          <div className={`hidden lg:flex ${overlay ? `h-full items-stretch ${GLASS}` : 'items-center gap-2'}`}>
+          <div className={`hidden lg:flex ${overlay ? `h-14 items-stretch ${GLASS}` : 'items-center gap-2'}`}>
             {!overlay && <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />}
 
             {session ? (
@@ -331,7 +333,7 @@ export default function Header() {
           </div>
 
           {/* ── Phone actions: the menu button holds the cart and account too ── */}
-          <div className={`ml-auto flex lg:hidden ${overlay ? 'h-full items-stretch' : 'items-center'}`}>
+          <div className={`ml-auto flex lg:hidden ${overlay ? 'h-14 items-stretch' : 'items-center'}`}>
             <button
               ref={menuButtonRef}
               type="button"
