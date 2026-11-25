@@ -201,7 +201,7 @@ export default function Header() {
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
-        <div className={`relative flex h-[60px] gap-3 md:h-[72px] lg:gap-2 ${overlay ? 'items-start lg:grid lg:grid-cols-[1fr_auto_1fr]' : 'items-center pl-4 pr-3 lg:px-8'}`}>
+        <div className={`relative flex h-[60px] gap-3 md:h-[72px] lg:gap-2 lg:px-8 ${overlay ? 'items-start lg:grid lg:grid-cols-[1fr_auto_1fr]' : 'items-center pl-4 pr-3'}`}>
           <Brand glass={overlay} />
 
           {/* ── Desktop nav ── */}
