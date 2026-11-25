@@ -226,7 +226,7 @@ export default function Header() {
   const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
 
   const linkBase = `group/word relative inline-flex h-11 items-center rounded-md px-3 text-[1.05rem] tracking-[0.1em] transition-colors duration-200 lg:px-4 lg:text-[1.3rem]
-    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#067F3A] after:transition-transform after:duration-200 lg:after:inset-x-4
+    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-white after:shadow-[0_1px_3px_rgba(0,0,0,0.5)] after:transition-transform after:duration-200 lg:after:inset-x-4
     ${FOCUS}`;
   const linkState = (active: boolean) =>
     active ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100';
