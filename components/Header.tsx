@@ -29,8 +29,8 @@ import { LOGO_URL, NAV, PAPER_LOGO_URL, SITE_NAME, VIBES_NAV } from '@/lib/site'
 // Every other page keeps the full-width frosted white bar.
 const NEON_TEXT = { color: '#0B0A07' } as const;
 const GLASS = 'bg-white/80 backdrop-blur-md shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]';
-// The nav links panel is nearly opaque so the words stay crisp over any scene.
-const SOLID_WHITE = 'bg-white/95 backdrop-blur-sm shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]';
+// The nav links panel is opaque crumpled paper (the same stock as the logo's frame), so the words stay crisp over any scene.
+const SOLID_WHITE = "bg-white bg-[url('/brand/paper-texture.webp')] bg-cover bg-center shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]";
 const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const FOCUS =
   'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
