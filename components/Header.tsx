@@ -57,7 +57,7 @@ function Brand({ glass }: { glass: boolean }) {
     <Link
       href="/"
       aria-label={`${SITE_NAME} — home`}
-      className={`flex shrink-0 ${glass ? 'self-start items-start lg:order-2 lg:justify-self-center' : 'items-center'} ${glass ? 'drop-shadow-[0_6px_14px_rgba(0,0,0,0.55)]' : 'rounded-xs'} ${FOCUS}`}
+      className={`flex shrink-0 ${glass ? 'self-start items-start' : 'items-center'} ${glass ? 'drop-shadow-[0_6px_14px_rgba(0,0,0,0.55)]' : 'rounded-xs'} ${FOCUS}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -201,11 +201,11 @@ export default function Header() {
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
-        <div className={`relative flex h-[60px] gap-3 md:h-[72px] lg:gap-2 lg:px-8 ${overlay ? 'items-start lg:grid lg:grid-cols-[1fr_auto_1fr]' : 'items-center pl-4 pr-3'}`}>
+        <div className={`relative flex h-[60px] gap-3 md:h-[72px] lg:gap-2 lg:px-8 ${overlay ? 'items-start' : 'items-center pl-4 pr-3'}`}>
           <Brand glass={overlay} />
 
           {/* ── Desktop nav ── */}
-          <nav aria-label="Main" className={`hidden lg:block ${overlay ? 'h-12 lg:order-1 lg:justify-self-start' : 'ml-auto'}`}>
+          <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-12' : ''}`}>
             <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `h-12 px-2 ${SOLID_WHITE}` : ''}`}>
               {PRIMARY.map((item) => {
                 const active = isActive(pathname, item.href);
@@ -286,7 +286,7 @@ export default function Header() {
           </nav>
 
           {/* ── Desktop utilities ── */}
-          <div className={`hidden lg:flex ${overlay ? `h-12 items-stretch lg:order-3 lg:justify-self-end bg-[#067F3A] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]` : 'items-center gap-2'}`}>
+          <div className={`hidden lg:flex ${overlay ? `h-12 items-stretch bg-[#067F3A] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]` : 'items-center gap-2'}`}>
             {!overlay && <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />}
 
             {session ? (
