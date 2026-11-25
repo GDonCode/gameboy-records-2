@@ -26,7 +26,7 @@ import { LOGO_URL, NAV, PAPER_LOGO_URL, SITE_NAME, VIBES_NAV } from '@/lib/site'
 // On Home the header floats over the hero film: the nav links and cart/account each sit on their own
 // frosted-white panel with black content so they stay readable over every scene (the logo carries its own paper
 // frame); Sign in keeps its solid green.
-// Every other page keeps the full-width frosted white bar.
+// The same style is used on every page; only Home floats it over the page.
 const NEON_TEXT = { color: '#0B0A07' } as const;
 const GLASS = 'bg-white/80 backdrop-blur-md shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]';
 // The nav links panel is opaque crumpled paper (the same stock as the logo's frame), so the words stay crisp over any scene.
@@ -85,7 +85,9 @@ function CartBadge({ count, className = '' }: { count: number; className?: strin
 // ── Header ────────────────────────────────────────────────────────────────────
 export default function Header() {
   const pathname = usePathname();
-  const overlay = pathname === '/';
+  // One header style site-wide. Only Home floats it over the hero film; elsewhere it stays in the page flow.
+  const overlay = true;
+  const onHome = pathname === '/';
   const { data: session } = useSession();
   // Live cart total: updates instantly from the shop/cart pages, no refresh needed.
   const liveCartCount = useCartCount(session?.user?.id);
@@ -196,7 +198,7 @@ export default function Header() {
 
       <header
         className={`${
-          overlay ? 'fixed inset-x-0 top-0 z-40 text-[#0B0A07]' : 'on-light sticky top-0 z-40 flex-shrink-0 bg-white/80 text-[#0B0A07] backdrop-blur-md'
+          onHome ? 'fixed inset-x-0 top-0 z-40 text-[#0B0A07]' : 'sticky top-0 z-40 flex-shrink-0 text-[#0B0A07]'
         } transition-transform duration-300 ease-in-out lg:translate-y-0 ${
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
