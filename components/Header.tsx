@@ -67,8 +67,10 @@ function PaperWord({ text, children }: { text: string; children?: React.ReactNod
           ) : (
             <span
               key={i}
-              className="inline-block"
+              className="inline-block origin-center transition-transform duration-300 ease-out [transform:translateY(var(--y))_rotate(var(--r))] group-hover/word:[transform:translateY(0)_rotate(0deg)_scale(1.1)] group-focus-visible/word:[transform:translateY(0)_rotate(0deg)_scale(1.1)] motion-reduce:transition-none"
               style={{
+                '--y': `${LIFT[i % LIFT.length]}px`,
+                '--r': `${TILT[i % TILT.length]}deg`,
                 fontFamily: "'Poppins', sans-serif",
                 fontWeight: 700,
                 color: 'transparent',
@@ -77,9 +79,8 @@ function PaperWord({ text, children }: { text: string; children?: React.ReactNod
                 backgroundPosition: `${(i * 53) % 200}px ${(i * 31) % 120}px`,
                 WebkitBackgroundClip: 'text',
                 backgroundClip: 'text',
-                transform: `translateY(${LIFT[i % LIFT.length]}px) rotate(${TILT[i % TILT.length]}deg)`,
                 padding: '0 0.04em',
-              }}
+              } as React.CSSProperties}
             >
               {ch}
             </span>
@@ -220,7 +221,7 @@ export default function Header() {
 
   const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
 
-  const linkBase = `relative inline-flex h-11 items-center rounded-md px-3 text-[1.05rem] tracking-[0.1em] transition-colors duration-200 lg:px-4 lg:text-[1.3rem]
+  const linkBase = `group/word relative inline-flex h-11 items-center rounded-md px-3 text-[1.05rem] tracking-[0.1em] transition-colors duration-200 lg:px-4 lg:text-[1.3rem]
     after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#067F3A] after:transition-transform after:duration-200 lg:after:inset-x-4
     ${FOCUS}`;
   const linkState = (active: boolean) =>
@@ -352,7 +353,7 @@ export default function Header() {
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`flex items-center gap-2 px-3 text-white transition-[transform,box-shadow,background-color] duration-100 lg:px-5 ${
+                className={`group/word flex items-center gap-2 px-3 text-white transition-[transform,box-shadow,background-color] duration-100 lg:px-5 ${
                   overlay ? 'hover:bg-white/10' : 'h-11 rounded-full bg-[#067F3A] shadow-[0_3px_0_#044F24] hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none'
                 } ${FOCUS}`}
               >
