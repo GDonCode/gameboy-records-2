@@ -50,7 +50,7 @@ function isActive(pathname: string, href: string) {
 }
 
 // ── Scrapbook lettering ───────────────────────────────────────────────────────
-// Each letter is cut from white crumpled paper (the texture is multiplied into the paper texture) and set a little off-kilter,
+// Each letter is cut from white crumpled paper (the creases are kept faint into the paper texture) and set a little off-kilter,
 // with a dark cut edge and soft shadow so it reads over any frame of the film. No backing panel.
 const TILT = [-4, 3, -2, 4, -3, 2, -5, 3, -2, 4];
 const LIFT = [0, 1, -1, 1, 0, -1, 1, 0, -1, 1];
@@ -75,8 +75,7 @@ function PaperWord({ text, children }: { text: string; children?: React.ReactNod
                 fontWeight: 700,
                 color: 'transparent',
                 backgroundColor: '#FFFFFF',
-                backgroundBlendMode: 'multiply',
-                backgroundImage: "url('/brand/paper-texture.webp')",
+                backgroundImage: "linear-gradient(rgba(255,255,255,0.72), rgba(255,255,255,0.72)), url('/brand/paper-texture.webp')",
                 backgroundSize: '260px auto',
                 backgroundPosition: `${(i * 53) % 200}px ${(i * 31) % 120}px`,
                 WebkitBackgroundClip: 'text',
@@ -141,6 +140,7 @@ export default function Header() {
   const initial = session?.user?.name?.trim().charAt(0).toUpperCase() || null;
 
   const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [vibesOpen, setVibesOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -155,9 +155,11 @@ export default function Header() {
   // on load, and scrolling inside a panel (the Music crate, say) never hides it.
   useEffect(() => {
     lastScrollY.current = window.scrollY;
+    setScrolled(window.scrollY > 8);
     function handleScroll() {
       const currentY = window.scrollY;
       setHidden(currentY > lastScrollY.current && currentY > 80);
+      setScrolled(currentY > 8);
       lastScrollY.current = currentY;
     }
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -247,6 +249,13 @@ export default function Header() {
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
+        {/* Once the page scrolls, a thin band of green frosted glass runs the full width behind the logo, nav and Sign in + Cart */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-x-0 top-0 h-12 border-b border-white/20 bg-[#067F3A]/50 backdrop-blur-md transition-opacity duration-300 motion-reduce:transition-none ${
+            scrolled ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
         <div className={`relative flex h-[60px] gap-3 md:h-[72px] ${overlay ? 'items-start lg:gap-0' : 'items-center pl-4 pr-3 lg:gap-2 lg:px-8'}`}>
           <Brand glass={overlay} />
 
