@@ -15,6 +15,8 @@ export const INSTAGRAM_HANDLE = '@gameboyrecordsofficial';
 
 export const MEDIA_BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media`;
 export const LOGO_URL = `${MEDIA_BASE}/gameboy-logo-removebg-preview.png`;
+// Logo on its torn-paper frame (header). Sits on its own backing, so it needs no glass behind it.
+export const PAPER_LOGO_URL = `${MEDIA_BASE}/gameboy-paper-logo.png`;
 
 /** Default share card (app/opengraph-image.tsx), for pages that set their own Open Graph details. */
 export const OG_IMAGE = { url: '/opengraph-image', width: 1200, height: 630, alt: 'Gameboy Records — independent label of Alexx A-Game' };

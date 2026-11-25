@@ -20,7 +20,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useCartCount } from '@/lib/cart-sync';
-import { LOGO_URL, NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
+import { LOGO_URL, NAV, PAPER_LOGO_URL, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
 // On Home the header floats over the hero film: each element (logo, nav links, cart/account) sits on its own
@@ -56,10 +56,15 @@ function Brand({ glass }: { glass: boolean }) {
     <Link
       href="/"
       aria-label={`${SITE_NAME} — home`}
-      className={`flex shrink-0 items-center ${glass ? `h-11 px-4 lg:h-12 lg:px-5 ${GLASS}` : 'rounded-xs'} ${FOCUS}`}
+      className={`flex shrink-0 items-center ${glass ? 'drop-shadow-[0_6px_14px_rgba(0,0,0,0.55)]' : 'rounded-xs'} ${FOCUS}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={LOGO_URL} alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
+      <img
+        src={glass ? PAPER_LOGO_URL : LOGO_URL}
+        alt=""
+        className={glass ? 'h-[46px] w-auto lg:h-[58px]' : 'h-[30px] w-auto lg:h-[38px]'}
+        {...(glass ? {} : { width: 1022, height: 168 })}
+      />
     </Link>
   );
 }
