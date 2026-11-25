@@ -23,9 +23,13 @@ import { useCartCount } from '@/lib/cart-sync';
 import { LOGO_URL, NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
-// The header is frosted white glass over whatever is behind it (the hero film on Home): black nav links,
-// a brand-green Sign in button.
+// On Home the header floats over the hero film: each element (logo, nav links, cart/account) sits on its own
+// dark-tinted glass pill with white text so it stays readable over every scene; Sign in keeps its solid green.
+// Every other page keeps the frosted white bar with black links.
 const NEON_TEXT = { color: '#0B0A07' } as const;
+const LIGHT_TEXT = { color: '#FFFFFF' } as const;
+const GLASS =
+  'border border-white/25 bg-[#0B0A07]/35 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.18)]';
 const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const FOCUS =
   'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
@@ -47,9 +51,13 @@ function isActive(pathname: string, href: string) {
 }
 
 // ── Brand ─────────────────────────────────────────────────────────────────────
-function Brand() {
+function Brand({ glass }: { glass: boolean }) {
   return (
-    <Link href="/" aria-label={`${SITE_NAME} — home`} className={`flex shrink-0 items-center rounded-xs ${FOCUS}`}>
+    <Link
+      href="/"
+      aria-label={`${SITE_NAME} — home`}
+      className={`flex shrink-0 items-center ${glass ? `h-11 rounded-full px-4 lg:h-12 lg:px-5 ${GLASS}` : 'rounded-xs'} ${FOCUS}`}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={LOGO_URL} alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
     </Link>
@@ -71,6 +79,8 @@ function CartBadge({ count, className = '' }: { count: number; className?: strin
 // ── Header ────────────────────────────────────────────────────────────────────
 export default function Header() {
   const pathname = usePathname();
+  const overlay = pathname === '/';
+  const textStyle = overlay ? LIGHT_TEXT : NEON_TEXT;
   const { data: session } = useSession();
   // Live cart total: updates instantly from the shop/cart pages, no refresh needed.
   const liveCartCount = useCartCount(session?.user?.id);
@@ -180,16 +190,18 @@ export default function Header() {
       )}
 
       <header
-        className={`on-light sticky top-0 z-40 flex-shrink-0 bg-white/80 text-[#0B0A07] backdrop-blur-md transition-transform duration-300 ease-in-out lg:translate-y-0 ${
+        className={`${
+          overlay ? 'fixed inset-x-0 top-0 z-40 text-white' : 'on-light sticky top-0 z-40 flex-shrink-0 bg-white/80 text-[#0B0A07] backdrop-blur-md'
+        } transition-transform duration-300 ease-in-out lg:translate-y-0 ${
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
         <div className="relative flex h-[60px] items-center gap-3 pl-4 pr-3 md:h-[72px] lg:gap-2 lg:px-8">
-          <Brand />
+          <Brand glass={overlay} />
 
           {/* ── Desktop nav ── */}
           <nav aria-label="Main" className="ml-auto hidden lg:block">
-            <ul className="flex items-center gap-0.5 lg:gap-1">
+            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? `rounded-full px-2 ${GLASS}` : ''}`}>
               {PRIMARY.map((item) => {
                 const active = isActive(pathname, item.href);
                 return (
@@ -198,7 +210,7 @@ export default function Header() {
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
                       className={`${linkBase} ${linkState(active)}`}
-                      style={{ ...SEMIBOLD, ...NEON_TEXT }}
+                      style={{ ...SEMIBOLD, ...textStyle }}
                     >
                       {item.label.toUpperCase()}
                     </Link>
@@ -214,7 +226,7 @@ export default function Header() {
                   aria-controls="vibes-menu"
                   onClick={toggleVibes}
                   className={`${linkBase} ${linkState(vibesActive || vibesOpen)} gap-1.5`}
-                  style={{ ...SEMIBOLD, ...NEON_TEXT }}
+                  style={{ ...SEMIBOLD, ...textStyle }}
                 >
                   VIBES
                   <ChevronDown
@@ -270,14 +282,16 @@ export default function Header() {
 
           {/* ── Desktop utilities ── */}
           <div className="hidden items-center gap-2 lg:flex">
-            <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />
+            <span className={`mx-2 h-7 w-px lg:mx-3 ${overlay ? 'bg-white/30' : 'bg-[#0B0A07]/20'}`} aria-hidden="true" />
 
             {session ? (
               <Link
                 href={accountHref}
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
-                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/10 ${FOCUS}`}
+                className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200 ${
+                  overlay ? `${GLASS} text-white hover:border-white/60` : 'border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
+                } ${FOCUS}`}
               >
                 {initial ? (
                   <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
@@ -302,7 +316,9 @@ export default function Header() {
               href="/cart"
               aria-label={cartLabel}
               aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
-              className={`relative flex h-12 w-12 items-center justify-center rounded-full text-[#0B0A07] transition-colors duration-200 hover:bg-[#067F3A]/10 hover:text-[#067F3A] ${FOCUS}`}
+              className={`relative flex h-12 w-12 items-center justify-center rounded-full transition-colors duration-200 ${
+                overlay ? `${GLASS} text-white hover:border-white/60` : 'text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
+              } ${FOCUS}`}
             >
               <ShoppingCart className="h-[26px] w-[26px]" strokeWidth={2.25} aria-hidden="true" />
               <CartBadge count={cartCount} className="absolute -right-1.5 -top-1.5" />
@@ -318,7 +334,9 @@ export default function Header() {
               aria-label={menuOpen ? 'Close menu' : cartCount > 0 ? `Open menu, ${cartCount} item${cartCount === 1 ? '' : 's'} in cart` : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full bg-transparent text-[#067F3A] transition-colors hover:text-[#05652E] -mr-1 ${FOCUS}`}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
+                overlay ? `${GLASS} text-white` : 'bg-transparent text-[#067F3A] hover:text-[#05652E] -mr-1'
+              } ${FOCUS}`}
             >
               {menuOpen ? (
                 <X className="h-[32px] w-[32px]" strokeWidth={2.75} aria-hidden="true" />

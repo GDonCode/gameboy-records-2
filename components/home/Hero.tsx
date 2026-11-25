@@ -1,5 +1,5 @@
 // components/home/Hero.tsx
-// Home page hero: the studio film fills the screen (on phones it runs up behind the header; on desktop it starts below it),
+// Home page hero: the studio film fills the screen (it runs up behind the floating, glass-backed header),
 // with the label's intro and the two calls to action centred along the bottom, clear of the subject in the middle of the frame.
 'use client';
 
@@ -37,7 +37,7 @@ export default function Hero() {
   }
 
   return (
-    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-end min-h-[100svh] mt-[calc(var(--header-h)*-1)] pt-(--header-h) lg:mt-0 lg:pt-0 lg:min-h-[calc(100svh-var(--header-h))]">
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-ink flex items-end min-h-[100svh] mt-[calc(var(--header-h)*-1)] pt-(--header-h)">
       {/* The film fills the whole hero */}
       <video
         ref={videoRef}
