@@ -370,7 +370,7 @@ export default function Header() {
               >
                 <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
                 <span className="hidden text-[1.1rem] tracking-[0.1em] lg:inline" style={SEMIBOLD}>
-                  <PaperWord text="+ PLAYER ONE" />
+                  <PaperWord text="+ PLAYER" />
                 </span>
               </Link>
             )}
@@ -473,7 +473,7 @@ export default function Header() {
                       className={`flex h-12 items-center justify-center rounded-full bg-[#067F3A] text-[0.95rem] tracking-[0.14em] text-white shadow-[0_3px_0_#044F24] active:translate-y-[3px] active:shadow-none ${FOCUS}`}
                       style={SEMIBOLD}
                     >
-                      + PLAYER ONE
+                      + PLAYER
                     </Link>
                     <Link
                       href="/account/login?mode=register"

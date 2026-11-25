@@ -38,7 +38,7 @@ export default function Home() {
       <section aria-labelledby="music-title" className="on-light paper text-ink section-y">
         <div className="container-site max-w-[1100px]">
           <SectionTitle ghost="Releases" id="music-title">
-            NEW | RELEASES
+            New Music
           </SectionTitle>
           <ReleaseCards releases={FEATURED_RELEASES} />
         </div>
