@@ -341,12 +341,11 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
   // clean steps: a gentle scroll moves one record, a long flick moves several in a row.
   useEffect(() => {
     const el = scrollerRef.current;
-    if (!el || !desktop) return;
+    if (!el || !desktop || embedded) return; // Home: buttons (and arrow keys) only; the wheel always scrolls the page
     let acc = 0;
     let lastEvent = 0;
     let lockedUntil = 0;
     const onWheel = (e: WheelEvent) => {
-      if (embedded && Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; // vertical: let the page scroll
       e.preventDefault();
       const now = performance.now();
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? el.clientWidth : 1;
@@ -398,7 +397,7 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
       ref={crateRef}
       data-axis={desktop ? 'x' : 'y'}
       data-embedded={embedded || undefined}
-      className={`crate relative bg-ink overflow-hidden flex flex-col ${embedded ? 'h-[100svh] pt-(--header-h)' : 'h-[calc(100svh-var(--header-h))]'}`}
+      className={`crate relative paper-ink overflow-hidden flex flex-col ${embedded ? 'h-[100svh] pt-(--header-h)' : 'h-[calc(100svh-var(--header-h))]'}`}
     >
       <style>{`
         .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 1); }
@@ -475,7 +474,7 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
           aria-roledescription="carousel"
           aria-label={`Record crate: ${n} releases, oldest first. Use the arrow keys to flip through; it loops.`}
           className={`crate-scroller no-scrollbar absolute inset-0 flex snap-mandatory overscroll-contain focus-visible:outline-none ${
-            embedded ? 'flex-row overflow-y-hidden overflow-x-auto snap-x' : 'flex-col md:flex-row overflow-y-auto md:overflow-y-hidden md:overflow-x-auto snap-y md:snap-x'
+            embedded ? 'flex-row overflow-hidden snap-x' : 'flex-col md:flex-row overflow-y-auto md:overflow-y-hidden md:overflow-x-auto snap-y md:snap-x'
           }`}
         >
           {Array.from({ length: COPIES }, (_, copy) =>
@@ -518,7 +517,7 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
               type="button"
               onClick={() => step(dir)}
               aria-label={dir === 1 ? 'Next record' : 'Previous record'}
-              className="pointer-events-auto zoom-content inline-flex items-center justify-center w-12 h-12 rounded-full border border-paper/30 bg-ink/70 text-paper backdrop-blur hover:border-paper/70 cursor-pointer"
+              className="pointer-events-auto zoom-content inline-flex items-center justify-center w-12 h-12 rounded-full border-2 border-ink bg-white bg-[url('/brand/paper-texture.webp')] bg-cover bg-center text-ink shadow-[3px_3px_0_rgba(0,0,0,0.6)] hover:border-green cursor-pointer"
             >
               <span>
                 <Icon name={dir === 1 ? 'chevron-right' : 'chevron-left'} className="w-4 h-4" />

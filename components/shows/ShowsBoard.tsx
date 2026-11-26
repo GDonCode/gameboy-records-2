@@ -24,7 +24,7 @@ function Badge({ viewBox, d, label, size = 'w-7 h-7', color = '#E2BA0A' }: { vie
   return (
     <div className="flex flex-col items-center gap-3">
       <span className="shows-placeholder-icon" aria-hidden="true">
-        <svg viewBox={viewBox} className={size} fill="#fff">
+        <svg viewBox={viewBox} className={size} fill="#0B0A07">
           <path d={d} />
         </svg>
       </span>
@@ -73,7 +73,7 @@ function ShowRail({ shows }: { shows: Show[] }) {
               </a>
               <div className="mt-auto pt-2">
                 {buyable ? (
-                  <a href={show.ticketUrl!} target="_blank" rel="noopener noreferrer" className="shows-notify-btn glass-btn zoom-content justify-center" aria-label={`${label}: ${show.city} (opens in a new tab)`}>
+                  <a href={show.ticketUrl!} target="_blank" rel="noopener noreferrer" className="shows-notify-btn glass-btn glass-btn--green zoom-content justify-center" aria-label={`${label}: ${show.city} (opens in a new tab)`}>
                     <span>{label}</span>
                   </a>
                 ) : (
@@ -170,8 +170,8 @@ export default function ShowsBoard({ shows, layout = 'page' }: { shows: Show[]; 
           width: 64px;
           height: 64px;
           border-radius: 50%;
-          background: #067F3A;
-          box-shadow: 4px 4px 0 #E2BA0A;
+          background: #E2BA0A;
+          box-shadow: 4px 4px 0 #067F3A;
         }
         .shows-email-input {
           flex: 1 1 auto;
@@ -263,7 +263,7 @@ export default function ShowsBoard({ shows, layout = 'page' }: { shows: Show[]; 
               required
               className={`shows-email-input ${rail ? 'shows-email-input--light' : ''}`}
             />
-            <button type="submit" disabled={isSubmitting} className="shows-notify-btn glass-btn zoom-content justify-center">
+            <button type="submit" disabled={isSubmitting} className={`shows-notify-btn glass-btn zoom-content justify-center ${rail ? 'glass-btn--green' : ''}`}>
               <span>{isSubmitting ? 'SENDING…' : 'NOTIFY ME'}</span>
             </button>
           </form>

@@ -1,5 +1,5 @@
 // lib/trivia-audio.ts
-// Browser-only helpers for Tricky Tempo Trivia: spoken questions (Web Speech API) and
+// Browser-only helpers for Do You Know A-Game?: spoken questions (Web Speech API) and
 // countdown / feedback sounds (Web Audio). No audio files needed.
 
 let ctx: AudioContext | null = null;

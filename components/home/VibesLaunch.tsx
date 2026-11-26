@@ -17,8 +17,8 @@ const GAMES = [
   },
   {
     href: '/trivia',
-    title: 'Tricky Tempo Trivia',
-    kicker: 'Test your ears',
+    title: 'Do You Know A-Game?',
+    kicker: "Prove you're a fan",
     blurb: 'Three rounds, fifteen questions, ten seconds each. Top the leaderboard and earn Club Points.',
     cta: 'Play trivia',
     icon: CircleHelp,

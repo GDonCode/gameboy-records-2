@@ -46,7 +46,7 @@ export default async function Home() {
       {releases.length > 0 && (
         <section id="music" aria-labelledby="crate-title" tabIndex={-1} className="scroll-mt-[calc(var(--header-h)*-1)] outline-none">
           {/* The crate only mounts when it is about a screen away; until then a same-height placeholder holds its place. */}
-          <LazyMount className="min-h-[100svh] bg-ink">
+          <LazyMount className="paper-ink min-h-[100svh]">
             <RecordCrate releases={releases} embedded />
           </LazyMount>
         </section>
