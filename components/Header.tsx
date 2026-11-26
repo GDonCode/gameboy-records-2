@@ -141,6 +141,7 @@ export default function Header() {
 
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showsInView, setShowsInView] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [vibesOpen, setVibesOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -165,6 +166,19 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // On Home the Shows link points at the Shows section further down the page, and lights up while it is on screen.
+  useEffect(() => {
+    if (!onHome) {
+      setShowsInView(false);
+      return;
+    }
+    const el = document.getElementById('shows');
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setShowsInView(entry.isIntersecting), { threshold: 0.5 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [onHome]);
 
   // Escape closes whichever menu is open and hands focus back to its trigger.
   useEffect(() => {
@@ -224,6 +238,8 @@ export default function Header() {
   }
 
   const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
+  const navItems = PRIMARY.map((n) => (onHome && n.href === '/shows' ? { ...n, href: '/#shows' } : n));
+  const isNavActive = (href: string) => (href === '/#shows' ? showsInView : isActive(pathname, href));
 
   const linkBase = `group/word relative inline-flex h-11 items-center rounded-md px-3 text-[1.05rem] tracking-[0.1em] transition-colors duration-200 lg:px-4 lg:text-[1.3rem]
     after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-white after:shadow-[0_1px_3px_rgba(0,0,0,0.5)] after:transition-transform after:duration-200 lg:after:inset-x-4
@@ -262,8 +278,8 @@ export default function Header() {
           {/* ── Desktop nav ── */}
           <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-12' : ''}`}>
             <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? 'h-12 px-2' : ''}`}>
-              {PRIMARY.map((item) => {
-                const active = isActive(pathname, item.href);
+              {navItems.map((item) => {
+                const active = isNavActive(item.href);
                 return (
                   <li key={item.href}>
                     <Link
@@ -420,12 +436,12 @@ export default function Header() {
             className="on-light absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl bg-white bg-[url('/brand/paper-texture.webp')] bg-cover bg-center text-[#0B0A07] shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
           >
             <nav aria-label="Mobile" className="px-3 pb-4 pt-2">
-              <MobileGroup items={PRIMARY} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+              <MobileGroup items={navItems} isActive={isNavActive} onNavigate={() => setMenuOpen(false)} />
 
               <p className="px-3 pb-1 pt-4 text-[0.7rem] tracking-[0.3em] text-[#05652E]" style={SEMIBOLD}>
                 VIBES
               </p>
-              <MobileGroup items={VIBES} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+              <MobileGroup items={VIBES} isActive={(href) => isActive(pathname, href)} onNavigate={() => setMenuOpen(false)} />
 
               <div className="mt-4 border-t-2 border-[#0B0A07]/15 pt-3">
                 <ul className="mb-3 flex flex-col gap-0.5">
@@ -500,11 +516,11 @@ export default function Header() {
   );
 }
 
-function MobileGroup({ items, pathname, onNavigate }: { items: NavItem[]; pathname: string; onNavigate: () => void }) {
+function MobileGroup({ items, isActive: isItemActive, onNavigate }: { items: NavItem[]; isActive: (href: string) => boolean; onNavigate: () => void }) {
   return (
     <ul className="flex flex-col gap-0.5">
       {items.map((item) => {
-        const active = isActive(pathname, item.href);
+        const active = isItemActive(item.href);
         const Icon = item.icon;
         return (
           <li key={item.href}>

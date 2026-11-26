@@ -4,9 +4,10 @@
 // they replace the TBA badges, one row per show.
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import PageTitle from '@/components/PageTitle';
 import GameIconsBackground from '@/components/GameIconsBackground';
+import Icon from '@/components/icons';
 import type { Show } from '@/lib/shows';
 
 const SEMI = "'Poppins_semibold', 'Poppins', sans-serif";
@@ -32,11 +33,76 @@ function Badge({ viewBox, d, label, size = 'w-7 h-7' }: { viewBox: string; d: st
   );
 }
 
+function showLabel(status: Show['status']) {
+  return status === 'sold-out' ? 'SOLD OUT' : status === 'announced' ? 'ON SALE SOON' : status === 'members-presale' ? 'MEMBERS PRESALE' : 'TICKETS';
+}
+
+/** Home layout: one card per show in a sideways scroll-snap rail, the next card peeking in. */
+function ShowRail({ shows }: { shows: Show[] }) {
+  const railRef = useRef<HTMLUListElement>(null);
+  const step = (dir: 1 | -1) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const card = rail.querySelector('li');
+    rail.scrollBy({ left: dir * ((card?.clientWidth ?? 320) + 16), behavior: 'smooth' });
+  };
+  return (
+    <div className="relative w-full max-w-[1200px] mt-12">
+      <ul
+        ref={railRef}
+        tabIndex={0}
+        aria-label="Upcoming shows, scroll sideways"
+        className="flex gap-4 overflow-x-auto snap-x snap-mandatory list-none p-0 m-0 px-1 pb-4 text-left [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-gold"
+      >
+        {shows.map((show) => {
+          const d = new Date(show.date);
+          const day = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }).toUpperCase();
+          const md = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }).toUpperCase();
+          const directions = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${show.venue}, ${show.address}`)}`;
+          const label = showLabel(show.status);
+          const buyable = show.ticketUrl && (show.status === 'on-sale' || show.status === 'members-presale');
+          return (
+            <li key={`${show.date}-${show.city}`} className="panel-ink snap-start shrink-0 w-[78%] sm:w-[340px] flex flex-col gap-4 p-6">
+              <span style={{ fontFamily: SEMI, letterSpacing: '0.14em', color: '#E2BA0A' }}>{day}</span>
+              <span className="text-white text-[2.4rem] leading-none" style={{ fontFamily: SEMI }}>{md}</span>
+              <span className="text-white" style={{ fontFamily: SEMI, letterSpacing: '0.08em' }}>
+                {show.city.toUpperCase()}, {show.country.toUpperCase()}
+              </span>
+              <a href={directions} target="_blank" rel="noopener noreferrer" className="text-[0.9em] text-[#e8f5ec]/70 underline underline-offset-4 hover:text-white" style={{ fontFamily: BODY }}>
+                {show.venue}
+              </a>
+              <div className="mt-auto pt-2">
+                {buyable ? (
+                  <a href={show.ticketUrl!} target="_blank" rel="noopener noreferrer" className="shows-notify-btn glass-btn zoom-content justify-center" aria-label={`${label}: ${show.city} (opens in a new tab)`}>
+                    <span>{label}</span>
+                  </a>
+                ) : (
+                  <span style={{ fontFamily: SEMI, fontSize: '0.85em', letterSpacing: '0.14em', color: '#e8f5ec', opacity: 0.6 }}>{label}</span>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      {shows.length > 1 && (
+        <div className="mt-4 hidden justify-center gap-3 sm:flex">
+          <button type="button" onClick={() => step(-1)} aria-label="Previous show" className="glass-btn glass-btn--quiet zoom-content inline-flex h-11 w-11 items-center justify-center">
+            <Icon name="arrow-right" className="w-4 h-4 rotate-180" />
+          </button>
+          <button type="button" onClick={() => step(1)} aria-label="Next show" className="glass-btn glass-btn--quiet zoom-content inline-flex h-11 w-11 items-center justify-center">
+            <Icon name="arrow-right" className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ShowRow({ show }: { show: Show }) {
   const d = new Date(show.date);
   const date = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' }).toUpperCase();
   const directions = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${show.venue}, ${show.address}`)}`;
-  const label = show.status === 'sold-out' ? 'SOLD OUT' : show.status === 'announced' ? 'ON SALE SOON' : show.status === 'members-presale' ? 'MEMBERS PRESALE' : 'TICKETS';
+  const label = showLabel(show.status);
   return (
     <li className="panel-ink flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 px-6 py-5 text-left">
       <span style={{ fontFamily: SEMI, letterSpacing: '0.14em', color: '#E2BA0A' }} className="sm:w-[150px] shrink-0">
@@ -61,7 +127,12 @@ function ShowRow({ show }: { show: Show }) {
   );
 }
 
-export default function ShowsBoard({ shows }: { shows: Show[] }) {
+/**
+ * `page` is the /shows page body. `rail` is the Home section: a full-screen panel (the fixed header floats over its
+ * top edge) whose dates scroll sideways.
+ */
+export default function ShowsBoard({ shows, layout = 'page' }: { shows: Show[]; layout?: 'page' | 'rail' }) {
+  const rail = layout === 'rail';
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
@@ -89,7 +160,7 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
 
   return (
     <div
-      className="paper-ink relative flex-1 overflow-hidden min-h-[calc(100svh-var(--header-h))]"
+      className={`paper-ink relative overflow-hidden ${rail ? 'min-h-[100svh]' : 'flex-1 min-h-[calc(100svh-var(--header-h))]'}`}
     >
       <style>{`
         .shows-placeholder-icon {
@@ -138,8 +209,12 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
 
       <GameIconsBackground />
 
-      <div className="relative z-[1] flex flex-col items-center px-6 py-20 text-center">
-        <PageTitle tone="dark" ghost="Live" className="w-full max-w-[900px]">
+      <div
+        className={`relative z-[1] flex flex-col items-center px-6 text-center ${
+          rail ? 'min-h-[100svh] justify-center pt-[calc(var(--header-h)+2.5rem)] pb-16' : 'py-20'
+        }`}
+      >
+        <PageTitle tone="dark" ghost="Live" className="w-full max-w-[900px]" {...(rail ? { as: 'h2' as const, id: 'shows-title' } : {})}>
           Shows
         </PageTitle>
         {shows.length > 0 ? (
@@ -147,11 +222,15 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
             <p className="mt-5 max-w-[560px]" style={{ fontFamily: BODY, fontSize: '1.1em', color: '#e8f5ec', lineHeight: 1.6, opacity: 0.8 }}>
               Upcoming dates. Playaz Club members get first access to tickets.
             </p>
-            <ul className="w-full max-w-[860px] mt-14 flex flex-col gap-3 list-none p-0">
-              {shows.map((s) => (
-                <ShowRow key={`${s.date}-${s.city}`} show={s} />
-              ))}
-            </ul>
+            {rail ? (
+              <ShowRail shows={shows} />
+            ) : (
+              <ul className="w-full max-w-[860px] mt-14 flex flex-col gap-3 list-none p-0">
+                {shows.map((s) => (
+                  <ShowRow key={`${s.date}-${s.city}`} show={s} />
+                ))}
+              </ul>
+            )}
           </>
         ) : (
           <div className="flex flex-wrap items-center justify-center gap-10 mt-10">

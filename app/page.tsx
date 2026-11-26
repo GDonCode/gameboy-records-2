@@ -7,9 +7,10 @@ import Ribbon from '@/components/home/Ribbon';
 import ReleaseCards from '@/components/home/ReleaseCards';
 import SectionTitle from '@/components/home/SectionTitle';
 import ClubBand from '@/components/home/ClubBand';
-import ShowsFeature from '@/components/home/ShowsFeature';
+import ShowsBoard from '@/components/shows/ShowsBoard';
 import JsonLd from '@/components/JsonLd';
 import { FEATURED_RELEASES } from '@/lib/releases';
+import { upcomingShows } from '@/lib/shows';
 import { ARTIST, SITE_DESCRIPTION, SITE_NAME, SITE_URL, OG_IMAGE } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -28,6 +29,9 @@ const releasesJsonLd = FEATURED_RELEASES.map((r) => ({
   sameAs: r.links.filter((l) => l.href).map((l) => l.href),
 }));
 
+// Past shows drop off the Shows section on their own.
+export const revalidate = 3600;
+
 export default function Home() {
   return (
     <PageShell>
@@ -43,7 +47,11 @@ export default function Home() {
           <ReleaseCards releases={FEATURED_RELEASES} />
         </div>
       </section>
-      <ShowsFeature />
+      {/* The header's Shows link scrolls here. The section is a full screen and its own top padding clears the
+          floating header, so the jump lands flush at the top. */}
+      <section id="shows" aria-labelledby="shows-title" className="scroll-mt-[calc(var(--header-h)*-1)]">
+        <ShowsBoard shows={upcomingShows()} layout="rail" />
+      </section>
       <ClubBand />
     </PageShell>
   );
