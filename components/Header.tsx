@@ -44,6 +44,10 @@ const VIBE_META: Record<string, { icon: LucideIcon; blurb: string }> = {
 };
 const VIBES: NavItem[] = VIBES_NAV.map((n) => ({ href: n.href, label: n.label, icon: VIBE_META[n.href].icon, blurb: VIBE_META[n.href].blurb }));
 
+// Pages whose content also lives on Home as a section: on Home their header links scroll to it.
+const HOME_SECTION_FOR: Record<string, string> = { '/shows': 'shows', '/music': 'music' };
+const HOME_SECTIONS = Object.values(HOME_SECTION_FOR);
+
 function isActive(pathname: string, href: string) {
   if (href === '/') return pathname === '/';
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -141,7 +145,8 @@ export default function Header() {
 
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [showsInView, setShowsInView] = useState(false);
+  // Which Home sections (Shows, Music) are on screen right now.
+  const [inView, setInView] = useState<Record<string, boolean>>({});
   const [menuOpen, setMenuOpen] = useState(false);
   const [vibesOpen, setVibesOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -167,16 +172,21 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // On Home the Shows link points at the Shows section further down the page, and lights up while it is on screen.
+  // On Home the Shows and Music links point at their sections further down the page, and light up while the section
+  // is on screen.
   useEffect(() => {
     if (!onHome) {
-      setShowsInView(false);
+      setInView({});
       return;
     }
-    const el = document.getElementById('shows');
-    if (!el) return;
-    const io = new IntersectionObserver(([entry]) => setShowsInView(entry.isIntersecting), { threshold: 0.5 });
-    io.observe(el);
+    const io = new IntersectionObserver(
+      (entries) => setInView((prev) => entries.reduce((acc, e) => ({ ...acc, [e.target.id]: e.isIntersecting }), prev)),
+      { threshold: 0.5 },
+    );
+    HOME_SECTIONS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
     return () => io.disconnect();
   }, [onHome]);
 
@@ -238,8 +248,8 @@ export default function Header() {
   }
 
   const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
-  const navItems = PRIMARY.map((n) => (onHome && n.href === '/shows' ? { ...n, href: '/#shows' } : n));
-  const isNavActive = (href: string) => (href === '/#shows' ? showsInView : isActive(pathname, href));
+  const navItems = PRIMARY.map((n) => (onHome && HOME_SECTION_FOR[n.href] ? { ...n, href: `/#${HOME_SECTION_FOR[n.href]}` } : n));
+  const isNavActive = (href: string) => (href.startsWith('/#') ? !!inView[href.slice(2)] : isActive(pathname, href));
 
   const linkBase = `group/word relative inline-flex h-11 items-center rounded-md px-3 text-[1.05rem] tracking-[0.1em] transition-colors duration-200 lg:px-4 lg:text-[1.3rem]
     after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-white after:shadow-[0_1px_3px_rgba(0,0,0,0.5)] after:transition-transform after:duration-200 lg:after:inset-x-4

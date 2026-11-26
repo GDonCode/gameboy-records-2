@@ -100,8 +100,14 @@ function Details({ release, index, total }: { release: Release; index: number; t
   );
 }
 
-export default function RecordCrate({ releases }: { releases: Release[] }) {
-  const desktop = useIsDesktop();
+/**
+ * `embedded` is the Home section. It is one screen tall (the fixed header floats over its top edge) and flips sideways
+ * at every screen size, so a vertical swipe or wheel turn scrolls the page past it instead of getting stuck in the
+ * crate. Only sideways gestures, the arrow keys/buttons and a tap on a sleeve move the records there.
+ */
+export default function RecordCrate({ releases, embedded = false }: { releases: Release[]; embedded?: boolean }) {
+  const isDesktop = useIsDesktop();
+  const desktop = embedded || isDesktop; // "desktop" below means "the crate runs sideways"
   const scrollerRef = useRef<HTMLDivElement>(null);
   const crateRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -334,6 +340,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
     let lastEvent = 0;
     let lockedUntil = 0;
     const onWheel = (e: WheelEvent) => {
+      if (embedded && Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; // vertical: let the page scroll
       e.preventDefault();
       const now = performance.now();
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? el.clientWidth : 1;
@@ -350,7 +357,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [desktop, step]);
+  }, [desktop, embedded, step]);
 
   const { play } = usePlayer();
   const onSleeveClick = (e: React.MouseEvent<HTMLButtonElement>, r: Release) => {
@@ -381,17 +388,23 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
   const current = releases[active];
 
   return (
-    <div ref={crateRef} className="crate relative h-[calc(100svh-var(--header-h))] bg-ink overflow-hidden flex flex-col">
+    <div
+      ref={crateRef}
+      data-axis={desktop ? 'x' : 'y'}
+      className={`crate relative bg-ink overflow-hidden flex flex-col ${embedded ? 'h-[100svh] pt-(--header-h)' : 'h-[calc(100svh-var(--header-h))]'}`}
+    >
       <style>{`
         .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 1); }
         @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 1.16); } }
         .crate-scroller { perspective: 1400px; perspective-origin: 50% 45%; }
         @media (min-width: 768px) { .crate-scroller { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); } }
+        .crate[data-axis='x'] .crate-scroller { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); }
         .crate-scroller:focus-visible { outline: none; }
         .crate-scroller:focus-visible .crate-sleeve[data-front='true'] .crate-cover { outline: 2px solid var(--color-gold); outline-offset: 4px; }
         .crate-slot { position: relative; pointer-events: none; transform-style: preserve-3d; flex: 0 0 var(--slot); width: var(--slot); height: var(--slot); scroll-snap-align: center; scroll-snap-stop: always; }
         @media (min-width: 768px) { .crate-slot { height: 100%; } }
         @media (max-width: 767px) { .crate-slot { width: 100%; } }
+        .crate[data-axis='x'] .crate-slot { width: var(--slot); height: 100%; }
         .crate-sleeve {
           position: absolute; left: 50%; top: 50%;
           width: var(--sleeve); height: var(--sleeve);
@@ -425,7 +438,11 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       `}</style>
 
       {/* Page title for screen readers and search engines; the records speak for themselves on screen. */}
-      <h1 className="sr-only">Alexx A-Game discography</h1>
+      {embedded ? (
+        <h2 id="crate-title" className="sr-only">Alexx A-Game discography</h2>
+      ) : (
+        <h1 className="sr-only">Alexx A-Game discography</h1>
+      )}
 
       {/* The crate */}
       <div ref={stageRef} className="relative flex-1 min-h-0 mt-[clamp(12px,3.5vh,44px)] md:mt-[clamp(20px,5vh,56px)]">
@@ -436,7 +453,9 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
           role="region"
           aria-roledescription="carousel"
           aria-label={`Record crate: ${n} releases, oldest first. Use the arrow keys to flip through; it loops.`}
-          className="crate-scroller no-scrollbar absolute inset-0 flex flex-col md:flex-row overflow-y-auto md:overflow-y-hidden md:overflow-x-auto snap-y md:snap-x snap-mandatory overscroll-contain focus-visible:outline-none"
+          className={`crate-scroller no-scrollbar absolute inset-0 flex snap-mandatory overscroll-contain focus-visible:outline-none ${
+            embedded ? 'flex-row overflow-y-hidden overflow-x-auto snap-x' : 'flex-col md:flex-row overflow-y-auto md:overflow-y-hidden md:overflow-x-auto snap-y md:snap-x'
+          }`}
         >
           {Array.from({ length: COPIES }, (_, copy) =>
             releases.map((r, i) => {
@@ -466,7 +485,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         </div>
 
         {/* Desktop arrows */}
-        <div className="hidden md:flex absolute z-[1600] inset-y-0 left-0 right-0 items-center justify-between px-6 pointer-events-none">
+        <div className={`${embedded ? 'flex' : 'hidden md:flex'} absolute z-[1600] inset-y-0 left-0 right-0 items-center justify-between px-3 md:px-6 pointer-events-none`}>
           {([-1, 1] as const).map((dir) => (
             <button
               key={dir}

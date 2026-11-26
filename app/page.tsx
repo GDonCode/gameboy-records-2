@@ -10,6 +10,8 @@ import ClubBand from '@/components/home/ClubBand';
 import ShowsBoard from '@/components/shows/ShowsBoard';
 import JsonLd from '@/components/JsonLd';
 import { FEATURED_RELEASES } from '@/lib/releases';
+import RecordCrate from '@/components/music/RecordCrate';
+import { getDiscography, type Release } from '@/lib/discography';
 import { upcomingShows } from '@/lib/shows';
 import { ARTIST, SITE_DESCRIPTION, SITE_NAME, SITE_URL, OG_IMAGE } from '@/lib/site';
 
@@ -32,7 +34,9 @@ const releasesJsonLd = FEATURED_RELEASES.map((r) => ({
 // Past shows drop off the Shows section on their own.
 export const revalidate = 3600;
 
-export default function Home() {
+export default async function Home() {
+  // The Music section is the same record crate as /music. If the discography can't be fetched it is simply left out.
+  const releases: Release[] = await getDiscography().catch(() => []);
   return (
     <PageShell>
       <JsonLd data={releasesJsonLd} />
@@ -47,6 +51,11 @@ export default function Home() {
           <ReleaseCards releases={FEATURED_RELEASES} />
         </div>
       </section>
+      {releases.length > 0 && (
+        <section id="music" aria-labelledby="crate-title" className="scroll-mt-[calc(var(--header-h)*-1)]">
+          <RecordCrate releases={releases} embedded />
+        </section>
+      )}
       {/* The header's Shows link scrolls here. The section is a full screen and its own top padding clears the
           floating header, so the jump lands flush at the top. */}
       <section id="shows" aria-labelledby="shows-title" className="scroll-mt-[calc(var(--header-h)*-1)]">
