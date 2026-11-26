@@ -8,6 +8,8 @@ import ReleaseCards from '@/components/home/ReleaseCards';
 import SectionTitle from '@/components/home/SectionTitle';
 import ClubBand from '@/components/home/ClubBand';
 import ShowsBoard from '@/components/shows/ShowsBoard';
+import VibesLaunch from '@/components/home/VibesLaunch';
+import LazyMount from '@/components/LazyMount';
 import JsonLd from '@/components/JsonLd';
 import { FEATURED_RELEASES } from '@/lib/releases';
 import RecordCrate from '@/components/music/RecordCrate';
@@ -52,15 +54,19 @@ export default async function Home() {
         </div>
       </section>
       {releases.length > 0 && (
-        <section id="music" aria-labelledby="crate-title" className="scroll-mt-[calc(var(--header-h)*-1)]">
-          <RecordCrate releases={releases} embedded />
+        <section id="music" aria-labelledby="crate-title" tabIndex={-1} className="scroll-mt-[calc(var(--header-h)*-1)] outline-none">
+          {/* The crate only mounts when it is about a screen away; until then a same-height placeholder holds its place. */}
+          <LazyMount className="min-h-[100svh] bg-ink">
+            <RecordCrate releases={releases} embedded />
+          </LazyMount>
         </section>
       )}
       {/* The header's Shows link scrolls here. The section is a full screen and its own top padding clears the
           floating header, so the jump lands flush at the top. */}
-      <section id="shows" aria-labelledby="shows-title" className="scroll-mt-[calc(var(--header-h)*-1)]">
+      <section id="shows" aria-labelledby="shows-title" tabIndex={-1} className="scroll-mt-[calc(var(--header-h)*-1)] outline-none">
         <ShowsBoard shows={upcomingShows()} layout="rail" />
       </section>
+      <VibesLaunch />
       <ClubBand />
     </PageShell>
   );

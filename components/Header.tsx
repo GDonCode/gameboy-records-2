@@ -48,6 +48,13 @@ const VIBES: NavItem[] = VIBES_NAV.map((n) => ({ href: n.href, label: n.label, i
 const HOME_SECTION_FOR: Record<string, string> = { '/shows': 'shows', '/music': 'music' };
 const HOME_SECTIONS = Object.values(HOME_SECTION_FOR);
 
+// After a jump to a Home section, hand keyboard focus to it so Tab carries on from there (the scroll is the link's own).
+function focusSection(href: string) {
+  if (!href.startsWith('/#')) return;
+  const id = href.slice(2);
+  window.setTimeout(() => document.getElementById(id)?.focus({ preventScroll: true }), 0);
+}
+
 function isActive(pathname: string, href: string) {
   if (href === '/') return pathname === '/';
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -295,6 +302,7 @@ export default function Header() {
                     <Link
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
+                      onClick={() => focusSection(item.href)}
                       className={`${linkBase} ${linkState(active)}`}
                       style={{ ...SEMIBOLD, ...NEON_TEXT }}
                     >
@@ -446,7 +454,7 @@ export default function Header() {
             className="on-light absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl bg-white bg-[url('/brand/paper-texture.webp')] bg-cover bg-center text-[#0B0A07] shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
           >
             <nav aria-label="Mobile" className="px-3 pb-4 pt-2">
-              <MobileGroup items={navItems} isActive={isNavActive} onNavigate={() => setMenuOpen(false)} />
+              <MobileGroup items={navItems} isActive={isNavActive} onNavigate={(href) => { setMenuOpen(false); focusSection(href); }} />
 
               <p className="px-3 pb-1 pt-4 text-[0.7rem] tracking-[0.3em] text-[#05652E]" style={SEMIBOLD}>
                 VIBES
@@ -526,7 +534,7 @@ export default function Header() {
   );
 }
 
-function MobileGroup({ items, isActive: isItemActive, onNavigate }: { items: NavItem[]; isActive: (href: string) => boolean; onNavigate: () => void }) {
+function MobileGroup({ items, isActive: isItemActive, onNavigate }: { items: NavItem[]; isActive: (href: string) => boolean; onNavigate: (href: string) => void }) {
   return (
     <ul className="flex flex-col gap-0.5">
       {items.map((item) => {
@@ -536,7 +544,7 @@ function MobileGroup({ items, isActive: isItemActive, onNavigate }: { items: Nav
           <li key={item.href}>
             <Link
               href={item.href}
-              onClick={onNavigate}
+              onClick={() => onNavigate(item.href)}
               aria-current={active ? 'page' : undefined}
               className={`flex min-h-[52px] items-center gap-3.5 rounded-xl px-3 text-[1rem] tracking-[0.12em] transition-colors ${FOCUS} ${
                 active ? 'bg-[#067F3A] text-white' : 'text-[#0B0A07] active:bg-[#067F3A]/12'
