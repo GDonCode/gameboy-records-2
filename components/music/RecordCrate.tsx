@@ -15,9 +15,14 @@ import Image from 'next/image';
 import Icon from '@/components/icons';
 import { usePlayer } from '@/components/player/PlayerProvider';
 import type { Release } from '@/lib/discography';
+import SectionTitle from '@/components/home/SectionTitle';
 import { spotifyTrackUrl } from '@/lib/spotify-catalog';
 
 const COPIES = 3;
+
+// Releases flagged with a NEW tag on their sleeve (and in the details below the crate).
+const NEW_TITLES = new Set(['still a rise', 'rise up now (guitar version)']);
+const isNew = (r: Release) => NEW_TITLES.has(r.title.trim().toLowerCase());
 
 function useIsDesktop() {
   const [desktop, setDesktop] = useState(false);
@@ -40,6 +45,7 @@ function Details({ release, index, total }: { release: Release; index: number; t
 
   return (
     <div className="flex flex-col items-center text-center gap-[clamp(6px,1.4vh,14px)]" aria-live="polite">
+      {isNew(release) && <span className="crate-new crate-new--inline">NEW</span>}
       <p className="m-0 eyebrow text-gold-light text-[clamp(0.6rem,1.4vh,0.72rem)] line-clamp-2">
         <span className="sr-only">
           Record {index + 1} of {total}:{' '}
@@ -391,11 +397,22 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
     <div
       ref={crateRef}
       data-axis={desktop ? 'x' : 'y'}
+      data-embedded={embedded || undefined}
       className={`crate relative bg-ink overflow-hidden flex flex-col ${embedded ? 'h-[100svh] pt-(--header-h)' : 'h-[calc(100svh-var(--header-h))]'}`}
     >
       <style>{`
         .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 1); }
         @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 1.16); } }
+        /* The Home version carries a title, so its records are a little smaller to leave them room. */
+        .crate[data-embedded] { --sleeve: clamp(180px, 34svh, 300px); --slot: var(--sleeve); }
+        @media (min-width: 768px) { .crate[data-embedded] { --sleeve: clamp(240px, 42vh, 440px); --slot: calc(var(--sleeve) * 1.16); } }
+        /* "NEW" sticker: gold, hard ink edge, green offset shadow, a little off-kilter like the other brand tags. */
+        .crate-new {
+          position: absolute; top: -12px; right: -14px; z-index: 3; transform: rotate(8deg);
+          padding: 5px 11px; background: #E2BA0A; color: #0B0A07; border: 2px solid #0B0A07; box-shadow: 3px 3px 0 #067F3A;
+          font-family: 'Poppins_semibold', 'Poppins', sans-serif; font-size: 0.78rem; line-height: 1; letter-spacing: 0.18em; pointer-events: none;
+        }
+        .crate-new--inline { position: static; transform: rotate(-3deg); }
         .crate-scroller { perspective: 1400px; perspective-origin: 50% 45%; }
         @media (min-width: 768px) { .crate-scroller { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); } }
         .crate[data-axis='x'] .crate-scroller { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); }
@@ -439,7 +456,11 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
 
       {/* Page title for screen readers and search engines; the records speak for themselves on screen. */}
       {embedded ? (
-        <h2 id="crate-title" className="sr-only">Alexx A-Game discography</h2>
+        <div className="relative z-10 shrink-0 px-6 pt-2 [&>.ghost-title]:mb-0 [&>.ghost-title]:min-h-[clamp(2.8rem,9vh,5.5rem)] [&_.ghost-title__ghost]:text-[clamp(2.6rem,9vh,5.5rem)]">
+          <SectionTitle ghost="Records" id="crate-title" tone="dark">
+            Music
+          </SectionTitle>
+        </div>
       ) : (
         <h1 className="sr-only">Alexx A-Game discography</h1>
       )}
@@ -466,7 +487,7 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
                     type="button"
                     className="crate-sleeve"
                     onClick={(e) => onSleeveClick(e, r)}
-                    aria-label={`${r.title}, ${r.year}${r.credit !== 'Alexx A-Game' ? `, ${r.credit}` : ''}`}
+                    aria-label={`${r.title}, ${r.year}${r.credit !== 'Alexx A-Game' ? `, ${r.credit}` : ''}${isNew(r) ? ', new' : ''}`}
                     tabIndex={clone ? -1 : 0}
                   >
                     <span className="crate-disc" aria-hidden="true">
@@ -477,6 +498,11 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
                     <span className="crate-cover">
                       <Image src={r.cover} alt="" fill sizes="(min-width: 768px) 360px, 250px" unoptimized loading={copy === 1 && i < 4 ? 'eager' : 'lazy'} className="object-cover" />
                     </span>
+                    {isNew(r) && (
+                      <span className="crate-new" aria-hidden="true">
+                        NEW
+                      </span>
+                    )}
                   </button>
                 </div>
               );

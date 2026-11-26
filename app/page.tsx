@@ -4,8 +4,6 @@ import PageShell from '@/components/PageShell';
 import Hero from '@/components/home/Hero';
 import MerchFeature from '@/components/home/MerchFeature';
 import Ribbon from '@/components/home/Ribbon';
-import ReleaseCards from '@/components/home/ReleaseCards';
-import SectionTitle from '@/components/home/SectionTitle';
 import ClubBand from '@/components/home/ClubBand';
 import ShowsBoard from '@/components/shows/ShowsBoard';
 import VibesLaunch from '@/components/home/VibesLaunch';
@@ -45,14 +43,6 @@ export default async function Home() {
       <Hero />
       <Ribbon />
       <MerchFeature />
-      <section aria-labelledby="music-title" className="on-light paper text-ink section-y">
-        <div className="container-site max-w-[1100px]">
-          <SectionTitle ghost="Releases" id="music-title">
-            New Music
-          </SectionTitle>
-          <ReleaseCards releases={FEATURED_RELEASES} />
-        </div>
-      </section>
       {releases.length > 0 && (
         <section id="music" aria-labelledby="crate-title" tabIndex={-1} className="scroll-mt-[calc(var(--header-h)*-1)] outline-none">
           {/* The crate only mounts when it is about a screen away; until then a same-height placeholder holds its place. */}
