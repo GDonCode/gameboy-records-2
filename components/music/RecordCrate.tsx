@@ -15,9 +15,14 @@ import Image from 'next/image';
 import Icon from '@/components/icons';
 import { usePlayer } from '@/components/player/PlayerProvider';
 import type { Release } from '@/lib/discography';
+import SectionTitle from '@/components/home/SectionTitle';
 import { spotifyTrackUrl } from '@/lib/spotify-catalog';
 
 const COPIES = 3;
+
+// Releases flagged with a NEW tag on their sleeve (and in the details below the crate).
+const NEW_TITLES = new Set(['still a rise', 'rise up now (guitar version)']);
+const isNew = (r: Release) => NEW_TITLES.has(r.title.trim().toLowerCase());
 
 function useIsDesktop() {
   const [desktop, setDesktop] = useState(false);
@@ -40,6 +45,7 @@ function Details({ release, index, total }: { release: Release; index: number; t
 
   return (
     <div className="flex flex-col items-center text-center gap-[clamp(6px,1.4vh,14px)]" aria-live="polite">
+      {isNew(release) && <span className="crate-new crate-new--inline">NEW</span>}
       <p className="m-0 eyebrow text-gold-light text-[clamp(0.6rem,1.4vh,0.72rem)] line-clamp-2">
         <span className="sr-only">
           Record {index + 1} of {total}:{' '}
@@ -100,8 +106,14 @@ function Details({ release, index, total }: { release: Release; index: number; t
   );
 }
 
-export default function RecordCrate({ releases }: { releases: Release[] }) {
-  const desktop = useIsDesktop();
+/**
+ * `embedded` is the Home section. It is one screen tall (the fixed header floats over its top edge) and flips sideways
+ * at every screen size, so a vertical swipe or wheel turn scrolls the page past it instead of getting stuck in the
+ * crate. Only sideways gestures, the arrow keys/buttons and a tap on a sleeve move the records there.
+ */
+export default function RecordCrate({ releases, embedded = false }: { releases: Release[]; embedded?: boolean }) {
+  const isDesktop = useIsDesktop();
+  const desktop = embedded || isDesktop; // "desktop" below means "the crate runs sideways"
   const scrollerRef = useRef<HTMLDivElement>(null);
   const crateRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -329,7 +341,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
   // clean steps: a gentle scroll moves one record, a long flick moves several in a row.
   useEffect(() => {
     const el = scrollerRef.current;
-    if (!el || !desktop) return;
+    if (!el || !desktop || embedded) return; // Home: buttons (and arrow keys) only; the wheel always scrolls the page
     let acc = 0;
     let lastEvent = 0;
     let lockedUntil = 0;
@@ -350,7 +362,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [desktop, step]);
+  }, [desktop, embedded, step]);
 
   const { play } = usePlayer();
   const onSleeveClick = (e: React.MouseEvent<HTMLButtonElement>, r: Release) => {
@@ -381,17 +393,34 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
   const current = releases[active];
 
   return (
-    <div ref={crateRef} className="crate relative h-[calc(100svh-var(--header-h))] bg-ink overflow-hidden flex flex-col">
+    <div
+      ref={crateRef}
+      data-axis={desktop ? 'x' : 'y'}
+      data-embedded={embedded || undefined}
+      className={`crate relative paper-ink overflow-hidden flex flex-col ${embedded ? 'h-[100svh] pt-(--header-h)' : 'h-[calc(100svh-var(--header-h))]'}`}
+    >
       <style>{`
         .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 1); }
         @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 1.16); } }
+        /* The Home version carries a title, so its records are a little smaller to leave them room. */
+        .crate[data-embedded] { --sleeve: clamp(180px, 34svh, 300px); --slot: var(--sleeve); }
+        @media (min-width: 768px) { .crate[data-embedded] { --sleeve: clamp(240px, 42vh, 440px); --slot: calc(var(--sleeve) * 1.16); } }
+        /* "NEW" sticker: gold, hard ink edge, green offset shadow, a little off-kilter like the other brand tags. */
+        .crate-new {
+          position: absolute; top: -12px; right: -14px; z-index: 3; transform: rotate(8deg);
+          padding: 5px 11px; background: #E2BA0A; color: #0B0A07; border: 2px solid #0B0A07; box-shadow: 3px 3px 0 #067F3A;
+          font-family: 'Poppins_semibold', 'Poppins', sans-serif; font-size: 0.78rem; line-height: 1; letter-spacing: 0.18em; pointer-events: none;
+        }
+        .crate-new--inline { position: static; transform: rotate(-3deg); }
         .crate-scroller { perspective: 1400px; perspective-origin: 50% 45%; }
         @media (min-width: 768px) { .crate-scroller { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); } }
+        .crate[data-axis='x'] .crate-scroller { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); }
         .crate-scroller:focus-visible { outline: none; }
         .crate-scroller:focus-visible .crate-sleeve[data-front='true'] .crate-cover { outline: 2px solid var(--color-gold); outline-offset: 4px; }
         .crate-slot { position: relative; pointer-events: none; transform-style: preserve-3d; flex: 0 0 var(--slot); width: var(--slot); height: var(--slot); scroll-snap-align: center; scroll-snap-stop: always; }
         @media (min-width: 768px) { .crate-slot { height: 100%; } }
         @media (max-width: 767px) { .crate-slot { width: 100%; } }
+        .crate[data-axis='x'] .crate-slot { width: var(--slot); height: 100%; }
         .crate-sleeve {
           position: absolute; left: 50%; top: 50%;
           width: var(--sleeve); height: var(--sleeve);
@@ -425,7 +454,15 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
       `}</style>
 
       {/* Page title for screen readers and search engines; the records speak for themselves on screen. */}
-      <h1 className="sr-only">Alexx A-Game discography</h1>
+      {embedded ? (
+        <div className="relative z-10 shrink-0 px-6 pt-2 [&>.ghost-title]:mb-0 [&>.ghost-title]:min-h-[clamp(2.8rem,9vh,5.5rem)] [&_.ghost-title__ghost]:text-[clamp(2.6rem,9vh,5.5rem)]">
+          <SectionTitle ghost="Records" id="crate-title" tone="dark">
+            Music
+          </SectionTitle>
+        </div>
+      ) : (
+        <h1 className="sr-only">Alexx A-Game discography</h1>
+      )}
 
       {/* The crate */}
       <div ref={stageRef} className="relative flex-1 min-h-0 mt-[clamp(12px,3.5vh,44px)] md:mt-[clamp(20px,5vh,56px)]">
@@ -436,7 +473,9 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
           role="region"
           aria-roledescription="carousel"
           aria-label={`Record crate: ${n} releases, oldest first. Use the arrow keys to flip through; it loops.`}
-          className="crate-scroller no-scrollbar absolute inset-0 flex flex-col md:flex-row overflow-y-auto md:overflow-y-hidden md:overflow-x-auto snap-y md:snap-x snap-mandatory overscroll-contain focus-visible:outline-none"
+          className={`crate-scroller no-scrollbar absolute inset-0 flex snap-mandatory overscroll-contain focus-visible:outline-none ${
+            embedded ? 'flex-row overflow-hidden snap-x' : 'flex-col md:flex-row overflow-y-auto md:overflow-y-hidden md:overflow-x-auto snap-y md:snap-x'
+          }`}
         >
           {Array.from({ length: COPIES }, (_, copy) =>
             releases.map((r, i) => {
@@ -447,7 +486,7 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
                     type="button"
                     className="crate-sleeve"
                     onClick={(e) => onSleeveClick(e, r)}
-                    aria-label={`${r.title}, ${r.year}${r.credit !== 'Alexx A-Game' ? `, ${r.credit}` : ''}`}
+                    aria-label={`${r.title}, ${r.year}${r.credit !== 'Alexx A-Game' ? `, ${r.credit}` : ''}${isNew(r) ? ', new' : ''}`}
                     tabIndex={clone ? -1 : 0}
                   >
                     <span className="crate-disc" aria-hidden="true">
@@ -458,6 +497,11 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
                     <span className="crate-cover">
                       <Image src={r.cover} alt="" fill sizes="(min-width: 768px) 360px, 250px" unoptimized loading={copy === 1 && i < 4 ? 'eager' : 'lazy'} className="object-cover" />
                     </span>
+                    {isNew(r) && (
+                      <span className="crate-new" aria-hidden="true">
+                        NEW
+                      </span>
+                    )}
                   </button>
                 </div>
               );
@@ -466,14 +510,14 @@ export default function RecordCrate({ releases }: { releases: Release[] }) {
         </div>
 
         {/* Desktop arrows */}
-        <div className="hidden md:flex absolute z-[1600] inset-y-0 left-0 right-0 items-center justify-between px-6 pointer-events-none">
+        <div className={`${embedded ? 'flex' : 'hidden md:flex'} absolute z-[1600] inset-y-0 left-0 right-0 items-center justify-between px-3 md:px-6 pointer-events-none`}>
           {([-1, 1] as const).map((dir) => (
             <button
               key={dir}
               type="button"
               onClick={() => step(dir)}
               aria-label={dir === 1 ? 'Next record' : 'Previous record'}
-              className="pointer-events-auto zoom-content inline-flex items-center justify-center w-12 h-12 rounded-full border border-paper/30 bg-ink/70 text-paper backdrop-blur hover:border-paper/70 cursor-pointer"
+              className="pointer-events-auto zoom-content inline-flex items-center justify-center w-12 h-12 rounded-full border-2 border-ink bg-white bg-[url('/brand/paper-texture.webp')] bg-cover bg-center text-ink shadow-[3px_3px_0_rgba(0,0,0,0.6)] hover:border-green cursor-pointer"
             >
               <span>
                 <Icon name={dir === 1 ? 'chevron-right' : 'chevron-left'} className="w-4 h-4" />

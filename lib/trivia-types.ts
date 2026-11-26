@@ -1,5 +1,5 @@
 // lib/trivia-types.ts
-// Shared (client + server) types and constants for Tricky Tempo Trivia.
+// Shared (client + server) types and constants for Do You Know A-Game?.
 // Nothing in here reveals an answer, so it is safe to import from Client Components.
 
 export type TriviaKind = 'lyric' | 'video' | 'bio' | 'discography' | 'media' | 'order' | 'cover';
