@@ -41,7 +41,7 @@ export default function Hero() {
       {/* The film fills the whole hero */}
       <video
         ref={videoRef}
-        src={`${MEDIA_BASE}/HeroMashupV1.mp4`}
+        src={`${MEDIA_BASE}/HeroMashup.mp4`}
         muted
         loop
         playsInline
