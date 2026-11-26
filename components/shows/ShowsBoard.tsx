@@ -24,7 +24,7 @@ function Badge({ viewBox, d, label, size = 'w-7 h-7', color = '#E2BA0A' }: { vie
   return (
     <div className="flex flex-col items-center gap-3">
       <span className="shows-placeholder-icon" aria-hidden="true">
-        <svg viewBox={viewBox} className={size} fill="#0B0A07">
+        <svg viewBox={viewBox} className={size} fill="#fff">
           <path d={d} />
         </svg>
       </span>

@@ -4,21 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import {
-  CalendarDays,
-  ChevronDown,
-  ChevronRight,
-  CircleHelp,
-  Disc3,
-  Info,
-  Menu,
-  Mic,
-  Shirt,
-  ShoppingCart,
-  User,
-  X,
-  type LucideIcon,
-} from 'lucide-react';
+import FaIcon, { type IconName } from '@/components/icons';
 import { useCartCount } from '@/lib/cart-sync';
 import { LOGO_URL, NAV, PAPER_LOGO_URL, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
@@ -33,14 +19,15 @@ const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as 
 const FOCUS =
   'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
 
-type NavItem = { href: string; label: string; icon: LucideIcon; blurb?: string };
+type NavItem = { href: string; label: string; icon: IconName; blurb?: string };
 
-const PRIMARY_ICONS: Record<string, LucideIcon> = { '/shows': CalendarDays, '/shop': Shirt, '/music': Disc3, '/about': Info };
-const PRIMARY: NavItem[] = NAV.map((n) => ({ href: n.href, label: n.label, icon: PRIMARY_ICONS[n.href] ?? Info }));
+// Font Awesome Free Solid icons (see components/icons.tsx).
+const PRIMARY_ICONS: Record<string, IconName> = { '/shows': 'calendar-days', '/shop': 'shirt', '/music': 'compact-disc', '/about': 'circle-info' };
+const PRIMARY: NavItem[] = NAV.map((n) => ({ href: n.href, label: n.label, icon: PRIMARY_ICONS[n.href] ?? 'circle-info' }));
 
-const VIBE_META: Record<string, { icon: LucideIcon; blurb: string }> = {
-  '/karaoke': { icon: Mic, blurb: 'Sing along to the catalogue' },
-  '/trivia': { icon: CircleHelp, blurb: 'How well do you know the label?' },
+const VIBE_META: Record<string, { icon: IconName; blurb: string }> = {
+  '/karaoke': { icon: 'microphone-lines', blurb: 'Sing along to the catalogue' },
+  '/trivia': { icon: 'circle-question', blurb: 'How well do you know the label?' },
 };
 const VIBES: NavItem[] = VIBES_NAV.map((n) => ({ href: n.href, label: n.label, icon: VIBE_META[n.href].icon, blurb: VIBE_META[n.href].blurb }));
 
@@ -323,10 +310,9 @@ export default function Header() {
                   style={{ ...SEMIBOLD, ...NEON_TEXT }}
                 >
                   <PaperWord text="VIBES">
-                    <ChevronDown
+                    <FaIcon
+                      name="chevron-down"
                       className={`h-4 w-4 text-white transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
-                      strokeWidth={3}
-                      aria-hidden="true"
                     />
                   </PaperWord>
                 </button>
@@ -339,7 +325,6 @@ export default function Header() {
                   <ul className="w-[300px] overflow-hidden rounded-xl border border-[#0B0A07]/10 bg-[#FFFFFF] p-1.5 shadow-[0_18px_40px_-12px_rgba(15,61,34,0.35)] motion-safe:animate-[gbr-drop_160ms_ease-out]">
                     {VIBES.map((item) => {
                       const active = isActive(pathname, item.href);
-                      const Icon = item.icon;
                       return (
                         <li key={item.href}>
                           <Link
@@ -355,7 +340,7 @@ export default function Header() {
                                 active ? 'bg-[#067F3A] text-white' : 'bg-[#067F3A]/12 text-[#05652E] group-hover:bg-[#067F3A] group-hover:text-white'
                               }`}
                             >
-                              <Icon className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                              <FaIcon name={item.icon} className="h-5 w-5" />
                             </span>
                             <span className="min-w-0">
                               <span className="block text-[0.9rem] tracking-[0.12em] text-[#0B0A07]" style={SEMIBOLD}>
@@ -391,7 +376,7 @@ export default function Header() {
                 {initial ? (
                   <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
                 ) : (
-                  <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                  <FaIcon name="user" className="h-5 w-5" />
                 )}
               </Link>
             ) : (
@@ -402,7 +387,7 @@ export default function Header() {
                   overlay ? 'hover:bg-white/10' : 'h-11 rounded-full bg-[#067F3A] shadow-[0_3px_0_#044F24] hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none'
                 } ${FOCUS}`}
               >
-                <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                <FaIcon name="user" className="h-5 w-5" />
                 <span className="hidden text-[1.1rem] tracking-[0.1em] lg:inline" style={SEMIBOLD}>
                   <PaperWord text="+ PLAYER" />
                 </span>
@@ -419,7 +404,7 @@ export default function Header() {
                 overlay ? 'w-16 text-white hover:bg-white/10' : 'h-12 w-12 rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
               } ${FOCUS}`}
             >
-              <ShoppingCart className="h-[26px] w-[26px]" strokeWidth={2.25} aria-hidden="true" />
+              <FaIcon name="cart-shopping" className="h-[24px] w-[24px]" />
               <CartBadge count={cartCount} className="absolute -right-1.5 -top-1.5" />
             </Link>
           </div>
@@ -438,9 +423,9 @@ export default function Header() {
               } ${FOCUS}`}
             >
               {menuOpen ? (
-                <X className="h-[32px] w-[32px]" strokeWidth={2.75} aria-hidden="true" />
+                <FaIcon name="xmark" className="h-[28px] w-[28px]" />
               ) : (
-                <Menu className="h-[32px] w-[32px]" strokeWidth={2.75} aria-hidden="true" />
+                <FaIcon name="bars" className="h-[28px] w-[28px]" />
               )}
             </button>
           </div>
@@ -473,7 +458,7 @@ export default function Header() {
                       }`}
                       style={SEMIBOLD}
                     >
-                      <ShoppingCart className={`h-5 w-5 shrink-0 ${isActive(pathname, '/cart') ? '' : 'text-[#05652E]'}`} strokeWidth={2.25} aria-hidden="true" />
+                      <FaIcon name="cart-shopping" className={`h-5 w-5 shrink-0 ${isActive(pathname, '/cart') ? '' : 'text-[#05652E]'}`} />
                       <span className="flex-1">{cartLabel.toUpperCase()}</span>
                       <CartBadge count={cartCount} />
                     </Link>
@@ -487,7 +472,7 @@ export default function Header() {
                     className={`flex items-center gap-3 rounded-xl bg-white/60 p-3 text-[#0B0A07] ${FOCUS}`}
                   >
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#067F3A] text-white" aria-hidden="true">
-                      {initial ? <span style={SEMIBOLD}>{initial}</span> : <User className="h-5 w-5" strokeWidth={2.25} />}
+                      {initial ? <span style={SEMIBOLD}>{initial}</span> : <FaIcon name="user" className="h-5 w-5" />}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-[0.95rem] tracking-[0.1em]" style={SEMIBOLD}>YOUR ACCOUNT</span>
@@ -497,7 +482,7 @@ export default function Header() {
                         </span>
                       )}
                     </span>
-                    <ChevronRight className="h-5 w-5 text-[#0B0A07]/50" aria-hidden="true" />
+                    <FaIcon name="chevron-right" className="h-4 w-4 text-[#0B0A07]/50" />
                   </Link>
                 ) : (
                   <div className="flex flex-col gap-2">
@@ -539,7 +524,6 @@ function MobileGroup({ items, isActive: isItemActive, onNavigate }: { items: Nav
     <ul className="flex flex-col gap-0.5">
       {items.map((item) => {
         const active = isItemActive(item.href);
-        const Icon = item.icon;
         return (
           <li key={item.href}>
             <Link
@@ -551,7 +535,7 @@ function MobileGroup({ items, isActive: isItemActive, onNavigate }: { items: Nav
               }`}
               style={SEMIBOLD}
             >
-              <Icon className={`h-5 w-5 shrink-0 ${active ? '' : 'text-[#05652E]'}`} strokeWidth={2.25} aria-hidden="true" />
+              <FaIcon name={item.icon} className={`h-5 w-5 shrink-0 ${active ? '' : 'text-[#05652E]'}`} />
               <span className="flex-1">{item.label.toUpperCase()}</span>
               {active && <span className="h-2 w-2 rounded-full bg-white" aria-hidden="true" />}
             </Link>

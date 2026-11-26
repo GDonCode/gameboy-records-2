@@ -1,6 +1,5 @@
 // components/home/VibesLaunch.tsx
 // Launcher for the two games. Karaoke and Trivia are full, stateful, audio-driven pages, so Home only points at them.
-import { CircleHelp, Mic } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/icons';
 import GameIconsBackground from '@/components/GameIconsBackground';
@@ -13,7 +12,7 @@ const GAMES = [
     kicker: 'Sing along',
     blurb: 'Pick a record from the catalogue and sing it with the lyrics on screen.',
     cta: 'Start singing',
-    icon: Mic,
+    icon: 'microphone-lines',
   },
   {
     href: '/trivia',
@@ -21,7 +20,8 @@ const GAMES = [
     kicker: "Prove you're a fan",
     blurb: 'Three rounds, fifteen questions, ten seconds each. Top the leaderboard and earn Club Points.',
     cta: 'Play trivia',
-    icon: CircleHelp,
+    // Placeholder: Font Awesome Pro's "messages-question" (Solid) is wanted here once it is added to components/icons.tsx.
+    icon: 'circle-question',
   },
 ] as const;
 
@@ -35,11 +35,10 @@ export default function VibesLaunch() {
         </SectionTitle>
         <ul className="list-none p-0 m-0 grid gap-5 md:grid-cols-2 md:gap-8">
           {GAMES.map((g) => {
-            const GameIcon = g.icon;
             return (
               <li key={g.href} className="panel-ink flex flex-col gap-4 p-7 md:p-9">
                 <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-green shadow-[4px_4px_0_#E2BA0A]" aria-hidden="true">
-                  <GameIcon className="h-6 w-6 text-white" strokeWidth={2.25} />
+                  <Icon name={g.icon} className="h-6 w-6 text-white" />
                 </span>
                 <p className="eyebrow m-0 text-gold">{g.kicker}</p>
                 <h3 className="display m-0 text-[1.6rem] md:text-[2rem]">{g.title}</h3>
