@@ -11,7 +11,10 @@ import { getCatalog } from '@/lib/catalog';
 
 export default async function MerchFeature() {
   const { products } = await getCatalog();
-  const pieces = products.filter((p) => p.images[0]).slice(0, 4);
+  // Three shirts only (tees first; if the catalogue has fewer than three tees, the next pieces fill in).
+  const withImage = products.filter((p) => p.images[0]);
+  const isTee = (name: string) => /\b(tee|t-shirt|shirt)\b/i.test(name);
+  const pieces = [...withImage.filter((p) => isTee(p.name)), ...withImage.filter((p) => !isTee(p.name))].slice(0, 3);
   if (pieces.length === 0) return null;
   return (
     <section aria-labelledby="merch-title" className="relative overflow-hidden on-light paper-deep text-ink section-y">
@@ -19,19 +22,18 @@ export default async function MerchFeature() {
         <SectionTitle ghost="Merch" id="merch-title">
           Merch
         </SectionTitle>
-        <ul inert data-chain-center className="list-none p-0 m-0 mt-10 grid grid-cols-2 gap-3 md:gap-8 lg:grid-cols-4 lg:gap-10">
+        <ul inert data-chain-center className="list-none p-0 m-0 mt-10 mx-auto max-w-[1180px] grid grid-cols-3 gap-3 md:gap-8 lg:gap-10">
           {pieces.map((p) => (
             <li key={p.id}>
-              <Link href={`/shop/${p.slug}`} className="zoom-media group flex flex-col gap-3 h-full">
+              <Link href={`/shop/${p.slug}`} aria-label={p.name} className="zoom-media group flex flex-col h-full">
                 {/* A recessed well: no border, the edges are shaded as if the tile were cut into the page */}
                 <div className="relative aspect-square bg-white">
-                  <Image src={p.images[0]} alt={p.name} fill sizes="(min-width: 1024px) 24vw, 48vw" className="object-contain p-2 md:p-4" />
+                  <Image src={p.images[0]} alt={p.name} fill sizes="(min-width: 1180px) 380px, 32vw" className="object-contain p-2 md:p-4" />
                   <span
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 shadow-[inset_4px_4px_10px_rgba(11,10,7,0.35),inset_-4px_-4px_10px_rgba(11,10,7,0.25)]"
                   />
                 </div>
-                <h3 className="m-0 mt-2 text-[0.85rem] md:text-[1rem] font-semibold uppercase tracking-[0.12em]">{p.name}</h3>
               </Link>
             </li>
           ))}

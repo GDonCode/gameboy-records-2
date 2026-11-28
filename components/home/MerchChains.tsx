@@ -18,11 +18,6 @@ type Sprite = { c: HTMLCanvasElement; w: number; h: number };
 const LINK = 30; // distance between link centres, px
 const REACH = 110; // how far from the pointer the links feel it
 const ITERATIONS = 8; // rope constraint passes per frame
-const IRON = '#2B2A26';
-const IRON_LIGHT = '#8D897D';
-const INK = '#0B0A07';
-const GOLD = '#E2BA0A';
-const GOLD_LIGHT = '#F4D84A';
 
 export default function MerchChains() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -41,6 +36,10 @@ export default function MerchChains() {
     let faceSprite: Sprite;
     let edgeSprite: Sprite;
     let lockSprite: Sprite;
+    let faceShadow: Sprite;
+    let edgeShadow: Sprite;
+    let lockShadow: Sprite;
+    let plateSprite: Sprite;
     const lock = { x: 0, y: 0, s: 80, ang: 0, vel: 0 };
     const mouse = { x: -9999, y: -9999, vx: 0, vy: 0, seen: false };
     let raf = 0;
@@ -48,7 +47,7 @@ export default function MerchChains() {
     let quiet = 0; // consecutive frames with (almost) nothing moving
     let resizeFrame = 0;
 
-    /** Draw something once into an offscreen canvas, centred, with a soft drop shadow. */
+    /** Draw something once into an offscreen canvas, centred. */
     const sprite = (sw: number, sh: number, draw: (g: CanvasRenderingContext2D) => void): Sprite => {
       const c = document.createElement('canvas');
       c.width = Math.ceil(sw * dpr);
@@ -58,83 +57,246 @@ export default function MerchChains() {
       g.translate(sw / 2, sh / 2);
       g.lineCap = 'round';
       g.lineJoin = 'round';
-      g.shadowColor = 'rgba(11, 10, 7, 0.32)';
-      g.shadowBlur = 5;
-      g.shadowOffsetY = 3;
       draw(g);
       return { c, w: sw, h: sh };
     };
 
-    const makeSprites = () => {
-      // A link seen side-on to its hole: a long rounded ring.
-      faceSprite = sprite(LINK * 1.24 + 16, LINK * 0.6 + 16, (g) => {
-        g.beginPath();
-        g.roundRect(-LINK * 0.62, -LINK * 0.3, LINK * 1.24, LINK * 0.6, LINK * 0.3);
-        g.strokeStyle = IRON;
-        g.lineWidth = 6;
+    /** A round tube of polished steel along the current path: stacked strokes, dark rim to bright centre line. */
+    const steelTube = (g: CanvasRenderingContext2D, width: number) => {
+      const layers: [number, string][] = [
+        [1.0, '#101215'],
+        [0.84, '#3a3f45'],
+        [0.68, '#69717a'],
+        [0.5, '#98a1aa'],
+        [0.3, '#cdd4da'],
+        [0.12, '#f7fafc'],
+      ];
+      for (const [k, color] of layers) {
+        g.strokeStyle = color;
+        g.lineWidth = width * k;
         g.stroke();
-        g.strokeStyle = IRON_LIGHT;
-        g.lineWidth = 2;
+      }
+    };
+
+    /** Soft contact shadow for a shape: the same silhouette in black, blurred. */
+    const blurred = (g: CanvasRenderingContext2D, px: number) => {
+      if ('filter' in g) g.filter = `blur(${px}px)`;
+    };
+
+    const facePath = (g: CanvasRenderingContext2D) => {
+      g.beginPath();
+      g.roundRect(-LINK * 0.62, -LINK * 0.3, LINK * 1.24, LINK * 0.6, LINK * 0.3);
+    };
+    const edgePath = (g: CanvasRenderingContext2D) => {
+      g.beginPath();
+      g.moveTo(-LINK * 0.4, 0);
+      g.lineTo(LINK * 0.4, 0);
+    };
+
+    /** The padlock's outline (shackle and body), for its shadow. */
+    const lockSilhouette = (g: CanvasRenderingContext2D, s: number) => {
+      const r = s * 0.28;
+      const top = -s * 0.28;
+      g.beginPath();
+      g.moveTo(-r, top + s * 0.1);
+      g.lineTo(-r, top);
+      g.arc(0, top, r, Math.PI, 0);
+      g.lineTo(r, top + s * 0.1);
+      g.strokeStyle = '#000';
+      g.lineWidth = s * 0.19;
+      g.stroke();
+      g.beginPath();
+      g.roundRect(-s / 2, top, s, s * 0.78, s * 0.1);
+      g.fillStyle = '#000';
+      g.fill();
+    };
+
+    const screw = (g: CanvasRenderingContext2D, x: number, y: number, r: number, light: string, dark: string) => {
+      const grad = g.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+      grad.addColorStop(0, light);
+      grad.addColorStop(1, dark);
+      g.beginPath();
+      g.arc(x, y, r, 0, Math.PI * 2);
+      g.fillStyle = grad;
+      g.fill();
+      g.lineWidth = 0.8;
+      g.strokeStyle = 'rgba(0,0,0,0.55)';
+      g.stroke();
+      g.beginPath();
+      g.moveTo(x - r * 0.6, y + r * 0.15);
+      g.lineTo(x + r * 0.6, y - r * 0.15);
+      g.lineWidth = Math.max(1, r * 0.28);
+      g.strokeStyle = 'rgba(0,0,0,0.6)';
+      g.stroke();
+    };
+
+    const makeSprites = () => {
+      // A link seen side-on to its hole: a long ring of steel rod.
+      faceSprite = sprite(LINK * 1.24 + 16, LINK * 0.6 + 16, (g) => {
+        facePath(g);
+        steelTube(g, 8.5);
+      });
+      // The next link is turned a quarter, so it shows only as a rod end-on: a shaded cylinder.
+      edgeSprite = sprite(LINK * 0.8 + 16, 8.5 + 16, (g) => {
+        const grad = g.createLinearGradient(0, -4.5, 0, 4.5);
+        grad.addColorStop(0, '#101215');
+        grad.addColorStop(0.18, '#69717a');
+        grad.addColorStop(0.4, '#e4e9ed');
+        grad.addColorStop(0.62, '#8f98a1');
+        grad.addColorStop(1, '#14171a');
+        g.beginPath();
+        g.roundRect(-LINK * 0.4 - 3, -4.5, LINK * 0.8 + 6, 9, 4.5);
+        g.fillStyle = grad;
+        g.fill();
+        g.strokeStyle = 'rgba(0,0,0,0.45)';
+        g.lineWidth = 0.8;
         g.stroke();
       });
-      // The next link is turned a quarter, so it shows only as a thick bar.
-      edgeSprite = sprite(LINK * 0.8 + 16, 8 + 16, (g) => {
-        g.beginPath();
-        g.moveTo(-LINK * 0.4, 0);
-        g.lineTo(LINK * 0.4, 0);
-        g.strokeStyle = IRON;
+      faceShadow = sprite(LINK * 1.24 + 24, LINK * 0.6 + 24, (g) => {
+        blurred(g, 3);
+        facePath(g);
+        g.strokeStyle = '#000';
         g.lineWidth = 8;
         g.stroke();
-        g.strokeStyle = IRON_LIGHT;
-        g.lineWidth = 3;
+      });
+      edgeShadow = sprite(LINK * 0.8 + 24, 8.5 + 24, (g) => {
+        blurred(g, 3);
+        edgePath(g);
+        g.strokeStyle = '#000';
+        g.lineWidth = 8;
         g.stroke();
       });
+      plateSprite = sprite(44, 44, (g) => {
+        g.shadowColor = 'rgba(0,0,0,0.4)';
+        g.shadowBlur = 5;
+        g.shadowOffsetY = 3;
+        const ring = g.createRadialGradient(-4, -5, 2, 0, 0, 13);
+        ring.addColorStop(0, '#d9dfe4');
+        ring.addColorStop(0.7, '#8b949d');
+        ring.addColorStop(1, '#3d434a');
+        g.beginPath();
+        g.arc(0, 0, 13, 0, Math.PI * 2);
+        g.fillStyle = ring;
+        g.fill();
+        g.shadowColor = 'transparent';
+        g.lineWidth = 1;
+        g.strokeStyle = 'rgba(0,0,0,0.6)';
+        g.stroke();
+        g.beginPath();
+        g.arc(0, 0, 9.5, 0, Math.PI * 2);
+        g.strokeStyle = 'rgba(255,255,255,0.35)';
+        g.stroke();
+        screw(g, 0, 0, 5.5, '#eef2f5', '#6f7880');
+      });
+
       const s = lock.s;
+      lockShadow = sprite(s * 1.7, s * 1.7, (g) => {
+        blurred(g, s * 0.07);
+        g.translate(0, s * 0.04);
+        lockSilhouette(g, s);
+      });
       lockSprite = sprite(s * 1.7, s * 1.7, (g) => {
         g.translate(0, s * 0.04);
-        // Shackle
         const r = s * 0.28;
         const top = -s * 0.28;
+        const bodyH = s * 0.78;
+        const rad = s * 0.1;
+
+        // Shackle: a heavy polished-steel loop
         g.beginPath();
         g.moveTo(-r, top + s * 0.1);
         g.lineTo(-r, top);
         g.arc(0, top, r, Math.PI, 0);
         g.lineTo(r, top + s * 0.1);
-        g.strokeStyle = INK;
-        g.lineWidth = s * 0.17;
-        g.stroke();
-        g.strokeStyle = IRON_LIGHT;
-        g.lineWidth = s * 0.09;
-        g.stroke();
-        // Body
+        steelTube(g, s * 0.16);
+
+        // Body: cast brass with a bevelled edge
         g.beginPath();
-        g.roundRect(-s / 2, top, s, s * 0.78, s * 0.12);
-        g.fillStyle = GOLD;
+        g.roundRect(-s / 2 - 1.5, top - 1.5, s + 3, bodyH + 3, rad + 1.5);
+        g.fillStyle = '#3a2905';
         g.fill();
-        g.lineWidth = 4;
-        g.strokeStyle = INK;
-        g.stroke();
-        // Sheen
+        const brass = g.createLinearGradient(0, top, 0, top + bodyH);
+        brass.addColorStop(0, '#f7de82');
+        brass.addColorStop(0.14, '#e9c04a');
+        brass.addColorStop(0.5, '#c9981c');
+        brass.addColorStop(0.86, '#a77810');
+        brass.addColorStop(1, '#7a560b');
         g.beginPath();
-        g.moveTo(-s * 0.36, top + s * 0.14);
-        g.lineTo(-s * 0.36, top + s * 0.6);
-        g.strokeStyle = GOLD_LIGHT;
-        g.lineWidth = s * 0.07;
-        g.stroke();
-        // Keyhole
-        g.shadowColor = 'transparent';
-        const ky = top + s * 0.3;
-        g.fillStyle = INK;
+        g.roundRect(-s / 2, top, s, bodyH, rad);
+        g.fillStyle = brass;
+        g.fill();
+        // Light from the left: a bright band fading to shade on the right
+        const side = g.createLinearGradient(-s / 2, 0, s / 2, 0);
+        side.addColorStop(0, 'rgba(255,255,255,0.32)');
+        side.addColorStop(0.3, 'rgba(255,255,255,0)');
+        side.addColorStop(0.75, 'rgba(0,0,0,0.04)');
+        side.addColorStop(1, 'rgba(0,0,0,0.26)');
+        g.fillStyle = side;
+        g.fill();
+        // Bevel: bright top edge, dark bottom edge
+        g.lineWidth = 1.6;
+        g.strokeStyle = 'rgba(255,248,210,0.75)';
         g.beginPath();
-        g.arc(0, ky, s * 0.09, 0, Math.PI * 2);
+        g.moveTo(-s / 2 + rad, top + 2);
+        g.lineTo(s / 2 - rad, top + 2);
+        g.stroke();
+        g.strokeStyle = 'rgba(60,40,0,0.55)';
+        g.beginPath();
+        g.moveTo(-s / 2 + rad, top + bodyH - 2);
+        g.lineTo(s / 2 - rad, top + bodyH - 2);
+        g.stroke();
+
+        // Recessed face plate
+        const pw = s * 0.64;
+        const ph = s * 0.5;
+        const py = top + s * 0.14;
+        g.beginPath();
+        g.roundRect(-pw / 2, py, pw, ph, s * 0.06);
+        const recess = g.createLinearGradient(0, py, 0, py + ph);
+        recess.addColorStop(0, '#9a6f10');
+        recess.addColorStop(1, '#d1a22a');
+        g.fillStyle = recess;
+        g.fill();
+        g.lineWidth = 1.4;
+        g.strokeStyle = 'rgba(50,32,0,0.6)';
+        g.stroke();
+        g.beginPath();
+        g.moveTo(-pw / 2 + s * 0.05, py + ph);
+        g.lineTo(pw / 2 - s * 0.05, py + ph);
+        g.strokeStyle = 'rgba(255,240,180,0.55)';
+        g.stroke();
+
+        // Keyhole in a brass escutcheon
+        const ky = py + ph * 0.42;
+        const esc = g.createRadialGradient(-s * 0.03, ky - s * 0.03, s * 0.01, 0, ky, s * 0.13);
+        esc.addColorStop(0, '#f6dc7c');
+        esc.addColorStop(1, '#a9790f');
+        g.beginPath();
+        g.arc(0, ky, s * 0.125, 0, Math.PI * 2);
+        g.fillStyle = esc;
+        g.fill();
+        g.lineWidth = 1.2;
+        g.strokeStyle = 'rgba(50,32,0,0.7)';
+        g.stroke();
+        g.fillStyle = '#080604';
+        g.beginPath();
+        g.arc(0, ky, s * 0.06, 0, Math.PI * 2);
         g.fill();
         g.beginPath();
-        g.moveTo(-s * 0.05, ky + s * 0.04);
-        g.lineTo(s * 0.05, ky + s * 0.04);
-        g.lineTo(s * 0.075, ky + s * 0.24);
-        g.lineTo(-s * 0.075, ky + s * 0.24);
+        g.moveTo(-s * 0.04, ky + s * 0.03);
+        g.lineTo(s * 0.04, ky + s * 0.03);
+        g.lineTo(s * 0.06, ky + s * 0.2);
+        g.lineTo(-s * 0.06, ky + s * 0.2);
         g.closePath();
         g.fill();
+
+        // Four little screws
+        const sx = s * 0.4;
+        const sr = s * 0.032;
+        screw(g, -sx, top + s * 0.1, sr, '#f3e3a2', '#8a620b');
+        screw(g, sx, top + s * 0.1, sr, '#f3e3a2', '#8a620b');
+        screw(g, -sx, top + bodyH - s * 0.1, sr, '#f3e3a2', '#8a620b');
+        screw(g, sx, top + bodyH - s * 0.1, sr, '#f3e3a2', '#8a620b');
       });
     };
 
@@ -255,24 +417,25 @@ export default function MerchChains() {
     const draw = () => {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (const arm of arms) {
-        const { pts } = arm;
+      // Shadows first (the light is up and to the left), then the metal on top of them.
+      ctx.globalAlpha = 0.38;
+      for (const { pts } of arms) {
+        for (let i = 0; i < pts.length - 1; i++) {
+          const a = pts[i];
+          const b = pts[i + 1];
+          stamp(i % 2 === 0 ? faceShadow : edgeShadow, (a.x + b.x) / 2 + 3, (a.y + b.y) / 2 + 6, Math.atan2(b.y - a.y, b.x - a.x));
+        }
+      }
+      stamp(lockShadow, lock.x + 5, lock.y + 10, lock.ang);
+      ctx.globalAlpha = 1;
+      for (const { pts } of arms) {
         for (let i = 0; i < pts.length - 1; i++) {
           const a = pts[i];
           const b = pts[i + 1];
           stamp(i % 2 === 0 ? faceSprite : edgeSprite, (a.x + b.x) / 2, (a.y + b.y) / 2, Math.atan2(b.y - a.y, b.x - a.x));
         }
-        // Bolted-down end plate
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.beginPath();
-        ctx.arc(arm.ax, arm.ay, 11, 0, Math.PI * 2);
-        ctx.fillStyle = IRON;
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(arm.ax, arm.ay, 4, 0, Math.PI * 2);
-        ctx.fillStyle = IRON_LIGHT;
-        ctx.fill();
       }
+      for (const arm of arms) stamp(plateSprite, arm.ax, arm.ay, 0);
       stamp(lockSprite, lock.x, lock.y, lock.ang);
     };
 
