@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "skills": {
+    "add-icon": {
+      "source": "FortAwesome/fontawesome-agent-tools",
+      "commit": "42dde8e841a95820e277d5987829d5298eee20e8",
+      "sourceType": "github",
+      "skillPath": "plugins/icons/skills/add-icon/SKILL.md",
+      "computedHash": "44c5953959c2b6e1c604c646710af52e51b4d2d5460a00fcbaa5b28b59ea4164"
+    },
+    "fa-help": {
+      "source": "FortAwesome/fontawesome-agent-tools",
+      "commit": "42dde8e841a95820e277d5987829d5298eee20e8",
+      "sourceType": "github",
+      "skillPath": "plugins/icons/skills/fa-help/SKILL.md",
+      "computedHash": "b15cf3678404250dcc7f50076060e7411f8bbb2aec580f36147074950c38f353"
+    },
+    "setup-fa": {
+      "source": "FortAwesome/fontawesome-agent-tools",
+      "commit": "42dde8e841a95820e277d5987829d5298eee20e8",
+      "sourceType": "github",
+      "skillPath": "plugins/icons/skills/setup-fa/SKILL.md",
+      "computedHash": "01dabe5acc7da09cab8c94a63f3d4dd7cc7a04e3420e18a3a3caab779a197253"
+    },
+    "suggest-icon": {
+      "source": "FortAwesome/fontawesome-agent-tools",
+      "commit": "42dde8e841a95820e277d5987829d5298eee20e8",
+      "sourceType": "github",
+      "skillPath": "plugins/icons/skills/suggest-icon/SKILL.md",
+      "computedHash": "782a7f42a722f139d6f11e1c67ea4f31b287385e3a6306e08d1fbc079f589856"
+    }
+  }
+}

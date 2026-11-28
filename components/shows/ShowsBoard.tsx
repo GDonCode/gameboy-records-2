@@ -4,9 +4,10 @@
 // they replace the TBA badges, one row per show.
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import PageTitle from '@/components/PageTitle';
 import GameIconsBackground from '@/components/GameIconsBackground';
+import Icon from '@/components/icons';
 import type { Show } from '@/lib/shows';
 
 const SEMI = "'Poppins_semibold', 'Poppins', sans-serif";
@@ -19,7 +20,7 @@ const ICON_PIN =
 const ICON_TICKET =
   'M64 200C64 168.9 89.1 143.9 120 144L520 144C550.9 144 576 169.1 576 200L576 232C558.3 232 544 246.3 544 264C544 281.7 558.3 296 576 296L576 360C558.3 360 544 374.3 544 392C544 409.7 558.3 424 576 424L576 456C576 486.9 550.9 512 520 512L120 512C89.1 512 64 486.9 64 456L64 424C81.7 424 96 409.7 96 392C96 374.3 81.7 360 64 360L64 296C81.7 296 96 281.7 96 264C96 246.3 81.7 232 64 232L64 200z';
 
-function Badge({ viewBox, d, label, size = 'w-7 h-7' }: { viewBox: string; d: string; label: string; size?: string }) {
+function Badge({ viewBox, d, label, size = 'w-7 h-7', color = '#E2BA0A' }: { viewBox: string; d: string; label: string; size?: string; color?: string }) {
   return (
     <div className="flex flex-col items-center gap-3">
       <span className="shows-placeholder-icon" aria-hidden="true">
@@ -27,7 +28,72 @@ function Badge({ viewBox, d, label, size = 'w-7 h-7' }: { viewBox: string; d: st
           <path d={d} />
         </svg>
       </span>
-      <span style={{ fontFamily: SEMI, fontSize: '0.85em', letterSpacing: '0.14em', color: '#E2BA0A' }}>{label}</span>
+      <span style={{ fontFamily: SEMI, fontSize: '0.85em', letterSpacing: '0.14em', color }}>{label}</span>
+    </div>
+  );
+}
+
+function showLabel(status: Show['status']) {
+  return status === 'sold-out' ? 'SOLD OUT' : status === 'announced' ? 'ON SALE SOON' : status === 'members-presale' ? 'MEMBERS PRESALE' : 'TICKETS';
+}
+
+/** Home layout: one card per show in a sideways scroll-snap rail, the next card peeking in. */
+function ShowRail({ shows }: { shows: Show[] }) {
+  const railRef = useRef<HTMLUListElement>(null);
+  const step = (dir: 1 | -1) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const card = rail.querySelector('li');
+    rail.scrollBy({ left: dir * ((card?.clientWidth ?? 320) + 16), behavior: 'smooth' });
+  };
+  return (
+    <div className="relative w-full max-w-[1200px] mt-12">
+      <ul
+        ref={railRef}
+        tabIndex={0}
+        aria-label="Upcoming shows, scroll sideways"
+        className="flex gap-4 overflow-x-auto snap-x snap-mandatory list-none p-0 m-0 px-1 pb-4 text-left [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-green"
+      >
+        {shows.map((show) => {
+          const d = new Date(show.date);
+          const day = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }).toUpperCase();
+          const md = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }).toUpperCase();
+          const directions = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${show.venue}, ${show.address}`)}`;
+          const label = showLabel(show.status);
+          const buyable = show.ticketUrl && (show.status === 'on-sale' || show.status === 'members-presale');
+          return (
+            <li key={`${show.date}-${show.city}`} className="panel-paper snap-start shrink-0 w-[78%] sm:w-[340px] flex flex-col gap-4 p-6">
+              <span style={{ fontFamily: SEMI, letterSpacing: '0.14em', color: '#05652E' }}>{day}</span>
+              <span className="text-ink text-[2.4rem] leading-none" style={{ fontFamily: SEMI }}>{md}</span>
+              <span className="text-ink" style={{ fontFamily: SEMI, letterSpacing: '0.08em' }}>
+                {show.city.toUpperCase()}, {show.country.toUpperCase()}
+              </span>
+              <a href={directions} target="_blank" rel="noopener noreferrer" className="text-[0.9em] text-ink/70 underline underline-offset-4 hover:text-ink" style={{ fontFamily: BODY }}>
+                {show.venue}
+              </a>
+              <div className="mt-auto pt-2">
+                {buyable ? (
+                  <a href={show.ticketUrl!} target="_blank" rel="noopener noreferrer" className="shows-notify-btn glass-btn glass-btn--green zoom-content justify-center" aria-label={`${label}: ${show.city} (opens in a new tab)`}>
+                    <span>{label}</span>
+                  </a>
+                ) : (
+                  <span style={{ fontFamily: SEMI, fontSize: '0.85em', letterSpacing: '0.14em', color: '#0B0A07', opacity: 0.6 }}>{label}</span>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      {shows.length > 1 && (
+        <div className="mt-4 hidden justify-center gap-3 sm:flex">
+          <button type="button" onClick={() => step(-1)} aria-label="Previous show" className="glass-btn glass-btn--quiet-dark zoom-content inline-flex h-11 w-11 items-center justify-center">
+            <Icon name="arrow-right" className="w-4 h-4 rotate-180" />
+          </button>
+          <button type="button" onClick={() => step(1)} aria-label="Next show" className="glass-btn glass-btn--quiet-dark zoom-content inline-flex h-11 w-11 items-center justify-center">
+            <Icon name="arrow-right" className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -36,7 +102,7 @@ function ShowRow({ show }: { show: Show }) {
   const d = new Date(show.date);
   const date = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' }).toUpperCase();
   const directions = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${show.venue}, ${show.address}`)}`;
-  const label = show.status === 'sold-out' ? 'SOLD OUT' : show.status === 'announced' ? 'ON SALE SOON' : show.status === 'members-presale' ? 'MEMBERS PRESALE' : 'TICKETS';
+  const label = showLabel(show.status);
   return (
     <li className="panel-ink flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 px-6 py-5 text-left">
       <span style={{ fontFamily: SEMI, letterSpacing: '0.14em', color: '#E2BA0A' }} className="sm:w-[150px] shrink-0">
@@ -61,7 +127,12 @@ function ShowRow({ show }: { show: Show }) {
   );
 }
 
-export default function ShowsBoard({ shows }: { shows: Show[] }) {
+/**
+ * `page` is the /shows page body. `rail` is the Home section: a full-screen panel (the fixed header floats over its
+ * top edge) whose dates scroll sideways.
+ */
+export default function ShowsBoard({ shows, layout = 'page' }: { shows: Show[]; layout?: 'page' | 'rail' }) {
+  const rail = layout === 'rail';
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
@@ -89,7 +160,7 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
 
   return (
     <div
-      className="paper-ink relative flex-1 overflow-hidden min-h-[calc(100svh-var(--header-h))]"
+      className={`${rail ? 'paper-deep' : 'paper-ink'} relative overflow-hidden ${rail ? 'min-h-[100svh]' : 'flex-1 min-h-[calc(100svh-var(--header-h))]'}`}
     >
       <style>{`
         .shows-placeholder-icon {
@@ -99,8 +170,8 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
           width: 64px;
           height: 64px;
           border-radius: 50%;
-          background: #067F3A;
-          box-shadow: 4px 4px 0 #E2BA0A;
+          background: #E2BA0A;
+          box-shadow: 4px 4px 0 #067F3A;
         }
         .shows-email-input {
           flex: 1 1 auto;
@@ -117,6 +188,9 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
           transition: border-color 0.2s, box-shadow 0.2s;
         }
         .shows-email-input::placeholder { color: rgba(255,255,255,0.45); }
+        .shows-email-input--light { background: #fff; color: #0B0A07; border-color: rgba(11,10,7,0.4); }
+        .shows-email-input--light::placeholder { color: rgba(11,10,7,0.5); }
+        .shows-email-input--light:focus { border-color: #067F3A; }
         .shows-email-input:focus {
           border-color: #E2BA0A;
         }
@@ -136,34 +210,42 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
         .shows-notify-btn:disabled { opacity: 0.5; cursor: not-allowed; }
       `}</style>
 
-      <GameIconsBackground />
+      {!rail && <GameIconsBackground />}
 
-      <div className="relative z-[1] flex flex-col items-center px-6 py-20 text-center">
-        <PageTitle tone="dark" ghost="Live" className="w-full max-w-[900px]">
+      <div
+        className={`relative z-[1] flex flex-col items-center px-6 text-center ${
+          rail ? 'min-h-[100svh] justify-center pt-[calc(var(--header-h)+2.5rem)] pb-16' : 'py-20'
+        }`}
+      >
+        <PageTitle tone={rail ? 'light' : 'dark'} ghost="Live" className="w-full max-w-[900px]" {...(rail ? { as: 'h2' as const, id: 'shows-title' } : {})}>
           Shows
         </PageTitle>
         {shows.length > 0 ? (
           <>
-            <p className="mt-5 max-w-[560px]" style={{ fontFamily: BODY, fontSize: '1.1em', color: '#e8f5ec', lineHeight: 1.6, opacity: 0.8 }}>
+            <p className="mt-5 max-w-[560px]" style={{ fontFamily: BODY, fontSize: '1.1em', color: rail ? '#0B0A07' : '#e8f5ec', lineHeight: 1.6, opacity: 0.8 }}>
               Upcoming dates. Playaz Club members get first access to tickets.
             </p>
-            <ul className="w-full max-w-[860px] mt-14 flex flex-col gap-3 list-none p-0">
-              {shows.map((s) => (
-                <ShowRow key={`${s.date}-${s.city}`} show={s} />
-              ))}
-            </ul>
+            {rail ? (
+              <ShowRail shows={shows} />
+            ) : (
+              <ul className="w-full max-w-[860px] mt-14 flex flex-col gap-3 list-none p-0">
+                {shows.map((s) => (
+                  <ShowRow key={`${s.date}-${s.city}`} show={s} />
+                ))}
+              </ul>
+            )}
           </>
         ) : (
           <div className="flex flex-wrap items-center justify-center gap-10 mt-10">
-            <Badge viewBox="0 0 640 640" d={ICON_CALENDAR} label="DATE — TBA" />
-            <Badge viewBox="0 0 384 512" d={ICON_PIN} label="VENUE — TBA" size="w-6 h-6" />
-            <Badge viewBox="0 0 640 640" d={ICON_TICKET} label="TICKETS — TBA" />
+            <Badge viewBox="0 0 640 640" d={ICON_CALENDAR} label="DATE — TBA" color={rail ? '#05652E' : undefined} />
+            <Badge viewBox="0 0 384 512" d={ICON_PIN} label="VENUE — TBA" size="w-6 h-6" color={rail ? '#05652E' : undefined} />
+            <Badge viewBox="0 0 640 640" d={ICON_TICKET} label="TICKETS — TBA" color={rail ? '#05652E' : undefined} />
           </div>
         )}
 
         {/* Email capture */}
         <div className="w-full max-w-[480px] mt-14">
-          <p className="mt-0 mb-5" style={{ fontFamily: BODY, fontSize: '1.05em', color: '#e8f5ec', opacity: 0.85, lineHeight: 1.6 }}>
+          <p className="mt-0 mb-5" style={{ fontFamily: BODY, fontSize: '1.05em', color: rail ? '#0B0A07' : '#e8f5ec', opacity: 0.85, lineHeight: 1.6 }}>
             {shows.length > 0 ? 'Be the first to know when we announce a show near you.' : 'Tour dates are being booked. Be the first to know when we announce a show near you.'}
           </p>
           <form onSubmit={handleNotify} className="flex flex-col sm:flex-row gap-2">
@@ -179,13 +261,13 @@ export default function ShowsBoard({ shows }: { shows: Show[] }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="shows-email-input"
+              className={`shows-email-input ${rail ? 'shows-email-input--light' : ''}`}
             />
-            <button type="submit" disabled={isSubmitting} className="shows-notify-btn glass-btn zoom-content justify-center">
+            <button type="submit" disabled={isSubmitting} className={`shows-notify-btn glass-btn zoom-content justify-center ${rail ? 'glass-btn--green' : ''}`}>
               <span>{isSubmitting ? 'SENDING…' : 'NOTIFY ME'}</span>
             </button>
           </form>
-          <p role="status" aria-live="polite" className="mt-3 min-h-[1.4em]" style={{ fontFamily: BODY, fontSize: '0.85em', color: status.type === 'success' ? '#38B26A' : '#F0A39C' }}>
+          <p role="status" aria-live="polite" className="mt-3 min-h-[1.4em]" style={{ fontFamily: BODY, fontSize: '0.85em', color: status.type === 'success' ? (rail ? '#05652E' : '#38B26A') : rail ? '#A3322A' : '#F0A39C' }}>
             {status.message}
           </p>
         </div>

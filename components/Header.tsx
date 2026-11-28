@@ -4,55 +4,111 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import {
-  CalendarDays,
-  ChevronDown,
-  ChevronRight,
-  CircleHelp,
-  Disc3,
-  Info,
-  Menu,
-  Mic,
-  Shirt,
-  ShoppingCart,
-  X,
-  type LucideIcon,
-} from 'lucide-react';
+import FaIcon, { type IconName } from '@/components/icons';
 import UserIcon from '@/components/icons/UserIcon';
 import UserAddIcon from '@/components/icons/UserAddIcon';
 import { useCartCount } from '@/lib/cart-sync';
-import { LOGO_URL, NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
+import { LOGO_URL, NAV, PAPER_LOGO_URL, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
-// The header is frosted white glass over whatever is behind it (the hero film on Home): black nav links,
-// a brand-green Sign in button.
+// On Home the header floats over the hero film: the nav links and cart/account each sit on their own
+// frosted-white panel with black content so they stay readable over every scene (the logo carries its own paper
+// frame); Sign in keeps its solid green.
+// The same style is used on every page; only Home floats it over the page.
 const NEON_TEXT = { color: '#0B0A07' } as const;
+const GLASS = 'bg-white/80 backdrop-blur-md shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]';
 const SEMIBOLD = { fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" } as const;
 const FOCUS =
   'outline-none focus-visible:ring-2 focus-visible:ring-[#067F3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F5]';
 
-type NavItem = { href: string; label: string; icon: LucideIcon; blurb?: string };
+type NavItem = { href: string; label: string; icon: IconName; blurb?: string };
 
-const PRIMARY_ICONS: Record<string, LucideIcon> = { '/shows': CalendarDays, '/shop': Shirt, '/music': Disc3, '/about': Info };
-const PRIMARY: NavItem[] = NAV.map((n) => ({ href: n.href, label: n.label, icon: PRIMARY_ICONS[n.href] ?? Info }));
+// Font Awesome Free Solid icons (see components/icons.tsx).
+const PRIMARY_ICONS: Record<string, IconName> = { '/shows': 'calendar-days', '/shop': 'shirt', '/music': 'compact-disc', '/about': 'circle-info' };
+const PRIMARY: NavItem[] = NAV.map((n) => ({ href: n.href, label: n.label, icon: PRIMARY_ICONS[n.href] ?? 'circle-info' }));
 
-const VIBE_META: Record<string, { icon: LucideIcon; blurb: string }> = {
-  '/karaoke': { icon: Mic, blurb: 'Sing along to the catalogue' },
-  '/trivia': { icon: CircleHelp, blurb: 'How well do you know the label?' },
+const VIBE_META: Record<string, { icon: IconName; blurb: string }> = {
+  '/karaoke': { icon: 'microphone-lines', blurb: 'Sing along to the catalogue' },
+  '/trivia': { icon: 'circle-question', blurb: 'How well do you know the label?' },
 };
 const VIBES: NavItem[] = VIBES_NAV.map((n) => ({ href: n.href, label: n.label, icon: VIBE_META[n.href].icon, blurb: VIBE_META[n.href].blurb }));
+
+// Pages whose content also lives on Home as a section: on Home their header links scroll to it.
+const HOME_SECTION_FOR: Record<string, string> = { '/shows': 'shows', '/music': 'music' };
+const HOME_SECTIONS = Object.values(HOME_SECTION_FOR);
+
+// After a jump to a Home section, hand keyboard focus to it so Tab carries on from there (the scroll is the link's own).
+function focusSection(href: string) {
+  if (!href.startsWith('/#')) return;
+  const id = href.slice(2);
+  window.setTimeout(() => document.getElementById(id)?.focus({ preventScroll: true }), 0);
+}
 
 function isActive(pathname: string, href: string) {
   if (href === '/') return pathname === '/';
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-// ── Brand ─────────────────────────────────────────────────────────────────────
-function Brand() {
+// ── Scrapbook lettering ───────────────────────────────────────────────────────
+// Each letter is cut from white crumpled paper (the creases are kept faint into the paper texture) and set a little off-kilter,
+// with a dark cut edge and soft shadow so it reads over any frame of the film. No backing panel.
+const TILT = [-4, 3, -2, 4, -3, 2, -5, 3, -2, 4];
+const LIFT = [0, 1, -1, 1, 0, -1, 1, 0, -1, 1];
+const CUTOUT_SHADOW =
+  'drop-shadow(0 0 0.75px rgba(11,10,7,1)) drop-shadow(1px 1px 0 rgba(11,10,7,0.85)) drop-shadow(0 3px 5px rgba(0,0,0,0.55))';
+
+function PaperWord({ text, children }: { text: string; children?: React.ReactNode }) {
   return (
-    <Link href="/" aria-label={`${SITE_NAME} — home`} className={`flex shrink-0 items-center rounded-xs ${FOCUS}`}>
+    <span className="inline-flex items-center gap-1.5" style={{ filter: CUTOUT_SHADOW }}>
+      <span aria-hidden="true">
+        {Array.from(text).map((ch, i) =>
+          ch === ' ' ? (
+            <span key={i} className="inline-block w-[0.5em]" />
+          ) : (
+            <span
+              key={i}
+              className="inline-block origin-center transition-transform duration-300 ease-out [transform:translateY(var(--y))_rotate(var(--r))] group-hover/word:[transform:translateY(0)_rotate(0deg)_scale(1.1)] group-focus-visible/word:[transform:translateY(0)_rotate(0deg)_scale(1.1)] motion-reduce:transition-none"
+              style={{
+                '--y': `${LIFT[i % LIFT.length]}px`,
+                '--r': `${TILT[i % TILT.length]}deg`,
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 700,
+                color: 'transparent',
+                backgroundColor: '#FFFFFF',
+                backgroundImage: "linear-gradient(rgba(255,255,255,0.72), rgba(255,255,255,0.72)), url('/brand/paper-texture.webp')",
+                backgroundSize: '260px auto',
+                backgroundPosition: `${(i * 53) % 200}px ${(i * 31) % 120}px`,
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                padding: '0 0.04em',
+              } as React.CSSProperties}
+            >
+              {ch}
+            </span>
+          ),
+        )}
+      </span>
+      <span className="sr-only">{text}</span>
+      {children}
+    </span>
+  );
+}
+
+// ── Brand ─────────────────────────────────────────────────────────────────────
+function Brand({ glass }: { glass: boolean }) {
+  return (
+    <Link
+      href="/"
+      aria-label={`${SITE_NAME} — home`}
+      className={`flex shrink-0 ${glass ? 'self-start items-start' : 'items-center'} ${glass ? 'drop-shadow-[0_6px_14px_rgba(0,0,0,0.55)]' : 'rounded-xs'} ${FOCUS}`}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={LOGO_URL} alt="" width={1022} height={168} className="h-[30px] w-auto lg:h-[38px]" />
+      <img
+        src={glass ? PAPER_LOGO_URL : LOGO_URL}
+        alt=""
+        className={glass ? 'h-[46px] w-auto lg:h-[58px]' : 'h-[30px] w-auto lg:h-[38px]'}
+        {...(glass ? {} : { width: 1022, height: 168 })}
+      />
     </Link>
   );
 }
@@ -72,6 +128,9 @@ function CartBadge({ count, className = '' }: { count: number; className?: strin
 // ── Header ────────────────────────────────────────────────────────────────────
 export default function Header() {
   const pathname = usePathname();
+  // One header style site-wide. Only Home floats it over the hero film; elsewhere it stays in the page flow.
+  const overlay = true;
+  const onHome = pathname === '/';
   const { data: session } = useSession();
   // Live cart total: updates instantly from the shop/cart pages, no refresh needed.
   const liveCartCount = useCartCount(session?.user?.id);
@@ -81,6 +140,9 @@ export default function Header() {
   const initial = session?.user?.name?.trim().charAt(0).toUpperCase() || null;
 
   const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  // Which Home sections (Shows, Music) are on screen right now.
+  const [inView, setInView] = useState<Record<string, boolean>>({});
   const [menuOpen, setMenuOpen] = useState(false);
   const [vibesOpen, setVibesOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -95,14 +157,34 @@ export default function Header() {
   // on load, and scrolling inside a panel (the Music crate, say) never hides it.
   useEffect(() => {
     lastScrollY.current = window.scrollY;
+    setScrolled(window.scrollY > 8);
     function handleScroll() {
       const currentY = window.scrollY;
       setHidden(currentY > lastScrollY.current && currentY > 80);
+      setScrolled(currentY > 8);
       lastScrollY.current = currentY;
     }
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // On Home the Shows and Music links point at their sections further down the page, and light up while the section
+  // is on screen.
+  useEffect(() => {
+    if (!onHome) {
+      setInView({});
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => setInView((prev) => entries.reduce((acc, e) => ({ ...acc, [e.target.id]: e.isIntersecting }), prev)),
+      { threshold: 0.5 },
+    );
+    HOME_SECTIONS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+    return () => io.disconnect();
+  }, [onHome]);
 
   // Escape closes whichever menu is open and hands focus back to its trigger.
   useEffect(() => {
@@ -162,9 +244,11 @@ export default function Header() {
   }
 
   const vibesActive = VIBES.some((v) => isActive(pathname, v.href));
+  const navItems = PRIMARY.map((n) => (onHome && HOME_SECTION_FOR[n.href] ? { ...n, href: `/#${HOME_SECTION_FOR[n.href]}` } : n));
+  const isNavActive = (href: string) => (href.startsWith('/#') ? !!inView[href.slice(2)] : isActive(pathname, href));
 
-  const linkBase = `relative inline-flex h-11 items-center rounded-md px-3 text-[0.9rem] tracking-[0.12em] transition-colors duration-200 lg:px-4 lg:text-[0.98rem]
-    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-[#067F3A] after:transition-transform after:duration-200 lg:after:inset-x-4
+  const linkBase = `group/word relative inline-flex h-11 items-center rounded-md px-3 text-[1.05rem] tracking-[0.1em] transition-colors duration-200 lg:px-4 lg:text-[1.3rem]
+    after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-center after:rounded-full after:bg-white after:shadow-[0_1px_3px_rgba(0,0,0,0.5)] after:transition-transform after:duration-200 lg:after:inset-x-4
     ${FOCUS}`;
   const linkState = (active: boolean) =>
     active ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100';
@@ -181,27 +265,37 @@ export default function Header() {
       )}
 
       <header
-        className={`on-light sticky top-0 z-40 flex-shrink-0 bg-white/80 text-[#0B0A07] backdrop-blur-md transition-transform duration-300 ease-in-out lg:translate-y-0 ${
+        className={`${
+          onHome ? 'fixed inset-x-0 top-0 z-40 text-[#0B0A07]' : 'sticky top-0 z-40 flex-shrink-0 text-[#0B0A07]'
+        } transition-transform duration-300 ease-in-out lg:translate-y-0 ${
           hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
-        <div className="relative flex h-[60px] items-center gap-3 pl-4 pr-3 md:h-[72px] lg:gap-2 lg:px-8">
-          <Brand />
+        {/* Once the page scrolls, a thin band of green frosted glass runs the full width behind the logo, nav and Sign in + Cart */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-x-0 top-0 h-12 border-b border-white/20 bg-[#067F3A]/50 backdrop-blur-md transition-opacity duration-300 motion-reduce:transition-none ${
+            scrolled ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+        <div className={`relative flex h-[60px] gap-3 md:h-[72px] ${overlay ? 'items-start lg:gap-0' : 'items-center pl-4 pr-3 lg:gap-2 lg:px-8'}`}>
+          <Brand glass={overlay} />
 
           {/* ── Desktop nav ── */}
-          <nav aria-label="Main" className="ml-auto hidden lg:block">
-            <ul className="flex items-center gap-0.5 lg:gap-1">
-              {PRIMARY.map((item) => {
-                const active = isActive(pathname, item.href);
+          <nav aria-label="Main" className={`ml-auto hidden lg:block ${overlay ? 'h-12' : ''}`}>
+            <ul className={`flex items-center gap-0.5 lg:gap-1 ${overlay ? 'h-12 px-2' : ''}`}>
+              {navItems.map((item) => {
+                const active = isNavActive(item.href);
                 return (
                   <li key={item.href}>
                     <Link
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
+                      onClick={() => focusSection(item.href)}
                       className={`${linkBase} ${linkState(active)}`}
                       style={{ ...SEMIBOLD, ...NEON_TEXT }}
                     >
-                      {item.label.toUpperCase()}
+                      <PaperWord text={item.label.toUpperCase()} />
                     </Link>
                   </li>
                 );
@@ -217,12 +311,12 @@ export default function Header() {
                   className={`${linkBase} ${linkState(vibesActive || vibesOpen)} gap-1.5`}
                   style={{ ...SEMIBOLD, ...NEON_TEXT }}
                 >
-                  VIBES
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
-                    strokeWidth={2.75}
-                    aria-hidden="true"
-                  />
+                  <PaperWord text="VIBES">
+                    <FaIcon
+                      name="chevron-down"
+                      className={`h-4 w-4 text-white transition-transform duration-200 ${vibesOpen ? 'rotate-180' : ''}`}
+                    />
+                  </PaperWord>
                 </button>
 
                 <div
@@ -233,7 +327,6 @@ export default function Header() {
                   <ul className="w-[300px] overflow-hidden rounded-xl border border-[#0B0A07]/10 bg-[#FFFFFF] p-1.5 shadow-[0_18px_40px_-12px_rgba(15,61,34,0.35)] motion-safe:animate-[gbr-drop_160ms_ease-out]">
                     {VIBES.map((item) => {
                       const active = isActive(pathname, item.href);
-                      const Icon = item.icon;
                       return (
                         <li key={item.href}>
                           <Link
@@ -249,7 +342,7 @@ export default function Header() {
                                 active ? 'bg-[#067F3A] text-white' : 'bg-[#067F3A]/12 text-[#05652E] group-hover:bg-[#067F3A] group-hover:text-white'
                               }`}
                             >
-                              <Icon className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                              <FaIcon name={item.icon} className="h-5 w-5" />
                             </span>
                             <span className="min-w-0">
                               <span className="block text-[0.9rem] tracking-[0.12em] text-[#0B0A07]" style={SEMIBOLD}>
@@ -270,15 +363,17 @@ export default function Header() {
           </nav>
 
           {/* ── Desktop utilities ── */}
-          <div className="hidden items-center gap-2 lg:flex">
-            <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />
+          <div className={`hidden lg:flex ${overlay ? `h-12 items-stretch bg-[#067F3A] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)]` : 'items-center gap-2'}`}>
+            {!overlay && <span className="mx-2 h-7 w-px bg-[#0B0A07]/20 lg:mx-3" aria-hidden="true" />}
 
             {session ? (
               <Link
                 href={accountHref}
                 aria-label="Your account"
                 aria-current={isActive(pathname, '/account') ? 'page' : undefined}
-                className={`flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] transition-colors duration-200 hover:border-[#067F3A] hover:bg-[#067F3A]/10 ${FOCUS}`}
+                className={`flex items-center justify-center transition-colors duration-200 ${
+                  overlay ? 'w-16 text-white hover:bg-white/10' : 'h-11 w-11'} ${overlay ? '' : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
+                } ${FOCUS}`}
               >
                 {initial ? (
                   <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
@@ -290,28 +385,34 @@ export default function Header() {
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`flex h-11 items-center gap-2 rounded-full bg-[#067F3A] px-3 text-white shadow-[0_3px_0_#044F24] transition-[transform,box-shadow,background-color] duration-100 hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none lg:px-4 ${FOCUS}`}
+                className={`group/word flex items-center gap-2 px-3 text-white transition-[transform,box-shadow,background-color] duration-100 lg:px-5 ${
+                  overlay ? 'hover:bg-white/10' : 'h-11 rounded-full bg-[#067F3A] shadow-[0_3px_0_#044F24] hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none'
+                } ${FOCUS}`}
               >
                 <UserAddIcon className="h-5 w-auto" />
-                <span className="hidden text-[0.85rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
-                  SIGN IN
+                <span className="hidden text-[1.1rem] tracking-[0.1em] lg:inline" style={SEMIBOLD}>
+                  <PaperWord text="+ PLAYER" />
                 </span>
               </Link>
             )}
+
+            {overlay && <span className="my-auto h-6 w-px bg-white" aria-hidden="true" />}
 
             <Link
               href="/cart"
               aria-label={cartLabel}
               aria-current={isActive(pathname, '/cart') ? 'page' : undefined}
-              className={`relative flex h-12 w-12 items-center justify-center rounded-full text-[#0B0A07] transition-colors duration-200 hover:bg-[#067F3A]/10 hover:text-[#067F3A] ${FOCUS}`}
+              className={`relative flex items-center justify-center transition-colors duration-200 ${
+                overlay ? 'w-16 text-white hover:bg-white/10' : 'h-12 w-12 rounded-full text-[#0B0A07] hover:bg-[#067F3A]/10 hover:text-[#067F3A]'
+              } ${FOCUS}`}
             >
-              <ShoppingCart className="h-[26px] w-[26px]" strokeWidth={2.25} aria-hidden="true" />
+              <FaIcon name="cart-shopping" className="h-[24px] w-[24px]" />
               <CartBadge count={cartCount} className="absolute -right-1.5 -top-1.5" />
             </Link>
           </div>
 
           {/* ── Phone actions: the menu button holds the cart and account too ── */}
-          <div className="ml-auto flex items-center lg:hidden">
+          <div className={`ml-auto flex lg:hidden ${overlay ? 'h-12 items-stretch' : 'items-center'}`}>
             <button
               ref={menuButtonRef}
               type="button"
@@ -319,12 +420,14 @@ export default function Header() {
               aria-label={menuOpen ? 'Close menu' : cartCount > 0 ? `Open menu, ${cartCount} item${cartCount === 1 ? '' : 's'} in cart` : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full bg-transparent text-[#067F3A] transition-colors hover:text-[#05652E] -mr-1 ${FOCUS}`}
+              className={`relative flex items-center justify-center transition-colors ${
+                overlay ? `w-14 ${GLASS} text-[#067F3A] hover:text-[#05652E]` : 'h-11 w-11 rounded-full bg-transparent text-[#067F3A] hover:text-[#05652E] -mr-1'
+              } ${FOCUS}`}
             >
               {menuOpen ? (
-                <X className="h-[32px] w-[32px]" strokeWidth={2.75} aria-hidden="true" />
+                <FaIcon name="xmark" className="h-[28px] w-[28px]" />
               ) : (
-                <Menu className="h-[32px] w-[32px]" strokeWidth={2.75} aria-hidden="true" />
+                <FaIcon name="bars" className="h-[28px] w-[28px]" />
               )}
             </button>
           </div>
@@ -335,15 +438,15 @@ export default function Header() {
           <div
             ref={menuRef}
             id="mobile-menu"
-            className="on-light absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl paper text-[#0B0A07] shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
+            className="on-light absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h))] overflow-y-auto rounded-b-xl bg-white bg-[url('/brand/paper-texture.webp')] bg-cover bg-center text-[#0B0A07] shadow-[0_24px_48px_-16px_rgba(0,0,0,0.5)] lg:hidden motion-safe:animate-[gbr-drop_200ms_ease-out]"
           >
             <nav aria-label="Mobile" className="px-3 pb-4 pt-2">
-              <MobileGroup items={PRIMARY} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+              <MobileGroup items={navItems} isActive={isNavActive} onNavigate={(href) => { setMenuOpen(false); focusSection(href); }} />
 
               <p className="px-3 pb-1 pt-4 text-[0.7rem] tracking-[0.3em] text-[#05652E]" style={SEMIBOLD}>
                 VIBES
               </p>
-              <MobileGroup items={VIBES} pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+              <MobileGroup items={VIBES} isActive={(href) => isActive(pathname, href)} onNavigate={() => setMenuOpen(false)} />
 
               <div className="mt-4 border-t-2 border-[#0B0A07]/15 pt-3">
                 <ul className="mb-3 flex flex-col gap-0.5">
@@ -357,7 +460,7 @@ export default function Header() {
                       }`}
                       style={SEMIBOLD}
                     >
-                      <ShoppingCart className={`h-5 w-5 shrink-0 ${isActive(pathname, '/cart') ? '' : 'text-[#05652E]'}`} strokeWidth={2.25} aria-hidden="true" />
+                      <FaIcon name="cart-shopping" className={`h-5 w-5 shrink-0 ${isActive(pathname, '/cart') ? '' : 'text-[#05652E]'}`} />
                       <span className="flex-1">{cartLabel.toUpperCase()}</span>
                       <CartBadge count={cartCount} />
                     </Link>
@@ -381,7 +484,7 @@ export default function Header() {
                         </span>
                       )}
                     </span>
-                    <ChevronRight className="h-5 w-5 text-[#0B0A07]/50" aria-hidden="true" />
+                    <FaIcon name="chevron-right" className="h-4 w-4 text-[#0B0A07]/50" />
                   </Link>
                 ) : (
                   <div className="flex flex-col gap-2">
@@ -391,7 +494,7 @@ export default function Header() {
                       className={`flex h-12 items-center justify-center rounded-full bg-[#067F3A] text-[0.95rem] tracking-[0.14em] text-white shadow-[0_3px_0_#044F24] active:translate-y-[3px] active:shadow-none ${FOCUS}`}
                       style={SEMIBOLD}
                     >
-                      SIGN IN
+                      + PLAYER
                     </Link>
                     <Link
                       href="/account/login?mode=register"
@@ -418,24 +521,23 @@ export default function Header() {
   );
 }
 
-function MobileGroup({ items, pathname, onNavigate }: { items: NavItem[]; pathname: string; onNavigate: () => void }) {
+function MobileGroup({ items, isActive: isItemActive, onNavigate }: { items: NavItem[]; isActive: (href: string) => boolean; onNavigate: (href: string) => void }) {
   return (
     <ul className="flex flex-col gap-0.5">
       {items.map((item) => {
-        const active = isActive(pathname, item.href);
-        const Icon = item.icon;
+        const active = isItemActive(item.href);
         return (
           <li key={item.href}>
             <Link
               href={item.href}
-              onClick={onNavigate}
+              onClick={() => onNavigate(item.href)}
               aria-current={active ? 'page' : undefined}
               className={`flex min-h-[52px] items-center gap-3.5 rounded-xl px-3 text-[1rem] tracking-[0.12em] transition-colors ${FOCUS} ${
                 active ? 'bg-[#067F3A] text-white' : 'text-[#0B0A07] active:bg-[#067F3A]/12'
               }`}
               style={SEMIBOLD}
             >
-              <Icon className={`h-5 w-5 shrink-0 ${active ? '' : 'text-[#05652E]'}`} strokeWidth={2.25} aria-hidden="true" />
+              <FaIcon name={item.icon} className={`h-5 w-5 shrink-0 ${active ? '' : 'text-[#05652E]'}`} />
               <span className="flex-1">{item.label.toUpperCase()}</span>
               {active && <span className="h-2 w-2 rounded-full bg-white" aria-hidden="true" />}
             </Link>

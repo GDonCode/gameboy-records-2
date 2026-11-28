@@ -382,8 +382,10 @@ select.field { appearance: none; background-image: linear-gradient(45deg, transp
 }
 .on-ink .ghost-title__ghost, .ghost-title--dark .ghost-title__ghost { -webkit-text-stroke-color: rgba(226, 186, 10, 0.32); }
 
-/* Scrolling ribbon. Stops for reduced motion. */
-.ribbon-track { display: flex; width: max-content; animation: ribbon 36s linear infinite; }
+/* Scrolling ribbon. Stops for reduced motion. The track holds 8 identical copies of the word list and slides by
+   exactly half of it (4 copies), so the loop point is invisible and there is always text to the right of the screen,
+   even on very wide displays. 144s keeps the speed of one copy per 36s. */
+.ribbon-track { display: flex; width: max-content; animation: ribbon 144s linear infinite; }
 @keyframes ribbon { to { transform: translateX(-50%); } }
 
 /* ── REDUCED MOTION ────────────────────────────────────────────────────────── */
