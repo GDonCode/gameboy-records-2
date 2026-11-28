@@ -37,19 +37,67 @@ function useIsDesktop() {
 
 const nameOf = (r: Release) => r.title;
 
+const TIMELINE_START = 2014;
+const TIMELINE_END = 2026;
+const TIMELINE_YEARS = Array.from({ length: TIMELINE_END - TIMELINE_START + 1 }, (_, i) => TIMELINE_START + i);
+// Positions along the bar's inner track (inside its 3px border), so the fill and the nodes always line up.
+const along = (pct: number) => `calc(3px + (100% - 6px) * ${pct / 100})`;
+
+/** A loading bar for the discography: one node per year, filled up to the year of the record in front. */
+function Timeline({ year }: { year: number }) {
+  const span = TIMELINE_END - TIMELINE_START;
+  const current = Math.max(TIMELINE_START, Math.min(TIMELINE_END, year));
+  const pctOf = (y: number) => ((y - TIMELINE_START) / span) * 100;
+  return (
+    <div aria-hidden="true" className="relative z-10 mx-auto w-full max-w-[920px] shrink-0 select-none px-[clamp(22px,4vw,44px)]">
+      <div className="relative mb-[clamp(18px,3.2vh,28px)] h-[clamp(14px,2.2vh,20px)]">
+        <div className="absolute inset-0 border-[3px] border-[#E2BA0A] bg-[#0B0A07] shadow-[3px_3px_0_#067F3A]" />
+        <div
+          className="absolute inset-y-[3px] left-[3px] bg-[#067F3A] transition-[width] duration-500 ease-out motion-reduce:transition-none"
+          style={{
+            width: `calc((100% - 6px) * ${pctOf(current) / 100})`,
+            backgroundImage: 'repeating-linear-gradient(90deg, transparent 0 8px, rgba(0,0,0,0.55) 8px 10px)',
+          }}
+        />
+        {TIMELINE_YEARS.map((y) => {
+          const isCurrent = y === current;
+          const reached = y < current;
+          return (
+            <span key={y} className="absolute top-1/2" style={{ left: along(pctOf(y)) }}>
+              <span
+                className={`absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 border-2 border-[#0B0A07] transition-[background-color,transform] duration-300 motion-reduce:transition-none ${
+                  isCurrent
+                    ? 'h-[clamp(16px,2.6vh,22px)] w-[clamp(16px,2.6vh,22px)] bg-[#4dff91] shadow-[0_0_14px_rgba(77,255,145,0.8)]'
+                    : reached
+                      ? 'h-2.5 w-2.5 bg-[#E2BA0A]'
+                      : 'h-2.5 w-2.5 bg-[#26231a]'
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-[calc(clamp(14px,2.2vh,20px)/2+10px)] -translate-x-1/2 whitespace-nowrap text-[clamp(0.55rem,1.3vh,0.7rem)] font-semibold tracking-[0.06em] transition-colors duration-300 ${
+                  isCurrent ? 'text-[#4dff91]' : reached ? 'text-paper/80' : 'text-paper/35'
+                }`}
+              >
+                <span className="hidden md:inline">{y}</span>
+                <span className="md:hidden">&rsquo;{String(y).slice(2)}</span>
+              </span>
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function Details({ release, index, total }: { release: Release; index: number; total: number }) {
   const { play } = usePlayer();
   const playId = release.videoId ?? (release.spotifyTrackId ? `spotify:${release.spotifyTrackId}` : null);
-  const meta = [release.year, release.project ?? release.format, release.label].filter(Boolean).join(' · ');
 
   return (
     <div className="flex flex-col items-center text-center gap-[clamp(6px,1.4vh,14px)]" aria-live="polite">
       {isNew(release) && <span className="crate-new crate-new--inline">NEW</span>}
-      <p className="m-0 eyebrow text-gold-light text-[clamp(0.6rem,1.4vh,0.72rem)] line-clamp-2">
-        <span className="sr-only">
-          Record {index + 1} of {total}:{' '}
-        </span>
-        {meta}
+      <p className="sr-only">
+        Record {index + 1} of {total}, released {release.year}
       </p>
       <h2 className="display m-0 max-w-full truncate whitespace-nowrap text-[clamp(1.1rem,min(4.4vh,4.6vw),2.75rem)]">{release.title}</h2>
       <p className="m-0 text-[clamp(0.68rem,1.7vh,0.95rem)] uppercase tracking-[0.22em] line-clamp-2" style={{ color: '#4dff91', textShadow: '0 0 16px rgba(77,255,145,0.45)' }}>
@@ -116,8 +164,8 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
   const scrollerRef = useRef<HTMLDivElement>(null);
   const crateRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
-  const activeRef = useRef(0);
+  const [active, setActive] = useState(Math.max(0, releases.length - 1)); // the crate opens on the latest release
+  const activeRef = useRef(Math.max(0, releases.length - 1));
   // The record an arrow-key step is heading to (see step()).
   // Where the crate is heading (an index into all the slots, three copies of the list), and when it last
   // was told to move. The loop's invisible jumps only ever happen once everything has come to rest.
@@ -245,15 +293,15 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
     return () => ro.disconnect();
   }, [desktop, jump, nearestSlot, paint, slotCenterTarget]);
 
-  // Start on the first record of the middle copy.
+  // Start on the latest record (the last one, as the list is oldest first) of the middle copy.
   useLayoutEffect(() => {
     const el = scrollerRef.current;
     if (!el || n === 0) return;
-    const first = el.querySelectorAll<HTMLElement>('.crate-slot')[n];
+    const first = el.querySelectorAll<HTMLElement>('.crate-slot')[2 * n - 1];
     if (!first) return;
     const target = desktop ? first.offsetLeft - (el.clientWidth - first.offsetWidth) / 2 : first.offsetTop - (el.clientHeight - first.offsetHeight) / 2;
     jump(el, target);
-    headingRef.current = n;
+    headingRef.current = 2 * n - 1;
     paint();
   }, [desktop, jump, n, paint]);
 
@@ -460,6 +508,7 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
 
       {/* The records and the details form one group, centred in the space below the header. */}
       <div className="flex min-h-0 flex-1 flex-col justify-center">
+      {current && <Timeline year={current.year} />}
       {/* The crate */}
       <div ref={stageRef} className="relative min-h-0 flex-1 max-h-[calc(var(--sleeve)*1.3)] mt-[clamp(12px,3.5vh,44px)] md:mt-[clamp(20px,5vh,56px)]">
         <div
