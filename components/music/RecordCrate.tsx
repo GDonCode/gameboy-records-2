@@ -40,52 +40,55 @@ const nameOf = (r: Release) => r.title;
 const TIMELINE_START = 2014;
 const TIMELINE_END = 2026;
 const TIMELINE_YEARS = Array.from({ length: TIMELINE_END - TIMELINE_START + 1 }, (_, i) => TIMELINE_START + i);
-// Positions along the bar's inner track (inside its 3px border), so the fill and the nodes always line up.
-const along = (pct: number) => `calc(3px + (100% - 6px) * ${pct / 100})`;
-
-/** A loading bar for the discography: one node per year, filled up to the year of the record in front. */
-function Timeline({ year }: { year: number }) {
+/** A simple year line for the discography: one circle per year, filled up to the year of the record in front. Tap a year to jump there. */
+function Timeline({ year, onSelect }: { year: number; onSelect: (year: number) => void }) {
   const span = TIMELINE_END - TIMELINE_START;
   const current = Math.max(TIMELINE_START, Math.min(TIMELINE_END, year));
   const pctOf = (y: number) => ((y - TIMELINE_START) / span) * 100;
+  const ease = 'duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none';
   return (
-    <div aria-hidden="true" className="relative z-10 mx-auto w-full max-w-[920px] shrink-0 select-none px-[clamp(22px,4vw,44px)]">
-      <div className="relative mb-[clamp(18px,3.2vh,28px)] h-[clamp(14px,2.2vh,20px)]">
-        <div className="absolute inset-0 border-[3px] border-[#E2BA0A] bg-[#0B0A07] shadow-[3px_3px_0_#067F3A]" />
+    <nav aria-label="Jump to a year" className="relative z-10 mx-auto w-full max-w-[920px] shrink-0 px-[clamp(22px,4vw,44px)]">
+      <div className="relative mb-[clamp(16px,3vh,26px)] h-6">
+        <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-white/20" />
         <div
-          className="absolute inset-y-[3px] left-[3px] bg-[#067F3A] transition-[width] duration-500 ease-out motion-reduce:transition-none"
-          style={{
-            width: `calc((100% - 6px) * ${pctOf(current) / 100})`,
-            backgroundImage: 'repeating-linear-gradient(90deg, transparent 0 8px, rgba(0,0,0,0.55) 8px 10px)',
-          }}
+          className={`absolute left-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-[#E2BA0A] transition-[width] ${ease}`}
+          style={{ width: `${pctOf(current)}%` }}
         />
         {TIMELINE_YEARS.map((y) => {
           const isCurrent = y === current;
           const reached = y < current;
           return (
-            <span key={y} className="absolute top-1/2" style={{ left: along(pctOf(y)) }}>
+            <button
+              key={y}
+              type="button"
+              onClick={() => onSelect(y)}
+              aria-label={`Jump to ${y}`}
+              aria-current={isCurrent || undefined}
+              className="group absolute top-0 flex h-6 w-6 -translate-x-1/2 cursor-pointer items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E2BA0A]"
+              style={{ left: `${pctOf(y)}%` }}
+            >
               <span
-                className={`absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 border-2 border-[#0B0A07] transition-[background-color,transform] duration-300 motion-reduce:transition-none ${
+                className={`block rounded-full transition-[width,height,background-color,box-shadow] ${ease} ${
                   isCurrent
-                    ? 'h-[clamp(16px,2.6vh,22px)] w-[clamp(16px,2.6vh,22px)] bg-[#4dff91] shadow-[0_0_14px_rgba(77,255,145,0.8)]'
+                    ? 'h-4 w-4 bg-[#E2BA0A] shadow-[0_0_0_4px_rgba(226,186,10,0.25)]'
                     : reached
-                      ? 'h-2.5 w-2.5 bg-[#E2BA0A]'
-                      : 'h-2.5 w-2.5 bg-[#26231a]'
+                      ? 'h-2 w-2 bg-[#E2BA0A] group-hover:scale-125'
+                      : 'h-2 w-2 bg-[#4a4636] group-hover:bg-[#E2BA0A]'
                 }`}
               />
               <span
-                className={`absolute left-0 top-[calc(clamp(14px,2.2vh,20px)/2+10px)] -translate-x-1/2 whitespace-nowrap text-[clamp(0.55rem,1.3vh,0.7rem)] font-semibold tracking-[0.06em] transition-colors duration-300 ${
-                  isCurrent ? 'text-[#4dff91]' : reached ? 'text-paper/80' : 'text-paper/35'
+                className={`pointer-events-none absolute left-1/2 top-full mt-0.5 -translate-x-1/2 whitespace-nowrap text-[clamp(0.55rem,1.3vh,0.7rem)] font-semibold tracking-[0.06em] transition-colors duration-500 ${
+                  isCurrent ? 'text-[#E2BA0A]' : 'text-paper/45 group-hover:text-paper'
                 }`}
               >
                 <span className="hidden md:inline">{y}</span>
                 <span className="md:hidden">&rsquo;{String(y).slice(2)}</span>
               </span>
-            </span>
+            </button>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }
 
@@ -365,6 +368,29 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
     [desktop]
   );
 
+  /** Year timeline: go to the first release of that year (or the nearest year that has one), by the shortest way round. */
+  const jumpToYear = useCallback(
+    (year: number) => {
+      const el = scrollerRef.current;
+      if (!el || n === 0) return;
+      let target = 0;
+      let bestGap = Infinity;
+      releases.forEach((r, i) => {
+        const gap = Math.abs(r.year - year);
+        if (gap < bestGap) {
+          bestGap = gap;
+          target = i;
+        }
+      });
+      const copies = Array.from(el.querySelectorAll<HTMLElement>('.crate-slot')).filter((sl) => Number(sl.dataset.index) === target);
+      if (copies.length === 0) return;
+      const center = desktop ? el.scrollLeft + el.clientWidth / 2 : el.scrollTop + el.clientHeight / 2;
+      const mid = (x: HTMLElement) => (desktop ? x.offsetLeft + x.offsetWidth / 2 : x.offsetTop + x.offsetHeight / 2);
+      centerSlot(copies.reduce((best, sl) => (Math.abs(mid(sl) - center) < Math.abs(mid(best) - center) ? sl : best), copies[0]));
+    },
+    [centerSlot, desktop, n, releases]
+  );
+
   // Arrow keys, buttons and the wheel move exactly one record, even when pressed quickly: each press steps from
   // the record the previous press was heading to, not from wherever the scroll animation has got to.
   const step = useCallback(
@@ -508,7 +534,7 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
 
       {/* The records and the details form one group, centred in the space below the header. */}
       <div className="flex min-h-0 flex-1 flex-col justify-center">
-      {current && <Timeline year={current.year} />}
+      {current && <Timeline year={current.year} onSelect={jumpToYear} />}
       {/* The crate */}
       <div ref={stageRef} className="relative min-h-0 flex-1 max-h-[calc(var(--sleeve)*1.3)] mt-[clamp(12px,3.5vh,44px)] md:mt-[clamp(20px,5vh,56px)]">
         <div
