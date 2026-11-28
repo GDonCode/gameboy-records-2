@@ -467,8 +467,8 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
           role="region"
           aria-roledescription="carousel"
           aria-label={`Record crate: ${n} releases, oldest first. Use the arrow keys to flip through; it loops.`}
-          className={`crate-scroller no-scrollbar absolute inset-0 flex snap-mandatory overscroll-contain focus-visible:outline-none ${
-            embedded ? 'flex-row overflow-hidden snap-x' : 'flex-col md:flex-row overflow-y-auto md:overflow-y-hidden md:overflow-x-auto snap-y md:snap-x'
+          className={`crate-scroller no-scrollbar absolute inset-0 flex snap-mandatory focus-visible:outline-none ${
+            embedded ? 'flex-row overflow-hidden snap-x' : 'flex-col md:flex-row overflow-y-auto md:overflow-y-hidden md:overflow-x-auto snap-y md:snap-x overscroll-contain'
           }`}
         >
           {Array.from({ length: COPIES }, (_, copy) =>

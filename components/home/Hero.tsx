@@ -65,9 +65,6 @@ export default function Hero() {
             Truest vision<span className="text-gold">.</span>
             <span className="mt-2 block text-[0.75rem] sm:text-[0.85rem] lg:text-[0.95rem] font-semibold tracking-[0.22em] text-gold">by ALEXX A-GAME</span>
           </h1>
-          <p className="mx-auto mt-4 mb-0 max-w-[52ch] text-[0.9rem] md:text-[1rem] leading-relaxed text-paper/90" style={TEXT_SHADOW}>
-            Reggae and dancehall out of Jamaica, from A-Game Everyday to Still A Rise. Authentic Music, curated live experiences and clean, quality merch from the mind of A-GAME
-          </p>
           <div className="mt-6 flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-4">
             <Button href="/shop" variant="green" size="lg">
               Shop the collection
