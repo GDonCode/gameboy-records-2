@@ -14,23 +14,12 @@ export default async function MerchFeature() {
   const pieces = products.filter((p) => p.images[0]).slice(0, 4);
   if (pieces.length === 0) return null;
   return (
-    <section aria-labelledby="merch-title" className="on-light paper-deep text-ink section-y">
+    <section aria-labelledby="merch-title" className="relative overflow-hidden on-light paper-deep text-ink section-y">
       <div className="container-site max-w-[1560px]">
-        {/* Chained up: the chains and padlock lie over the title and the pieces. */}
-        <div className="relative">
-        <div className="relative">
-          <SectionTitle ghost="Merch" id="merch-title">
-            Merch
-          </SectionTitle>
-          {/* "Coming soon" sticker: same hard-edged, slightly crooked style as the NEW tags on the Music crate. */}
-          <span
-            className="absolute right-0 top-0 z-20 rotate-[5deg] border-2 border-ink bg-red px-3.5 py-2 text-[0.72rem] leading-none tracking-[0.18em] text-paper shadow-[3px_3px_0_var(--color-green)] md:text-[0.85rem]"
-            style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}
-          >
-            COMING SOON
-          </span>
-        </div>
-        <ul className="list-none p-0 m-0 mt-10 grid grid-cols-2 gap-3 md:gap-8 lg:grid-cols-4 lg:gap-10">
+        <SectionTitle ghost="Merch" id="merch-title">
+          Merch
+        </SectionTitle>
+        <ul inert data-chain-center className="list-none p-0 m-0 mt-10 grid grid-cols-2 gap-3 md:gap-8 lg:grid-cols-4 lg:gap-10">
           {pieces.map((p) => (
             <li key={p.id}>
               <Link href={`/shop/${p.slug}`} className="zoom-media group flex flex-col gap-3 h-full">
@@ -47,10 +36,8 @@ export default async function MerchFeature() {
             </li>
           ))}
         </ul>
-          <MerchChains />
-        </div>
 
-        <div className="mt-12 flex flex-col items-center gap-5 text-center">
+        <div className="relative z-20 mt-12 flex flex-col items-center gap-5 text-center">
           <p className="m-0 max-w-[44ch] text-[0.95rem] md:text-[1.05rem] leading-relaxed">
             The merch is almost here. Sign up to get first access when it drops.
           </p>
@@ -62,6 +49,8 @@ export default async function MerchFeature() {
           </div>
         </div>
       </div>
+      {/* Chained up: lies over the whole section and blocks the pieces; the sign-up block above stays on top. */}
+      <MerchChains />
     </section>
   );
 }

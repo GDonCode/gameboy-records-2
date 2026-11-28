@@ -1,17 +1,23 @@
 // components/home/MerchChains.tsx
-// Chains and a padlock laid over the Merch section: four chains run from the corners to a gold padlock in the middle.
-// Each chain is a small rope simulation (verlet integration), so the pointer pushes the links aside as it passes
-// and the chains swing back; flicking past the padlock rattles it. The canvas never takes the pointer itself
-// (pointer-events: none), it only watches it, so everything underneath stays clickable.
+// Chains and a padlock laid over the whole Merch section: four chains run from the section's corners to a gold padlock
+// centred on whatever carries `data-chain-center`. Each chain is a small rope simulation (verlet integration), so the
+// pointer pushes the links aside as it passes and they swing back; flicking past the padlock rattles it.
+// The canvas takes the pointer itself, so it also blocks clicks on what lies underneath.
+//
+// Performance: links and the padlock are drawn once into small offscreen sprites and stamped with drawImage (no
+// per-frame path or shadow work); the loop only runs while the section is on screen AND something is still moving,
+// so a resting lock costs nothing; it wakes when the pointer moves over it.
 'use client';
 
 import { useEffect, useRef } from 'react';
 
 type Point = { x: number; y: number; px: number; py: number };
 type Arm = { pts: Point[]; seg: number; ax: number; ay: number };
+type Sprite = { c: HTMLCanvasElement; w: number; h: number };
 
 const LINK = 30; // distance between link centres, px
 const REACH = 110; // how far from the pointer the links feel it
+const ITERATIONS = 8; // rope constraint passes per frame
 const IRON = '#2B2A26';
 const IRON_LIGHT = '#8D897D';
 const INK = '#0B0A07';
@@ -31,22 +37,127 @@ export default function MerchChains() {
     let h = 0;
     let dpr = 1;
     let arms: Arm[] = [];
+    let freePoints = 1;
+    let faceSprite: Sprite;
+    let edgeSprite: Sprite;
+    let lockSprite: Sprite;
     const lock = { x: 0, y: 0, s: 80, ang: 0, vel: 0 };
     const mouse = { x: -9999, y: -9999, vx: 0, vy: 0, seen: false };
     let raf = 0;
     let visible = false;
+    let quiet = 0; // consecutive frames with (almost) nothing moving
+    let resizeFrame = 0;
+
+    /** Draw something once into an offscreen canvas, centred, with a soft drop shadow. */
+    const sprite = (sw: number, sh: number, draw: (g: CanvasRenderingContext2D) => void): Sprite => {
+      const c = document.createElement('canvas');
+      c.width = Math.ceil(sw * dpr);
+      c.height = Math.ceil(sh * dpr);
+      const g = c.getContext('2d')!;
+      g.scale(dpr, dpr);
+      g.translate(sw / 2, sh / 2);
+      g.lineCap = 'round';
+      g.lineJoin = 'round';
+      g.shadowColor = 'rgba(11, 10, 7, 0.32)';
+      g.shadowBlur = 5;
+      g.shadowOffsetY = 3;
+      draw(g);
+      return { c, w: sw, h: sh };
+    };
+
+    const makeSprites = () => {
+      // A link seen side-on to its hole: a long rounded ring.
+      faceSprite = sprite(LINK * 1.24 + 16, LINK * 0.6 + 16, (g) => {
+        g.beginPath();
+        g.roundRect(-LINK * 0.62, -LINK * 0.3, LINK * 1.24, LINK * 0.6, LINK * 0.3);
+        g.strokeStyle = IRON;
+        g.lineWidth = 6;
+        g.stroke();
+        g.strokeStyle = IRON_LIGHT;
+        g.lineWidth = 2;
+        g.stroke();
+      });
+      // The next link is turned a quarter, so it shows only as a thick bar.
+      edgeSprite = sprite(LINK * 0.8 + 16, 8 + 16, (g) => {
+        g.beginPath();
+        g.moveTo(-LINK * 0.4, 0);
+        g.lineTo(LINK * 0.4, 0);
+        g.strokeStyle = IRON;
+        g.lineWidth = 8;
+        g.stroke();
+        g.strokeStyle = IRON_LIGHT;
+        g.lineWidth = 3;
+        g.stroke();
+      });
+      const s = lock.s;
+      lockSprite = sprite(s * 1.7, s * 1.7, (g) => {
+        g.translate(0, s * 0.04);
+        // Shackle
+        const r = s * 0.28;
+        const top = -s * 0.28;
+        g.beginPath();
+        g.moveTo(-r, top + s * 0.1);
+        g.lineTo(-r, top);
+        g.arc(0, top, r, Math.PI, 0);
+        g.lineTo(r, top + s * 0.1);
+        g.strokeStyle = INK;
+        g.lineWidth = s * 0.17;
+        g.stroke();
+        g.strokeStyle = IRON_LIGHT;
+        g.lineWidth = s * 0.09;
+        g.stroke();
+        // Body
+        g.beginPath();
+        g.roundRect(-s / 2, top, s, s * 0.78, s * 0.12);
+        g.fillStyle = GOLD;
+        g.fill();
+        g.lineWidth = 4;
+        g.strokeStyle = INK;
+        g.stroke();
+        // Sheen
+        g.beginPath();
+        g.moveTo(-s * 0.36, top + s * 0.14);
+        g.lineTo(-s * 0.36, top + s * 0.6);
+        g.strokeStyle = GOLD_LIGHT;
+        g.lineWidth = s * 0.07;
+        g.stroke();
+        // Keyhole
+        g.shadowColor = 'transparent';
+        const ky = top + s * 0.3;
+        g.fillStyle = INK;
+        g.beginPath();
+        g.arc(0, ky, s * 0.09, 0, Math.PI * 2);
+        g.fill();
+        g.beginPath();
+        g.moveTo(-s * 0.05, ky + s * 0.04);
+        g.lineTo(s * 0.05, ky + s * 0.04);
+        g.lineTo(s * 0.075, ky + s * 0.24);
+        g.lineTo(-s * 0.075, ky + s * 0.24);
+        g.closePath();
+        g.fill();
+      });
+    };
 
     const build = () => {
       const rect = canvas.getBoundingClientRect();
       w = rect.width;
       h = rect.height;
-      if (w < 2 || h < 2) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      if (w < 2 || h < 2) return false;
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
-      lock.x = w / 2;
-      lock.y = h / 2;
+      // The padlock sits at the centre of the element marked data-chain-center (the product grid), else the middle.
+      const target = canvas.parentElement?.querySelector<HTMLElement>('[data-chain-center]');
+      if (target) {
+        const t = target.getBoundingClientRect();
+        lock.x = t.left + t.width / 2 - rect.left;
+        lock.y = t.top + t.height / 2 - rect.top;
+      } else {
+        lock.x = w / 2;
+        lock.y = h / 2;
+      }
       lock.s = Math.max(64, Math.min(108, w * 0.09));
+      makeSprites();
       arms = [
         [0, 0],
         [w, 0],
@@ -67,10 +178,14 @@ export default function MerchChains() {
         }
         return { pts, seg: len / n, ax, ay };
       });
+      freePoints = arms.reduce((sum, a) => sum + a.pts.length - 2, 0);
+      return true;
     };
 
+    /** One physics step. Returns how much is still moving (average px per free point, plus the padlock). */
     const step = () => {
       const near = Math.hypot(mouse.x - lock.x, mouse.y - lock.y) < lock.s * 1.5;
+      let moved = 0;
       for (const arm of arms) {
         const { pts } = arm;
         const last = pts.length - 1;
@@ -84,14 +199,16 @@ export default function MerchChains() {
           p.y += vy + 0.35; // gravity
           const dx = p.x - mouse.x;
           const dy = p.y - mouse.y;
-          const d = Math.hypot(dx, dy);
-          if (d < REACH && d > 0.001) {
-            const f = 1 - d / REACH;
-            p.x += (dx / d) * f * 3 + mouse.vx * f * 0.3;
-            p.y += (dy / d) * f * 3 + mouse.vy * f * 0.3;
+          if (Math.abs(dx) < REACH && Math.abs(dy) < REACH) {
+            const d = Math.hypot(dx, dy);
+            if (d < REACH && d > 0.001) {
+              const f = 1 - d / REACH;
+              p.x += (dx / d) * f * 3 + mouse.vx * f * 0.3;
+              p.y += (dy / d) * f * 3 + mouse.vy * f * 0.3;
+            }
           }
         }
-        for (let it = 0; it < 10; it++) {
+        for (let it = 0; it < ITERATIONS; it++) {
           pts[0].x = arm.ax;
           pts[0].y = arm.ay;
           pts[last].x = lock.x;
@@ -115,6 +232,7 @@ export default function MerchChains() {
             }
           }
         }
+        for (let i = 1; i < last; i++) moved += Math.abs(pts[i].x - pts[i].px) + Math.abs(pts[i].y - pts[i].py);
       }
       // The padlock: a spring that a passing pointer flicks sideways.
       if (near) lock.vel += mouse.vx * 0.0016;
@@ -123,104 +241,29 @@ export default function MerchChains() {
       lock.ang = Math.max(-0.5, Math.min(0.5, lock.ang + lock.vel));
       mouse.vx *= 0.8;
       mouse.vy *= 0.8;
+      return moved / freePoints + (Math.abs(lock.vel) + Math.abs(lock.ang)) * 20;
     };
 
-    const drawLink = (x: number, y: number, angle: number, face: boolean) => {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(angle);
-      ctx.lineCap = 'round';
-      if (face) {
-        // A link seen side-on to its hole: a long rounded ring.
-        ctx.beginPath();
-        ctx.roundRect(-LINK * 0.62, -LINK * 0.3, LINK * 1.24, LINK * 0.6, LINK * 0.3);
-        ctx.strokeStyle = IRON;
-        ctx.lineWidth = 6;
-        ctx.stroke();
-        ctx.strokeStyle = IRON_LIGHT;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      } else {
-        // The next link is turned a quarter, so it shows only as a thick bar.
-        ctx.beginPath();
-        ctx.moveTo(-LINK * 0.4, 0);
-        ctx.lineTo(LINK * 0.4, 0);
-        ctx.strokeStyle = IRON;
-        ctx.lineWidth = 8;
-        ctx.stroke();
-        ctx.strokeStyle = IRON_LIGHT;
-        ctx.lineWidth = 3;
-        ctx.stroke();
-      }
-      ctx.restore();
-    };
-
-    const drawLock = () => {
-      const { x, y, s } = lock;
-      ctx.save();
-      ctx.translate(x, y + s * 0.04);
-      ctx.rotate(lock.ang);
-      ctx.lineJoin = 'round';
-      ctx.lineCap = 'round';
-      // Shackle
-      const r = s * 0.28;
-      const top = -s * 0.28;
-      ctx.beginPath();
-      ctx.moveTo(-r, top + s * 0.1);
-      ctx.lineTo(-r, top);
-      ctx.arc(0, top, r, Math.PI, 0);
-      ctx.lineTo(r, top + s * 0.1);
-      ctx.strokeStyle = INK;
-      ctx.lineWidth = s * 0.17;
-      ctx.stroke();
-      ctx.strokeStyle = IRON_LIGHT;
-      ctx.lineWidth = s * 0.09;
-      ctx.stroke();
-      // Body
-      ctx.beginPath();
-      ctx.roundRect(-s / 2, top, s, s * 0.78, s * 0.12);
-      ctx.fillStyle = GOLD;
-      ctx.fill();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = INK;
-      ctx.stroke();
-      // Sheen
-      ctx.beginPath();
-      ctx.moveTo(-s * 0.36, top + s * 0.14);
-      ctx.lineTo(-s * 0.36, top + s * 0.6);
-      ctx.strokeStyle = GOLD_LIGHT;
-      ctx.lineWidth = s * 0.07;
-      ctx.stroke();
-      // Keyhole
-      const ky = top + s * 0.3;
-      ctx.fillStyle = INK;
-      ctx.beginPath();
-      ctx.arc(0, ky, s * 0.09, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(-s * 0.05, ky + s * 0.04);
-      ctx.lineTo(s * 0.05, ky + s * 0.04);
-      ctx.lineTo(s * 0.075, ky + s * 0.24);
-      ctx.lineTo(-s * 0.075, ky + s * 0.24);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
+    /** Stamp a sprite centred on (x, y), turned by `angle`. */
+    const stamp = (sp: Sprite, x: number, y: number, angle: number) => {
+      const cos = Math.cos(angle) * dpr;
+      const sin = Math.sin(angle) * dpr;
+      ctx.setTransform(cos, sin, -sin, cos, x * dpr, y * dpr);
+      ctx.drawImage(sp.c, -sp.w / 2, -sp.h / 2, sp.w, sp.h);
     };
 
     const draw = () => {
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, w, h);
-      ctx.shadowColor = 'rgba(11, 10, 7, 0.35)';
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetY = 4;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (const arm of arms) {
         const { pts } = arm;
         for (let i = 0; i < pts.length - 1; i++) {
           const a = pts[i];
           const b = pts[i + 1];
-          drawLink((a.x + b.x) / 2, (a.y + b.y) / 2, Math.atan2(b.y - a.y, b.x - a.x), i % 2 === 0);
+          stamp(i % 2 === 0 ? faceSprite : edgeSprite, (a.x + b.x) / 2, (a.y + b.y) / 2, Math.atan2(b.y - a.y, b.x - a.x));
         }
         // Bolted-down end plate
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.beginPath();
         ctx.arc(arm.ax, arm.ay, 11, 0, Math.PI * 2);
         ctx.fillStyle = IRON;
@@ -230,7 +273,7 @@ export default function MerchChains() {
         ctx.fillStyle = IRON_LIGHT;
         ctx.fill();
       }
-      drawLock();
+      stamp(lockSprite, lock.x, lock.y, lock.ang);
     };
 
     /** Let the chains hang for a moment before the first frame, so they never visibly drop into place. */
@@ -240,65 +283,72 @@ export default function MerchChains() {
     };
 
     const frame = () => {
-      step();
+      const energy = step();
       draw();
-      raf = requestAnimationFrame(frame);
+      quiet = energy < 0.012 ? quiet + 1 : 0;
+      // Everything has come to rest: stop until the pointer disturbs it again.
+      raf = quiet > 30 ? 0 : requestAnimationFrame(frame);
     };
-    const start = () => {
+    const wake = () => {
+      quiet = 0;
       if (!raf && visible && !reduceMotion) raf = requestAnimationFrame(frame);
     };
-    const stop = () => {
+    const sleep = () => {
       cancelAnimationFrame(raf);
       raf = 0;
     };
 
+    // The canvas is the pointer's target, so offsetX/Y are already relative to it (no layout reads per move).
     const onMove = (e: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
       if (mouse.seen) {
-        mouse.vx = Math.max(-40, Math.min(40, x - mouse.x));
-        mouse.vy = Math.max(-40, Math.min(40, y - mouse.y));
+        mouse.vx = Math.max(-40, Math.min(40, e.offsetX - mouse.x));
+        mouse.vy = Math.max(-40, Math.min(40, e.offsetY - mouse.y));
       }
-      mouse.x = x;
-      mouse.y = y;
+      mouse.x = e.offsetX;
+      mouse.y = e.offsetY;
       mouse.seen = true;
+      wake();
     };
     const onLeave = () => {
       mouse.x = -9999;
       mouse.y = -9999;
       mouse.seen = false;
+      wake(); // let the links swing back
     };
 
-    build();
-    settle();
+    if (build()) settle();
 
     const resize = new ResizeObserver(() => {
-      build();
-      settle();
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        if (build()) {
+          settle();
+          wake();
+        }
+      });
     });
     resize.observe(canvas);
 
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
-      if (visible) start();
-      else stop();
+      if (!visible) sleep();
     });
     io.observe(canvas);
 
     if (!reduceMotion) {
-      window.addEventListener('pointermove', onMove, { passive: true });
-      document.documentElement.addEventListener('pointerleave', onLeave);
+      canvas.addEventListener('pointermove', onMove, { passive: true });
+      canvas.addEventListener('pointerleave', onLeave);
     }
 
     return () => {
-      stop();
+      sleep();
+      cancelAnimationFrame(resizeFrame);
       resize.disconnect();
       io.disconnect();
-      window.removeEventListener('pointermove', onMove);
-      document.documentElement.removeEventListener('pointerleave', onLeave);
+      canvas.removeEventListener('pointermove', onMove);
+      canvas.removeEventListener('pointerleave', onLeave);
     };
   }, []);
 
-  return <canvas ref={ref} aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 h-full w-full" />;
+  return <canvas ref={ref} aria-hidden="true" className="absolute inset-0 z-10 h-full w-full" />;
 }
