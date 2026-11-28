@@ -51,7 +51,7 @@ function Timeline({ year, onSelect }: { year: number; onSelect: (year: number) =
       <div className="relative mb-[clamp(16px,3vh,26px)] h-6">
         <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-white/20" />
         <div
-          className={`absolute left-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-[#E2BA0A] transition-[width] ${ease}`}
+          className={`absolute left-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-green transition-[width] ${ease}`}
           style={{ width: `${pctOf(current)}%` }}
         />
         {TIMELINE_YEARS.map((y) => {
@@ -64,21 +64,21 @@ function Timeline({ year, onSelect }: { year: number; onSelect: (year: number) =
               onClick={() => onSelect(y)}
               aria-label={`Jump to ${y}`}
               aria-current={isCurrent || undefined}
-              className="group absolute top-0 flex h-6 w-6 -translate-x-1/2 cursor-pointer items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E2BA0A]"
+              className="group absolute top-0 flex h-6 w-6 -translate-x-1/2 cursor-pointer items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-light"
               style={{ left: `${pctOf(y)}%` }}
             >
               <span
                 className={`block rounded-full transition-[width,height,background-color,box-shadow] ${ease} ${
                   isCurrent
-                    ? 'h-4 w-4 bg-[#E2BA0A] shadow-[0_0_0_4px_rgba(226,186,10,0.25)]'
+                    ? 'h-4 w-4 bg-green shadow-[0_0_0_4px_rgba(6,127,58,0.4)]'
                     : reached
-                      ? 'h-2 w-2 bg-[#E2BA0A] group-hover:scale-125'
-                      : 'h-2 w-2 bg-[#4a4636] group-hover:bg-[#E2BA0A]'
+                      ? 'h-2 w-2 bg-green group-hover:scale-125'
+                      : 'h-2 w-2 bg-green/30 group-hover:bg-green'
                 }`}
               />
               <span
                 className={`pointer-events-none absolute left-1/2 top-full mt-0.5 -translate-x-1/2 whitespace-nowrap text-[clamp(0.55rem,1.3vh,0.7rem)] font-semibold tracking-[0.06em] transition-colors duration-500 ${
-                  isCurrent ? 'text-[#E2BA0A]' : 'text-paper/45 group-hover:text-paper'
+                  isCurrent ? 'text-green-light' : 'text-paper/45 group-hover:text-paper'
                 }`}
               >
                 <span className="hidden md:inline">{y}</span>
