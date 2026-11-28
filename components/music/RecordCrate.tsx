@@ -49,9 +49,9 @@ function Timeline({ year, onSelect }: { year: number; onSelect: (year: number) =
   return (
     <nav aria-label="Jump to a year" className="relative z-10 mx-auto w-full max-w-[920px] shrink-0 px-[clamp(22px,4vw,44px)]">
       <div className="relative mb-[clamp(16px,3vh,26px)] h-6">
-        <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-white/20" />
+        <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-green-light/25" />
         <div
-          className={`absolute left-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-green transition-[width] ${ease}`}
+          className={`absolute left-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-green-light/60 transition-[width] ${ease}`}
           style={{ width: `${pctOf(current)}%` }}
         />
         {TIMELINE_YEARS.map((y) => {
@@ -73,7 +73,7 @@ function Timeline({ year, onSelect }: { year: number; onSelect: (year: number) =
                     ? 'h-4 w-4 bg-green shadow-[0_0_0_4px_rgba(6,127,58,0.4)]'
                     : reached
                       ? 'h-2 w-2 bg-green group-hover:scale-125'
-                      : 'h-2 w-2 bg-green/30 group-hover:bg-green'
+                      : 'h-2 w-2 bg-green-light/40 group-hover:bg-green'
                 }`}
               />
               <span

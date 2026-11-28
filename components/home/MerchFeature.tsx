@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Icon from '@/components/icons';
 import Button from '@/components/ui/Button';
 import SectionTitle from '@/components/home/SectionTitle';
+import MerchChains from '@/components/home/MerchChains';
 import { getCatalog } from '@/lib/catalog';
 
 export default async function MerchFeature() {
@@ -15,13 +16,15 @@ export default async function MerchFeature() {
   return (
     <section aria-labelledby="merch-title" className="on-light paper-deep text-ink section-y">
       <div className="container-site max-w-[1560px]">
+        {/* Chained up: the chains and padlock lie over the title and the pieces. */}
+        <div className="relative">
         <div className="relative">
           <SectionTitle ghost="Merch" id="merch-title">
             Merch
           </SectionTitle>
           {/* "Coming soon" sticker: same hard-edged, slightly crooked style as the NEW tags on the Music crate. */}
           <span
-            className="absolute right-0 top-0 rotate-[5deg] border-2 border-ink bg-red px-3.5 py-2 text-[0.72rem] leading-none tracking-[0.18em] text-paper shadow-[3px_3px_0_var(--color-green)] md:text-[0.85rem]"
+            className="absolute right-0 top-0 z-20 rotate-[5deg] border-2 border-ink bg-red px-3.5 py-2 text-[0.72rem] leading-none tracking-[0.18em] text-paper shadow-[3px_3px_0_var(--color-green)] md:text-[0.85rem]"
             style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}
           >
             COMING SOON
@@ -44,6 +47,8 @@ export default async function MerchFeature() {
             </li>
           ))}
         </ul>
+          <MerchChains />
+        </div>
 
         <div className="mt-12 flex flex-col items-center gap-5 text-center">
           <p className="m-0 max-w-[44ch] text-[0.95rem] md:text-[1.05rem] leading-relaxed">
@@ -53,9 +58,6 @@ export default async function MerchFeature() {
             <Button href="/account/login?mode=register" variant="green" size="lg">
               Sign up
               <Icon name="arrow-right" className="w-3.5 h-3.5" />
-            </Button>
-            <Button href="/shop" variant="outline-dark" size="lg">
-              Shop all apparel
             </Button>
           </div>
         </div>
