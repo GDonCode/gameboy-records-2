@@ -41,6 +41,7 @@
   --color-mist: #B9B6AE;  /* secondary text on ink (9:1) */
   --color-line: rgba(11, 10, 7, 0.12);
   --color-line-inv: rgba(245, 245, 245, 0.14);
+  --color-red: #C62F25; /* sticker red: warm and bright enough to stand beside the green and gold; paper text on it is 5.4:1 */
   --color-danger: #A3322A;
   --color-danger-light: #F0A39C;
 

@@ -15,9 +15,18 @@ export default async function MerchFeature() {
   return (
     <section aria-labelledby="merch-title" className="on-light paper-deep text-ink section-y">
       <div className="container-site max-w-[1560px]">
-        <SectionTitle ghost="Merch" id="merch-title">
-          Merch
-        </SectionTitle>
+        <div className="relative">
+          <SectionTitle ghost="Merch" id="merch-title">
+            Merch
+          </SectionTitle>
+          {/* "Coming soon" sticker: same hard-edged, slightly crooked style as the NEW tags on the Music crate. */}
+          <span
+            className="absolute right-0 top-0 rotate-[5deg] border-2 border-ink bg-red px-3.5 py-2 text-[0.72rem] leading-none tracking-[0.18em] text-paper shadow-[3px_3px_0_var(--color-green)] md:text-[0.85rem]"
+            style={{ fontFamily: "'Poppins_semibold', 'Poppins', sans-serif" }}
+          >
+            COMING SOON
+          </span>
+        </div>
         <ul className="list-none p-0 m-0 mt-10 grid grid-cols-2 gap-3 md:gap-8 lg:grid-cols-4 lg:gap-10">
           {pieces.map((p) => (
             <li key={p.id}>
@@ -36,11 +45,19 @@ export default async function MerchFeature() {
           ))}
         </ul>
 
-        <div className="mt-12 flex justify-center">
-          <Button href="/shop" variant="green" size="lg">
-            Shop all apparel
-            <Icon name="arrow-right" className="w-3.5 h-3.5" />
-          </Button>
+        <div className="mt-12 flex flex-col items-center gap-5 text-center">
+          <p className="m-0 max-w-[44ch] text-[0.95rem] md:text-[1.05rem] leading-relaxed">
+            The merch is almost here. Sign up to get first access when it drops.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <Button href="/account/login?mode=register" variant="green" size="lg">
+              Sign up
+              <Icon name="arrow-right" className="w-3.5 h-3.5" />
+            </Button>
+            <Button href="/shop" variant="outline-dark" size="lg">
+              Shop all apparel
+            </Button>
+          </div>
         </div>
       </div>
     </section>
