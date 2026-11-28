@@ -15,10 +15,11 @@ import {
   Mic,
   Shirt,
   ShoppingCart,
-  User,
   X,
   type LucideIcon,
 } from 'lucide-react';
+import UserIcon from '@/components/icons/UserIcon';
+import UserAddIcon from '@/components/icons/UserAddIcon';
 import { useCartCount } from '@/lib/cart-sync';
 import { LOGO_URL, NAV, SITE_NAME, VIBES_NAV } from '@/lib/site';
 
@@ -282,7 +283,7 @@ export default function Header() {
                 {initial ? (
                   <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
                 ) : (
-                  <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                  <UserIcon className="h-5 w-auto" />
                 )}
               </Link>
             ) : (
@@ -291,7 +292,7 @@ export default function Header() {
                 aria-label="Sign in"
                 className={`flex h-11 items-center gap-2 rounded-full bg-[#067F3A] px-3 text-white shadow-[0_3px_0_#044F24] transition-[transform,box-shadow,background-color] duration-100 hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none lg:px-4 ${FOCUS}`}
               >
-                <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                <UserAddIcon className="h-5 w-auto" />
                 <span className="hidden text-[0.85rem] tracking-[0.12em] lg:inline" style={SEMIBOLD}>
                   SIGN IN
                 </span>
@@ -370,7 +371,7 @@ export default function Header() {
                     className={`flex items-center gap-3 rounded-xl bg-white/60 p-3 text-[#0B0A07] ${FOCUS}`}
                   >
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#067F3A] text-white" aria-hidden="true">
-                      {initial ? <span style={SEMIBOLD}>{initial}</span> : <User className="h-5 w-5" strokeWidth={2.25} />}
+                      {initial ? <span style={SEMIBOLD}>{initial}</span> : <UserIcon className="h-5 w-auto" />}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-[0.95rem] tracking-[0.1em]" style={SEMIBOLD}>YOUR ACCOUNT</span>
