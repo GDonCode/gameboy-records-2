@@ -137,7 +137,6 @@ export default function Header() {
   const cartCount = session ? liveCartCount : 0;
   const cartLabel = cartCount > 0 ? `Cart, ${cartCount} item${cartCount === 1 ? '' : 's'}` : 'Cart';
   const accountHref = session ? '/account' : '/account/login';
-  const initial = session?.user?.name?.trim().charAt(0).toUpperCase() || null;
 
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -375,24 +374,17 @@ export default function Header() {
                   overlay ? 'w-16 text-white hover:bg-white/10' : 'h-11 w-11'} ${overlay ? '' : 'rounded-full border-2 border-[#0B0A07]/25 text-[#0B0A07] hover:border-[#067F3A] hover:bg-[#067F3A]/10'
                 } ${FOCUS}`}
               >
-                {initial ? (
-                  <span className="text-[1rem] leading-none" style={SEMIBOLD}>{initial}</span>
-                ) : (
-                  <UserIcon className="h-5 w-auto" />
-                )}
+                <UserIcon className="h-5 w-auto" />
               </Link>
             ) : (
               <Link
                 href={accountHref}
                 aria-label="Sign in"
-                className={`group/word flex items-center gap-2 px-3 text-white transition-[transform,box-shadow,background-color] duration-100 lg:px-5 ${
-                  overlay ? 'hover:bg-white/10' : 'h-11 rounded-full bg-[#067F3A] shadow-[0_3px_0_#044F24] hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none'
+                className={`flex items-center justify-center text-white transition-[transform,box-shadow,background-color] duration-100 ${
+                  overlay ? 'w-16 hover:bg-white/10' : 'h-11 px-4 rounded-full bg-[#067F3A] shadow-[0_3px_0_#044F24] hover:bg-[#05652E] active:translate-y-[3px] active:shadow-none'
                 } ${FOCUS}`}
               >
-                <UserAddIcon className="h-5 w-auto" />
-                <span className="hidden text-[1.1rem] tracking-[0.1em] lg:inline" style={SEMIBOLD}>
-                  <PaperWord text="+ PLAYER" />
-                </span>
+                <UserAddIcon className="h-6 w-auto" />
               </Link>
             )}
 
@@ -474,7 +466,7 @@ export default function Header() {
                     className={`flex items-center gap-3 rounded-xl bg-white/60 p-3 text-[#0B0A07] ${FOCUS}`}
                   >
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#067F3A] text-white" aria-hidden="true">
-                      {initial ? <span style={SEMIBOLD}>{initial}</span> : <UserIcon className="h-5 w-auto" />}
+                      <UserIcon className="h-5 w-auto" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-[0.95rem] tracking-[0.1em]" style={SEMIBOLD}>YOUR ACCOUNT</span>
@@ -491,10 +483,10 @@ export default function Header() {
                     <Link
                       href="/account/login"
                       onClick={() => setMenuOpen(false)}
-                      className={`flex h-12 items-center justify-center rounded-full bg-[#067F3A] text-[0.95rem] tracking-[0.14em] text-white shadow-[0_3px_0_#044F24] active:translate-y-[3px] active:shadow-none ${FOCUS}`}
-                      style={SEMIBOLD}
+                      aria-label="Sign in"
+                      className={`flex h-12 items-center justify-center rounded-full bg-[#067F3A] text-white shadow-[0_3px_0_#044F24] active:translate-y-[3px] active:shadow-none ${FOCUS}`}
                     >
-                      + PLAYER
+                      <UserAddIcon className="h-6 w-auto" />
                     </Link>
                     <Link
                       href="/account/login?mode=register"
