@@ -15,7 +15,6 @@ import Image from 'next/image';
 import Icon from '@/components/icons';
 import { usePlayer } from '@/components/player/PlayerProvider';
 import type { Release } from '@/lib/discography';
-import SectionTitle from '@/components/home/SectionTitle';
 import { spotifyTrackUrl } from '@/lib/spotify-catalog';
 
 const COPIES = 3;
@@ -402,9 +401,6 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
       <style>{`
         .crate { --crate-btn: clamp(36px, 5.4vh, 48px); --sleeve: clamp(220px, 44svh, 320px); --slot: calc(var(--sleeve) * 1); }
         @media (min-width: 768px) { .crate { --sleeve: clamp(280px, 52vh, 480px); --slot: calc(var(--sleeve) * 1.16); } }
-        /* The Home version carries a title, so its records are a little smaller to leave them room. */
-        .crate[data-embedded] { --sleeve: clamp(180px, 34svh, 300px); --slot: var(--sleeve); }
-        @media (min-width: 768px) { .crate[data-embedded] { --sleeve: clamp(240px, 42vh, 440px); --slot: calc(var(--sleeve) * 1.16); } }
         /* "NEW" sticker: gold, hard ink edge, green offset shadow, a little off-kilter like the other brand tags. */
         .crate-new {
           position: absolute; top: -12px; right: -14px; z-index: 3; transform: rotate(8deg);
@@ -455,11 +451,9 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
 
       {/* Page title for screen readers and search engines; the records speak for themselves on screen. */}
       {embedded ? (
-        <div className="relative z-10 shrink-0 px-6 pt-2 [&>.ghost-title]:mb-0 [&>.ghost-title]:min-h-[clamp(2.8rem,9vh,5.5rem)] [&_.ghost-title__ghost]:text-[clamp(2.6rem,9vh,5.5rem)]">
-          <SectionTitle ghost="Records" id="crate-title" tone="dark">
-            Music
-          </SectionTitle>
-        </div>
+        <h2 id="crate-title" className="sr-only">
+          Music
+        </h2>
       ) : (
         <h1 className="sr-only">Alexx A-Game discography</h1>
       )}

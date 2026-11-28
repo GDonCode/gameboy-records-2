@@ -27,7 +27,7 @@ export default async function MerchFeature() {
                   <Image src={p.images[0]} alt={p.name} fill sizes="(min-width: 1024px) 24vw, 48vw" className="object-contain p-2 md:p-4" />
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 shadow-[inset_4px_4px_10px_rgba(11,10,7,0.35),inset_-3px_-3px_8px_rgba(255,255,255,0.7)]"
+                    className="pointer-events-none absolute inset-0 shadow-[inset_4px_4px_10px_rgba(11,10,7,0.35),inset_-4px_-4px_10px_rgba(11,10,7,0.25)]"
                   />
                 </div>
                 <h3 className="m-0 mt-2 text-[0.85rem] md:text-[1rem] font-semibold uppercase tracking-[0.12em]">{p.name}</h3>
