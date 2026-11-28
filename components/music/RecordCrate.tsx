@@ -51,7 +51,7 @@ function Details({ release, index, total }: { release: Release; index: number; t
         </span>
         {meta}
       </p>
-      <h2 className="display m-0 text-[clamp(1.3rem,4.4vh,2.75rem)] max-w-[22ch] line-clamp-2">{release.title}</h2>
+      <h2 className="display m-0 max-w-full truncate whitespace-nowrap text-[clamp(1.1rem,min(4.4vh,4.6vw),2.75rem)]">{release.title}</h2>
       <p className="m-0 text-[clamp(0.68rem,1.7vh,0.95rem)] uppercase tracking-[0.22em] line-clamp-2" style={{ color: '#4dff91', textShadow: '0 0 16px rgba(77,255,145,0.45)' }}>
         {release.credit}
       </p>
@@ -458,8 +458,10 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
         <h1 className="sr-only">Alexx A-Game discography</h1>
       )}
 
+      {/* The records and the details form one group, centred in the space below the header. */}
+      <div className="flex min-h-0 flex-1 flex-col justify-center">
       {/* The crate */}
-      <div ref={stageRef} className="relative flex-1 min-h-0 mt-[clamp(12px,3.5vh,44px)] md:mt-[clamp(20px,5vh,56px)]">
+      <div ref={stageRef} className="relative min-h-0 flex-1 max-h-[calc(var(--sleeve)*1.3)] mt-[clamp(12px,3.5vh,44px)] md:mt-[clamp(20px,5vh,56px)]">
         <div
           ref={scrollerRef}
           tabIndex={0}
@@ -524,6 +526,7 @@ export default function RecordCrate({ releases, embedded = false }: { releases: 
       {/* The record in front */}
       <div className="crate-details relative z-20 shrink-0 px-5 pb-[clamp(10px,2.4vh,32px)] flex flex-col justify-center overflow-hidden">
         {current && <Details release={current} index={active} total={n} />}
+      </div>
       </div>
     </div>
   );
